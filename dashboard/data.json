@@ -3,9 +3,9 @@
     "name": "PBFCM",
     "color": "bg-blue-500",
     "textColor": "text-blue-800",
-    "links": [ 
+    "links": [
       {
-        "name": "Halo", 
+        "name": "Halo",
         "url": "https://pbfcm.haloitsm.com",
         "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"
       },
@@ -28,6 +28,11 @@
         "name": "Udemy",
         "url": "https://pbfcm.udemy.com/organization/home/",
         "img": "https://upload.wikimedia.org/wikipedia/commons/e/e3/Udemy_logo.svg"
+      },
+      {
+        "name": "test",
+        "url": "www.google.com",
+        "img": "/images/favicon.png"
       }
     ]
   },
@@ -153,12 +158,12 @@
       {
         "name": "Movies Portal",
         "url": "https://movies.do",
-        "img": "https://news.med.virginia.edu/files/2023/12/MyChart-1x1-1-200x200.jpg"
+        "img": "/images/favicon.png"
       },
       {
         "name": "Bright Star Cinemas",
         "url": "https://www.brightstarcinemas.com/",
-        "img": "https://news.med.virginia.edu/files/2023/12/MyChart-1x1-1-200x200.jpg"
+        "img": "/images/favicon.png"
       },
       {
         "name": "YouTube",
