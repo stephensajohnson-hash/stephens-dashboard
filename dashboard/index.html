@@ -21,35 +21,40 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
-  <!-- COMPACT TOP BANNER -->
-<div id="top-banner" class="fixed top-0 left-0 right-0 h-8 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-md">
-  <!-- Date / Time (click → Google Calendar) -->
-  <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-2">
-    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-    <span id="date-time">Loading…</span>
-  </a>
+<!-- COMPACT TOP BANNER WITH ALL BUTTONS -->
+<div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-lg">
+  <div class="flex items-center gap-2">
+    <!-- Left buttons -->
+    <button onclick="addGroup()"    class="bg-blue-600 hover:bg-blue-700 px-2.5 py-1 rounded text-xs font-medium transition">+</button>
+    <button onclick="addLink()"     class="bg-green-600 hover:bg-green-700 px-2.5 py-1 rounded text-xs font-medium transition">+</button>
+    <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-bold transition">PUBLISH</button>
 
-  <!-- Weather (click → weather.com with auto-detected city) -->
-  <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-2">
-    <span id="weather-icon">☀️</span>
-    <span id="weather-temp">—°</span>
-  </a>
+    <!-- Date / Time (click → Google Calendar) -->
+    <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="ml-4 hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+      <span id="date-time">Loading…</span>
+    </a>
+  </div>
+
+  <div class="flex items-center gap-4">
+    <!-- Dark mode toggle -->
+    <button onclick="document.body.classList.toggle('dark-mode')" 
+            class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition flex items-center gap-1">
+      <span class="dark:hidden">Dark</span>
+      <span class="hidden dark:inline">Light</span>
+    </button>
+
+    <!-- Weather (click → weather.com) -->
+    <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
+      <span id="weather-icon">☀️</span>
+      <span id="weather-temp">—°</span>
+    </a>
+  </div>
 </div>
 
-<!-- Push main content down so banner doesn’t cover it -->
-<div class="pt-10">
-  <!-- everything else (your existing dashboard) stays here -->
-
-<button onclick="document.body.classList.toggle('dark-mode')" 
-        class="fixed top-3 right-3 z-50 bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1.5 rounded-lg text-xs shadow-md transition">
-  Dark Mode
-</button>
-
-<div class="fixed top-3 left-3 z-50 flex gap-2">
-  <button onclick="addGroup()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded text-xs font-medium shadow">+ Group</button>
-  <button onclick="addLink()" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded text-xs font-medium shadow">+ Link</button>
-  <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded text-xs font-medium shadow font-bold">PUBLISH</button>
-</div>
+<!-- Push everything down so banner doesn’t cover content -->
+<div class="pt-12">
+  <!-- rest of your existing dashboard stays here -->
 
 <div id="dashboard" class="max-w-full mx-auto space-y-2 pt-16"></div>
 
@@ -286,6 +291,7 @@
   
 </body>
 </html>
+
 
 
 
