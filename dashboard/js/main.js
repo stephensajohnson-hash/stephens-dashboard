@@ -1,32 +1,38 @@
-import { render, setData } from './ui.js';
-import { updateDateTime } from './calendar.js';
+import { setData, render } from './ui.js';
 import { initWeather } from './weather.js';
+import { updateDateTime } from './calendar.js';
 
 let data = [];
 
-async function loadData() {
+export async function loadData() {
   try {
-    const res = await fetch('data.json?v=' + Date.now());
+    const res = await fetch('data.json?t=' + Date.now());
     if (res.ok) data = await res.json();
-  } catch(e) {}
+  } catch (e) { console.log('No data.json found, using localStorage'); }
+
   if (!data.length) {
     const saved = localStorage.getItem('dashboardData');
     data = saved ? JSON.parse(saved) : [];
   } else {
     localStorage.setItem('dashboardData', JSON.stringify(data));
   }
+
   setData(data);
   render();
 }
 
 window.publishData = () => {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
-  const a = document.createElement('a'); a.href = url; a.download = 'data.json'; a.click();
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'data.json';
+  a.click();
   URL.revokeObjectURL(url);
-  alert('Data downloaded! Upload to GitHub to redeploy.');
+  alert('data.json downloaded! Upload to GitHub → redeploy');
 };
 
+// Initialize everything
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
   updateDateTime();
