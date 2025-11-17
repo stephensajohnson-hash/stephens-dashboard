@@ -8,7 +8,7 @@ export async function loadData() {
   try {
     const res = await fetch('data.json?t=' + Date.now());
     if (res.ok) data = await res.json();
-  } catch (e) { console.log('No data.json found, using localStorage'); }
+  } catch (e) { console.log('No data.json, using localStorage'); }
 
   if (!data.length) {
     const saved = localStorage.getItem('dashboardData');
@@ -21,7 +21,8 @@ export async function loadData() {
   render();
 }
 
-window.publishData = () => {
+// EXPORTED SO MENU BUTTON WORKS
+export function publishData() {
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -30,9 +31,9 @@ window.publishData = () => {
   a.click();
   URL.revokeObjectURL(url);
   alert('data.json downloaded! Upload to GitHub → redeploy');
-};
+}
 
-// Initialize everything
+// Initialize
 document.addEventListener('DOMContentLoaded', () => {
   loadData();
   updateDateTime();
