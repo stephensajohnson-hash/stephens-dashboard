@@ -21,6 +21,25 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
+  <!-- COMPACT TOP BANNER -->
+<div id="top-banner" class="fixed top-0 left-0 right-0 h-8 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-md">
+  <!-- Date / Time (click → Google Calendar) -->
+  <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-2">
+    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+    <span id="date-time">Loading…</span>
+  </a>
+
+  <!-- Weather (click → weather.com with auto-detected city) -->
+  <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-2">
+    <span id="weather-icon">☀️</span>
+    <span id="weather-temp">—°</span>
+  </a>
+</div>
+
+<!-- Push main content down so banner doesn’t cover it -->
+<div class="pt-10">
+  <!-- everything else (your existing dashboard) stays here -->
+
 <button onclick="document.body.classList.toggle('dark-mode')" 
         class="fixed top-3 right-3 z-50 bg-gray-800 hover:bg-gray-700 text-white px-2.5 py-1.5 rounded-lg text-xs shadow-md transition">
   Dark Mode
@@ -230,9 +249,44 @@
   }
 
   document.addEventListener('DOMContentLoaded', loadData);
+
+  // === DATE & TIME (updates every minute) ===
+  function updateDateTime() {
+    const now = new Date();
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    const dateStr = now.toLocaleDateString('en-US', options).replace(/(\d)(st|nd|rd|th)/, '$1<sup>$2</sup>');
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(' am', 'am').replace(' pm', 'pm');
+    document.getElementById('date-time').innerHTML = `${dateStr} <span class="text-gray-400">${timeStr}</span>`;
+  }
+  updateDateTime();
+  setInterval(updateDateTime, 60000);
+
+  // === WEATHER (free API – no key needed) ===
+  fetch('https://wttr.in/?format=j1')
+    .then(r => r.json())
+    .then(data => {
+      const tempF = data.current_condition[0].temp_F;
+      const condition = data.current_condition[0].weatherDesc[0].value.toLowerCase();
+      let icon = '☀️';
+      if (condition.includes('cloud') || condition.includes('overcast')) icon = '☁️';
+      else if (condition.includes('rain') || condition.includes('drizzle')) icon = '🌧️';
+      else if (condition.includes('snow')) icon = '❄️';
+      else if (condition.includes('clear') || condition.includes('sunny')) icon = '☀️';
+      else if (condition.includes('storm')) icon = '⛈️';
+      else if (condition.includes('fog') || condition.includes('mist')) icon = '🌫️';
+
+      document.getElementById('weather-icon').textContent = icon;
+      document.getElementById('weather-temp').textContent = `${tempF}°`;
+    })
+    .catch(() => {
+      document.getElementById('weather-icon').textContent = '🌐';
+      document.getElementById('weather-temp').textContent = 'offline';
+    });
 </script>
+  
 </body>
 </html>
+
 
 
 
