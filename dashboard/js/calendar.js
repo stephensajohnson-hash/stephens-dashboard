@@ -12,16 +12,16 @@ export function updateDateTime() {
   cal += '<div class="grid grid-cols-7 gap-1 text-center text-sm">';
   for (let i = 0; i < firstDay; i++) cal += '<div></div>';
   for (let d = 1; d <= daysInMonth; d++) {
-    const today = d === n.getDate() ? 'bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold' : 'w-8 h-8';
+    const today = d === n.getDate() ? 'bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold' : '';
     cal += `<div class="${today}">${d}</div>`;
   }
   cal += '</div>';
   document.getElementById('calendar-popup').innerHTML = cal;
 }
 
-document.getElementById('date-time-link').parentElement.addEventListener('mouseenter', () => {
+document.getElementById('date-time-link')?.parentElement.addEventListener('mouseenter', () => {
   document.getElementById('calendar-popup').classList.add('show');
 });
-document.getElementById('date-time-link').parentElement.addEventListener('mouseleave', () => {
+document.getElementById('date-time-link')?.parentElement.addEventListener('mouseleave', () => {
   document.getElementById('calendar-popup').classList.remove('show');
 });
