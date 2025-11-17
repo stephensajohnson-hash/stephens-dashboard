@@ -78,30 +78,46 @@
   import { setData, render } from './js/ui.js';
   import { loadData, publishData } from './js/main.js';
 
+  // Global functions for inline onclicks
   window.toggleMenu = toggleMenu;
   window.publishData = publishData;
   window.addGroup = () => window.ui?.addGroup();
   window.addLink = () => window.ui?.addLink();
 
-  document.getElementById('menu-btn')?.addEventListener('click', toggleMenu);
+  // Hamburger menu
+  document.getElementById('menu-btn')?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
 
-  // Ensure popups are hidden on load
-  document.getElementById('calendar-popup')?.classList.remove('show');
-  document.getElementById('forecast-popup')?.classList.remove('show');
+  // CRITICAL: Wait for full DOM + all modules loaded
+  document.addEventListener('DOMContentLoaded', async () => {
+    // Hide popups first
+    const calPopup = document.getElementById('calendar-popup');
+    const forePopup = document.getElementById('forecast-popup');
+    if (calPopup) calPopup.classList.remove('show');
+    if (forePopup) forePopup.classList.remove('show');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    loadData();
-    updateDateTime();
+    // Load data + render dashboard
+    await loadData();
+
+    // NOW safe to update UI elements
+    updateDateTime();                    // ← Date/time appears
     setInterval(updateDateTime, 60000);
-    initWeather();
 
-    // Fix hover conflicts: clicking menu doesn't trigger calendar
-    document.getElementById('menu-btn').addEventListener('click', (e) => {
-      e.stopPropagation();
+    initWeather();                       // ← Weather + icons appear
+
+    // Fix hover conflicts
+    document.getElementById('top-banner')?.addEventListener('click', (e) => {
+      if (e.target.closest('#menu-btn')) return;
+      calPopup?.classList.remove('show');
+      forePopup?.classList.remove('show');
     });
   });
 </script>
+  
 </body>
 </html>
+
 
 
