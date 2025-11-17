@@ -14,17 +14,22 @@
     .dark-mode img { filter: invert(1) hue-rotate(180deg); }
     .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
     .dragging { opacity: 0.5; }
-    .btn-icon { @apply w-5 h-5 opacity-0 group-hover:opacity-100 transition; }
+    .tooltip { @apply relative; }
+    .tooltip:hover::after {
+      content: attr(data-tip);
+      @apply absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50;
+    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
-<!-- COMPACT TOP BANNER WITH HOVER POPUPS -->
+<!-- COMPACT TOP BANNER -->
 <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-lg">
-  <div class="flex items-center gap-2">
-    <button onclick="addGroup()"    class="bg-blue-600 hover:bg-blue-700 px-2.5 py-1 rounded font-medium transition">+</button>
-    <button onclick="addLink()"     class="bg-green-600 hover:bg-green-700 px-2.5 py-1 rounded font-medium transition">+</button>
-    <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded font-bold transition">PUBLISH</button>
+  <div class="flex items-center gap-3">
+    <!-- Add Group & Add Link with tooltips -->
+    <button onclick="addGroup()"    class="tooltip bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded font-medium transition" data-tip="Add new group">Group +</button>
+    <button onclick="addLink()"     class="tooltip bg-green-600 hover:bg-green-700 px-3 py-1 rounded font-medium transition" data-tip="Add new link">Link +</button>
+    <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 px-4 py-1 rounded font-bold transition">PUBLISH</button>
 
     <!-- Date/Time with calendar popup -->
     <div class="relative ml-4">
@@ -69,7 +74,6 @@
   let data = [];
   let dragged = null;
 
-  // Load data
   async function loadData() {
     let jsonData = [];
     try {
@@ -98,7 +102,6 @@
     alert('PUBLISHED! Upload this file to GitHub → Vercel auto-deploys.');
   }
 
-  // Render dashboard
   function render() {
     const container = document.getElementById('dashboard');
     container.innerHTML = '';
@@ -142,10 +145,83 @@
     setupDragAndDrop();
   }
 
-  // Drag & drop, addGroup, addLink, etc. (your existing functions remain unchanged)
-  // ... [all your existing functions go here — they are unchanged]
+  function setupDragAndDrop() {
+    // (your existing drag-and-drop code – unchanged)
+    document.querySelectorAll('details').forEach(el => {
+      el.addEventListener('dragstart', e => { dragged = { type: 'group', el, idx: el.dataset.idx }; setTimeout(() => el.classList.add('dragging'), 0); });
+      el.addEventListener('dragend', () => { el.classList.remove('dragging'); dragged = null; });
+      el.addEventListener('dragover', e => e.preventDefault());
+      el.addEventListener('drop', e => {
+        e.preventDefault();
+        if (dragged && dragged.type === 'group') {
+          const from = parseInt(dragged.idx), to = parseInt(el.dataset.idx);
+          if (from !== to) { data.splice(to, 0, data.splice(from, 1)[0]); saveToLocal(); render(); }
+        }
+      });
+    });
 
-  // DATE/TIME + CALENDAR POPUP
+    document.querySelectorAll('.icon').forEach(el => {
+      el.addEventListener('dragstart', e => { dragged = { type: 'link', el, group: el.dataset.group, idx: el.dataset.idx }; setTimeout(() => el.classList.add('dragging'), 0); });
+      el.addEventListener('dragend', () => { el.classList.remove('dragging'); dragged = null; });
+    });
+
+    document.querySelectorAll('[data-group]').forEach(grid => {
+      grid.addEventListener('dragover', e => { e.preventDefault(); grid.classList.add('drag-over'); });
+      grid.addEventListener('dragleave', () => grid.classList.remove('drag-over'));
+      grid.addEventListener('drop', e => {
+        e.preventDefault(); grid.classList.remove('drag-over');
+        if (dragged && dragged.type === 'link') {
+          const fromGroup = parseInt(dragged.group), fromIdx = parseInt(dragged.idx), toGroup = parseInt(grid.dataset.group);
+          const link = data[fromGroup].links.splice(fromIdx, 1)[0];
+          data[toGroup].links.push(link);
+          saveToLocal(); render();
+        }
+      });
+    });
+  }
+
+  function addGroup() {
+    const form = `<input type="text" id="group-name" placeholder="Group Name" class="w-full p-2 border rounded text-sm mb-2" required>`;
+    showPopup('Add Group', form, () => {
+      const name = document.getElementById('group-name').value.trim();
+      if (!name) return;
+      const colors = ['bg-blue-500','bg-amber-500','bg-green-500','bg-purple-500','bg-pink-500','bg-emerald-500','bg-teal-500'];
+      const textColors = ['text-blue-800','text-amber-800','text-green-800','text-purple-800','text-pink-800','text-emerald-800','text-teal-800'];
+      const idx = data.length % colors.length;
+      data.push({ name, color: colors[idx], textColor: textColors[idx], links: [] });
+      saveToLocal(); render();
+    });
+  }
+
+  function addLink() {
+    const groups = data.map((g,i) => `<option value="${i}">${g.name}</option>`).join('');
+    const form = `<select id="link-group" class="w-full p-2 border rounded text-sm mb-2">${groups||'<option>No groups yet</option>'}</select>
+      <input type="text" id="link-name" placeholder="Link Name" class="w-full p-2 border rounded text-sm mb-2" required>
+      <input type="url" id="link-url" placeholder="URL" class="w-full p-2 border rounded text-sm mb-2" required>
+      <input type="url" id="link-img" placeholder="Image URL (optional)" class="w-full p-2 border rounded text-sm mb-2">`;
+    showPopup('Add Link', form, () => {
+      const groupIdx = document.getElementById('link-group').value;
+      const name = document.getElementById('link-name').value.trim();
+      const url = document.getElementById('link-url').value.trim();
+      const img = document.getElementById('link-img').value.trim() || `https://placehold.co/80x80/666/fff?text=${encodeURIComponent(name.charAt(0))}`;
+      if (!name || !url || groupIdx === null) return;
+      data[groupIdx].links.push({ name, url, img });
+      saveToLocal(); render();
+    });
+  }
+
+  function showPopup(title, form, onSave) {
+    document.getElementById('popup-title').textContent = title;
+    document.getElementById('popup-form').innerHTML = form;
+    document.getElementById('popup-save').onclick = () => { onSave(); closePopup(); };
+    document.getElementById('popup').classList.remove('hidden');
+  }
+
+  function closePopup() {
+    document.getElementById('popup').classList.add('hidden');
+  }
+
+  // DATE/TIME + CALENDAR
   function updateDateTime() {
     const now = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
