@@ -21,40 +21,39 @@
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
-<!-- COMPACT TOP BANNER WITH ALL BUTTONS -->
+<!-- COMPACT TOP BANNER + HOVER POPUPS -->
 <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-lg">
   <div class="flex items-center gap-2">
-    <!-- Left buttons -->
-    <button onclick="addGroup()"    class="bg-blue-600 hover:bg-blue-700 px-2.5 py-1 rounded text-xs font-medium transition">+</button>
-    <button onclick="addLink()"     class="bg-green-600 hover:bg-green-700 px-2.5 py-1 rounded text-xs font-medium transition">+</button>
-    <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded text-xs font-bold transition">PUBLISH</button>
+    <button onclick="addGroup()"    class="bg-blue-600 hover:bg-blue-700 px-2.5 py-1 rounded font-medium transition">+</button>
+    <button onclick="addLink()"     class="bg-green-600 hover:bg-green-700 px-2.5 py-1 rounded font-medium transition">+</button>
+    <button onclick="publishData()" class="bg-red-600 hover:bg-red-700 px-3 py-1 rounded font-bold transition">PUBLISH</button>
 
-    <!-- Date / Time (click → Google Calendar) -->
-    <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="ml-4 hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
-      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-      <span id="date-time">Loading…</span>
-    </a>
+    <!-- Date/Time with monthly calendar on hover -->
+    <div class="relative ml-4">
+      <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span id="date-time">Loading…</span>
+      </a>
+      <div id="calendar-popup" class="absolute top-8 left-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-2 opacity-0 pointer-events-none transition-opacity z-50 whitespace-nowrap"></div>
+    </div>
   </div>
 
   <div class="flex items-center gap-4">
-    <!-- Dark mode toggle -->
-    <button onclick="document.body.classList.toggle('dark-mode')" 
-            class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition flex items-center gap-1">
-      <span class="dark:hidden">Dark</span>
-      <span class="hidden dark:inline">Light</span>
-    </button>
+    <button onclick="document.body.classList.toggle('dark-mode')" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition">Dark</button>
 
-    <!-- Weather (click → weather.com) -->
-    <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
-      <span id="weather-icon">☀️</span>
-      <span id="weather-temp">—°</span>
-    </a>
+    <!-- Weather with 7-day forecast on hover -->
+    <div class="relative">
+      <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
+        <span id="weather-icon">☀️</span>
+        <span id="weather-temp">—°</span>
+      </a>
+      <div id="forecast-popup" class="absolute top-8 right-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-3 opacity-0 pointer-events-none transition-opacity z-50 min-w-64"></div>
+    </div>
   </div>
 </div>
 
-<!-- Push everything down so banner doesn’t cover content -->
 <div class="pt-12">
-  <!-- rest of your existing dashboard stays here -->
+  <!-- rest of your dashboard -->
 
 <div id="dashboard" class="max-w-full mx-auto space-y-2 pt-16"></div>
 
@@ -255,42 +254,75 @@
 
   document.addEventListener('DOMContentLoaded', loadData);
 
-  // === DATE & TIME (updates every minute) ===
+  // === DATE & TIME + MONTHLY CALENDAR HOVER ===
   function updateDateTime() {
     const now = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     const dateStr = now.toLocaleDateString('en-US', options).replace(/(\d)(st|nd|rd|th)/, '$1<sup>$2</sup>');
-    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(' am', 'am').replace(' pm', 'pm');
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(' am','am').replace(' pm','pm');
     document.getElementById('date-time').innerHTML = `${dateStr} <span class="text-gray-400">${timeStr}</span>`;
+    
+    // Build mini calendar
+    const year = now.getFullYear(), month = now.getMonth();
+    const firstDay = new Date(year, month, 1).getDay();
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    let cal = `<div class="font-bold text-center mb-1">${now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}</div>`;
+    cal += '<div class="grid grid-cols-7 text-center text-xs mb-1"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>';
+    cal += '<div class="grid grid-cols-7 text-center text-xs">';
+    for (let i = 0; i < firstDay; i++) cal += '<div></div>';
+    for (let day = 1; day <= daysInMonth; day++) {
+      const isToday = day === now.getDate();
+      cal += `<div class="${isToday ? 'bg-blue-600 text-white rounded' : ''}">${day}</div>`;
+    }
+    cal += '</div>';
+    document.getElementById('calendar-popup').innerHTML = cal;
   }
   updateDateTime();
   setInterval(updateDateTime, 60000);
 
-  // === WEATHER (free API – no key needed) ===
+  // Show/hide calendar on hover
+  const dateLink = document.getElementById('date-time-link').parentElement;
+  dateLink.addEventListener('mouseenter', () => document.getElementById('calendar-popup').classList.replace('opacity-0','opacity-100'));
+  dateLink.addEventListener('mouseleave', () => document.getElementById('calendar-popup').classList.replace('opacity-100','opacity-0'));
+
+  // === WEATHER + 7-DAY FORECAST HOVER ===
   fetch('https://wttr.in/?format=j1')
     .then(r => r.json())
     .then(data => {
-      const tempF = data.current_condition[0].temp_F;
-      const condition = data.current_condition[0].weatherDesc[0].value.toLowerCase();
-      let icon = '☀️';
-      if (condition.includes('cloud') || condition.includes('overcast')) icon = '☁️';
-      else if (condition.includes('rain') || condition.includes('drizzle')) icon = '🌧️';
-      else if (condition.includes('snow')) icon = '❄️';
-      else if (condition.includes('clear') || condition.includes('sunny')) icon = '☀️';
-      else if (condition.includes('storm')) icon = '⛈️';
-      else if (condition.includes('fog') || condition.includes('mist')) icon = '🌫️';
+      const current = data.current_condition[0];
+      const tempF = current.temp_F;
+      const condition = current.weatherDesc[0].value.toLowerCase();
+      const iconMap = { cloud: '☁️', overcast: '☁️', rain: '🌧️', drizzle: '🌧️', snow: '❄️', clear: '☀️', sunny: '☀️', storm: '⛈️', fog: '🌫️', mist: '🌫️' };
+      const icon = Object.keys(iconMap).find(k => condition.includes(k)) ? iconMap[Object.keys(iconMap).find(k => condition.includes(k))] : '🌤️';
 
       document.getElementById('weather-icon').textContent = icon;
       document.getElementById('weather-temp').textContent = `${tempF}°`;
+
+      // Build 7-day forecast popup
+      let forecastHTML = '<div class="font-bold mb-2 text-center">7-Day Forecast</div>';
+      data.weather.slice(0, 7).forEach(day => {
+        const date = new Date(day.date);
+        const weekday = date.toLocaleDateString('en-US', { weekday: 'short' });
+        const high = day.maxtempF;
+        const low = day.mintempF;
+        forecastHTML += `<div class="flex justify-between py-1"><span>${weekday}</span><span>${low}°–${high}°</span></div>`;
+      });
+      document.getElementById('forecast-popup').innerHTML = forecastHTML;
     })
     .catch(() => {
       document.getElementById('weather-icon').textContent = '🌐';
       document.getElementById('weather-temp').textContent = 'offline';
     });
+
+  // Show/hide forecast on hover
+  const weatherDiv = document.querySelector('#weather-link').parentElement;
+  weatherDiv.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.replace('opacity-0','opacity-100'));
+  weatherDiv.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.replace('opacity-100','opacity-0'));
 </script>
   
 </body>
 </html>
+
 
 
 
