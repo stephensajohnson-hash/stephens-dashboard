@@ -76,25 +76,32 @@
   import { updateDateTime } from './js/calendar.js';
   import { initWeather } from './js/weather.js';
   import { setData, render } from './js/ui.js';
-  import { loadData, publishData } from './js/main.js';  // ← now works!
+  import { loadData, publishData } from './js/main.js';
 
-  // Global functions for inline onclicks
   window.toggleMenu = toggleMenu;
   window.publishData = publishData;
-  window.addGroup = () => window.ui.addGroup();
-  window.addLink = () => window.ui.addLink();
+  window.addGroup = () => window.ui?.addGroup();
+  window.addLink = () => window.ui?.addLink();
 
-  // Hamburger menu
-  document.getElementById('menu-btn').addEventListener('click', toggleMenu);
+  document.getElementById('menu-btn')?.addEventListener('click', toggleMenu);
 
-  // Start app
+  // Ensure popups are hidden on load
+  document.getElementById('calendar-popup')?.classList.remove('show');
+  document.getElementById('forecast-popup')?.classList.remove('show');
+
   document.addEventListener('DOMContentLoaded', () => {
     loadData();
     updateDateTime();
     setInterval(updateDateTime, 60000);
     initWeather();
+
+    // Fix hover conflicts: clicking menu doesn't trigger calendar
+    document.getElementById('menu-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+    });
   });
 </script>
 </body>
 </html>
+
 
