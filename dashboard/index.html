@@ -14,19 +14,14 @@
     .dark-mode img { filter: invert(1) hue-rotate(180deg); }
     .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
     .dragging { opacity: 0.5; }
-    .tooltip { @apply relative; }
-    .tooltip:hover::after {
-      content: attr(data-tip);
-      @apply absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded whitespace-nowrap z-50;
-    }
   </style>
 </head>
 <body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
-<!-- COMPACT TOP BANNER WITH HAMBURGER MENU -->
+<!-- COMPACT TOP BANNER -->
 <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-lg">
   <div class="flex items-center gap-3">
-    <!-- Hamburger Menu Button -->
+    <!-- Hamburger Menu -->
     <button onclick="document.getElementById('sidebar-menu').classList.toggle('translate-x-0')" 
             class="p-1.5 hover:bg-gray-700 rounded transition z-50">
       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,7 +29,7 @@
       </svg>
     </button>
 
-    <!-- Date/Time with calendar popup -->
+    <!-- Date/Time -->
     <div class="relative">
       <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,14 +37,12 @@
         </svg>
         <span id="date-time">Loading…</span>
       </a>
-      <div id="calendar-popup" class="absolute top-8 left-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-3 opacity-0 pointer-events-none transition-opacity z-50 whitespace-nowrap"></div>
+      <div id="calendar-popup" class="absolute top-8 left-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-3 opacity-0 pointer-events-none transition-opacity z-50"></div>
     </div>
   </div>
 
   <div class="flex items-center gap-4">
     <button onclick="document.body.classList.toggle('dark-mode')" class="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-xs transition">Dark</button>
-
-    <!-- Weather with 7-day forecast popup -->
     <div class="relative">
       <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 transition cursor-pointer flex items-center gap-1.5">
         <span id="weather-icon">Sunny</span>
@@ -60,13 +53,12 @@
   </div>
 </div>
 
-<!-- SLIDE-IN MENU -->
-<div id="sidebar-menu" class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl">
+<!-- SLIDE-IN MENU (now sits ON TOP of banner) -->
+<div id="sidebar-menu" class="fixed top-0 left-0 h-full w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-[60] shadow-2xl">
   <div class="p-4 border-b border-gray-700">
     <div class="flex items-center justify-between">
       <h2 class="text-lg font-bold">Dashboard Menu</h2>
-      <button onclick="document.getElementById('sidebar-menu').classList.remove('translate-x-0')" 
-              class="p-1 hover:bg-gray-700 rounded">
+      <button onclick="document.getElementById('sidebar-menu').classList.remove('translate-x-0')" class="p-1 hover:bg-gray-700 rounded">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
         </svg>
@@ -102,7 +94,7 @@
   <div id="dashboard" class="max-w-full mx-auto space-y-2"></div>
 </div>
 
-<!-- Popup modal remains unchanged -->
+<!-- Popup Modal -->
 <div id="popup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
   <div class="bg-white dark:bg-gray-800 rounded-lg p-5 max-w-md w-full shadow-xl">
     <h3 id="popup-title" class="text-lg font-bold mb-4"></h3>
@@ -115,9 +107,6 @@
 </div>
 
 <script>
-  // All your existing functions (loadData, render, drag/drop, addGroup, addLink, publishData, etc.)
-  // are exactly the same as before — only the banner changed
-
   let data = [];
   let dragged = null;
 
@@ -129,7 +118,7 @@
     } catch (e) {}
     const saved = localStorage.getItem('dashboardData');
     const localData = saved ? JSON.parse(saved) : [];
-    data = localData.length > 0 ? localData : jsonData;
+    data = localData.length > (jsonData.length || 0) ? localData : jsonData;
     render();
   }
 
@@ -149,16 +138,8 @@
     alert('PUBLISHED! Upload to GitHub → Vercel auto-deploys.');
   }
 
-  // render(), setupDragAndDrop(), addGroup(), addLink(), showPopup(), closePopup() 
-  // → all unchanged from previous working version (they're still in the full file I sent last time)
-
-  // DATE/TIME + WEATHER scripts remain 100% unchanged from the last working version
-
-  document.addEventListener('DOMContentLoaded', loadData);
-</script>
-
-<!-- Paste the rest of the working script from the previous full version here -->
-<!-- (render, drag/drop, addGroup, addLink, date/time, weather — all unchanged) -->
-
-</body>
-</html>
+  function render() {
+    const container = document.getElementById('dashboard');
+    container.innerHTML = '';
+    data.forEach((group, groupIdx) => {
+      const details = document<|eos|>
