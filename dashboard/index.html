@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="transition-colors duration-300">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,14 +9,12 @@
   <style>
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
-    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.15); }
-    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
-    .dragging { opacity: 0.5; }
+    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
   </style>
 </head>
-<body class="min-h-screen bg-white dark:bg-black transition-colors duration-500">
+<body class="min-h-screen bg-black text-white">
 
 <!-- TOP BANNER -->
 <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
@@ -29,7 +27,7 @@
         <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
         <span id="date-time">Loading…</span>
       </a>
-      <div id="calendar-popup" class="absolute top-9 left-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded-lg shadow-2xl p-4 opacity-0 pointer-events-none transition-opacity z-50 border border-gray-200 dark:border-gray-700 min-w-56"></div>
+      <div id="calendar-popup" class="absolute top-9 left-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 opacity-0 pointer-events-none transition-opacity z-50 border border-gray-700 min-w-56"></div>
     </div>
   </div>
   <div class="relative">
@@ -37,20 +35,16 @@
       <span id="weather-icon-svg" class="weather-svg"></span>
       <span id="weather-temp">--°</span>
     </a>
-    <div id="forecast-popup" class="absolute top-9 right-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded-lg shadow-2xl p-4 opacity-0 pointer-events-none transition-opacity z-50 border border-gray-200 dark:border-gray-700 min-w-64"></div>
+    <div id="forecast-popup" class="absolute top-9 right-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 opacity-0 pointer-events-none transition-opacity z-50 border border-gray-700 min-w-64"></div>
   </div>
 </div>
 
-<!-- MENU -->
+<!-- MENU (Dark Mode button REMOVED) -->
 <div id="sidebar-menu" class="fixed top-9 left-0 h-[calc(100vh-36px)] w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl overflow-y-auto">
   <div class="p-4 space-y-4">
     <button onclick="addGroup(); toggleMenu()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded">Add Group</button>
     <button onclick="addLink(); toggleMenu()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded">Add Link</button>
     <button onclick="publishData(); toggleMenu()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded font-bold">Download Data</button>
-    <hr class="border-gray-700">
-    <button id="dark-toggle" onclick="toggleDarkMode()" class="w-full bg-gray-700 hover:bg-gray-600 px-4 py-2.5 rounded text-left">
-      <span id="dark-text">Dark Mode</span>
-    </button>
   </div>
 </div>
 
@@ -58,12 +52,12 @@
   <div id="dashboard" class="max-w-full mx-auto space-y-4"></div>
 </div>
 
-<div id="popup" class="fixed inset-0 bg-black bg-opacity-60 hidden z-50 flex items-center justify-center p-4">
-  <div class="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-300 dark:border-gray-600">
-    <h3 id="popup-title" class="text-lg font-bold mb-4 text-gray-900 dark:text-white"></h3>
+<div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
+    <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
     <div id="popup-form"></div>
     <div class="flex justify-end gap-3 mt-6">
-      <button onclick="closePopup()" class="px-4 py-2 bg-gray-300 hover:bg-gray-400 dark:bg-gray-700 dark:hover:bg-gray-600 rounded text-sm">Cancel</button>
+      <button onclick="closePopup()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm">Cancel</button>
       <button id="popup-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm">Save</button>
     </div>
   </div>
@@ -87,17 +81,6 @@
   let data = [];
 
   function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('-translate-x-full'); }
-
-  // ONLY THESE 4 LINES CHANGED FOR DARK MODE
-  function toggleDarkMode() {
-    const isDark = document.documentElement.classList.toggle('dark');
-    localStorage.setItem('darkMode', isDark);
-    document.getElementById('dark-text').textContent = isDark ? 'Light Mode' : 'Dark Mode';
-  }
-  // Force light mode + correct button on first load
-  document.documentElement.classList.remove('dark');
-  localStorage.setItem('darkMode', 'false');
-  document.getElementById('dark-text').textContent = 'Dark Mode';
 
   async function loadData() {
     try {
@@ -127,24 +110,21 @@
     const c = document.getElementById('dashboard'); c.innerHTML = '';
     data.forEach((g, gi) => {
       const d = document.createElement('details'); d.open = true;
-      d.className = 'bg-white dark:bg-black rounded-lg overflow-hidden border border-gray-300 dark:border-gray-700 shadow-sm';
-      d.draggable = true; d.dataset.idx = gi;
+      d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
       const s = document.createElement('summary');
-      s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-50 dark:bg-gray-800';
+      s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-800 hover:bg-gray-750';
       s.innerHTML = `<span class="w-1 h-9 ${g.color} rounded-r-sm mr-2"></span>
         <span class="font-bold ${g.textColor} text-sm">${g.name}</span>
-        <svg class="w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform group-open:rotate-180 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
+        <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
       d.appendChild(s);
       const grid = document.createElement('div');
-      grid.className = 'p-3 grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-3 bg-white dark:bg-black';
-      grid.dataset.group = gi;
+      grid.className = 'p-3 grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-3 bg-black';
       (g.links || []).forEach((l, li) => {
         const a = document.createElement('a'); a.href = l.url; a.target = "_blank";
-        a.className = 'icon text-center block'; a.draggable = true;
-        a.dataset.group = gi; a.dataset.idx = li;
-        a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain shadow-sm bg-white dark:bg-gray-800" 
-          onerror="this.src='https://via.placeholder.com/80/666/fff?text='+encodeURIComponent((l.name||'?').substring(0,2))">
-          <span class="block mt-1 text-xs text-gray-700 dark:text-gray-300">${l.name}</span>`;
+        a.className = 'icon text-center block';
+        a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain shadow bg-gray-900" 
+          onerror="this.src='https://via.placeholder.com/80/333/fff?text='+encodeURIComponent((l.name||'?').substring(0,2))">
+          <span class="block mt-1 text-xs text-gray-300">${l.name}</span>`;
         grid.appendChild(a);
       });
       d.appendChild(grid); c.appendChild(d);
@@ -152,12 +132,12 @@
   }
 
   function addGroup() {
-    const form = `<input type="text" id="newGroupName" placeholder="Group Name" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>`;
+    const form = `<input type="text" id="newGroupName" placeholder="Group Name" class="w-full p-2 bg-gray-700 border border-gray-600 rounded mb-2 text-white" required>`;
     showPopup('Add New Group', form, () => {
       const name = document.getElementById('newGroupName').value.trim();
       if (!name) return;
       const colors = ['bg-blue-500','bg-amber-500','bg-green-500','bg-purple-500','bg-pink-500','bg-emerald-500','bg-teal-500'];
-      const textColors = ['text-blue-900','text-amber-900','text-green-900','text-purple-900','text-pink-900','text-emerald-900','text-teal-900'];
+      const textColors = ['text-blue-300','text-amber-300','text-green-300','text-purple-300','text-pink-300','text-emerald-300','text-teal-300'];
       data.push({ name, color: colors[data.length % colors.length], textColor: textColors[data.length % textColors.length], links: [] });
       saveToLocal(); render();
     });
@@ -166,16 +146,16 @@
   function addLink() {
     const opts = data.length ? data.map((g,i) => `<option value="${i}">${g.name}</option>`).join('') : '<option disabled>No groups</option>';
     const form = `
-      <select id="linkGroup" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600">${opts}</select>
-      <input id="linkName" placeholder="Name" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>
-      <input id="linkUrl" placeholder="https://..." class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>
-      <input id="linkImg" placeholder="Image URL (optional)" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600">
+      <select id="linkGroup" class="w-full p-2 bg-gray-700 border border-gray-600 rounded mb-2 text-white">${opts}</select>
+      <input id="linkName" placeholder="Name" class="w-full p-2 bg-gray-700 border border-gray-600 rounded mb-2 text-white" required>
+      <input id="linkUrl" placeholder="https://..." class="w-full p-2 bg-gray-700 border border-gray-600 rounded mb-2 text-white" required>
+      <input id="linkImg" placeholder="Image URL (optional)" class="w-full p-2 bg-gray-700 border border-gray-600 rounded mb-2 text-white">
     `;
     showPopup('Add New Link', form, () => {
       const g = +document.getElementById('linkGroup').value;
       const n = document.getElementById('linkName').value.trim();
       const u = document.getElementById('linkUrl').value.trim();
-      const i = document.getElementById('linkImg').value.trim() || `https://via.placeholder.com/80/666/fff?text=${n.charAt(0)}`;
+      const i = document.getElementById('linkImg').value.trim() || `https://via.placeholder.com/80/333/fff?text=${n.charAt(0)}`;
       if (!n || !u) return;
       data[g].links.push({ name: n, url: u, img: i });
       saveToLocal(); render();
@@ -200,7 +180,7 @@
     const firstDay = new Date(y, m, 1).getDay();
     const daysInMonth = new Date(y, m+1, 0).getDate();
     let cal = `<div class="font-bold text-center mb-3 text-sm">${n.toLocaleDateString('en-US',{month:'long', year:'numeric'})}</div>`;
-    cal += '<div class="grid grid-cols-7 text-center text-xs mb-2 font-medium text-gray-600 dark:text-gray-400"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>';
+    cal += '<div class="grid grid-cols-7 text-center text-xs mb-2 font-medium text-gray-400"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>';
     cal += '<div class="grid grid-cols-7 gap-1 text-center text-sm">';
     for (let i = 0; i < firstDay; i++) cal += '<div></div>';
     for (let d = 1; d <= daysInMonth; d++) {
