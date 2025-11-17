@@ -1,10 +1,8 @@
-export const icons = { /* paste your full icons object here */ };
+export const icons = { /* your full icons object — paste here */ };
 
 export const weatherMap = {0:"sunny",1:"sunny",2:"partly",3:"cloudy",45:"fog",48:"fog",51:"drizzle",53:"drizzle",55:"drizzle",61:"rain",63:"rain",65:"rain",71:"snow",73:"snow",75:"snow",77:"snow",95:"storm",96:"storm",99:"storm"};
 
-export function getIcon(c) {
-  return icons[weatherMap[c] || (c>=80?"rain":"cloudy")];
-}
+export function getIcon(c) { return icons[weatherMap[c] || "cloudy"]; }
 
 export function initWeather() {
   fetch('https://api.open-meteo.com/v1/forecast?latitude=33.75&longitude=-84.39&current=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&temperature_unit=fahrenheit&timezone=America%2FNew_York')
@@ -30,7 +28,7 @@ export function initWeather() {
       document.getElementById('forecast-popup').innerHTML = forecast;
     });
 
-  const weatherParent = document.querySelector('#weather-link').parentElement;
-  weatherParent.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.add('show'));
-  weatherParent.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.remove('show'));
+  const wp = document.querySelector('#weather-link')?.parentElement;
+  wp?.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.add('show'));
+  wp?.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.remove('show'));
 }
