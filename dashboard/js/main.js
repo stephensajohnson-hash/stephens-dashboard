@@ -1,23 +1,14 @@
-// js/main.js — FINAL FIX WITH DEBUGGING
+import { toggleMenu } from './utils.js';
+import { updateDateTime } from './calendar.js';
+import { initWeather } from './weather.js';
 import { setData, render } from './ui.js';
-import { initWeather } from './js/weather.js';
-import { updateDateTime } from './js/calendar.js';
+import { loadData, publishData } from './main.js';
 
 let data = [];
 
 // Debug logger
 function log(msg) {
   console.log(`%c[MAIN] ${msg}`, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
-  const debug = document.getElementById('debug');
-  if (debug) debug.textContent = msg;
-}
-
-// Create debug div if not exists
-if (!document.getElementById('debug')) {
-  const d = document.createElement('div');
-  d.id = 'debug';
-  d.style.cssText = 'position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.9);color:lime;padding:10px;font:12px monospace;z-index:99999;border-radius:8px;max-width:400px;';
-  document.body.appendChild(d);
 }
 
 export async function loadData() {
@@ -56,13 +47,27 @@ export function publishData() {
   log('data.json downloaded');
 }
 
-// FINAL FIX: Run everything AFTER DOM is ready — MULTIPLE TIMES if needed
+// Global functions for inline onclicks
+window.toggleMenu = toggleMenu;
+window.publishData = publishData;
+window.addGroup = () => window.ui?.addGroup();
+window.addLink = () => window.ui?.addLink();
+
+// Hamburger menu
+document.getElementById('menu-btn')?.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleMenu();
+});
+
+// CRITICAL: Wait for full DOM + all modules loaded
 function startApp() {
   log('startApp() called');
 
   // Force hide popups
-  document.getElementById('calendar-popup')?.classList.remove('show');
-  document.getElementById('forecast-popup')?.classList.remove('show');
+  const calPopup = document.getElementById('calendar-popup');
+  const forePopup = document.getElementById('forecast-popup');
+  if (calPopup) calPopup.classList.remove('show');
+  if (forePopup) forePopup.classList.remove('show');
 
   // Update date/time
   if (typeof updateDateTime === 'function') {
