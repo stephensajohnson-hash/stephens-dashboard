@@ -12,7 +12,3 @@ export function showPopup(title, html, onSave) {
 export function closePopup() {
   document.getElementById('popup').classList.add('hidden');
 }
-
-// Make available globally for inline onclicks
-window.toggleMenu = toggleMenu;
-window.closePopup = closePopup;
