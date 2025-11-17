@@ -3,7 +3,3 @@ details summary::-webkit-details-marker { display: none; }
 .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
 .weather-svg { width: 22px; height: 22px; }
 .forecast-svg { width: 28px; height: 28px; }
-.popup-panel {
-  @apply absolute top-9 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 opacity-0 pointer-events-none transition-opacity z-50 border border-gray-700 min-w-56;
-}
-.popup-panel.show { opacity: 1; pointer-events: auto; }
