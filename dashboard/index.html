@@ -70,7 +70,6 @@
 </div>
 
 <script>
-  // Weather Icons (same as your working version)
   const icons = {
     sunny: `<svg viewBox="0 0 64 64" fill="#fbbf24"><circle cx="32" cy="32" r="14"/><line x1="32" y1="8" x2="32" y2="4" stroke="#fbbf24" stroke-width="6"/><line x1="32" y1="60" x2="32" y2="56"/><line x1="8" y1="32" x2="4" y2="32"/><line x1="60" y1="32" x2="56" y2="32"/><line x1="14" y1="14" x2="10" y2="10"/><line x1="50" y1="50" x2="54" y2="54"/><line x1="14" y1="50" x2="10" y2="54"/><line x1="50" y1="14" x2="54" y2="10"/></svg>`,
     partly: `<svg viewBox="0 0 64 64"><circle cx="40" cy="28" r="12" fill="#fbbf24"/><path d="M12 30 H30 M12 24 H26 M38 30 H56 M42 24 H56" stroke="#94a3b8" stroke-width="8" stroke-linecap="round"/></svg>`,
@@ -85,25 +84,44 @@
   const weatherMap = {0:"sunny",1:"sunny",2:"partly",3:"cloudy",45:"fog",48:"fog",51:"drizzle",53:"drizzle",55:"drizzle",61:"rain",63:"rain",65:"rain",71:"snow",73:"snow",75:"snow",77:"snow",95:"storm",96:"storm",99:"storm"};
   function getIcon(c) { return icons[weatherMap[c] || (c>=80?"rain":"cloudy")]; }
 
-  let data = []; let dragged = null;
+  let data = [];
 
   function toggleMenu() { document.getElementById('sidebar-menu').classList.toggle('-translate-x-full'); }
 
-  // ONLY DARK MODE FIX — 3 LINES
+  // ONLY THESE 4 LINES CHANGED FOR DARK MODE
   function toggleDarkMode() {
     const isDark = document.documentElement.classList.toggle('dark');
     localStorage.setItem('darkMode', isDark);
     document.getElementById('dark-text').textContent = isDark ? 'Light Mode' : 'Dark Mode';
   }
-
-  // Force light mode on load + correct button text
+  // Force light mode + correct button on first load
   document.documentElement.classList.remove('dark');
+  localStorage.setItem('darkMode', 'false');
   document.getElementById('dark-text').textContent = 'Dark Mode';
 
-  // Rest of your perfectly working code (unchanged)
-  async function loadData() { /* ... your working loadData ... */ }
+  async function loadData() {
+    try {
+      const res = await fetch('data.json?v=' + Date.now());
+      if (res.ok) data = await res.json();
+    } catch(e) {}
+    if (!data.length) {
+      const saved = localStorage.getItem('dashboardData');
+      data = saved ? JSON.parse(saved) : [];
+    } else {
+      localStorage.setItem('dashboardData', JSON.stringify(data));
+    }
+    render();
+  }
+
   function saveToLocal() { localStorage.setItem('dashboardData', JSON.stringify(data)); }
-  function publishData() { /* ... your working publishData ... */ }
+
+  function publishData() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type: 'application/json'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href = url; a.download = 'data.json'; a.click();
+    URL.revokeObjectURL(url);
+    alert('Data downloaded! Upload to GitHub to redeploy.');
+  }
 
   function render() {
     const c = document.getElementById('dashboard'); c.innerHTML = '';
@@ -131,16 +149,100 @@
       });
       d.appendChild(grid); c.appendChild(d);
     });
-    setupDragAndDrop();
   }
 
-  // Your addGroup, addLink, calendar, weather — all 100% unchanged and working
-  // ... (rest of your original working script below)
+  function addGroup() {
+    const form = `<input type="text" id="newGroupName" placeholder="Group Name" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>`;
+    showPopup('Add New Group', form, () => {
+      const name = document.getElementById('newGroupName').value.trim();
+      if (!name) return;
+      const colors = ['bg-blue-500','bg-amber-500','bg-green-500','bg-purple-500','bg-pink-500','bg-emerald-500','bg-teal-500'];
+      const textColors = ['text-blue-900','text-amber-900','text-green-900','text-purple-900','text-pink-900','text-emerald-900','text-teal-900'];
+      data.push({ name, color: colors[data.length % colors.length], textColor: textColors[data.length % textColors.length], links: [] });
+      saveToLocal(); render();
+    });
+  }
+
+  function addLink() {
+    const opts = data.length ? data.map((g,i) => `<option value="${i}">${g.name}</option>`).join('') : '<option disabled>No groups</option>';
+    const form = `
+      <select id="linkGroup" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600">${opts}</select>
+      <input id="linkName" placeholder="Name" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>
+      <input id="linkUrl" placeholder="https://..." class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600" required>
+      <input id="linkImg" placeholder="Image URL (optional)" class="w-full p-2 border rounded mb-2 dark:bg-gray-700 dark:border-gray-600">
+    `;
+    showPopup('Add New Link', form, () => {
+      const g = +document.getElementById('linkGroup').value;
+      const n = document.getElementById('linkName').value.trim();
+      const u = document.getElementById('linkUrl').value.trim();
+      const i = document.getElementById('linkImg').value.trim() || `https://via.placeholder.com/80/666/fff?text=${n.charAt(0)}`;
+      if (!n || !u) return;
+      data[g].links.push({ name: n, url: u, img: i });
+      saveToLocal(); render();
+    });
+  }
+
+  function showPopup(t,h,s) {
+    document.getElementById('popup-title').textContent = t;
+    document.getElementById('popup-form').innerHTML = h;
+    document.getElementById('popup-save').onclick = () => { s(); closePopup(); };
+    document.getElementById('popup').classList.remove('hidden');
+  }
+  function closePopup() { document.getElementById('popup').classList.add('hidden'); }
+
+  function updateDateTime() {
+    const n = new Date();
+    const ds = n.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+    const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).replace(' AM','am').replace(' PM','pm');
+    document.getElementById('date-time').innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
+
+    const y = n.getFullYear(), m = n.getMonth();
+    const firstDay = new Date(y, m, 1).getDay();
+    const daysInMonth = new Date(y, m+1, 0).getDate();
+    let cal = `<div class="font-bold text-center mb-3 text-sm">${n.toLocaleDateString('en-US',{month:'long', year:'numeric'})}</div>`;
+    cal += '<div class="grid grid-cols-7 text-center text-xs mb-2 font-medium text-gray-600 dark:text-gray-400"><div>S</div><div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div></div>';
+    cal += '<div class="grid grid-cols-7 gap-1 text-center text-sm">';
+    for (let i = 0; i < firstDay; i++) cal += '<div></div>';
+    for (let d = 1; d <= daysInMonth; d++) {
+      const today = d === n.getDate() ? 'bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold' : 'w-8 h-8';
+      cal += `<div class="${today}">${d}</div>`;
+    }
+    cal += '</div>';
+    document.getElementById('calendar-popup').innerHTML = cal;
+  }
+
+  fetch('https://api.open-meteo.com/v1/forecast?latitude=33.75&longitude=-84.39&current=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&temperature_unit=fahrenheit&timezone=America%2FNew_York')
+    .then(r => r.json())
+    .then(w => {
+      document.getElementById('weather-temp').textContent = Math.round(w.current.temperature_2m) + '°';
+      document.getElementById('weather-icon-svg').innerHTML = getIcon(w.current.weathercode);
+
+      let forecast = '<div class="font-bold mb-3 text-center">7-Day Forecast</div>';
+      const today = new Date();
+      for (let i = 0; i < 7; i++) {
+        const date = new Date(); date.setDate(today.getDate() + i);
+        const name = i === 0 ? 'Today' : date.toLocaleDateString('en-US', {weekday:'short'});
+        const high = Math.round(w.daily.temperature_2m_max[i]);
+        const low = Math.round(w.daily.temperature_2m_min[i]);
+        const icon = getIcon(w.daily.weathercode[i]);
+        forecast += `<div class="flex items-center justify-between py-1.5 ${i===0?'font-bold':''}">
+          <span class="w-16">${name}</span>
+          <span class="forecast-svg inline-block mr-3">${icon}</span>
+          <span>${low}°–${high}°</span>
+        </div>`;
+      }
+      document.getElementById('forecast-popup').innerHTML = forecast;
+    });
+
+  document.getElementById('date-time-link').parentElement.addEventListener('mouseenter', () => document.getElementById('calendar-popup').classList.replace('opacity-0','opacity-100'));
+  document.getElementById('date-time-link').parentElement.addEventListener('mouseleave', () => document.getElementById('calendar-popup').classList.replace('opacity-100','opacity-0'));
+  document.querySelector('#weather-link').parentElement.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.replace('opacity-0','opacity-100'));
+  document.querySelector('#weather-link').parentElement.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.replace('opacity-100','opacity-0'));
 
   document.addEventListener('DOMContentLoaded', () => {
     loadData();
-    updateDateTime(); setInterval(updateDateTime, 60000);
-    // weather + hover events — all working
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
   });
 </script>
 </body>
