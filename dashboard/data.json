@@ -285,11 +285,13 @@
       }
     ]
   },
-  "countdowns": [
-    {
-      "title": "Cruise!",
-      "targetDate": "2026-02-01",
-      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
-    }
-  ]
+  {
+    "countdowns": [
+      {
+        "title": "Cruise!",
+        "targetDate": "2026-02-01",
+        "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
+      }
+    ]
+  }
 ]
