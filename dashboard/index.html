@@ -45,7 +45,7 @@
       </button>
       <div class="relative">
         <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9  Kao 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
           <span id="date-time">Loading…</span>
         </a>
         <div id="calendar-popup" class="popup-panel absolute top-9 left-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 border border-gray-700 min-w-56"></div>
@@ -94,7 +94,7 @@
   </div>
 
   <script>
-    let data = { groups: [], countdowns: [] };
+    let data = [];
     let dragged = null;
     let countdownIndex = 0;
     let countdownInterval = null;
@@ -116,20 +116,16 @@
       try {
         const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) {
-          const json = await res.json();
-          if (json.groups) data.groups = json.groups;
-          if (json.countdowns) data.countdowns = json.countdowns;
+          data = await res.json();
           debug('data.json loaded');
         }
       } catch (e) {
         debug('fetch error: ' + e.message);
       }
 
-      if (data.groups.length === 0) {
+      if (!data || data.length === 0) {
         const saved = localStorage.getItem('dashboardData');
-        const savedData = saved ? JSON.parse(saved) : { groups: [], countdowns: [] };
-        data.groups = savedData.groups || [];
-        data.countdowns = savedData.countdowns || [];
+        data = saved ? JSON.parse(saved) : [];
         debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
@@ -156,7 +152,7 @@
 
     function render() {
       const c = document.getElementById('dashboard'); c.innerHTML = '';
-      data.groups.forEach((g, gi) => {
+      data.forEach((g, gi) => {
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
@@ -171,7 +167,7 @@
           const a = document.createElement('a'); a.href = l.url; a.target = "_blank";
           a.className = 'icon text-center block';
           a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain bg-black" 
-            onerror="this...">
+            onerror="this.src='https://via.placeholder.com/80/111/fff?text='+encodeURIComponent((l.name||'?').substring(0,2))">
             <span class="block mt-1 text-xs text-gray-300">${l.name}</span>`;
           grid.appendChild(a);
         });
