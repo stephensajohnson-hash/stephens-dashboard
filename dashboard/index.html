@@ -10,6 +10,8 @@
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
     .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
+    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
+    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -19,10 +21,10 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 120px;
+      height: 180px;
       background: rgba(0,0,0,0.95);
       color: lime;
-      padding: 8px 12px;
+      padding: 10px;
       font: 12px monospace;
       z-index: 99999;
       overflow-y: auto;
@@ -32,7 +34,7 @@
 </head>
 <body class="min-h-screen bg-black text-white">
 
-  <!-- DEBUG BAR (kept for now) -->
+  <!-- DEBUG BAR -->
   <div id="debug-bar">Debug: Initializing...</div>
 
   <!-- TOP BANNER -->
@@ -92,7 +94,8 @@
   </div>
 
   <script>
-    let data = [];
+    let data = { groups: [], countdowns: [] };
+    let dragged = null;
     let countdownIndex = 0;
     let countdownInterval = null;
 
@@ -100,10 +103,8 @@
     function debug(msg) {
       console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
       const bar = document.getElementById('debug-bar');
-      if (bar) {
-        bar.innerHTML += '<br>' + msg;
-        bar.scrollTop = bar.scrollHeight;
-      }
+      if (bar) bar.innerHTML += '<br>' + msg;
+      if (bar) bar.scrollTop = bar.scrollHeight;
     }
 
     function toggleMenu() {
@@ -115,16 +116,20 @@
       try {
         const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) {
-          data = await res.json();
+          const json = await res.json();
+          if (json.groups) data.groups = json.groups;
+          if (json.countdowns) data.countdowns = json.countdowns;
           debug('data.json loaded');
         }
       } catch (e) {
         debug('fetch error: ' + e.message);
       }
 
-      if (!data || data.length === 0) {
+      if (data.groups.length === 0) {
         const saved = localStorage.getItem('dashboardData');
-        data = saved ? JSON.parse(saved) : [];
+        const savedData = saved ? JSON.parse(saved) : { groups: [], countdowns: [] };
+        data.groups = savedData.groups || [];
+        data.countdowns = savedData.countdowns || [];
         debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
@@ -151,7 +156,7 @@
 
     function render() {
       const c = document.getElementById('dashboard'); c.innerHTML = '';
-      data.forEach((g, gi) => {
+      data.groups.forEach((g, gi) => {
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
@@ -166,7 +171,7 @@
           const a = document.createElement('a'); a.href = l.url; a.target = "_blank";
           a.className = 'icon text-center block';
           a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain bg-black" 
-            onerror="this.src='https://via.placeholder.com/80/111/fff?text='+encodeURIComponent((l.name||'?').substring(0,2))">
+            onerror="this...">
             <span class="block mt-1 text-xs text-gray-300">${l.name}</span>`;
           grid.appendChild(a);
         });
