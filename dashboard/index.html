@@ -795,7 +795,8 @@
             async function fetchWeather() {
                 
                 const LOCATION_ZIP = '75482,us'; // Sulphur Springs, TX
-                const API_KEY = '143488d05f299c2730ceb827be96992e'; // *** YOUR ACTUAL API KEY ***
+                // API Key updated to the new confirmed key: 87256fe2710631542ff491e4c5d73306
+                const API_KEY = '87256fe2710631542ff491e4c5d73306'; 
                 
                 weatherIcon.textContent = '...';
                 weatherTemp.textContent = 'Loading';
@@ -805,7 +806,7 @@
                 const apiUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
                 
                 try {
-                    // Check if the API key is valid (optional, but good practice)
+                    // This check is now satisfied with the correct key length, but useful for quick debug
                     if (API_KEY.length !== 32) {
                         throw new Error("Invalid API Key length.");
                     }
