@@ -1,288 +1,290 @@
-[
-  {
-    "name": "PBFCM",
-    "color": "bg-blue-500",
-    "textColor": "text-blue-800",
-    "links": [
-      {
-        "name": "Halo",
-        "url": "https://pbfcm.haloitsm.com",
-        "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"
-      },
-      {
-        "name": "2025 Bullet Journal",
-        "url": "https://docs.google.com/document/d/1Y2TbxiLuN7K55mL2o_XWDWiTD_bQ8HJLfXjXwEc5m44/edit?tab=t.0#heading=h.clgrn99mtopn",
-        "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
-      },
-      {
-        "name": "Dayforce",
-        "url": "https://us251.dayforcehcm.com/MyDayforce/u/Iw_6iFiF-0SPEmVMNfEh7A/Common/#SHViPyZpc0ZpcnN0RmVhdHVyZT10cnVl",
-        "img": "https://play-lh.googleusercontent.com/GzXqzEjylw9Y2FQPvsw34DcYirDrItkNGYInKrkLg-mFP-cgLYmwF223kA67KlD2miU=s256-rw"
-      },
-      {
-        "name": "3CX",
-        "url": "https://pbfcm.businessphone.com/#/chat/9059",
-        "img": "https://cdn-1.carierista.com/companies/150/2d05df55a3399d793cfbd01657052b4d.png"
-      },
-      {
-        "name": "Udemy",
-        "url": "https://pbfcm.udemy.com/organization/home/",
-        "img": "https://images.seeklogo.com/logo-png/40/1/udemy-wordmark-logo-png_seeklogo-409220.png"
-      }
-    ]
-  },
-  {
-    "name": "Fun",
-    "color": "bg-amber-500",
-    "textColor": "text-amber-800",
-    "links": [
-      {
-        "name": "TikTok",
-        "url": "https://www.tiktok.com/@jaspynj",
-        "img": "https://images.seeklogo.com/logo-png/37/1/tiktok-app-icon-logo-png_seeklogo-373800.png"
-      },
-      {
-        "name": "Facebook",
-        "url": "https://www.facebook.com/",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_logo_%28square%29.png/960px-Facebook_logo_%28square%29.png"
-      },
-      {
-        "name": "Duolingo",
-        "url": "https://www.duolingo.com",
-        "img": "https://images.seeklogo.com/logo-png/45/2/duolingo-logo-png_seeklogo-458347.png"
-      },
-      {
-        "name": "Instapaper",
-        "url": "http://instapaper.com",
-        "img": "https://play-lh.googleusercontent.com/uQElx_kgheNkInfRZl6_iPZ34HLOpt1KMOiVWmcN_PZFRQ66Ug3vDaAS0eymjsok7g"
-      },
-      {
-        "name": "FFL",
-        "url": "https://ultimateffl.xyz",
-        "img": "https://www.thebiline.com/wp-content/uploads/2023/11/fantasyFootball.png"
-      },
-      {
-        "name": "Royal Caribbean",
-        "url": "https://www.royalcaribbean.com",
-        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
-      }
-    ]
-  },
-  {
-    "name": "Google Apps",
-    "color": "bg-green-500",
-    "textColor": "text-green-800",
-    "links": [
-      {
-        "name": "Gmail",
-        "url": "https://www.gmail.com",
-        "img": "https://icons.iconarchive.com/icons/marcus-roberto/google-play/256/Gmail-icon.png"
-      },
-      {
-        "name": "Google News",
-        "url": "https://news.google.com/foryou?hl=en-US&gl=US&ceid=US%3Aen",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Google_News_icon.svg/120px-Google_News_icon.svg.png"
-      },
-      {
-        "name": "Drive",
-        "url": "https://drive.google.com",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/120px-Google_Drive_icon_%282020%29.svg.png"
-      },
-      {
-        "name": "Keep",
-        "url": "http://keep.google.com",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google_Keep_icon_%282015-2020%29.svg/512px-Google_Keep_icon_%282015-2020%29.svg.png?20210606170001"
-      },
-      {
-        "name": "Calendar",
-        "url": "https://www.google.com/calendar/",
-        "img": "https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_13_2x.png"
-      },
-      {
-        "name": "Contacts",
-        "url": "https://contacts.google.com/#contacts",
-        "img": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/google-contacts.svg"
-      },
-      {
-        "name": "YouTube",
-        "url": "https://www.youtube.com",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
-      },
-      {
-        "name": "YouTube Music",
-        "url": "https://music.youtube.com",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Youtube_Music_icon.svg/512px-Youtube_Music_icon.svg.png"
-      },
-      {
-        "name": "YouTube TV",
-        "url": "https://tv.youtube.com",
-        "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"
-      },
-      {
-        "name": "Photos",
-        "url": "https://photos.google.com",
-        "img": "https://images.seeklogo.com/logo-png/26/1/google-photos-logo-png_seeklogo-269651.png"
-      },
-      {
-        "name": "Messages",
-        "url": "https://messages.android.com",
-        "img": "https://play-lh.googleusercontent.com/9AZOTXU_CpreTFAXUPAmJNkm8VGCb1C90fjJ9pHGcVmpGMDSTq3cUbaQJdBT9Tdp9A=w240-h480-rw"
-      }
-    ]
-  },
-  {
-    "name": "Movies & TV",
-    "color": "bg-purple-500",
-    "textColor": "text-purple-800",
-    "links": [
-      {
-        "name": "IMDb",
-        "url": "https://www.imdb.com/",
-        "img": "https://jeremyirons.net/wp-content/uploads/2009/01/imdb-logo-23962421_std.jpg"
-      },
-      {
-        "name": "TV Time",
-        "url": "https://www.tvtime.com/en",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/3/33/TVShow_Time_logo.png?20160620170449"
-      },
-      {
-        "name": "Movies Portal",
-        "url": "https://movies.do",
-        "img": "/images/movies portal.jpg"
-      },
-      {
-        "name": "Bright Star Cinemas",
-        "url": "https://www.brightstarcinemas.com/",
-        "img": "/images/bright star cinemas.png"
-      },
-      {
-        "name": "YouTube",
-        "url": "https://www.youtube.com",
-        "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
-      },
-      {
-        "name": "YouTube TV",
-        "url": "https://tv.youtube.com",
-        "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"
-      }
-    ]
-  },
-  {
-    "name": "Shopping",
-    "color": "bg-pink-500",
-    "textColor": "text-pink-800",
-    "links": [
-      {
-        "name": "Amazon",
-        "url": "https://amazon.com",
-        "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"
-      },
-      {
-        "name": "Walmart",
-        "url": "http://www.walmart.com/",
-        "img": "https://www.designmantic.com/blog/wp-content/uploads/2025/02/Walmart-Logo-Icon.png"
-      },
-      {
-        "name": "Black Friday",
-        "url": "http://blackfriday.com/",
-        "img": "https://images.seeklogo.com/logo-png/39/1/black-friday-logo-png_seeklogo-391204.png"
-      }
-    ]
-  },
-  {
-    "name": "Financial",
-    "color": "bg-emerald-500",
-    "textColor": "text-emerald-800",
-    "links": [
-      {
-        "name": "Alliance Bank",
-        "url": "https://alliancebank.com",
-        "img": "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/styles/article_420/public/2020-03/xVBU_UXM.png?itok=XpQwRzsj"
-      },
-      {
-        "name": "2025 Budget",
-        "url": "https://docs.google.com/spreadsheets/d/1o3Ab6q4nMFVZIzxM-6lDXCd6jFt-nhHtT5b1yAKgUkw",
-        "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
-      },
-      {
-        "name": "Big Money",
-        "url": "https://docs.google.com/spreadsheets/d/17aFT-1c1eZgnvKkHnw8oS2SQzbTh3JnacRS3ChaW9dM/edit?gid=1898418506#gid=1898418506",
-        "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
-      },
-      {
-        "name": "Mega Millions",
-        "url": "https://www.megamillions.com",
-        "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
-      },
-      {
-        "name": "Power Ball",
-        "url": "https://www.powerball.com/games/home",
-        "img": "https://simublast.com/assets/images/lottery/us-powerball.png"
-      },
-      {
-        "name": "Book Sales",
-        "url": "https://kdp.amazon.com/en_US/",
-        "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"
-      },
-      {
-        "name": "Realtor",
-        "url": "http://www.realtor.com",
-        "img": "https://hooquest.com/wp-content/uploads/2018/09/realtor-com-logo-300.png"
-      }
-    ]
-  },
-  {
-    "name": "Benefits",
-    "color": "bg-teal-500",
-    "textColor": "text-teal-800",
-    "links": [
-      {
-        "name": "BCBS",
-        "url": "https://mybam.bcbstx.com",
-        "img": "https://play-lh.googleusercontent.com/EQb_e3MXfOxRvT2U_orh3iV-9z_GvgJFUyn0qfYPlcNDHXCKnW04tMqPLbp4EfjCP8w=w240-h480-rw"
-      },
-      {
-        "name": "MyChart",
-        "url": "https://mychart.christushealth.org/mychart/Authentication/Login?postloginurl=Clinical%2fTestResults",
-        "img": "https://news.med.virginia.edu/files/2023/12/MyChart-1x1-1-200x200.jpg"
-      },
-      {
-        "name": "BCBS Vision",
-        "url": "https://member.eyemedvisioncare.com/bcbstx/en-us/",
-        "img": "https://www.bcbsil.com/content/bcbs-v2/public-sites/bcbsil/en/home/welcome/shop-plans/vision-insurance/_jcr_content/root/main-par/section_252757724_co/section-par/horizontal_value_pro/value-prop-one/image.coreimg.svg/1743113970660/circle-eye-glasses-icon.svg"
-      },
-      {
-        "name": "HSA Bank",
-        "url": "https://account.hsabank.com/#/",
-        "img": "https://media.licdn.com/dms/image/v2/D4E22AQG0tY8-IPbPAQ/feedshare-shrink_800/B4EZTXDi.1GYAg-/0/1738774819262?e=1764806400&v=beta&t=S0Rvm5Ve8gQ7zjOjiLHHnd9zMVS3YSbmC4qeWM6zJfg"
-      },
-      {
-        "name": "Aflac",
-        "url": "https://myaflac.aflac.com/home",
-        "img": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"
-      },
-      {
-        "name": "Fidelity",
-        "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
-        "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1752030331882"
-      }
-    ]
-  },
-  {
-    "name": "Coding",
-    "color": "bg-blue-500",
-    "textColor": "text-blue-800",
-    "links": [
-      {
-        "name": "Vercel",
-        "url": "https://vercel.com/stephensajohnson-hashs-projects/stephens-dashboard",
-        "img": "https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/vercel-logo-icon.png"
-      },
-      {
-        "name": "GitHub",
-        "url": "https://github.com/stephensajohnson-hash/stephens-dashboard/tree/main/dashboard",
-        "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
-      }
-    ]
-  }
-]
+{
+  "linkGroups": [
+    {
+      "name": "PBFCM",
+      "color": "bg-blue-500",
+      "textColor": "text-blue-800",
+      "links": [
+        {
+          "name": "Halo",
+          "url": "https://pbfcm.haloitsm.com",
+          "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"
+        },
+        {
+          "name": "2025 Bullet Journal",
+          "url": "https://docs.google.com/document/d/1Y2TbxiLuN7K55mL2o_XWDWiTD_bQ8HJLfXjXwEc5m44/edit?tab=t.0#heading=h.clgrn99mtopn",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "name": "Dayforce",
+          "url": "https://us251.dayforcehcm.com/MyDayforce/u/Iw_6iFiF-0SPEmVMNfEh7A/Common/#SHViPyZpc0ZpcnN0RmVhdHVyZT10cnVl",
+          "img": "https://play-lh.googleusercontent.com/GzXqzEjylw9Y2FQPvsw34DcYirDrItkNGYInKrkLg-mFP-cgLYmwF223kA67KlD2miU=s256-rw"
+        },
+        {
+          "name": "3CX",
+          "url": "https://pbfcm.businessphone.com/#/chat/9059",
+          "img": "https://cdn-1.carierista.com/companies/150/2d05df55a3399d793cfbd01657052b4d.png"
+        },
+        {
+          "name": "Udemy",
+          "url": "https://pbfcm.udemy.com/organization/home/",
+          "img": "https://images.seeklogo.com/logo-png/40/1/udemy-wordmark-logo-png_seeklogo-409220.png"
+        }
+      ]
+    },
+    {
+      "name": "Fun",
+      "color": "bg-amber-500",
+      "textColor": "text-amber-800",
+      "links": [
+        {
+          "name": "TikTok",
+          "url": "https://www.tiktok.com/@jaspynj",
+          "img": "https://images.seeklogo.com/logo-png/37/1/tiktok-app-icon-logo-png_seeklogo-373800.png"
+        },
+        {
+          "name": "Facebook",
+          "url": "https://www.facebook.com/",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_logo_%28square%29.png/960px-Facebook_logo_%28square%29.png"
+        },
+        {
+          "name": "Duolingo",
+          "url": "https://www.duolingo.com",
+          "img": "https://images.seeklogo.com/logo-png/45/2/duolingo-logo-png_seeklogo-458347.png"
+        },
+        {
+          "name": "Instapaper",
+          "url": "http://instapaper.com",
+          "img": "https://play-lh.googleusercontent.com/uQElx_kgheNkInfRZl6_iPZ34HLOpt1KMOiVWmcN_PZFRQ66Ug3vDaAS0eymjsok7g"
+        },
+        {
+          "name": "FFL",
+          "url": "https://ultimateffl.xyz",
+          "img": "https://www.thebiline.com/wp-content/uploads/2023/11/fantasyFootball.png"
+        },
+        {
+          "name": "Royal Caribbean",
+          "url": "https://www.royalcaribbean.com",
+          "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
+        }
+      ]
+    },
+    {
+      "name": "Google Apps",
+      "color": "bg-green-500",
+      "textColor": "text-green-800",
+      "links": [
+        {
+          "name": "Gmail",
+          "url": "https://www.gmail.com",
+          "img": "https://icons.iconarchive.com/icons/marcus-roberto/google-play/256/Gmail-icon.png"
+        },
+        {
+          "name": "Google News",
+          "url": "https://news.google.com/foryou?hl=en-US&gl=US&ceid=US%3Aen",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Google_News_icon.svg/120px-Google_News_icon.svg.png"
+        },
+        {
+          "name": "Drive",
+          "url": "https://drive.google.com",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/120px-Google_Drive_icon_%282020%29.svg.png"
+        },
+        {
+          "name": "Keep",
+          "url": "http://keep.google.com",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google_Keep_icon_%282015-2020%29.svg/512px-Google_Keep_icon_%282015-2020%29.svg.png?20210606170001"
+        },
+        {
+          "name": "Calendar",
+          "url": "https://www.google.com/calendar/",
+          "img": "https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_13_2x.png"
+        },
+        {
+          "name": "Contacts",
+          "url": "https://contacts.google.com/#contacts",
+          "img": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/google-contacts.svg"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
+        },
+        {
+          "name": "YouTube Music",
+          "url": "https://music.youtube.com",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Youtube_Music_icon.svg/512px-Youtube_Music_icon.svg.png"
+        },
+        {
+          "name": "YouTube TV",
+          "url": "https://tv.youtube.com",
+          "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"
+        },
+        {
+          "name": "Photos",
+          "url": "https://photos.google.com",
+          "img": "https://images.seeklogo.com/logo-png/26/1/google-photos-logo-png_seeklogo-269651.png"
+        },
+        {
+          "name": "Messages",
+          "url": "https://messages.android.com",
+          "img": "https://play-lh.googleusercontent.com/9AZOTXU_CpreTFAXUPAmJNkm8VGCb1C90fjJ9pHGcVmpGMDSTq3cUbaQJdBT9Tdp9A=w240-h480-rw"
+        }
+      ]
+    },
+    {
+      "name": "Movies & TV",
+      "color": "bg-purple-500",
+      "textColor": "text-purple-800",
+      "links": [
+        {
+          "name": "IMDb",
+          "url": "https://www.imdb.com/",
+          "img": "https://jeremyirons.net/wp-content/uploads/2009/01/imdb-logo-23962421_std.jpg"
+        },
+        {
+          "name": "TV Time",
+          "url": "https://www.tvtime.com/en",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/3/33/TVShow_Time_logo.png?20160620170449"
+        },
+        {
+          "name": "Movies Portal",
+          "url": "https://movies.do",
+          "img": "/images/movies portal.jpg"
+        },
+        {
+          "name": "Bright Star Cinemas",
+          "url": "https://www.brightstarcinemas.com/",
+          "img": "/images/bright star cinemas.png"
+        },
+        {
+          "name": "YouTube",
+          "url": "https://www.youtube.com",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"
+        },
+        {
+          "name": "YouTube TV",
+          "url": "https://tv.youtube.com",
+          "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"
+        }
+      ]
+    },
+    {
+      "name": "Shopping",
+      "color": "bg-pink-500",
+      "textColor": "text-pink-800",
+      "links": [
+        {
+          "name": "Amazon",
+          "url": "https://amazon.com",
+          "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"
+        },
+        {
+          "name": "Walmart",
+          "url": "http://www.walmart.com/",
+          "img": "https://www.designmantic.com/blog/wp-content/uploads/2025/02/Walmart-Logo-Icon.png"
+        },
+        {
+          "name": "Black Friday",
+          "url": "http://blackfriday.com/",
+          "img": "https://images.seeklogo.com/logo-png/39/1/black-friday-logo-png_seeklogo-391204.png"
+        }
+      ]
+    },
+    {
+      "name": "Financial",
+      "color": "bg-emerald-500",
+      "textColor": "text-emerald-800",
+      "links": [
+        {
+          "name": "Alliance Bank",
+          "url": "https://alliancebank.com",
+          "img": "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/styles/article_420/public/2020-03/xVBU_UXM.png?itok=XpQwRzsj"
+        },
+        {
+          "name": "2025 Budget",
+          "url": "https://docs.google.com/spreadsheets/d/1o3Ab6q4nMFVZIzxM-6lDXCd6jFt-nhHtT5b1yAKgUkw",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "name": "Big Money",
+          "url": "https://docs.google.com/spreadsheets/d/17aFT-1c1eZgnvKkHnw8oS2SQzbTh3JnacRS3ChaW9dM/edit?gid=1898418506#gid=1898418506",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "name": "Mega Millions",
+          "url": "https://www.megamillions.com",
+          "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
+        },
+        {
+          "name": "Power Ball",
+          "url": "https://www.powerball.com/games/home",
+          "img": "https://simublast.com/assets/images/lottery/us-powerball.png"
+        },
+        {
+          "name": "Book Sales",
+          "url": "https://kdp.amazon.com/en_US/",
+          "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"
+        },
+        {
+          "name": "Realtor",
+          "url": "http://www.realtor.com",
+          "img": "https://hooquest.com/wp-content/uploads/2018/09/realtor-com-logo-300.png"
+        }
+      ]
+    },
+    {
+      "name": "Benefits",
+      "color": "bg-teal-500",
+      "textColor": "text-teal-800",
+      "links": [
+        {
+          "name": "BCBS",
+          "url": "https://mybam.bcbstx.com",
+          "img": "https://play-lh.googleusercontent.com/EQb_e3MXfOxRvT2U_orh3iV-9z_GvgJFUyn0qfYPlcNDHXCKnW04tMqPLbp4EfjCP8w=w240-h480-rw"
+        },
+        {
+          "name": "MyChart",
+          "url": "https://mychart.christushealth.org/mychart/Authentication/Login?postloginurl=Clinical%2fTestResults",
+          "img": "https://news.med.virginia.edu/files/2023/12/MyChart-1x1-1-200x200.jpg"
+        },
+        {
+          "name": "BCBS Vision",
+          "url": "https://member.eyemedvisioncare.com/bcbstx/en-us/",
+          "img": "https://www.bcbsil.com/content/bcbs-v2/public-sites/bcbsil/en/home/welcome/shop-plans/vision-insurance/_jcr_content/root/main-par/section_252757724_co/section-par/horizontal_value_pro/value-prop-one/image.coreimg.svg/1743113970660/circle-eye-glasses-icon.svg"
+        },
+        {
+          "name": "HSA Bank",
+          "url": "https://account.hsabank.com/#/",
+          "img": "https://media.licdn.com/dms/image/v2/D4E22AQG0tY8-IPbPAQ/feedshare-shrink_800/B4EZTXDi.1GYAg-/0/1738774819262?e=1764806400&v=beta&t=S0Rvm5Ve8gQ7zjOjiLHHnd9zMVS3YSbmC4qeWM6zJfg"
+        },
+        {
+          "name": "Aflac",
+          "url": "https://myaflac.aflac.com/home",
+          "img": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"
+        },
+        {
+          "name": "Fidelity",
+          "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
+          "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1752030331882"
+        }
+      ]
+    },
+    {
+      "name": "Coding",
+      "color": "bg-blue-500",
+      "textColor": "text-blue-800",
+      "links": [
+        {
+          "name": "Vercel",
+          "url": "https://vercel.com/stephensajohnson-hashs-projects/stephens-dashboard",
+          "img": "https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/vercel-logo-icon.png"
+        },
+        {
+          "name": "GitHub",
+          "url": "https://github.com/stephensajohnson-hash/stephens-dashboard/tree/main/dashboard",
+          "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
+        }
+      ]
+    }
+  ]
+}
