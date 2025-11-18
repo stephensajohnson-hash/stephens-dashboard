@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stephen's Dashboard</title>
+  <link rel="icon" type="image/png" href="/images/favicon.png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    details summary::-webkit-details-marker { display: none; }
+    .icon { transition: all .2s; }
+    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
+    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
+    .dragging { opacity: 0.5; }
+    .weather-svg { width: 22px; height: 22px; }
+    .forecast-svg { width: 28px; height: 28px; }
+    .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .popup-panel.show { opacity: 1; pointer-events: auto; }
+  </style>
+</head>
+<body class="min-h-screen bg-black text-white">
+
+  <!-- TOP BANNER -->
+  <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
+    <div class="flex items-center gap-3">
+      <button onclick="document.getElementById('sidebar-menu').classList.toggle('-translate-x-full')" class="p-1.5 hover:bg-gray-700 rounded">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+      <div class="relative">
+        <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          <span id="date-time">Loading…</span>
+        </a>
+        <div id="calendar-popup" class="popup-panel absolute top-9 left-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 border border-gray-700 min-w-56"></div>
+      </div>
+    </div>
+    <div class="relative">
+      <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
+        <span id="weather-icon-svg" class="weather-svg"></span>
+        <span id="weather-temp">--°</span>
+      </a>
+      <div id="forecast-popup" class="popup-panel absolute top-9 right-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 border border-gray-700 min-w-64"></div>
+    </div>
+  </div>
+
+<!-- MENU -->
+<div id="sidebar-menu" class="fixed top-9 left-0 h-[calc(100vh-36px)] w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl overflow-y-auto">
+  <div class="p-4 space-y-4">
+    <button onclick="addGroup(); toggleMenu()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded">Add Group</button>
+    <button onclick="addLink(); toggleMenu()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded">Add Link</button>
+    <button onclick="publishData(); toggleMenu()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded font-bold">Download Data</button>
+
+    <hr class="border-gray-700 my-6">
+
+    <!-- Version Number -->
+    <div class="text-center text-gray-400 text-xs">
+      Version 0.1
+    </div>
+  </div>
+</div>
+
+  <div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
+    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
+      <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
+      <div id="popup-form"></div>
+      <div class="flex justify-end gap-3 mt-6">
+        <button onclick="closePopup()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm">Cancel</button>
+        <button id="popup-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { toggleMenu } from './js/utils.js';
+    import { updateDateTime } from './js/calendar.js';
+    import { initWeather } from './js/weather.js';
+    import { setData, render } from './js/ui.js';
+    import { loadData, publishData } from './js/main.js';
+
+    window.toggleMenu = toggleMenu;
+    window.publishData = publishData;
+    window.addGroup = () => window.ui?.addGroup();
+    window.addLink = () => window.ui?.addLink();
+
+    document.getElementById('menu-btn')?.addEventListener('click', toggleMenu);
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadData();
+      updateDateTime();
+      setInterval(updateDateTime, 60000);
+      initWeather();
+    });
+  </script>
+</body>
+</html>
+
