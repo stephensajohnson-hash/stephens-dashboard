@@ -14,6 +14,7 @@
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .popup-panel.show { opacity: 1; pointer-events: auto; }
+    }
     #debug-bar {
       position: fixed;
       bottom: 0;
@@ -21,11 +22,9 @@
       right: 0;
       background: rgba(0,0,0,0.9);
       color: lime;
-      padding: 8px 12px;
-      font-family: monospace;
-      font-size: 12px;
+      padding: 8px;
+      font: 12px monospace;
       z-index: 99999;
-      text-align: left;
       max-height: 120px;
       overflow-y: auto;
     }
@@ -34,7 +33,7 @@
 <body class="min-h-screen bg-black text-white">
 
   <!-- DEBUG BAR -->
-  <div id="debug-bar">Debug: Initializing...</div>
+  <div id="debug-bar">Initializing...</div>
 
   <!-- TOP BANNER -->
   <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
@@ -80,6 +79,7 @@
     <div id="dashboard" class="max-w-full mx-auto space-y-4"></div>
   </div>
 
+  <!-- POPUP -->
   <div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
       <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
@@ -92,9 +92,8 @@
   </div>
 
   <script>
-    // DEBUG = true;
+    // DEBUG LOGGING
     function debug(msg) {
-      if (!DEBUG) return;
       console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
       const bar = document.getElementById('debug-bar');
       if (bar) bar.innerHTML += '<br>' + msg;
@@ -109,23 +108,23 @@
     }
 
     async function loadData() {
-      debug('loadData started');
+      debug('loadData() started');
       try {
         const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) {
           data = await res.json();
-          debug('data.json loaded successfully');
+          debug('data.json loaded');
         } else {
-          debug('data.json 404 or error');
+          debug('data.json 404');
         }
       } catch (e) {
-        debug('fetch failed: ' + e.message);
+        debug('fetch error: ' + e.message);
       }
 
-      if (!data || data.length === 0) {
+      if (!data.length) {
         const saved = localStorage.getItem('dashboardData');
         data = saved ? JSON.parse(saved) : [];
-        debug('Using localStorage data');
+        debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
       }
@@ -146,16 +145,16 @@
       a.download = 'data.json';
       a.click();
       URL.revokeObjectURL(url);
-      debug('data.json downloaded');
+      alert('data.json downloaded! Upload to GitHub → redeploy');
     }
 
     function render() {
       const c = document.getElementById('dashboard'); c.innerHTML = '';
-      (data || []).forEach((g, gi) => {
+      data.forEach((g, gi) => {
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
-        s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-800 hover:bg-gray-750';
+        s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-800 hover:bg-gray-700';
         s.innerHTML = `<span class="w-1 h-9 ${g.color} rounded-r-sm mr-2"></span>
           <span class="font-bold ${g.textColor} text-sm">${g.name}</span>
           <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
@@ -176,9 +175,8 @@
 
     // COUNTDOWN SYSTEM
     function startCountdowns() {
-      debug('startCountdowns called');
+      debug('startCountdowns() called');
       if (!data.countdowns || data.countdowns.length === 0) {
-        debug('No countdowns found');
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
       }
@@ -214,7 +212,6 @@
       update();
       clearInterval(countdownInterval);
       countdownInterval = setInterval(update, 8000);
-      debug('Countdowns running');
     }
 
     function addCountdown() {
@@ -226,7 +223,7 @@
       showPopup('Add Countdown', form, () => {
         const title = document.getElementById('cd-title').value.trim();
         const date = document.getElementById('cd-date').value;
-        const image = document.getElementById('cd-image').value.trim();
+        const image = document.getElementById('cd('cd-image').value.trim();
         if (!title || !date) return;
 
         if (!data.countdowns) data.countdowns = [];
