@@ -14,9 +14,26 @@
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .popup-panel.show { opacity: 1; pointer-events: auto; }
+    #debug-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      background: rgba(0,0,0,0.95);
+      color: lime;
+      padding: 10px;
+      font: 12px monospace;
+      z-index: 99999;
+      overflow-y: auto;
+      border-top: 2px solid #333;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-black text-white">
+
+  <!-- DEBUG BAR (kept until you say remove) -->
+  <div id="debug-bar">Debug: Initializing...</div>
 
   <!-- TOP BANNER -->
   <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
@@ -84,34 +101,65 @@
       document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
     }
 
+    // Debug (kept until you say remove)
+    function debug(msg) {
+      console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
+      const bar = document.getElementById('debug-bar');
+      if (bar) bar.innerHTML += '<br>' + msg;
+      if (bar) bar.scrollTop = bar.scrollHeight;
+    }
+
     async function loadData() {
+      debug('loadData() started');
       try {
         const res = await fetch('data.json?t=' + Date.now());
-        if (res.ok) data = await res.json();
-      } catch (e) {}
+        if (res.ok) {
+          data = await res.json();
+          debug('data.json loaded');
+        } else {
+          debug('data.json 404');
+        }
+      } catch (e) {
+        debug('fetch error: ' + e.message);
+      }
+
       if (!data || !Array.isArray(data)) {
         const saved = localStorage.getItem('dashboardData');
         data = saved ? JSON.parse(saved) : [];
+        debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
       }
+
+      // Extract countdowns if they are in the last object
+      if (data.length > 0 && data[data.length - 1].countdowns) {
+        data.countdowns = data[data.length - 1].countdowns;
+        data = data.slice(0, -1); // remove the countdown object from groups
+        debug('countdowns extracted from last object');
+      }
+
       render();
       startCountdowns();
     }
 
     function saveToLocal() {
-      localStorage.setItem('dashboardData', JSON.stringify(data));
+      // Re-attach countdowns before saving
+      const saveData = [...data];
+      if (data.countdowns) saveData.push({ countdowns: data.countdowns });
+      localStorage.setItem('dashboardData', JSON.stringify(saveData));
     }
 
     function publishData() {
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const saveData = [...data];
+      if (data.countdowns) saveData.push({ countdowns: data.countdowns });
+      const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = 'data.json';
       a.click();
       URL.revokeObjectURL(url);
-      alert('data.json downloaded! Upload to GitHub → redeploy');
+      debug('data.json downloaded');
     }
 
     function render() {
@@ -141,6 +189,7 @@
 
     // COUNTDOWN SYSTEM
     function startCountdowns() {
+      debug('startCountdowns() called');
       if (!data.countdowns || data.countdowns.length === 0) {
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
@@ -177,6 +226,7 @@
       update();
       clearInterval(countdownInterval);
       countdownInterval = setInterval(update, 8000);
+      debug('Countdowns running');
     }
 
     function addCountdown() {
@@ -200,14 +250,17 @@
 
     // DATE/TIME
     function updateDateTime() {
+      debug('updateDateTime() called');
       const n = new Date();
       const ds = n.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
       const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).toLowerCase().replace(' am','am').replace(' pm','pm');
-      document.getElementById('date-time').innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
+      const el = document.getElementById('date-time');
+      if (el) el.innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
     }
 
     // WEATHER
     function initWeather() {
+      debug('initWeather() called');
       fetch('https://wttr.in/?format=j1')
         .then(r => r.json())
         .then(d => {
@@ -218,10 +271,12 @@
           const icon = Object.keys(iconMap).find(k => cond.includes(k)) ? iconMap[Object.keys(iconMap).find(k => cond.includes(k))] : 'Partly Cloudy';
           document.getElementById('weather-icon-svg').innerHTML = icon;
           document.getElementById('weather-temp').textContent = temp + '°';
+          debug('Weather loaded');
         })
         .catch(() => {
           document.getElementById('weather-icon-svg').innerHTML = 'Globe';
           document.getElementById('weather-temp').textContent = 'offline';
+          debug('Weather failed');
         });
     }
 
