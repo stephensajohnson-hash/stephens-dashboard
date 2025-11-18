@@ -10,15 +10,31 @@
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
     .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
-    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
-    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .popup-panel.show { opacity: 1; pointer-events: auto; }
+    #debug-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(0,0,0,0.9);
+      color: lime;
+      padding: 8px 12px;
+      font-family: monospace;
+      font-size: 12px;
+      z-index: 99999;
+      text-align: left;
+      max-height: 120px;
+      overflow-y: auto;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-black text-white">
+
+  <!-- DEBUG BAR -->
+  <div id="debug-bar">Debug: Initializing...</div>
 
   <!-- TOP BANNER -->
   <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
@@ -76,8 +92,15 @@
   </div>
 
   <script>
+    // DEBUG = true;
+    function debug(msg) {
+      if (!DEBUG) return;
+      console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
+      const bar = document.getElementById('debug-bar');
+      if (bar) bar.innerHTML += '<br>' + msg;
+    }
+
     let data = [];
-    let dragged = null;
     let countdownIndex = 0;
     let countdownInterval = null;
 
@@ -86,16 +109,27 @@
     }
 
     async function loadData() {
+      debug('loadData started');
       try {
         const res = await fetch('data.json?t=' + Date.now());
-        if (res.ok) data = await res.json();
-      } catch (e) {}
-      if (!data.length) {
+        if (res.ok) {
+          data = await res.json();
+          debug('data.json loaded successfully');
+        } else {
+          debug('data.json 404 or error');
+        }
+      } catch (e) {
+        debug('fetch failed: ' + e.message);
+      }
+
+      if (!data || data.length === 0) {
         const saved = localStorage.getItem('dashboardData');
         data = saved ? JSON.parse(saved) : [];
+        debug('Using localStorage data');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
       }
+
       render();
       startCountdowns();
     }
@@ -112,12 +146,12 @@
       a.download = 'data.json';
       a.click();
       URL.revokeObjectURL(url);
-      alert('data.json downloaded! Upload to GitHub → redeploy');
+      debug('data.json downloaded');
     }
 
     function render() {
       const c = document.getElementById('dashboard'); c.innerHTML = '';
-      data.forEach((g, gi) => {
+      (data || []).forEach((g, gi) => {
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
@@ -128,7 +162,7 @@
         d.appendChild(s);
         const grid = document.createElement('div');
         grid.className = 'p-3 grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-3 bg-black';
-        (g.links || []).forEach((l, li) => {
+        (g.links || []).forEach(l => {
           const a = document.createElement('a'); a.href = l.url; a.target = "_blank";
           a.className = 'icon text-center block';
           a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain bg-black" 
@@ -142,7 +176,9 @@
 
     // COUNTDOWN SYSTEM
     function startCountdowns() {
+      debug('startCountdowns called');
       if (!data.countdowns || data.countdowns.length === 0) {
+        debug('No countdowns found');
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
       }
@@ -178,6 +214,7 @@
       update();
       clearInterval(countdownInterval);
       countdownInterval = setInterval(update, 8000);
+      debug('Countdowns running');
     }
 
     function addCountdown() {
@@ -201,14 +238,17 @@
 
     // DATE/TIME
     function updateDateTime() {
+      debug('updateDateTime() called');
       const n = new Date();
       const ds = n.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
-      const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).replace(' AM','am').replace(' PM','pm');
-      document.getElementById('date-time').innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
+      const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).toLowerCase().replace(' am','am').replace(' pm','pm');
+      const el = document.getElementById('date-time');
+      if (el) el.innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
     }
 
     // WEATHER
     function initWeather() {
+      debug('initWeather() called');
       fetch('https://wttr.in/?format=j1')
         .then(r => r.json())
         .then(d => {
@@ -219,10 +259,12 @@
           const icon = Object.keys(iconMap).find(k => cond.includes(k)) ? iconMap[Object.keys(iconMap).find(k => cond.includes(k))] : 'Partly Cloudy';
           document.getElementById('weather-icon-svg').innerHTML = icon;
           document.getElementById('weather-temp').textContent = temp + '°';
+          log('Weather loaded');
         })
         .catch(() => {
           document.getElementById('weather-icon-svg').innerHTML = 'Globe';
           document.getElementById('weather-temp').textContent = 'offline';
+          log('Weather failed');
         });
     }
 
