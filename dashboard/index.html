@@ -1,97 +1,177 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Stephen's Dashboard</title>
-  <link rel="icon" type="image/png" href="/images/favicon.png">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <style>
-    details summary::-webkit-details-marker { display: none; }
-    .icon { transition: all .2s; }
-    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
-    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
-    .dragging { opacity: 0.5; }
-    .weather-svg { width: 22px; height: 22px; }
-    .forecast-svg { width: 28px; height: 28px; }
-    .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
-    .popup-panel.show { opacity: 1; pointer-events: auto; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stephens' Dashboard V0.2</title>
+    <!-- Load Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Apply smooth transitions to all interactive elements */
+        * {
+            transition: all 0.2s ease-in-out;
+        }
+        /* Custom scrollbar for a polished dark-mode look */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #111827; /* gray-900 */
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4B5563; /* gray-600 */
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6B7280; /* gray-500 */
+        }
+
+        /* Set default font to Inter */
+        html {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
 </head>
-<body class="min-h-screen bg-black text-white">
+<!-- Main container is set to dark mode -->
+<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-  <!-- TOP BANNER -->
-  <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
-    <div class="flex items-center gap-3">
-      <button onclick="document.getElementById('sidebar-menu').classList.toggle('-translate-x-full')" class="p-1.5 hover:bg-gray-700 rounded">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-      <div class="relative">
-        <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span id="date-time">Loading…</span>
-        </a>
-        <div id="calendar-popup" class="popup-panel absolute top-9 left-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 border border-gray-700 min-w-56"></div>
-      </div>
-    </div>
-    <div class="relative">
-      <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
-        <span id="weather-icon-svg" class="weather-svg"></span>
-        <span id="weather-temp">--°</span>
-      </a>
-      <div id="forecast-popup" class="popup-panel absolute top-9 right-0 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 border border-gray-700 min-w-64"></div>
-    </div>
-  </div>
+    <!-- Header -->
+    <header class="mb-10 pt-4 text-center">
+        <h1 class="text-5xl font-extrabold text-blue-400 tracking-tight mb-2">
+            Stephens' Dashboard <span class="text-gray-300">V0.2</span>
+        </h1>
+        <p class="text-lg text-gray-400">Your quick-access portal for work, fun, and life.</p>
+    </header>
 
-<!-- MENU -->
-<div id="sidebar-menu" class="fixed top-9 left-0 h-[calc(100vh-36px)] w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl overflow-y-auto">
-  <div class="p-4 space-y-4">
-    <button onclick="addGroup(); toggleMenu()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded">Add Group</button>
-    <button onclick="addLink(); toggleMenu()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded">Add Link</button>
-    <button onclick="publishData(); toggleMenu()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded font-bold">Download Data</button>
+    <!-- Dashboard Content Container (The Grid) -->
+    <!-- Grid layout is responsive: 1 column on mobile, 2 on medium screens, 3 on large screens -->
+    <main id="dashboard-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        <!-- A simple loading indicator -->
+        <p id="loading-indicator" class="col-span-full text-center text-gray-400 p-8">Loading dashboard data...</p>
+    </main>
 
-    <hr class="border-gray-700 my-6">
+    <!-- JavaScript for Data Handling and Rendering -->
+    <script>
+        const container = document.getElementById('dashboard-container');
 
-    <!-- Version Number -->
-    <div class="text-center text-gray-400 text-xs">
-      Version 0.1
-    </div>
-  </div>
-</div>
+        // Function to create an individual link tile
+        function createLinkElement(link) {
+            const linkTile = document.createElement('a');
+            linkTile.href = link.url;
+            linkTile.target = '_blank';
+            
+            // Set up placeholder image if URL fails (or if it's a local file like /images/...)
+            const placeholderLetter = link.name.substring(0, 1).toUpperCase();
+            const imgHtml = `
+                <img
+                    src="${link.img}"
+                    alt="${link.name} icon"
+                    class="w-8 h-8 rounded-full object-cover mr-3 flex-shrink-0"
+                    loading="lazy"
+                    onerror="this.onerror=null;this.src='https://placehold.co/32x32/1F2937/FFFFFF?text=${placeholderLetter}'"
+                />
+            `;
 
-  <div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
-      <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
-      <div id="popup-form"></div>
-      <div class="flex justify-end gap-3 mt-6">
-        <button onclick="closePopup()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm">Cancel</button>
-        <button id="popup-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm">Save</button>
-      </div>
-    </div>
-  </div>
+            linkTile.className = 'flex items-center p-3 text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.02] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out';
+            linkTile.innerHTML = imgHtml + `<span class="truncate font-medium">${link.name}</span>`;
+            
+            return linkTile;
+        }
 
-  <script type="module">
-    import { toggleMenu } from './js/utils.js';
-    import { updateDateTime } from './js/calendar.js';
-    import { initWeather } from './js/weather.js';
-    import { setData, render } from './js/ui.js';
-    import { loadData, publishData } from './js/main.js';
+        /**
+         * Renders the dashboard content based on the fetched data.
+         * @param {Object} data - The parsed JSON object containing linkGroups.
+         */
+        function renderDashboard(data) {
+            // Clear the loading message or previous content
+            container.innerHTML = ''; 
 
-    window.toggleMenu = toggleMenu;
-    window.publishData = publishData;
-    window.addGroup = () => window.ui?.addGroup();
-    window.addLink = () => window.ui?.addLink();
+            if (!data.linkGroups || data.linkGroups.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No link groups found in data.</p>';
+                return;
+            }
 
-    document.getElementById('menu-btn')?.addEventListener('click', toggleMenu);
+            data.linkGroups.forEach(group => {
+                // Create the card container for the group
+                const groupCard = document.createElement('div');
+                groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl';
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadData();
-      updateDateTime();
-      setInterval(updateDateTime, 60000);
-      initWeather();
-    });
-  </script>
+                // Create the header
+                const header = document.createElement('div');
+                // Use the provided color/textColor classes for the header badge
+                const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
+                header.innerHTML = `<h2 class="${headerClasses}">${group.name}</h2>`;
+
+                // Create the links grid
+                const linksGrid = document.createElement('div');
+                linksGrid.className = 'grid gap-3';
+
+                // Add links to the grid
+                if (group.links && group.links.length > 0) {
+                    group.links.forEach(link => {
+                        const linkElement = createLinkElement(link);
+                        linksGrid.appendChild(linkElement);
+                    });
+                } else {
+                    const emptyMessage = document.createElement('p');
+                    emptyMessage.className = 'text-gray-500 text-sm italic';
+                    emptyMessage.textContent = 'No links in this group.';
+                    linksGrid.appendChild(emptyMessage);
+                }
+
+                // Append everything to the card and the card to the container
+                groupCard.appendChild(header);
+                groupCard.appendChild(linksGrid);
+                container.appendChild(groupCard);
+            });
+        }
+
+
+        /**
+         * Initializes the dashboard by fetching data from data.json.
+         */
+        async function initDashboard() {
+            try {
+                // Fetch the data.json file from the same directory
+                // FIX: Changed fetch to use a root-relative path '/data.json'
+                const response = await fetch('/data.json');
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status} (${response.statusText})`);
+                }
+                
+                const dashboardData = await response.json();
+                
+                // Render the dashboard with the fetched data
+                renderDashboard(dashboardData);
+
+            } catch (error) {
+                console.error('Failed to load dashboard data:', error);
+                
+                // Display a user-friendly error message on the screen
+                container.innerHTML = `
+                    <div class="col-span-full bg-red-900/20 border border-red-700 text-red-400 p-6 rounded-xl text-center">
+                        <p class="font-bold mb-2">Error: Could not load configuration data.</p>
+                        <p class="text-sm">Please ensure that the 'data.json' file exists in the root directory and is properly formatted. Check the console for details.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Run the initialization function when the window loads
+        window.onload = initDashboard;
+    </script>
+
 </body>
 </html>
-
-
