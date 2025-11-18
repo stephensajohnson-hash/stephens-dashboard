@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.2</title>
+    <title>Stephens' Dashboard V0.3</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -56,12 +56,19 @@
 </head>
 <!-- Main container is set to dark mode --><body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-    <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) --><nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-start">
-        <!-- Hamburger Menu Button - Now first and on the far left --><button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
-            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-        </button>
-        <!-- Date and Time Display - Immediately follows the menu button --><div id="datetime" class="text-sm sm:text-base font-medium">
-            <!-- Date and time injected here by JS, with colored time span --></div>
+    <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) --><nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
+        <div class="flex items-center">
+            <!-- Hamburger Menu Button - Now first and on the far left --><button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
+                <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+            <!-- Date and Time Display - Immediately follows the menu button --><div id="datetime" class="text-sm sm:text-base font-medium">
+                <!-- Date and time injected here by JS, with colored time span --></div>
+        </div>
+
+        <!-- NEW: Weather Display Container --><div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
+            <span class="mr-2" id="weather-icon">Loading...</span>
+            <span id="weather-temp" class="text-white font-medium"></span>
+        </div>
     </nav>
 
     <!-- Menu Dropdown (now a simple floating menu that transitions down) --><div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs">
@@ -88,7 +95,7 @@
             </button>
 
 
-            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.2</p>
+            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.3</p>
         </div>
     </div>
     
@@ -243,6 +250,11 @@
             const linkGroupSelect = document.getElementById('link-group-select');
             const groupThemeSelect = document.getElementById('group-theme');
             
+            // Elements for weather
+            const weatherIcon = document.getElementById('weather-icon');
+            const weatherTemp = document.getElementById('weather-temp');
+
+
             // Variable to hold the original static data for the download function
             let STATIC_LINK_GROUPS = [];
             let STATIC_COUNTDOWNS = [];
@@ -379,7 +391,7 @@
                             {"name": "BCBS Vision", "url": "https://member.eyemedvisioncare.com/bcbstx/en-us/", "img": "https://www.bcbsil.com/content/bcbs-v2/public-sites/bcbsil/en/home/welcome/shop-plans/vision-insurance/_jcr_content/root/main-par/section_252757724_co/section-par/horizontal_value_pro/value-prop-one/image.coreimg.svg/1743113970660/circle-eye-glasses-icon.svg"},
                             {"name": "HSA Bank", "url": "https://account.hsabank.com/#/", "img": "https://media.licdn.com/dms/image/v2/D4E22AQG0tY8-IPbPAQ/feedshare-shrink_800/B4EZTXDi.1GYAg-/0/1738774819262?e=1764806400&v=beta&t=S0Rvm5Ve8gQ7zjOjiLHHnd9zMVS3YSbmC4qeWM6zJfg"},
                             {"name": "Aflac", "url": "https://myaflac.aflac.com/home", "img": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"},
-                            {"name": "Fidelity", "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions", "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1752030331882"}
+                            {"name": "Fidelity", "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions", "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1752030331882"}
                         ]
                     },
                     {
@@ -778,6 +790,69 @@
                     clockInterval = setInterval(updateClock, 60000);
                 }, msUntilNextMinute);
             }
+
+            // --- NEW: Weather Fetch Function (Active API Integration) ---
+            async function fetchWeather() {
+                
+                const LOCATION_ZIP = '75482,us'; // Sulphur Springs, TX
+                const API_KEY = '143488d05f299c2730ceb827be96992e'; // *** YOUR ACTUAL API KEY ***
+                
+                weatherIcon.textContent = '...';
+                weatherTemp.textContent = 'Loading';
+                document.getElementById('weather-display').title = `Fetching weather for ${LOCATION_ZIP}...`;
+
+                // OpenWeatherMap Current Weather API URL (using imperial units)
+                const apiUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
+                
+                try {
+                    // Check if the API key is valid (optional, but good practice)
+                    if (API_KEY.length !== 32) {
+                        throw new Error("Invalid API Key length.");
+                    }
+                    
+                    const response = await fetch(apiUrl);
+                    
+                    if (!response.ok) {
+                         // Attempt to read error message from API response
+                         const errorData = await response.json();
+                         throw new Error(`API returned status ${response.status}: ${errorData.message || 'Unknown error'}`);
+                    }
+                    
+                    const data = await response.json();
+                    
+                    // --- PROCESS AND RENDER DATA ---
+                    
+                    const temp = Math.round(data.main.temp);
+                    const description = data.weather[0].description;
+                    
+                    // Simple icon mapping based on OpenWeatherMap icon codes
+                    const iconCode = data.weather[0].icon;
+                    let emojiIcon = '❓'; 
+
+                    // Map common icon groups to Emojis
+                    if (iconCode.includes('01')) emojiIcon = '☀️';       // Clear sky
+                    else if (iconCode.includes('02')) emojiIcon = '🌤️';    // Few clouds
+                    else if (iconCode.includes('03')) emojiIcon = '🌥️';    // Scattered clouds
+                    else if (iconCode.includes('04')) emojiIcon = '☁️';    // Broken clouds
+                    else if (iconCode.includes('09') || iconCode.includes('10')) emojiIcon = '🌧️'; // Rain
+                    else if (iconCode.includes('11')) emojiIcon = '⛈️';   // Thunderstorm
+                    else if (iconCode.includes('13')) emojiIcon = '❄️';    // Snow
+                    else if (iconCode.includes('50')) emojiIcon = '🌫️';    // Mist/Fog
+                    
+                    // Update the UI
+                    weatherIcon.innerHTML = emojiIcon;
+                    weatherTemp.textContent = `${temp}°F`;
+                    document.getElementById('weather-display').title = `Weather in ${data.name}: ${description}`;
+
+
+                } catch (error) {
+                    console.error("Weather initialization failed:", error);
+                    weatherIcon.textContent = 'N/A';
+                    weatherTemp.textContent = '--';
+                    document.getElementById('weather-display').title = `Error fetching weather. Check console for details.`;
+                }
+            }
+            // --- END Weather Fetch Function ---
 
 
             // --- Countdown Scrolling Logic ---
@@ -1194,6 +1269,8 @@
                 // populateGroupColorDropdown() is now called inside addGroupButton listener
                 initDashboard();
                 startClockUpdate(); 
+                // NEW: Initialize weather widget
+                fetchWeather();
             }
         })(); // End of IIFE
     </script>
