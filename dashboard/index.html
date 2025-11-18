@@ -30,6 +30,8 @@
         html {
             font-family: 'Inter', sans-serif;
         }
+
+        /* Menu is hidden using Tailwind classes (opacity/pointer-events/translate) */
     </style>
     <script>
         tailwind.config = {
@@ -46,24 +48,50 @@
 <!-- Main container is set to dark mode -->
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-    <!-- Header -->
-    <header class="mb-10 pt-4 text-center">
-        <h1 class="text-5xl font-extrabold text-blue-400 tracking-tight mb-2">
-            Stephens' Dashboard <span class="text-gray-300">V0.2</span>
-        </h1>
-        <p class="text-lg text-gray-400">Your quick-access portal for work, fun, and life.</p>
-    </header>
+    <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-start">
+        <!-- Hamburger Menu Button - Now first and on the far left -->
+        <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
+            <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
+        <!-- Date and Time Display - Immediately follows the menu button -->
+        <div id="datetime" class="text-sm sm:text-base font-medium">
+            <!-- Date and time injected here by JS, with colored time span -->
+        </div>
+    </nav>
 
-    <!-- Dashboard Content Container (FLEX WRAP for non-uniform layout) -->
-    <!-- Groups will wrap and take up max-w-sm of space, creating the desired flow -->
-    <main id="dashboard-container" class="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
+    <!-- Menu Dropdown (now a simple floating menu that transitions down) -->
+    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
+            <!-- Close button (optional in this format, but useful for touch) -->
+            <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
+                <h3 class="text-xl font-semibold text-white">Menu</h3>
+                <button id="close-menu-button" class="text-gray-400 hover:text-white p-1">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.2</p>
+        </div>
+    </div>
+
+    <!-- Main Content Container (pt-16 for the smaller toolbar height) -->
+    <main id="dashboard-container" class="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto pt-16 pb-8">
         <!-- A simple loading indicator -->
-        <p id="loading-indicator" class="col-span-full text-center text-gray-400 p-8">Loading dashboard data...</p>
+        <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
     </main>
+    
+    <!-- Debug/Notice Footer -->
+    <footer id="debug-log" class="max-w-7xl mx-auto mt-10 p-4 w-full">
+        <!-- Fallback notice or debug messages will be injected here -->
+    </footer>
 
     <!-- JavaScript for Data Handling and Rendering -->
     <script>
         const container = document.getElementById('dashboard-container');
+        const debugLog = document.getElementById('debug-log');
+        const menuModal = document.getElementById('menu-modal');
+        const menuButton = document.getElementById('menu-button');
+        const closeMenuButton = document.getElementById('close-menu-button');
 
         // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
         const EMBEDDED_DATA = {
@@ -175,6 +203,71 @@
         // --- END EMBEDDED DATA ---
 
 
+        // --- UI Logic ---
+
+        // Toggle Menu Modal
+        function toggleMenu() {
+            const isHidden = menuModal.classList.contains('opacity-0');
+            if (isHidden) {
+                // Show menu
+                menuModal.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+            } else {
+                // Hide menu
+                menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+        }
+        
+        menuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        closeMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleMenu();
+        });
+
+        // Close menu if user clicks anywhere else outside the menu or the button
+        document.addEventListener('click', (e) => {
+            if (!menuModal.contains(e.target) && !menuButton.contains(e.target) && !menuModal.classList.contains('opacity-0')) {
+                toggleMenu();
+            }
+        });
+
+        // Function to update the clock display
+        function updateClock() {
+            const now = new Date();
+            
+            // Format date (e.g., "Tuesday, June 25, 2024")
+            const datePart = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            
+            // Format time (e.g., "1:23 pm")
+            const timePart = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(/\s/g, '');
+
+            // Custom day suffix logic (e.g., 'st', 'nd', 'rd', 'th')
+            let dateWithSuffix = datePart;
+            const dayMatch = datePart.match(/,\s(\w+)\s(\d+)/); 
+            if (dayMatch) {
+                const day = parseInt(dayMatch[2]);
+                let suffix;
+                if (day > 3 && day < 21) suffix = 'th';
+                else if (day % 10 === 1) suffix = 'st';
+                else if (day % 10 === 2) suffix = 'nd';
+                else if (day % 10 === 3) suffix = 'rd';
+                else suffix = 'th';
+                dateWithSuffix = datePart.replace(` ${day}`, ` ${day}${suffix}`);
+            }
+
+            // Inject HTML with separate colors for Date (gray-400) and Time (blue-300)
+            document.getElementById('datetime').innerHTML = `
+                <span class="text-gray-400">${dateWithSuffix}</span>
+                <span class="text-blue-300 ml-1">${timePart}</span>
+            `;
+        }
+
+
+        // --- Rendering Logic ---
+
         // Function to create an individual link tile
         function createLinkElement(link) {
             const linkTile = document.createElement('a');
@@ -184,7 +277,7 @@
             // Set up placeholder image if URL fails (or if it's a local file like /images/...)
             const placeholderLetter = link.name.substring(0, 1).toUpperCase();
             
-            // Image is now roughly 96x96 (w-full of its parent) and uses rounded-xl
+            // Image is now roughly 96x96 and uses rounded-xl
             const imgHtml = `
                 <div class="w-full h-full aspect-square flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner">
                     <img
@@ -214,16 +307,16 @@
             container.innerHTML = ''; 
 
             if (!data.linkGroups || data.linkGroups.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 col-span-full text-center">No link groups found in data.</p>';
+                container.innerHTML = '<p class="w-full text-gray-500 text-center">No link groups found in data.</p>';
                 return;
             }
 
-            // Display a notification if fallback data is being used
+            // Display a notification if fallback data is being used (moved to debugLog)
             if (isFallback) {
                 const fallbackNote = document.createElement('div');
-                fallbackNote.className = 'col-span-full bg-yellow-900/20 border border-yellow-700 text-yellow-400 p-3 rounded-xl text-center mb-6 w-full';
-                fallbackNote.textContent = 'NOTICE: Using embedded (test) data. The external data.json failed to load (expected in preview environment).';
-                container.appendChild(fallbackNote);
+                fallbackNote.className = 'bg-yellow-900/20 border border-yellow-700 text-yellow-400 p-3 rounded-xl text-center w-full';
+                fallbackNote.innerHTML = '<p class="font-bold">DEBUG WARNING:</p> <p class="text-sm">Using embedded (test) data. The external <code class="font-mono">data.json</code> failed to load (expected in preview environment).</p>';
+                debugLog.appendChild(fallbackNote);
             }
 
             data.linkGroups.forEach(group => {
@@ -281,11 +374,11 @@
                     isFallback = false;
                     console.log('Successfully loaded external data.json.');
                 } else {
-                    // Fetch succeeded but returned non-OK status (e.g., 404)
+                    // Fetch succeeded but returned non-OK status (e.g., 404), fall back.
                     console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
                 }
             } catch (error) {
-                // Fetch failed (e.g., URL parsing error in preview, network error)
+                // Fetch failed (e.g., URL parsing error in preview, network error), fall back.
                 console.error('Failed to fetch external data.json:', error.message);
                 console.warn('Falling back to embedded test data.');
             }
@@ -295,7 +388,12 @@
         }
 
         // Run the initialization function when the window loads
-        window.onload = initDashboard;
+        window.onload = () => {
+            initDashboard();
+            updateClock();
+            // Update clock every minute (60,000 milliseconds)
+            setInterval(updateClock, 60000); 
+        }
     </script>
 
 </body>
