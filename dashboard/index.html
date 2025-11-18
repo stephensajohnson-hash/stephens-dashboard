@@ -10,6 +10,8 @@
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
     .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
+    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
+    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -32,7 +34,7 @@
 </head>
 <body class="min-h-screen bg-black text-white">
 
-  <!-- DEBUG BAR (kept until you say remove) -->
+  <!-- DEBUG BAR -->
   <div id="debug-bar">Debug: Initializing...</div>
 
   <!-- TOP BANNER -->
@@ -97,16 +99,16 @@
     let countdownIndex = 0;
     let countdownInterval = null;
 
-    function toggleMenu() {
-      document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
-    }
-
-    // Debug (kept until you say remove)
+    // Debug
     function debug(msg) {
       console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
       const bar = document.getElementById('debug-bar');
       if (bar) bar.innerHTML += '<br>' + msg;
       if (bar) bar.scrollTop = bar.scrollHeight;
+    }
+
+    function toggleMenu() {
+      document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
     }
 
     async function loadData() {
@@ -123,7 +125,7 @@
         debug('fetch error: ' + e.message);
       }
 
-      if (!data || !Array.isArray(data)) {
+      if (!data || data.length === 0) {
         const saved = localStorage.getItem('dashboardData');
         data = saved ? JSON.parse(saved) : [];
         debug('using localStorage');
@@ -131,28 +133,18 @@
         localStorage.setItem('dashboardData', JSON.stringify(data));
       }
 
-      // Extract countdowns if they are in the last object
-      if (data.length > 0 && data[data.length - 1].countdowns) {
-        data.countdowns = data[data.length - 1].countdowns;
-        data = data.slice(0, -1); // remove the countdown object from groups
-        debug('countdowns extracted from last object');
-      }
+      debug('FULL DATA: ' + JSON.stringify(data, null, 2));
 
       render();
       startCountdowns();
     }
 
     function saveToLocal() {
-      // Re-attach countdowns before saving
-      const saveData = [...data];
-      if (data.countdowns) saveData.push({ countdowns: data.countdowns });
-      localStorage.setItem('dashboardData', JSON.stringify(saveData));
+      localStorage.setItem('dashboardData', JSON.stringify(data));
     }
 
     function publishData() {
-      const saveData = [...data];
-      if (data.countdowns) saveData.push({ countdowns: data.countdowns });
-      const blob = new Blob([JSON.stringify(saveData, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -190,6 +182,7 @@
     // COUNTDOWN SYSTEM
     function startCountdowns() {
       debug('startCountdowns() called');
+      debug('data.countdowns = ' + JSON.stringify(data.countdowns));
       if (!data.countdowns || data.countdowns.length === 0) {
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
@@ -197,6 +190,7 @@
 
       function update() {
         const cd = data.countdowns[countdownIndex];
+        debug('Showing countdown: ' + JSON.stringify(cd));
         const target = new Date(cd.targetDate);
         const now = new Date();
         const diff = target - now;
@@ -226,7 +220,6 @@
       update();
       clearInterval(countdownInterval);
       countdownInterval = setInterval(update, 8000);
-      debug('Countdowns running');
     }
 
     function addCountdown() {
