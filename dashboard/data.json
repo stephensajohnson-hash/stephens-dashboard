@@ -294,6 +294,13 @@
       "linkUrl": "https://www.royalcaribbean.com/",
       "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s",
       "timezone": "America/Chicago"
+    },
+    {
+      "name": "Stephens Retires",
+      "targetDate": "2033-03-18T00:00:00",
+      "linkUrl": "#",
+      "img": "https://placehold.co/40x40/374151/FFFFFF?text=NEW",
+      "timezone": "America/Chicago"
     }
   ]
 }
