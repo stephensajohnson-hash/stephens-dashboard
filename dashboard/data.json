@@ -2,8 +2,8 @@
   "linkGroups": [
     {
       "name": "PBFCM",
-      "color": "bg-blue-500",
-      "textColor": "text-blue-800",
+      "color": "bg-blue-600/20",
+      "textColor": "text-blue-400",
       "links": [
         {
           "name": "Halo",
@@ -34,8 +34,8 @@
     },
     {
       "name": "Fun",
-      "color": "bg-amber-500",
-      "textColor": "text-amber-800",
+      "color": "bg-amber-600/20",
+      "textColor": "text-amber-400",
       "links": [
         {
           "name": "TikTok",
@@ -71,8 +71,8 @@
     },
     {
       "name": "Google Apps",
-      "color": "bg-green-500",
-      "textColor": "text-green-800",
+      "color": "bg-green-600/20",
+      "textColor": "text-green-400",
       "links": [
         {
           "name": "Gmail",
@@ -133,8 +133,8 @@
     },
     {
       "name": "Movies & TV",
-      "color": "bg-purple-500",
-      "textColor": "text-purple-800",
+      "color": "bg-purple-600/20",
+      "textColor": "text-purple-400",
       "links": [
         {
           "name": "IMDb",
@@ -149,12 +149,12 @@
         {
           "name": "Movies Portal",
           "url": "https://movies.do",
-          "img": "/images/movies portal.jpg"
+          "img": "https://placehold.co/60x60/1E40AF/FFFFFF?text=MP"
         },
         {
           "name": "Bright Star Cinemas",
           "url": "https://www.brightstarcinemas.com/",
-          "img": "/images/bright star cinemas.png"
+          "img": "https://placehold.co/60x60/8B5CF6/FFFFFF?text=BSC"
         },
         {
           "name": "YouTube",
@@ -170,8 +170,8 @@
     },
     {
       "name": "Shopping",
-      "color": "bg-pink-500",
-      "textColor": "text-pink-800",
+      "color": "bg-pink-600/20",
+      "textColor": "text-pink-400",
       "links": [
         {
           "name": "Amazon",
@@ -192,8 +192,8 @@
     },
     {
       "name": "Financial",
-      "color": "bg-emerald-500",
-      "textColor": "text-emerald-800",
+      "color": "bg-emerald-600/20",
+      "textColor": "text-emerald-400",
       "links": [
         {
           "name": "Alliance Bank",
@@ -234,8 +234,8 @@
     },
     {
       "name": "Benefits",
-      "color": "bg-teal-500",
-      "textColor": "text-teal-800",
+      "color": "bg-teal-600/20",
+      "textColor": "text-teal-400",
       "links": [
         {
           "name": "BCBS",
@@ -271,8 +271,8 @@
     },
     {
       "name": "Coding",
-      "color": "bg-blue-500",
-      "textColor": "text-blue-800",
+      "color": "bg-blue-600/20",
+      "textColor": "text-blue-400",
       "links": [
         {
           "name": "Vercel",
@@ -285,6 +285,15 @@
           "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
         }
       ]
+    }
+  ],
+  "countdowns": [
+    {
+      "name": "Cruise!",
+      "targetDate": "2026-02-01T00:00:00",
+      "linkUrl": "https://www.royalcaribbean.com/",
+      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s",
+      "timezone": "America/Chicago"
     }
   ]
 }
