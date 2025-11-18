@@ -10,12 +10,24 @@
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
     .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
-    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
-    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     .popup-panel.show { opacity: 1; pointer-events: auto; }
+    #debug-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 180px;
+      background: rgba(0,0,0,0.95);
+      color: lime;
+      padding: 10px;
+      font: 12px monospace;
+      z-index: 99999;
+      overflow-y: auto;
+      border-top: 2px solid #333;
+    }
   </style>
 </head>
 <body class="min-h-screen bg-black text-white">
@@ -64,7 +76,6 @@
     <div id="dashboard" class="max-w-full mx-auto space-y-4"></div>
   </div>
 
-  <!-- POPUP -->
   <div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
     <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
       <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
@@ -76,27 +87,54 @@
     </div>
   </div>
 
+  <!-- DEBUG BAR (scrollable, last 10 logs) -->
+  <div id="debug-bar">Debug starting...</div>
+
   <script>
     let data = [];
     let dragged = null;
     let countdownIndex = 0;
     let countdownInterval = null;
 
+    // Debug system
+    const debugLogs = [];
+    function debug(msg) {
+      console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
+      debugLogs.push(msg);
+      if (debugLogs.length > 10) debugLogs.shift();
+      const bar = document.getElementById('debug-bar');
+      if (bar) bar.innerHTML = debugLogs.map(l => `<div>${l}</div>`).join('');
+    }
+
     function toggleMenu() {
       document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
     }
 
     async function loadData() {
+      debug('loadData() started');
       try {
         const res = await fetch('data.json?t=' + Date.now());
-        if (res.ok) data = await res.json();
-      } catch (e) {}
+        if (res.ok) {
+          data = await res.json();
+          debug('data.json loaded');
+        } else {
+          debug('data.json 404');
+        }
+      } catch (e) {
+        debug('fetch failed: ' + e.message);
+      }
+
       if (!data || data.length === 0) {
         const saved = localStorage.getItem('dashboardData');
         data = saved ? JSON.parse(saved) : [];
+        debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
       }
+
+      // Show full data.json content in debug
+      debug('Current data: ' + JSON.stringify(data, null, 2).slice(0, 500) + '...');
+
       render();
       startCountdowns();
     }
@@ -113,7 +151,7 @@
       a.download = 'data.json';
       a.click();
       URL.revokeObjectURL(url);
-      alert('data.json downloaded! Upload to GitHub → redeploy');
+      debug('data.json downloaded');
     }
 
     function render() {
@@ -122,7 +160,7 @@
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
-        s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-800 hover:bg-gray-700';
+        s.className = 'flex items-center px-3 py-2 cursor-pointer select-none bg-gray-800 hover:bg-gray-750';
         s.innerHTML = `<span class="w-1 h-9 ${g.color} rounded-r-sm mr-2"></span>
           <span class="font-bold ${g.textColor} text-sm">${g.name}</span>
           <svg class="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180 ml-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>`;
@@ -143,6 +181,7 @@
 
     // COUNTDOWN SYSTEM
     function startCountdowns() {
+      debug('startCountdowns() called');
       if (!data.countdowns || data.countdowns.length === 0) {
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
@@ -179,6 +218,7 @@
       update();
       clearInterval(countdownInterval);
       countdownInterval = setInterval(update, 8000);
+      debug('Countdowns running');
     }
 
     function addCountdown() {
@@ -202,14 +242,17 @@
 
     // DATE/TIME
     function updateDateTime() {
+      debug('updateDateTime() called');
       const n = new Date();
       const ds = n.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
       const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).toLowerCase().replace(' am','am').replace(' pm','pm');
-      document.getElementById('date-time').innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
+      const el = document.getElementById('date-time');
+      if (el) el.innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
     }
 
     // WEATHER
     function initWeather() {
+      debug('initWeather() called');
       fetch('https://wttr.in/?format=j1')
         .then(r => r.json())
         .then(d => {
@@ -220,10 +263,12 @@
           const icon = Object.keys(iconMap).find(k => cond.includes(k)) ? iconMap[Object.keys(iconMap).find(k => cond.includes(k))] : 'Partly Cloudy';
           document.getElementById('weather-icon-svg').innerHTML = icon;
           document.getElementById('weather-temp').textContent = temp + '°';
+          log('Weather loaded');
         })
         .catch(() => {
           document.getElementById('weather-icon-svg').innerHTML = 'Globe';
           document.getElementById('weather-temp').textContent = 'offline';
+          log('Weather failed');
         });
     }
 
