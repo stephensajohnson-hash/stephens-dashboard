@@ -75,9 +75,15 @@
     </div>
 
     <!-- Main Content Container (pt-16 for the smaller toolbar height) -->
-    <main id="dashboard-container" class="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto pt-16 pb-8">
-        <!-- A simple loading indicator -->
-        <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
+    <!-- Added a container for Countdowns called 'countdown-widgets' which will sit above the link groups -->
+    <main id="dashboard-content" class="max-w-7xl mx-auto pt-16 pb-8">
+        <div id="countdown-widgets" class="mb-8 p-4">
+            <!-- Countdown widgets will be rendered here -->
+            <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
+        </div>
+        <div id="link-groups-container" class="flex flex-wrap justify-center gap-6">
+            <!-- Link groups will be rendered here -->
+        </div>
     </main>
     
     <!-- Debug/Notice Footer -->
@@ -87,7 +93,9 @@
 
     <!-- JavaScript for Data Handling and Rendering -->
     <script>
-        const container = document.getElementById('dashboard-container');
+        const linkGroupsContainer = document.getElementById('link-groups-container');
+        const countdownWidgetsContainer = document.getElementById('countdown-widgets');
+        const loadingIndicator = document.getElementById('loading-indicator');
         const debugLog = document.getElementById('debug-log');
         const menuModal = document.getElementById('menu-modal');
         const menuButton = document.getElementById('menu-button');
@@ -198,7 +206,18 @@
                         {"name": "GitHub", "url": "https://github.com/stephensajohnson-hash/stephens-dashboard/tree/main/dashboard", "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"}
                     ]
                 }
+            ],
+            // --- NEW COUNTDOWN DATA FOR PREVIEW/FALLBACK ---
+            "countdowns": [
+                {
+                    "name": "Cruise! (test)",
+                    "targetDate": "2026-02-01T00:00:00",
+                    "linkUrl": "https://www.royalcaribbean.com/",
+                    "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s",
+                    "timezone": "America/Chicago"
+                }
             ]
+            // --- END NEW COUNTDOWN DATA ---
         };
         // --- END EMBEDDED DATA ---
 
@@ -299,19 +318,17 @@
 
         /**
          * Renders the dashboard content based on the fetched data.
-         * @param {Object} data - The parsed JSON object containing linkGroups.
+         * NOTE: The countdown rendering logic is not yet implemented in this step.
+         * @param {Object} data - The parsed JSON object containing linkGroups and countdowns.
          * @param {boolean} isFallback - True if embedded data is being used.
          */
         function renderDashboard(data, isFallback) {
             // Clear the loading message or previous content
-            container.innerHTML = ''; 
+            loadingIndicator.remove(); // Remove loading indicator once data is ready
+            linkGroupsContainer.innerHTML = ''; 
+            countdownWidgetsContainer.innerHTML = '';
 
-            if (!data.linkGroups || data.linkGroups.length === 0) {
-                container.innerHTML = '<p class="w-full text-gray-500 text-center">No link groups found in data.</p>';
-                return;
-            }
-
-            // Display a notification if fallback data is being used (moved to debugLog)
+            // 1. Handle Debug Log
             if (isFallback) {
                 const fallbackNote = document.createElement('div');
                 fallbackNote.className = 'bg-yellow-900/20 border border-yellow-700 text-yellow-400 p-3 rounded-xl text-center w-full';
@@ -319,40 +336,54 @@
                 debugLog.appendChild(fallbackNote);
             }
 
-            data.linkGroups.forEach(group => {
-                // Create the card container for the group
-                const groupCard = document.createElement('div');
-                // Use max-w-sm and w-full to allow for the groups to wrap freely
-                groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl w-full max-w-sm';
+            // 2. Render Link Groups (Existing Logic)
+            if (data.linkGroups && data.linkGroups.length > 0) {
+                data.linkGroups.forEach(group => {
+                    // Create the card container for the group
+                    const groupCard = document.createElement('div');
+                    // Use max-w-sm and w-full to allow for the groups to wrap freely
+                    groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl w-full max-w-sm';
 
-                // Create the header
-                const header = document.createElement('div');
-                // Use the provided color/textColor classes for the header badge
-                const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
-                header.innerHTML = `<h2 class="${headerClasses}">${group.name}</h2>`;
+                    // Create the header
+                    const header = document.createElement('div');
+                    // Use the provided color/textColor classes for the header badge
+                    const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
+                    header.innerHTML = `<h2 class="${headerClasses}">${group.name}</h2>`;
 
-                // Create the links grid (3 columns inside the card)
-                const linksGrid = document.createElement('div');
-                linksGrid.className = 'grid grid-cols-3 gap-3';
+                    // Create the links grid (3 columns inside the card)
+                    const linksGrid = document.createElement('div');
+                    linksGrid.className = 'grid grid-cols-3 gap-3';
 
-                // Add links to the grid
-                if (group.links && group.links.length > 0) {
-                    group.links.forEach(link => {
-                        const linkElement = createLinkElement(link);
-                        linksGrid.appendChild(linkElement);
-                    });
-                } else {
-                    const emptyMessage = document.createElement('p');
-                    emptyMessage.className = 'text-gray-500 text-sm italic col-span-3';
-                    emptyMessage.textContent = 'No links in this group.';
-                    linksGrid.appendChild(emptyMessage);
-                }
+                    // Add links to the grid
+                    if (group.links && group.links.length > 0) {
+                        group.links.forEach(link => {
+                            const linkElement = createLinkElement(link);
+                            linksGrid.appendChild(linkElement);
+                        });
+                    } else {
+                        const emptyMessage = document.createElement('p');
+                        emptyMessage.className = 'text-gray-500 text-sm italic col-span-3';
+                        emptyMessage.textContent = 'No links in this group.';
+                        linksGrid.appendChild(emptyMessage);
+                    }
 
-                // Append everything to the card and the card to the container
-                groupCard.appendChild(header);
-                groupCard.appendChild(linksGrid);
-                container.appendChild(groupCard);
-            });
+                    // Append everything to the card and the card to the container
+                    groupCard.appendChild(header);
+                    groupCard.appendChild(linksGrid);
+                    linkGroupsContainer.appendChild(groupCard);
+                });
+            } else {
+                 linkGroupsContainer.innerHTML = '<p class="w-full text-gray-500 text-center">No link groups found in data.</p>';
+            }
+
+            // 3. Render Countdowns (Placeholder for next step)
+            if (data.countdowns && data.countdowns.length > 0) {
+                countdownWidgetsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 italic p-4 border border-dashed border-gray-700 rounded-lg">
+                        Countdown widget feature loaded but not yet implemented. Ready to build the UI for ${data.countdowns.length} event(s)!
+                    </div>
+                `;
+            }
         }
 
 
@@ -366,19 +397,17 @@
             
             try {
                 // Try to fetch the external data file
+                // NOTE: Using the current correct relative path for Vercel deployment
                 const response = await fetch('./data.json');
                 
                 if (response.ok) {
-                    // Success! Use the fetched data
                     dashboardData = await response.json();
                     isFallback = false;
                     console.log('Successfully loaded external data.json.');
                 } else {
-                    // Fetch succeeded but returned non-OK status (e.g., 404), fall back.
                     console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
                 }
             } catch (error) {
-                // Fetch failed (e.g., URL parsing error in preview, network error), fall back.
                 console.error('Failed to fetch external data.json:', error.message);
                 console.warn('Falling back to embedded test data.');
             }
