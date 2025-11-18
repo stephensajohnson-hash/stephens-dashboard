@@ -296,6 +296,13 @@
       "timezone": "America/Chicago"
     },
     {
+      "name": "Christmas",
+      "targetDate": "2025-12-25T00:00:00",
+      "linkUrl": "#",
+      "img": "https://i0.wp.com/acountrygirlslife.com/wp-content/uploads/2023/11/Christmas-Tree-Cakes-Recipe-5.jpg?resize=1024%2C1536&ssl=1",
+      "timezone": "America/Chicago"
+    },
+    {
       "name": "Cruise!",
       "targetDate": "2026-02-01T00:00:00",
       "linkUrl": "https://www.royalcaribbean.com/",
