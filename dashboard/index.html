@@ -1115,8 +1115,8 @@
                 if (finalLinkGroups && finalLinkGroups.length > 0) {
                     finalLinkGroups.forEach(group => {
                         const groupCard = document.createElement('div');
-                        // ADDED flex-1 and min-w-[300px] to make the cards fluid but prevent them from becoming too small
-                        groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[300px]'; 
+                        // UPDATED min-w-[300px] to min-w-[440px] to safely contain 3 x 120px links + gaps/padding
+                        groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[440px]'; 
 
                         const header = document.createElement('div');
                         const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
