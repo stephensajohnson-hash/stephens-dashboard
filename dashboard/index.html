@@ -31,7 +31,15 @@
             font-family: 'Inter', sans-serif;
         }
 
-        /* Menu is hidden using Tailwind classes (opacity/pointer-events/translate) */
+        /* Modal backdrop for the form */
+        .modal-backdrop {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        /* Ensure the smooth scroll is applied only to the transform property */
+        #countdown-scroll-container {
+            transition: transform 1s ease-in-out; /* Slow 1-second animation */
+        }
     </style>
     <script>
         tailwind.config = {
@@ -70,16 +78,78 @@
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
+            
+            <!-- NEW: Add Countdown Button -->
+            <button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">
+                Add Countdown
+            </button>
+            
+            <!-- NEW: Download Data Button -->
+            <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
+                Download Data File
+            </button>
+
+
             <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.2</p>
         </div>
     </div>
+    
+    <!-- NEW: Add Countdown Modal Form (Hidden by default) -->
+    <div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
+            <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add New Countdown</h2>
+            <form id="countdown-form" class="space-y-4">
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Event Name:</span>
+                    <input type="text" id="countdown-name" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Target Date:</span>
+                    <input type="date" id="countdown-targetDate" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Timezone:</span>
+                    <select id="countdown-timezone" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                        <!-- Options populated by JS -->
+                    </select>
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Link URL (Optional):</span>
+                    <input type="url" id="countdown-linkUrl" class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Image URL (Optional, will use placeholder if empty):</span>
+                    <input type="url" id="countdown-img" class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-countdown-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/50">
+                        Save Countdown
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END: Add Countdown Modal Form -->
+
 
     <!-- Main Content Container (pt-16 for the smaller toolbar height) -->
     <main id="dashboard-content" class="max-w-7xl mx-auto pt-16 pb-8">
-        <div id="countdown-widgets" class="mb-8 w-full">
-            <!-- Countdown widgets will be rendered here -->
+        
+        <!-- COUNTDOWN WIDGETS CONTAINER (Overflow hidden, height fixed) -->
+        <div id="countdown-widgets" class="mb-8 w-full overflow-hidden h-14 relative">
             <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
+            
+            <!-- SCROLL CONTAINER (This element moves horizontally) -->
+            <div id="countdown-scroll-container" class="flex flex-nowrap h-full transition-transform duration-1000 ease-in-out absolute inset-0">
+                <!-- Countdown items will be rendered here. Each item is w-1/2. -->
+            </div>
         </div>
+        <!-- END COUNTDOWN WIDGETS -->
+
         <div id="link-groups-container" class="flex flex-wrap justify-center gap-6">
             <!-- Link groups will be rendered here -->
         </div>
@@ -97,11 +167,40 @@
         (function() {
             const linkGroupsContainer = document.getElementById('link-groups-container');
             const countdownWidgetsContainer = document.getElementById('countdown-widgets');
+            const countdownScrollContainer = document.getElementById('countdown-scroll-container'); // NEW REF
             const loadingIndicator = document.getElementById('loading-indicator');
             const debugLog = document.getElementById('debug-log');
             const menuModal = document.getElementById('menu-modal');
             const menuButton = document.getElementById('menu-button');
             const closeMenuButton = document.getElementById('close-menu-button');
+            const downloadDataButton = document.getElementById('download-data-button');
+            
+            // New elements for the Add Countdown feature
+            const addCountdownButton = document.getElementById('add-countdown-button');
+            const addCountdownModal = document.getElementById('add-countdown-modal');
+            const countdownForm = document.getElementById('countdown-form');
+            const cancelCountdownButton = document.getElementById('cancel-countdown-button');
+            
+            // Variable to hold the original static data for the download function
+            let STATIC_LINK_GROUPS = [];
+            let STATIC_COUNTDOWNS = [];
+
+            // Variable to hold the clock interval
+            let clockInterval = null;
+
+            // List of common IANA timezones
+            const TIMEZONES = [
+                { name: "Central (CT) - Default", value: "America/Chicago" },
+                { name: "Eastern (ET)", value: "America/New_York" },
+                { name: "Mountain (MT)", value: "America/Denver" },
+                { name: "Pacific (PT)", value: "America/Los_Angeles" },
+                { name: "Alaska (AKT)", value: "America/Anchorage" },
+                { name: "Hawaii (HST)", value: "Pacific/Honolulu" },
+                { name: "London (GMT/BST)", value: "Europe/London" },
+                { name: "Paris (CET/CEST)", value: "Europe/Paris" },
+                { name: "Shanghai (CST)", value: "Asia/Shanghai" },
+                { name: "Tokyo (JST)", value: "Asia/Tokyo" }
+            ];
 
             // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
             const EMBEDDED_DATA = {
@@ -209,29 +308,118 @@
                         ]
                     }
                 ],
-                // --- NEW COUNTDOWN DATA FOR PREVIEW/FALLBACK ---
+                // --- EMBEDDED COUNTDOWN DATA ---
                 "countdowns": [
                     {
-                        "name": "Cruise! (test)",
-                        "targetDate": "2026-02-01T00:00:00",
-                        "linkUrl": "https://www.royalcaribbean.com/",
-                        "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s",
-                        "timezone": "America/Chicago"
+                      "name": "Thanksgiving (test)",
+                      "targetDate": "2025-11-27T00:00:00",
+                      "linkUrl": "#",
+                      "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
+                      "timezone": "America/Chicago"
+                    },
+                    {
+                      "name": "Cruise! (test)",
+                      "targetDate": "2026-02-01T00:00:00",
+                      "linkUrl": "https://www.royalcaribbean.com/",
+                      "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s",
+                      "timezone": "America/Chicago"
+                    },
+                    {
+                      "name": "Stephens Retires (test)",
+                      "targetDate": "2033-03-18T00:00:00",
+                      "linkUrl": "#",
+                      "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
+                      "timezone": "America/Chicago"
                     }
                 ]
-                // --- END NEW COUNTDOWN DATA ---
+                // --- END EMBEDDED COUNTDOWN DATA ---
             };
             // --- END EMBEDDED DATA ---
 
 
             // Global state for rotation
-            // Consolidated all 'let' variables into a single const object to prevent redeclaration errors
             const state = {
                 allCountdowns: [],
-                currentCountdownIndex: 0,
+                activeCountdownElements: [], // NEW: Stores references to all time display elements
+                currentScrollIndex: 0, // NEW: Tracks current position for scrolling
                 countdownInterval: null,
-                animationFrameId: null
+                animationFrameId: null,
+                localStorageKey: 'stephens_dashboard_custom_countdowns'
             };
+            
+            // --- TIMEZONE DROPDOWN POPULATION ---
+            
+            function populateTimezoneDropdown() {
+                const select = document.getElementById('countdown-timezone');
+                select.innerHTML = ''; 
+                
+                TIMEZONES.forEach(tz => {
+                    const option = document.createElement('option');
+                    option.value = tz.value;
+                    option.textContent = tz.name;
+                    if (tz.value === 'America/Chicago') {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            }
+
+            // --- LOCAL STORAGE FUNCTIONS ---
+
+            function getCustomCountdowns() {
+                try {
+                    const saved = localStorage.getItem(state.localStorageKey);
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    console.error("Error reading from localStorage:", e);
+                    return [];
+                }
+            }
+
+            function saveCustomCountdowns(countdowns) {
+                try {
+                    localStorage.setItem(state.localStorageKey, JSON.stringify(countdowns));
+                } catch (e) {
+                    console.error("Error writing to localStorage:", e);
+                }
+            }
+            
+            // --- MODAL AND FORM LOGIC ---
+
+            function showAddCountdownModal() {
+                addCountdownModal.classList.remove('hidden');
+                menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
+                countdownForm.reset(); 
+                populateTimezoneDropdown(); 
+            }
+
+            function hideAddCountdownModal() {
+                addCountdownModal.classList.add('hidden');
+            }
+
+            // Event listeners for the modal
+            addCountdownButton.addEventListener('click', showAddCountdownModal);
+            cancelCountdownButton.addEventListener('click', hideAddCountdownModal);
+            
+            countdownForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const newCountdown = {
+                    name: document.getElementById('countdown-name').value.trim(),
+                    targetDate: document.getElementById('countdown-targetDate').value.trim() + 'T00:00:00',
+                    linkUrl: document.getElementById('countdown-linkUrl').value.trim() || '#',
+                    img: document.getElementById('countdown-img').value.trim() || 'https://placehold.co/40x40/374151/FFFFFF?text=NEW',
+                    id: 'user_' + Date.now(), 
+                    timezone: document.getElementById('countdown-timezone').value, 
+                };
+
+                const customCountdowns = getCustomCountdowns();
+                customCountdowns.push(newCountdown);
+                saveCustomCountdowns(customCountdowns);
+
+                hideAddCountdownModal();
+                initDashboard(); 
+            });
 
 
             // --- UI Logic ---
@@ -240,10 +428,8 @@
             function toggleMenu() {
                 const isHidden = menuModal.classList.contains('opacity-0');
                 if (isHidden) {
-                    // Show menu
                     menuModal.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
                 } else {
-                    // Hide menu
                     menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
                 }
             }
@@ -264,18 +450,64 @@
                     toggleMenu();
                 }
             });
+            
+            // --- Download Logic ---
+            
+            downloadDataButton.addEventListener('click', downloadDataFile);
 
-            // Function to update the clock display
+            function downloadDataFile() {
+                hideMenu(); 
+                
+                // 1. Create the Consolidated Data Object
+                const finalLinkGroups = STATIC_LINK_GROUPS.map(group => ({
+                    ...group,
+                    name: group.name.replace(' (test)', '')
+                }));
+                
+                let finalCountdowns = STATIC_COUNTDOWNS.map(c => ({
+                    ...c,
+                    name: c.name.replace(' (test)', '') 
+                }));
+                
+                const customCountdowns = getCustomCountdowns();
+                
+                customCountdowns.forEach(customC => {
+                    const { id, ...cleanCountdown } = customC; 
+                    finalCountdowns.push(cleanCountdown);
+                });
+                
+                const consolidatedData = {
+                    "linkGroups": finalLinkGroups,
+                    "countdowns": finalCountdowns 
+                };
+                
+                // 2. Prepare for Download
+                const dataStr = JSON.stringify(consolidatedData, null, 2); 
+                const dataBlob = new Blob([dataStr], { type: 'application/json' });
+                
+                // 3. Trigger Download
+                const a = document.createElement('a');
+                const date = new Date();
+                const dateString = date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0');
+                a.download = `data-update-${dateString}.json`;
+                a.href = window.URL.createObjectURL(dataBlob);
+                a.click();
+                
+                window.URL.revokeObjectURL(a.href);
+            }
+            
+            function hideMenu() {
+                 menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+
+
+            // Function to update the clock display (Accurate to the minute)
             function updateClock() {
                 const now = new Date();
                 
-                // Format date (e.g., "Tuesday, June 25, 2024")
                 const datePart = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                
-                // Format time (e.g., "1:23 pm")
                 const timePart = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(/\s/g, '');
 
-                // Custom day suffix logic (e.g., 'st', 'nd', 'rd', 'th')
                 let dateWithSuffix = datePart;
                 const dayMatch = datePart.match(/,\s(\w+)\s(\d+)/); 
                 if (dayMatch) {
@@ -289,55 +521,50 @@
                     dateWithSuffix = datePart.replace(` ${day}`, ` ${day}${suffix}`);
                 }
 
-                // Inject HTML with separate colors for Date (gray-400) and Time (blue-300)
                 document.getElementById('datetime').innerHTML = `
                     <span class="text-gray-400">${dateWithSuffix}</span>
                     <span class="text-blue-300 ml-1">${timePart}</span>
                 `;
             }
 
+            // Function to manage the clock startup with sub-minute accuracy
+            function startClockUpdate() {
+                if (clockInterval) clearInterval(clockInterval);
+                updateClock();
 
-            // --- Countdown Logic ---
+                const now = new Date();
+                const ms = now.getMilliseconds();
+                const seconds = now.getSeconds();
+                
+                const msUntilNextMinute = (60 - seconds) * 1000 - ms;
 
-            // Function to handle the calculation and formatting of the time remaining
-            function updateCountdownTimeDisplay() {
-                if (!state.allCountdowns.length) return;
+                setTimeout(() => {
+                    updateClock();
+                    clockInterval = setInterval(updateClock, 60000);
+                }, msUntilNextMinute);
+            }
 
-                // Get the currently active countdown data
-                const countdown = state.allCountdowns[state.currentCountdownIndex];
 
-                // NOTE: Timezone parsing is tricky in standard JS. 
+            // --- Countdown Scrolling Logic ---
+
+            /**
+             * Calculates the time remaining and formats it.
+             * @param {Object} countdown - The countdown object.
+             * @returns {string} The formatted time string.
+             */
+            function formatTimeRemaining(countdown) {
                 const targetDate = new Date(countdown.targetDate);
                 const now = new Date();
-                
                 const diffMs = targetDate.getTime() - now.getTime();
-                const timeDisplayElement = document.getElementById('countdown-time-display');
                 
-                if (diffMs <= 0) {
-                    // If expired, remove it and restart rotation if necessary
-                    state.allCountdowns.splice(state.currentCountdownIndex, 1);
-                    state.currentCountdownIndex = state.currentCountdownIndex % state.allCountdowns.length; // Loop around
-                    
-                    if (state.allCountdowns.length === 0) {
-                        clearInterval(state.countdownInterval);
-                        cancelAnimationFrame(state.animationFrameId);
-                        countdownWidgetsContainer.innerHTML = '';
-                        return;
-                    }
-
-                    // Force rotation change immediately
-                    rotateCountdown(); 
-                    return;
-                } 
+                if (diffMs <= 0) return null; // Expired
 
                 const msInDay = 1000 * 60 * 60 * 24;
                 const totalDays = Math.floor(diffMs / msInDay);
                 
-                // 1. Calculate Years (approximate using 365 days)
                 const years = Math.floor(totalDays / 365);
                 let remainingDays = totalDays % 365;
 
-                // 2. Calculate Months (approximate using 30 days)
                 const months = Math.floor(remainingDays / 30);
                 const days = remainingDays % 30;
 
@@ -349,40 +576,60 @@
                     primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
                     if (days > 0) primaryDisplay.push(`${days} Day${days > 1 ? 's' : ''}`);
                 } else {
-                    // If less than a month, show hours/minutes/seconds for more granularity
                     const remainingMs = diffMs % msInDay;
                     const hours = Math.floor(remainingMs / (1000 * 60 * 60));
                     const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
                     const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
                     
                     if (totalDays > 0) primaryDisplay.push(`${totalDays} Day${totalDays > 1 ? 's' : ''}`);
-                    // Only show time if the event is soon (less than a day left)
                     if (totalDays < 1) primaryDisplay.push(`${hours}h ${minutes}m ${seconds}s`);
                 }
 
-                // Filter out parts that only contain "0 Month" or "0 Day" 
                 let finalDisplay = primaryDisplay.filter(part => !part.startsWith('0 '));
                 
-                // If it's less than a month, the totalDays calculation is the same as the days remaining, 
-                // so we only show the total days part if the primary display is concise.
                 const totalDaysString = finalDisplay.length > 1 ? `[${totalDays} days]` : `(${totalDays} days)`;
 
                 const timeString = finalDisplay.join(' ');
                 
-                // Update the DOM element
-                if (timeDisplayElement) {
-                    timeDisplayElement.textContent = `${timeString} ${totalDaysString}`;
-                }
-                
-                // Request next frame for smooth second updates
+                return `${timeString} ${totalDaysString}`;
+            }
+
+            /**
+             * Updates the text content of all active countdown timers (per animation frame).
+             */
+            function updateCountdownTimeDisplay() {
+                if (!state.allCountdowns.length) return;
+
+                // Loop through all active elements and update their text
+                state.allCountdowns.forEach((countdown, index) => {
+                    const timeString = formatTimeRemaining(countdown);
+                    const element = state.activeCountdownElements[index];
+
+                    if (timeString === null) {
+                        // If expired, trigger dismissal
+                        const dismissedId = countdown.id || countdown.name;
+                        window.dismissCountdown(new Event('synthetic'), dismissedId, true);
+                    } else if (element) {
+                        element.textContent = timeString;
+                    }
+                });
+
                 state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
             }
 
-            // Creates the main bar structure and sets up initial content
-            function renderCountdownWidget(countdown) {
+            /**
+             * Creates a single countdown card element (50% width).
+             */
+            function createCountdownItem(countdown) {
                 const placeholderLetter = countdown.name.substring(0, 1);
+                const dismissId = countdown.id || countdown.name.replace(' (test)', ''); // Use clean name for static items
                 
-                countdownWidgetsContainer.innerHTML = `
+                const item = document.createElement('div');
+                // w-1/2 ensures only 2 are visible at any time
+                item.className = 'w-1/2 flex-shrink-0 px-3'; 
+                
+                // Inner card structure
+                item.innerHTML = `
                     <a href="${countdown.linkUrl}" target="_blank" class="flex items-center w-full h-14 bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transform transition-all duration-200">
                         <!-- Image -->
                         <img
@@ -394,105 +641,156 @@
                         
                         <!-- Text Content -->
                         <div class="flex-grow min-w-0 pr-4">
-                            <div class="text-sm font-semibold text-white truncate">${countdown.name}</div>
-                            <div id="countdown-time-display" class="text-xs font-mono text-amber-400">Loading...</div>
+                            <div class="text-sm font-semibold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
+                            <div class="countdown-time-display text-xs font-mono text-amber-400">Loading...</div>
                         </div>
                         
                         <!-- Close Button (X) -->
-                        <button onclick="window.dismissCountdown(event, '${countdown.name}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
+                        <button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </a>
                 `;
+
+                return item;
             }
 
-            // Function to handle rotation
-            function rotateCountdown() {
-                if (!state.allCountdowns.length) {
-                    startCountdownRotation(null); // Stop everything
-                    return;
-                }
+            /**
+             * Renders all countdowns into the scroll container, including a clone for looping.
+             */
+            function renderAllCountdowns(countdowns) {
+                countdownScrollContainer.innerHTML = '';
+                state.activeCountdownElements = [];
 
-                // Increment index and loop around
-                state.currentCountdownIndex = (state.currentCountdownIndex + 1) % state.allCountdowns.length;
+                if (countdowns.length === 0) return;
                 
-                // Stop previous animation frame loop if running
-                if (state.animationFrameId) {
-                    cancelAnimationFrame(state.animationFrameId);
+                // Determine total number of elements to render (original + 1 clone)
+                const totalElements = Math.max(countdowns.length, 1);
+                const totalScrollContainerWidth = totalElements * 50;
+                
+                // 1. Render Original Items
+                countdowns.forEach(countdown => {
+                    const item = createCountdownItem(countdown);
+                    countdownScrollContainer.appendChild(item);
+                    state.activeCountdownElements.push(item.querySelector('.countdown-time-display')); 
+                });
+                
+                // 2. Add Clone(s) for seamless looping (we only need the first item cloned since we show 2 at a time)
+                if (countdowns.length > 1) {
+                    const clone = createCountdownItem(countdowns[0]);
+                    countdownScrollContainer.appendChild(clone);
+                    // Add the clone's time display element to the list to keep it updated
+                    state.activeCountdownElements.push(clone.querySelector('.countdown-time-display'));
                 }
                 
-                // Render the new widget structure
-                renderCountdownWidget(state.allCountdowns[state.currentCountdownIndex]);
-                
-                // Start the time update loop for the new widget
-                state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
+                // 3. Set Container Width (Total items * 50% width)
+                countdownScrollContainer.style.width = `${(countdowns.length + (countdowns.length > 1 ? 1 : 0)) * 50}%`;
+                countdownScrollContainer.style.transform = `translateX(0%)`; // Reset to start
+                state.currentScrollIndex = 0;
             }
 
-            // Function to start the rotation interval
-            function startCountdownRotation(countdowns) {
-                // Stop previous timers
+            /**
+             * Handles the CSS transform for scrolling and manages the seamless loop reset.
+             */
+            function animateScroll() {
+                const numCountdowns = state.allCountdowns.length;
+                if (numCountdowns <= 1) return;
+
+                // Move to the next position
+                state.currentScrollIndex += 1;
+                
+                // Calculate shift based on 50% card width
+                const shiftAmount = state.currentScrollIndex * 50; 
+                
+                // Apply the slow transition transform
+                countdownScrollContainer.style.transitionDuration = '1000ms';
+                countdownScrollContainer.style.transform = `translateX(-${shiftAmount}%)`;
+
+                // If we hit the clone, reset instantly back to the first item (Index 0)
+                if (state.currentScrollIndex >= numCountdowns) {
+                    // Use a short delay (longer than the transition) to perform the instant snap
+                    setTimeout(() => {
+                        countdownScrollContainer.style.transitionDuration = '0ms'; // Disable transition
+                        countdownScrollContainer.style.transform = `translateX(0%)`; // Snap back to 0
+                        state.currentScrollIndex = 0;
+                    }, 1050); // Slightly longer than the 1s transition
+                }
+            }
+            
+            /**
+             * Sets up the countdown update and scrolling intervals.
+             */
+            function startCountdownScroll(countdowns) {
                 if (state.countdownInterval) clearInterval(state.countdownInterval);
                 if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
 
-                // Filter out any expired events (though updateCountdownTimeDisplay should handle this)
                 const activeCountdowns = (countdowns || []).filter(c => new Date(c.targetDate).getTime() > new Date().getTime());
 
+                // Clear container and state if no active countdowns
                 if (activeCountdowns.length === 0) {
                     countdownWidgetsContainer.innerHTML = '';
                     return;
                 }
                 
                 state.allCountdowns = activeCountdowns;
-                state.currentCountdownIndex = 0; // Start with the first one
 
-                // Initial render
-                renderCountdownWidget(state.allCountdowns[state.currentCountdownIndex]);
+                // 1. Render all cards
+                renderAllCountdowns(state.allCountdowns);
                 
-                // Start the time update loop
+                // Remove the loading indicator now that the container has content
+                if(loadingIndicator) loadingIndicator.style.display = 'none';
+
+                // 2. Start the second-by-second time update loop
                 state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
 
-                // Start rotation interval (8 seconds) only if there is more than one countdown
-                if (state.allCountdowns.length > 1) {
-                    state.countdownInterval = setInterval(rotateCountdown, 8000);
+                // 3. Start scroll rotation (8 seconds between transitions)
+                if (state.allCountdowns.length > 2) { // Need at least 3 items to justify scrolling when showing 2
+                    state.scrollInterval = setInterval(animateScroll, 8000);
+                } else if (state.allCountdowns.length > 0) {
+                     countdownScrollContainer.style.width = `100%`; // Ensures two visible items fill the width correctly if only 2 are present
                 }
             }
 
+
             // Function to dismiss a countdown (for the 'X' button)
-            // MUST be attached to the window object so the inline onclick HTML attribute can find it
-            window.dismissCountdown = function(event, name) {
+            window.dismissCountdown = function(event, dismissId, expired = false) {
                 event.preventDefault();
                 event.stopPropagation();
 
-                // Find and remove the item from the data array
+                // 1. Remove from local state
                 const initialLength = state.allCountdowns.length;
-                state.allCountdowns = state.allCountdowns.filter(c => c.name !== name);
+                
+                state.allCountdowns = state.allCountdowns.filter(c => (c.id || c.name.replace(' (test)', '')) !== dismissId);
 
                 if (state.allCountdowns.length < initialLength) {
-                    // If an item was successfully removed
-                    if (state.allCountdowns.length === 0) {
-                        // Stop everything
-                        clearInterval(state.countdownInterval);
-                        cancelAnimationFrame(state.animationFrameId);
-                        countdownWidgetsContainer.innerHTML = '';
-                    } else {
-                        // Force rotation to the next item
-                        rotateCountdown();
+                    // 2. Remove from Local Storage if it was a custom countdown (using the 'id' field)
+                    if (dismissId.startsWith('user_')) {
+                        let customCountdowns = getCustomCountdowns();
+                        customCountdowns = customCountdowns.filter(c => c.id !== dismissId);
+                        saveCustomCountdowns(customCountdowns);
+                    } else if (expired) {
+                        // If expired, store name in static dismissals
+                        const staticDismissals = JSON.parse(localStorage.getItem('static_dismissals') || '[]');
+                        if (!staticDismissals.includes(dismissId)) {
+                             staticDismissals.push(dismissId);
+                             localStorage.setItem('static_dismissals', JSON.stringify(staticDismissals));
+                        }
                     }
+
+                    // 3. Re-render and restart scroll
+                    startCountdownScroll(state.allCountdowns);
                 }
             }
 
-            // --- Core Rendering Logic for Links ---
+            // --- Core Rendering Logic for Links (Unchanged) ---
 
-            // Function to create an individual link tile
             function createLinkElement(link) {
                 const linkTile = document.createElement('a');
                 linkTile.href = link.url;
                 linkTile.target = '_blank';
                 
-                // Set up placeholder image if URL fails (or if it's a local file like /images/...)
                 const placeholderLetter = link.name.substring(0, 1).toUpperCase();
                 
-                // Image is now roughly 96x96 and uses rounded-xl
                 const imgHtml = `
                     <div class="w-full h-full aspect-square flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner">
                         <img
@@ -505,7 +803,6 @@
                     </div>
                 `;
 
-                // New classes for the vertical icon/label structure
                 linkTile.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.05] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out h-full justify-start';
                 linkTile.innerHTML = imgHtml + `<span class="mt-2 text-sm font-medium truncate w-full">${link.name}</span>`;
                 
@@ -514,14 +811,12 @@
 
             /**
              * Renders the dashboard content based on the fetched data.
-             * @param {Object} data - The parsed JSON object containing linkGroups and countdowns.
-             * @param {boolean} isFallback - True if embedded data is being used.
              */
             function renderDashboard(data, isFallback) {
-                // Remove loading indicator once data is ready
-                loadingIndicator.remove(); 
+                STATIC_LINK_GROUPS = data.linkGroups || [];
+                STATIC_COUNTDOWNS = data.countdowns || [];
+                
                 linkGroupsContainer.innerHTML = ''; 
-                countdownWidgetsContainer.innerHTML = '';
 
                 // 1. Handle Debug Log
                 if (isFallback) {
@@ -531,31 +826,33 @@
                     debugLog.appendChild(fallbackNote);
                 }
 
+                // --- MERGE COUNTDOWN DATA ---
+                
+                let allCountdownsList = data.countdowns || [];
+                const customCountdowns = getCustomCountdowns();
+                
+                const staticDismissals = JSON.parse(localStorage.getItem('static_dismissals') || '[]');
+                allCountdownsList = allCountdownsList.filter(c => !staticDismissals.includes(c.name.replace(' (test)', '')));
+
+                const mergedCountdowns = [...allCountdownsList, ...customCountdowns];
+
                 // 2. Render Countdowns (New Logic)
-                if (data.countdowns && data.countdowns.length > 0) {
-                    // Initialize the rotation mechanism
-                    startCountdownRotation(data.countdowns);
-                }
+                startCountdownScroll(mergedCountdowns);
+
 
                 // 3. Render Link Groups (Existing Logic)
                 if (data.linkGroups && data.linkGroups.length > 0) {
                     data.linkGroups.forEach(group => {
-                        // Create the card container for the group
                         const groupCard = document.createElement('div');
-                        // Use max-w-sm and w-full to allow for the groups to wrap freely
                         groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl w-full max-w-sm';
 
-                        // Create the header
                         const header = document.createElement('div');
-                        // Use the provided color/textColor classes for the header badge
                         const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
                         header.innerHTML = `<h2 class="${headerClasses}">${group.name}</h2>`;
 
-                        // Create the links grid (3 columns inside the card)
                         const linksGrid = document.createElement('div');
                         linksGrid.className = 'grid grid-cols-3 gap-3';
 
-                        // Add links to the grid
                         if (group.links && group.links.length > 0) {
                             group.links.forEach(link => {
                                 const linkElement = createLinkElement(link);
@@ -568,7 +865,6 @@
                             linksGrid.appendChild(emptyMessage);
                         }
 
-                        // Append everything to the card and the card to the container
                         groupCard.appendChild(header);
                         groupCard.appendChild(linksGrid);
                         linkGroupsContainer.appendChild(groupCard);
@@ -588,7 +884,6 @@
                 let isFallback = true;
                 
                 try {
-                    // Try to fetch the external data file
                     const response = await fetch('./data.json');
                     
                     if (response.ok) {
@@ -603,16 +898,14 @@
                     console.warn('Falling back to embedded test data.');
                 }
 
-                // Render the dashboard using the determined data source
                 renderDashboard(dashboardData, isFallback);
             }
 
             // Run the initialization function when the window loads
             window.onload = () => {
+                populateTimezoneDropdown();
                 initDashboard();
-                updateClock();
-                // Update clock every minute (60,000 milliseconds)
-                setInterval(updateClock, 60000); 
+                startClockUpdate(); 
             }
         })(); // End of IIFE
     </script>
