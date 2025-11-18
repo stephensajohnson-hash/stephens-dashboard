@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stephens' Dashboard V0.2</title>
-    <!-- Load Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Apply smooth transitions to all interactive elements */
         * {
@@ -54,39 +53,30 @@
         }
     </script>
 </head>
-<!-- Main container is set to dark mode -->
-<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
+<!-- Main container is set to dark mode --><body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-    <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) -->
-    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-start">
-        <!-- Hamburger Menu Button - Now first and on the far left -->
-        <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
+    <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) --><nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-start">
+        <!-- Hamburger Menu Button - Now first and on the far left --><button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
             <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
         </button>
-        <!-- Date and Time Display - Immediately follows the menu button -->
-        <div id="datetime" class="text-sm sm:text-base font-medium">
-            <!-- Date and time injected here by JS, with colored time span -->
-        </div>
+        <!-- Date and Time Display - Immediately follows the menu button --><div id="datetime" class="text-sm sm:text-base font-medium">
+            <!-- Date and time injected here by JS, with colored time span --></div>
     </nav>
 
-    <!-- Menu Dropdown (now a simple floating menu that transitions down) -->
-    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs">
+    <!-- Menu Dropdown (now a simple floating menu that transitions down) --><div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs">
         <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
-            <!-- Close button (optional in this format, but useful for touch) -->
-            <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
+            <!-- Close button (optional in this format, but useful for touch) --><div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
                 <h3 class="text-xl font-semibold text-white">Menu</h3>
                 <button id="close-menu-button" class="text-gray-400 hover:text-white p-1">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
             
-            <!-- NEW: Add Countdown Button -->
-            <button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">
+            <!-- NEW: Add Countdown Button --><button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">
                 Add Countdown
             </button>
             
-            <!-- NEW: Download Data Button -->
-            <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
+            <!-- NEW: Download Data Button --><button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
                 Download Data File
             </button>
 
@@ -95,8 +85,7 @@
         </div>
     </div>
     
-    <!-- NEW: Add Countdown Modal Form (Hidden by default) -->
-    <div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+    <!-- NEW: Add Countdown Modal Form (Hidden by default) --><div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
             <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add New Countdown</h2>
             <form id="countdown-form" class="space-y-4">
@@ -111,8 +100,7 @@
                 <label class="block">
                     <span class="text-gray-400 text-sm">Timezone:</span>
                     <select id="countdown-timezone" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
-                        <!-- Options populated by JS -->
-                    </select>
+                        <!-- Options populated by JS --></select>
                 </label>
                 <label class="block">
                     <span class="text-gray-400 text-sm">Link URL (Optional):</span>
@@ -134,37 +122,21 @@
             </form>
         </div>
     </div>
-    <!-- END: Add Countdown Modal Form -->
-
-
-    <!-- Main Content Container (pt-16 for the smaller toolbar height) -->
-    <!-- UPDATED: Removed max-w-7xl mx-auto for full width, kept responsive padding -->
-    <main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
+    <!-- END: Add Countdown Modal Form --><!-- Main Content Container (pt-16 for the smaller toolbar height) --><!-- UPDATED: Removed max-w-7xl mx-auto for full width, kept responsive padding --><main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
         
-        <!-- COUNTDOWN WIDGETS CONTAINER (Overflow hidden, height fixed) -->
-        <div id="countdown-widgets" class="mb-8 w-full overflow-hidden h-14 relative">
+        <!-- COUNTDOWN WIDGETS CONTAINER (Overflow hidden, height fixed) --><div id="countdown-widgets" class="mb-8 w-full overflow-hidden h-14 relative">
             <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
             
-            <!-- SCROLL CONTAINER (This element moves horizontally) -->
-            <div id="countdown-scroll-container" class="flex flex-nowrap h-full transition-transform duration-1000 ease-in-out absolute inset-0">
-                <!-- Countdown items will be rendered here. Each item is w-full. -->
-            </div>
+            <!-- SCROLL CONTAINER (This element moves horizontally) --><div id="countdown-scroll-container" class="flex flex-nowrap h-full transition-transform duration-1000 ease-in-out absolute inset-0">
+                <!-- Countdown items will be rendered here. Each item is w-full. --></div>
         </div>
-        <!-- END COUNTDOWN WIDGETS -->
-
-        <!-- UPDATED: Tighter gap (gap-4) and added flex-1 to group cards in JS for fluid width -->
-        <div id="link-groups-container" class="flex flex-wrap justify-center gap-4"> 
-            <!-- Link groups will be rendered here -->
-        </div>
+        <!-- END COUNTDOWN WIDGETS --><!-- UPDATED: Tighter gap (gap-4) and added flex-1 to group cards in JS for fluid width --><div id="link-groups-container" class="flex flex-wrap justify-center gap-4"> 
+            <!-- Link groups will be rendered here --></div>
     </main>
     
-    <!-- Debug/Notice Footer -->
-    <footer id="debug-log" class="w-full px-4 sm:px-8 mt-10 p-4"> <!-- UPDATED: Full width and aligned padding -->
-        <!-- Fallback notice or debug messages will be injected here -->
-    </footer>
+    <!-- Debug/Notice Footer --><footer id="debug-log" class="w-full px-4 sm:px-8 mt-10 p-4"> <!-- UPDATED: Full width and aligned padding --><!-- Fallback notice or debug messages will be injected here --></footer>
 
-    <!-- JavaScript for Data Handling and Rendering -->
-    <script>
+    <!-- JavaScript for Data Handling and Rendering --><script>
         // Use an IIFE (Immediately Invoked Function Expression) to create a private scope 
         // and prevent global variable conflicts in environments that rerun scripts.
         (function() {
@@ -215,7 +187,7 @@
                         "links": [
                             {"name": "Halo", "url": "https://pbfcm.haloitsm.com", "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"},
                             {"name": "2025 Bullet Journal", "url": "https://docs.google.com/document/d/1Y2TbxiLuN7K55mL2o_XWDWiTD_bQ8HJLfXjXwEc5m44/edit?tab=t.0#heading=h.clgrn99mtopn", "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"},
-                            {"name": "Dayforce", "url": "https://us251.dayforcehcm.com/MyDayforce/u/Iw_6iFiF-0SPEmVMNfEh7A/Common/#SHViPyZpc0ZpcnN0RmVhdHVyZT10cnVl", "img": "https://play-lh.googleusercontent.com/GzXqzEjylw9Y2FQPvsw34DcYirDrItkNGYInKrkLg-mFP-cgLYmwF223kA67KlD2miU=s256-rw"},
+                            {"name": "Dayforce", "url": "https://us251.dayforcehcm.com/MyDayforce/u/Iw_6iFiF-0SPEmVMNfEh7A/Common/#SHViPyZpc0ZpcnN0RmVhdHVyZT10cnVl", "img": "https://play-lh.googleusercontent.com/GzXqzEjylw9Y2FQPvsw34DcYirDrItjNGYInKrkLg-mFP-cgLYmwF223kA67KlD2miU=s256-rw"},
                             {"name": "3CX", "url": "https://pbfcm.businessphone.com/#/chat/9059", "img": "https://cdn-1.carierista.com/companies/150/2d05df55a3399d793cfbd01657052b4d.png"},
                             {"name": "Udemy", "url": "https://pbfcm.udemy.com/organization/home/", "img": "https://images.seeklogo.com/logo-png/40/1/udemy-wordmark-logo-png_seeklogo-409220.png"}
                         ]
@@ -635,22 +607,19 @@
                 // Inner card structure
                 item.innerHTML = `
                     <a href="${countdown.linkUrl}" target="_blank" class="flex items-center w-full h-14 bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transform transition-all duration-200">
-                        <!-- Image -->
-                        <img
+                        <!-- Image --><img
                             src="${countdown.img}"
                             alt="${countdown.name} icon"
                             class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md"
                             onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/FFFFFF?text=${placeholderLetter}';"
                         />
                         
-                        <!-- Text Content -->
-                        <div class="flex-grow min-w-0 pr-4">
+                        <!-- Text Content --><div class="flex-grow min-w-0 pr-4">
                             <div class="text-sm font-semibold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
                             <div class="countdown-time-display text-xs font-mono text-amber-400">Loading...</div>
                         </div>
                         
-                        <!-- Close Button (X) -->
-                        <button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
+                        <!-- Close Button (X) --><button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </a>
@@ -800,7 +769,7 @@
                 const placeholderLetter = link.name.substring(0, 1).toUpperCase();
                 
                 const imgHtml = `
-                    <div class="w-full h-full aspect-square flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner">
+                    <div class="w-24 h-24 flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner"> 
                         <img
                             src="${link.img}"
                             alt="${link.name} icon"
@@ -811,7 +780,8 @@
                     </div>
                 `;
 
-                linkTile.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.05] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out h-full justify-start';
+                // ADDED: min-w-[120px] to ensure tiles don't get too small and maintain aspect ratio
+                linkTile.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.05] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out h-full justify-start min-w-[120px]'; 
                 linkTile.innerHTML = imgHtml + `<span class="mt-2 text-sm font-medium truncate w-full">${link.name}</span>`;
                 
                 return linkTile;
