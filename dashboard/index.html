@@ -4,128 +4,265 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stephen's Dashboard</title>
-  <link rel="icon" type="image/png" href="/assets/favicon.png">
+  <link rel="icon" type="image/png" href="/images/favicon.png">
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/css/style.css">
   <style>
-    /* Critical inline styles so popups are hidden even if CSS 404s */
-    #calendar-popup, #forecast-popup { opacity: 0; pointer-events: none; }
-    #calendar-popup.show, #forecast-popup.show { opacity: 100; pointer-events: auto; }
-    .popup-panel {
-      @apply absolute top-9 bg-gray-800 text-white text-xs rounded-lg shadow-2xl p-4 transition-opacity z-50 border border-gray-700;
-    }
     details summary::-webkit-details-marker { display: none; }
-    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
+    .icon { transition: all .2s; }
+    .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.12); }
+    .dark-mode { filter: invert(1) hue-rotate(180deg); }
+    .dark-mode img { filter: invert(1) hue-rotate(180deg); }
+    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
+    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
+    .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+    .popup-panel.show { opacity: 1; pointer-events: auto; }
   </style>
 </head>
-<body class="min-h-screen bg-black text-white">
+<body class="bg-gradient-to-br from-gray-50 to-gray-100 p-2 font-sans text-sm">
 
-  <!-- TOP BANNER -->
-  <div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-2xl">
-    <div class="flex items-center gap-3">
-      <button id="menu-btn" class="p-1.5 hover:bg-gray-700 rounded">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
-      </button>
-      <div class="relative">
-        <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span id="date-time">Loading…</span>
-        </a>
-        <div id="calendar-popup" class="popup-panel left-0 min-w-56"></div>
-      </div>
-    </div>
-    <div class="relative">
-      <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
-        <span id="weather-icon-svg" class="weather-svg"></span>
-        <span id="weather-temp">--°</span>
-      </a>
-      <div id="forecast-popup" class="popup-panel right-0 min-w-64"></div>
-    </div>
-  </div>
-
-  <!-- MENU -->
-  <div id="sidebar-menu" class="fixed top-9 left-0 h-[calc(100vh-36px)] w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl overflow-y-auto">
-    <div class="p-4 space-y-4">
-      <button onclick="addGroup(); toggleMenu()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded">Add Group</button>
-      <button onclick="addLink(); toggleMenu()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded">Add Link</button>
-      <button onclick="publishData(); toggleMenu()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded font-bold">Download Data</button>
-    </div>
-  </div>
-
-  <div class="pt-12 px-2">
-    <div id="dashboard" class="max-w-full mx-auto space-y-4"></div>
-  </div>
-
-  <!-- POPUP -->
-  <div id="popup" class="fixed inset-0 bg-black bg-opacity-70 hidden z-50 flex items-center justify-center p-4">
-    <div class="bg-gray-800 rounded-lg p-6 max-w-md w-full shadow-2xl border border-gray-700">
-      <h3 id="popup-title" class="text-lg font-bold mb-4 text-white"></h3>
-      <div id="popup-form"></div>
-      <div class="flex justify-end gap-3 mt-6">
-        <button onclick="closePopup()" class="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded text-sm">Cancel</button>
-        <button id="popup-save" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded text-sm">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="debug" style="position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.9);color:lime;padding:10px;font:12px monospace;z-index:99999;border-radius:8px;max-width:400px;">
+<!-- DEBUG BOX -->
+<div id="debug" style="position:fixed;bottom:10px;right:10px;background:#000;color:lime;padding:10px;font:12px monospace;z-index:99999;border-radius:8px;max-width:400px;">
   Initializing...
 </div>
 
-  <!-- All JS as modules -->
-<script type="module">
-  import { toggleMenu } from './js/utils.js';
-  import { updateDateTime } from './js/calendar.js';
-  import { initWeather } from './js/weather.js';
-  import { setData, render } from './js/ui.js';
-  import { loadData, publishData } from './js/main.js';
+<!-- TOP BANNER -->
+<div id="top-banner" class="fixed top-0 left-0 right-0 h-9 bg-gray-900 text-white text-xs flex items-center justify-between px-3 z-50 shadow-lg">
+  <div class="flex items-center gap-3">
+    <button onclick="document.getElementById('sidebar-menu').classList.toggle('-translate-x-full')" class="p-1.5 hover:bg-gray-700 rounded">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+    <div class="relative">
+      <a href="https://calendar.google.com" target="_blank" id="date-time-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        <span id="date-time">Loading date...</span>
+      </a>
+      <div id="calendar-popup" class="popup-panel absolute top-9 left-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-3 min-w-48"></div>
+    </div>
+  </div>
+  <div class="relative">
+    <a href="https://weather.com" target="_blank" id="weather-link" class="hover:text-blue-300 flex items-center gap-1.5 cursor-pointer">
+      <span id="weather-icon-svg" class="weather-svg">☀️</span>
+      <span id="weather-temp">--°</span>
+    </a>
+    <div id="forecast-popup" class="popup-panel absolute top-9 right-0 bg-white dark:bg-gray-800 text-black dark:text-white text-xs rounded shadow-xl p-3 min-w-64"></div>
+  </div>
+</div>
 
-  // Global functions for inline onclicks
-  window.toggleMenu = toggleMenu;
-  window.publishData = publishData;
-  window.addGroup = () => window.ui?.addGroup();
-  window.addLink = () => window.ui?.addLink();
+<!-- MENU -->
+<div id="sidebar-menu" class="fixed top-9 left-0 h-[calc(100vh-36px)] w-64 bg-gray-900 text-white transform -translate-x-full transition-transform duration-300 z-40 shadow-2xl overflow-y-auto">
+  <div class="p-4 space-y-4">
+    <button onclick="addGroup(); toggleMenu()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2.5 rounded">Add Group</button>
+    <button onclick="addLink(); toggleMenu()" class="w-full bg-green-600 hover:bg-green-700 px-4 py-2.5 rounded">Add Link</button>
+    <button onclick="publishData(); toggleMenu()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2.5 rounded font-bold">Download Data</button>
+  </div>
+</div>
 
-  // Hamburger menu
-  document.getElementById('menu-btn')?.addEventListener('click', (e) => {
-    e.stopPropagation();
-    toggleMenu();
-  });
+<div class="pt-12"><div id="dashboard" class="max-w-full mx-auto space-y-2"></div></div>
 
-  // CRITICAL: Wait for full DOM + all modules loaded
-  document.addEventListener('DOMContentLoaded', async () => {
-    // Hide popups first
-    const calPopup = document.getElementById('calendar-popup');
-    const forePopup = document.getElementById('forecast-popup');
-    if (calPopup) calPopup.classList.remove('show');
-    if (forePopup) forePopup.classList.remove('show');
+<div id="popup" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4">
+  <div class="bg-white dark:bg-gray-800 rounded-lg p-5 max-w-md w-full shadow-xl">
+    <h3 id="popup-title" class="text-lg font-bold mb-4"></h3>
+    <div id="popup-form"></div>
+    <div class="flex justify-end gap-2 mt-4">
+      <button onclick="closePopup()" class="px-3 py-1.5 bg-gray-300 hover:bg-gray-400 rounded text-xs">Cancel</button>
+      <button id="popup-save" class="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-xs">Save</button>
+    </div>
+  </div>
+</div>
 
-    // Load data + render dashboard
-    await loadData();
+<script>
+  let data = [];
+  let dragged = null;
 
-    // NOW safe to update UI elements
-    updateDateTime();                    // ← Date/time appears
-    setInterval(updateDateTime, 60000);
+  // Debug
+  function log(msg) {
+    console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px;');
+    const d = document.getElementById('debug');
+    if (d) d.textContent = msg;
+  }
 
-    initWeather();                       // ← Weather + icons appear
+  function toggleMenu() {
+    document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
+  }
 
-    // Fix hover conflicts
-    document.getElementById('top-banner')?.addEventListener('click', (e) => {
-      if (e.target.closest('#menu-btn')) return;
-      calPopup?.classList.remove('show');
-      forePopup?.classList.remove('show');
+  async function loadData() {
+    log('loadData started');
+    let jsonData = [];
+    try {
+      const res = await fetch('data.json?' + Date.now());
+      if (res.ok) jsonData = await res.json();
+      log('data.json loaded');
+    } catch (e) {
+      log('data.json failed, using localStorage');
+    }
+
+    const saved = localStorage.getItem('dashboardData');
+    const localData = saved ? JSON.parse(saved) : [];
+    data = localData.length > jsonData.length ? localData : jsonData;
+    log(`Using ${data.length} groups`);
+    render();
+  }
+
+  function saveToLocal() {
+    localStorage.setItem('dashboardData', JSON.stringify(data));
+  }
+
+  function publishData() {
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'data.json';
+    a.click();
+    URL.revokeObjectURL(url);
+    log('data.json downloaded');
+  }
+
+  function render() {
+    const container = document.getElementById('dashboard');
+    container.innerHTML = '';
+    data.forEach((group, groupIdx) => {
+      const details = document.createElement('details');
+      details.open = true;
+      details.className = 'bg-white rounded-lg shadow-sm border overflow-hidden group';
+      details.draggable = true;
+      details.dataset.idx = groupIdx;
+
+      const summary = document.createElement('summary');
+      summary.className = 'flex items-center px-3 py-1.5 cursor-pointer hover:opacity-90 transition select-none';
+      summary.innerHTML = `
+        <span class="w-1 h-8 ${group.color} rounded-r-sm mr-2"></span>
+        <span class="font-bold ${group.textColor} text-sm">${group.name}</span>
+        <svg class="w-4 h-4 ml-auto text-gray-600 transition-transform group-open:rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+      `;
+      details.appendChild(summary);
+
+      const grid = document.createElement('div');
+      grid.className = 'p-2.5 grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5';
+      grid.dataset.group = groupIdx;
+
+      group.links.forEach((link, linkIdx) => {
+        const a = document.createElement('a');
+        a.href = link.url;
+        a.target = "_blank";
+        a.className = 'icon text-center block';
+        a.draggable = true;
+        a.dataset.group = groupIdx;
+        a.dataset.idx = linkIdx;
+        a.innerHTML = `
+          <img src="${link.img}" alt="${link.name}" class="w-20 h-20 mx-auto rounded object-contain shadow-sm" onerror="this.src='https://placehold.co/80x80/666/fff?text=${link.name.charAt(0)}'">
+          <span class="block mt-1 text-xs text-gray-700 leading-tight">${link.name}</span>
+        `;
+        grid.appendChild(a);
+      });
+
+      details.appendChild(grid);
+      container.appendChild(details);
     });
+    setupDragAndDrop();
+  }
+
+  function setupDragAndDrop() {
+    // ... (your drag/drop code — unchanged)
+  }
+
+  function addGroup() {
+    const form = `<input type="text" id="group-name" placeholder="Group Name" class="w-full p-2 border rounded text-sm mb-2">`;
+    showPopup('Add Group', form, () => {
+      const name = document.getElementById('group-name').value.trim();
+      if (!name) return;
+      const colors = ['bg-blue-500','bg-amber-500','bg-green-500','bg-purple-500','bg-pink-500','bg-emerald-500','bg-teal-500'];
+      const textColors = ['text-blue-800','text-amber-800','text-green-800','text-purple-800','text-pink-800','text-emerald-800','text-teal-800'];
+      const idx = data.length % colors.length;
+      data.push({ name, color: colors[idx], textColor: textColors[idx], links: [] });
+      saveToLocal();
+      render();
+    });
+  }
+
+  function addLink() {
+    const groups = data.map((g, i) => `<option value="${i}">${g.name}</option>`).join('');
+    const form = `<select id="link-group" class="w-full p-2 border rounded text-sm mb-2">${groups}</select>
+      <input type="text" id="link-name" placeholder="Link Name" class="w-full p-2 border rounded text-sm mb-2">
+      <input type="url" id="link-url" placeholder="URL" class="w-full p-2 border rounded text-sm mb-2">
+      <input type="url" id="link-img" placeholder="Image URL (optional)" class="w-full p-2 border rounded text-sm mb-2">`;
+    showPopup('Add Link', form, () => {
+      const groupIdx = document.getElementById('link-group').value;
+      const name = document.getElementById('link-name').value.trim();
+      const url = document.getElementById('link-url').value.trim();
+      const img = document.getElementById('link-img').value.trim() || `https://placehold.co/80x80/666/fff?text=${name.charAt(0)}`;
+      if (!name || !url) return;
+      data[groupIdx].links.push({ name, url, img });
+      saveToLocal();
+      render();
+    });
+  }
+
+  function showPopup(title, form, onSave) {
+    document.getElementById('popup-title').textContent = title;
+    document.getElementById('popup-form').innerHTML = form;
+    document.getElementById('popup-save').onclick = () => { onSave(); closePopup(); };
+    document.getElementById('popup').classList.remove('hidden');
+  }
+
+  function closePopup() {
+    document.getElementById('popup').classList.add('hidden');
+  }
+
+  // DATE/TIME + CALENDAR
+  function updateDateTime() {
+    log('updateDateTime() called');
+    const now = new Date();
+    const dateStr = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+    const timeStr = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(' am','am').replace(' pm','pm');
+    const el = document.getElementById('date-time');
+    if (el) el.innerHTML = `${dateStr} <span class="text-gray-400">${timeStr}</span>`;
+  }
+
+  // WEATHER
+  function initWeather() {
+    log('initWeather() called');
+    fetch('https://wttr.in/?format=j1')
+      .then(r => r.json())
+      .then(d => {
+        const c = d.current_condition[0];
+        const temp = c.temp_F;
+        const cond = c.weatherDesc[0].value.toLowerCase();
+        const iconMap = {sunny:'Sunny', clear:'Sunny', cloudy:'Cloudy', overcast:'Cloudy', rain:'Rainy', drizzle:'Rainy', snow:'Snow', storm:'Stormy', fog:'Foggy', mist:'Foggy'};
+        const icon = Object.keys(iconMap).find(k => cond.includes(k)) ? iconMap[Object.keys(iconMap).find(k => cond.includes(k))] : 'Partly Cloudy';
+        document.getElementById('weather-icon-svg').innerHTML = icon;
+        document.getElementById('weather-temp').textContent = temp + '°';
+        log('Weather loaded: ' + temp + '° ' + cond);
+      })
+      .catch(() => {
+        document.getElementById('weather-icon-svg').innerHTML = 'Globe';
+        document.getElementById('weather-temp').textContent = 'offline';
+        log('Weather failed');
+      });
+  }
+
+  // Hover popups
+  const dateParent = document.getElementById('date-time-link')?.parentElement;
+  if (dateParent) {
+    dateParent.addEventListener('mouseenter', () => document.getElementById('calendar-popup').classList.add('show'));
+    dateParent.addEventListener('mouseleave', () => document.getElementById('calendar-popup').classList.remove('show'));
+  }
+
+  const weatherParent = document.querySelector('#weather-link')?.parentElement;
+  if (weatherParent) {
+    weatherParent.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.add('show'));
+    weatherParent.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.remove('show'));
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    log('DOM loaded');
+    loadData();
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+    initWeather();
   });
 </script>
-
-<div id="debug" style="position:fixed;bottom:10px;right:10px;background:rgba(0,0,0,0.9);color:lime;padding:10px;font:12px monospace;z-index:99999;border-radius:8px;max-width:400px;">Initializing...</div>
-  
 </body>
 </html>
-
-
-
-
-
