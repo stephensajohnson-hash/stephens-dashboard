@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stephens' Dashboard V0.2</title>
+    <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Apply smooth transitions to all interactive elements */
@@ -75,8 +76,14 @@
             <!-- NEW: Add Countdown Button --><button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">
                 Add Countdown
             </button>
+            <!-- NEW: Add Link Group Button --><button id="add-group-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">
+                Add Link Group
+            </button>
+            <!-- NEW: Add Link Button --><button id="add-link-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
+                Add Link
+            </button>
             
-            <!-- NEW: Download Data Button --><button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
+            <!-- Download Data Button --><button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
                 Download Data File
             </button>
 
@@ -85,7 +92,7 @@
         </div>
     </div>
     
-    <!-- NEW: Add Countdown Modal Form (Hidden by default) --><div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+    <!-- MODAL 1: Add Countdown Modal Form (Hidden by default) --><div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
             <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add New Countdown</h2>
             <form id="countdown-form" class="space-y-4">
@@ -122,7 +129,73 @@
             </form>
         </div>
     </div>
-    <!-- END: Add Countdown Modal Form --><!-- Main Content Container (pt-16 for the smaller toolbar height) --><!-- UPDATED: Removed max-w-7xl mx-auto for full width, kept responsive padding --><main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
+    <!-- END: Add Countdown Modal Form -->
+
+    <!-- MODAL 2: Add Link Group Modal Form (Hidden by default) --><div id="add-group-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
+            <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add New Link Group</h2>
+            <form id="group-form" class="space-y-4">
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Group Name:</span>
+                    <input type="text" id="group-name" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <!-- UPDATED: Single dropdown for color theme -->
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Color Theme:</span>
+                    <select id="group-theme" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                        <!-- Options populated by JS -->
+                    </select>
+                </label>
+                
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-group-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:ring-green-500/50">
+                        Create Group
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END: Add Link Group Modal Form -->
+
+    <!-- MODAL 3: Add Link Modal Form (Hidden by default) --><div id="add-link-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
+            <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add New Link</h2>
+            <form id="link-form" class="space-y-4">
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Link Name:</span>
+                    <input type="text" id="link-name" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">URL:</span>
+                    <input type="url" id="link-url" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Image URL (Optional, uses 96x96 placeholder if empty):</span>
+                    <input type="url" id="link-img" class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Target Group:</span>
+                    <select id="link-group-select" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                        <!-- Options populated by JS --></select>
+                </label>
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-link-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:ring-blue-500/50">
+                        Add Link
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END: Add Link Modal Form -->
+
+
+    <!-- Main Content Container (pt-16 for the smaller toolbar height) --><!-- UPDATED: Removed max-w-7xl mx-auto for full width, kept responsive padding --><main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
         
         <!-- COUNTDOWN WIDGETS CONTAINER (Overflow hidden, height fixed) --><div id="countdown-widgets" class="mb-8 w-full overflow-hidden h-14 relative">
             <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
@@ -150,11 +223,25 @@
             const closeMenuButton = document.getElementById('close-menu-button');
             const downloadDataButton = document.getElementById('download-data-button');
             
-            // New elements for the Add Countdown feature
+            // Elements for custom data modals
             const addCountdownButton = document.getElementById('add-countdown-button');
+            const addGroupButton = document.getElementById('add-group-button');
+            const addLinkButton = document.getElementById('add-link-button');
+
             const addCountdownModal = document.getElementById('add-countdown-modal');
+            const addGroupModal = document.getElementById('add-group-modal');
+            const addLinkModal = document.getElementById('add-link-modal');
+
             const countdownForm = document.getElementById('countdown-form');
+            const groupForm = document.getElementById('group-form');
+            const linkForm = document.getElementById('link-form');
+
             const cancelCountdownButton = document.getElementById('cancel-countdown-button');
+            const cancelGroupButton = document.getElementById('cancel-group-button');
+            const cancelLinkButton = document.getElementById('cancel-link-button');
+
+            const linkGroupSelect = document.getElementById('link-group-select');
+            const groupThemeSelect = document.getElementById('group-theme');
             
             // Variable to hold the original static data for the download function
             let STATIC_LINK_GROUPS = [];
@@ -175,6 +262,28 @@
                 { name: "Paris (CET/CEST)", value: "Europe/Paris" },
                 { name: "Shanghai (CST)", value: "Asia/Shanghai" },
                 { name: "Tokyo (JST)", value: "Asia/Tokyo" }
+            ];
+
+            // --- COLOR PALETTE DEFINITION (18 Options) ---
+            const COLOR_PALETTE = [
+                { name: "Cool Gray", bg: "bg-gray-600/20", text: "text-gray-400" },
+                { name: "Royal Red", bg: "bg-red-600/20", text: "text-red-400" },
+                { name: "Dark Orange", bg: "bg-orange-600/20", text: "text-orange-400" },
+                { name: "Bright Amber", bg: "bg-amber-600/20", text: "text-amber-400" },
+                { name: "Golden Yellow", bg: "bg-yellow-600/20", text: "text-yellow-400" },
+                { name: "Lime Green", bg: "bg-lime-600/20", text: "text-lime-400" },
+                { name: "Forest Green", bg: "bg-green-600/20", text: "text-green-400" },
+                { name: "Deep Emerald", bg: "bg-emerald-600/20", text: "text-emerald-400" },
+                { name: "Ocean Teal", bg: "bg-teal-600/20", text: "text-teal-400" },
+                { name: "Bright Cyan", bg: "bg-cyan-600/20", text: "text-cyan-400" },
+                { name: "Sky Blue", bg: "bg-sky-600/20", text: "text-sky-400" },
+                { name: "Royal Blue (Default)", bg: "bg-blue-600/20", text: "text-blue-400" },
+                { name: "Misty Indigo", bg: "bg-indigo-600/20", text: "text-indigo-400" },
+                { name: "Deep Violet", bg: "bg-violet-600/20", text: "text-violet-400" },
+                { name: "Classic Purple", bg: "bg-purple-600/20", text: "text-purple-400" },
+                { name: "Neon Fuchsia", bg: "bg-fuchsia-600/20", text: "text-fuchsia-400" },
+                { name: "Hot Pink", bg: "bg-pink-600/20", text: "text-pink-400" },
+                { name: "Rose Blush", bg: "bg-rose-600/20", text: "text-rose-400" }
             ];
 
             // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
@@ -319,7 +428,12 @@
                 currentScrollIndex: 0, // Tracks current position for scrolling
                 countdownInterval: null,
                 animationFrameId: null,
-                localStorageKey: 'stephens_dashboard_custom_countdowns'
+                localStorageKeys: {
+                    countdowns: 'sd_custom_countdowns',
+                    groups: 'sd_custom_groups',
+                    links: 'sd_custom_links',
+                    dismissals: 'sd_static_dismissals'
+                }
             };
             
             // --- TIMEZONE DROPDOWN POPULATION ---
@@ -339,46 +453,77 @@
                 });
             }
 
-            // --- LOCAL STORAGE FUNCTIONS ---
+            // --- COLOR DROPDOWN POPULATION ---
+            
+            function populateGroupColorDropdown() {
+                groupThemeSelect.innerHTML = ''; 
+                
+                COLOR_PALETTE.forEach(theme => {
+                    const option = document.createElement('option');
+                    // Store the BG and Text classes as a JSON string in the value
+                    option.value = JSON.stringify({ bg: theme.bg, text: theme.text });
+                    option.textContent = theme.name;
+                    if (theme.name.includes('(Default)')) {
+                        option.selected = true;
+                    }
+                    groupThemeSelect.appendChild(option);
+                });
+            }
 
-            function getCustomCountdowns() {
+
+            // --- LOCAL STORAGE FUNCTIONS (Generalized) ---
+
+            function getCustomData(key) {
                 try {
-                    const saved = localStorage.getItem(state.localStorageKey);
+                    const saved = localStorage.getItem(key);
                     return saved ? JSON.parse(saved) : [];
                 } catch (e) {
-                    console.error("Error reading from localStorage:", e);
+                    console.error(`Error reading ${key} from localStorage:`, e);
                     return [];
                 }
             }
 
-            function saveCustomCountdowns(countdowns) {
+            function saveCustomData(key, data) {
                 try {
-                    localStorage.setItem(state.localStorageKey, JSON.stringify(countdowns));
+                    localStorage.setItem(key, JSON.stringify(data));
                 } catch (e) {
-                    console.error("Error writing to localStorage:", e);
+                    console.error(`Error writing ${key} to localStorage:`, e);
                 }
             }
             
+            // Accessors for specific data types
+            const getCustomCountdowns = () => getCustomData(state.localStorageKeys.countdowns);
+            const saveCustomCountdowns = (data) => saveCustomData(state.localStorageKeys.countdowns, data);
+            
+            const getCustomGroups = () => getCustomData(state.localStorageKeys.groups);
+            const saveCustomGroups = (data) => saveCustomData(state.localStorageKeys.groups, data);
+            
+            const getCustomLinks = () => getCustomData(state.localStorageKeys.links);
+            const saveCustomLinks = (data) => saveCustomData(state.localStorageKeys.links, data);
+
+
             // --- MODAL AND FORM LOGIC ---
 
-            function showAddCountdownModal() {
-                addCountdownModal.classList.remove('hidden');
+            // General Modal Logic
+            function showModal(modalElement) {
+                modalElement.classList.remove('hidden');
                 menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
+            }
+
+            function hideModal(modalElement) {
+                modalElement.classList.add('hidden');
+            }
+
+            // Countdown Modal
+            addCountdownButton.addEventListener('click', () => {
+                showModal(addCountdownModal);
                 countdownForm.reset(); 
-                populateTimezoneDropdown(); 
-            }
-
-            function hideAddCountdownModal() {
-                addCountdownModal.classList.add('hidden');
-            }
-
-            // Event listeners for the modal
-            addCountdownButton.addEventListener('click', showAddCountdownModal);
-            cancelCountdownButton.addEventListener('click', hideAddCountdownModal);
+                populateTimezoneDropdown();
+            });
+            cancelCountdownButton.addEventListener('click', () => hideModal(addCountdownModal));
             
             countdownForm.addEventListener('submit', function(e) {
                 e.preventDefault();
-                
                 const newCountdown = {
                     name: document.getElementById('countdown-name').value.trim(),
                     targetDate: document.getElementById('countdown-targetDate').value.trim() + 'T00:00:00',
@@ -387,15 +532,88 @@
                     id: 'user_' + Date.now(), 
                     timezone: document.getElementById('countdown-timezone').value, 
                 };
-
                 const customCountdowns = getCustomCountdowns();
                 customCountdowns.push(newCountdown);
                 saveCustomCountdowns(customCountdowns);
-
-                hideAddCountdownModal();
+                hideModal(addCountdownModal);
                 initDashboard(); 
             });
 
+            // Link Group Modal
+            addGroupButton.addEventListener('click', () => {
+                showModal(addGroupModal);
+                groupForm.reset();
+                populateGroupColorDropdown(); // Populate dropdown when opening
+            });
+            cancelGroupButton.addEventListener('click', () => hideModal(addGroupModal));
+
+            groupForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const selectedTheme = JSON.parse(groupThemeSelect.value); // Parse the JSON string value
+                
+                const newGroup = {
+                    name: document.getElementById('group-name').value.trim(),
+                    color: selectedTheme.bg,        // Get BG color class
+                    textColor: selectedTheme.text,  // Get Text color class
+                    id: 'group_' + Date.now(),
+                    links: []
+                };
+                const customGroups = getCustomGroups();
+                customGroups.push(newGroup);
+                saveCustomGroups(customGroups);
+                hideModal(addGroupModal);
+                initDashboard();
+            });
+
+            // Link Modal
+            addLinkButton.addEventListener('click', () => {
+                showModal(addLinkModal);
+                linkForm.reset();
+                populateGroupDropdown();
+            });
+            cancelLinkButton.addEventListener('click', () => hideModal(addLinkModal));
+
+            linkForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newLink = {
+                    name: document.getElementById('link-name').value.trim(),
+                    url: document.getElementById('link-url').value.trim(),
+                    img: document.getElementById('link-img').value.trim(),
+                    groupName: document.getElementById('link-group-select').value,
+                    id: 'link_' + Date.now()
+                };
+                const customLinks = getCustomLinks();
+                customLinks.push(newLink);
+                saveCustomLinks(customLinks);
+                hideModal(addLinkModal);
+                initDashboard();
+            });
+
+
+            // Populate Group Dropdown for Add Link Modal
+            function populateGroupDropdown() {
+                // Get all link groups currently rendered (static + custom)
+                const allGroups = [...STATIC_LINK_GROUPS, ...getCustomGroups()];
+                linkGroupSelect.innerHTML = '';
+
+                if (allGroups.length === 0) {
+                    const option = document.createElement('option');
+                    option.textContent = "No groups available. Add one first!";
+                    option.disabled = true;
+                    linkGroupSelect.appendChild(option);
+                    return;
+                }
+
+                allGroups.forEach(group => {
+                    const option = document.createElement('option');
+                    // Use the group name without '(test)' suffix for the value
+                    const name = group.name.replace(' (test)', '').trim(); 
+                    option.value = name;
+                    option.textContent = name;
+                    linkGroupSelect.appendChild(option);
+                });
+            }
 
             // --- UI Logic ---
 
@@ -426,41 +644,83 @@
                 }
             });
             
-            // --- Download Logic ---
+            // --- Download Logic (Updated to include custom groups/links) ---
             
             downloadDataButton.addEventListener('click', downloadDataFile);
 
             function downloadDataFile() {
                 hideMenu(); 
                 
-                // 1. Create the Consolidated Data Object
-                const finalLinkGroups = STATIC_LINK_GROUPS.map(group => ({
+                // 1. Prepare Static Data (removing '(test)' suffix)
+                const staticLinkGroups = STATIC_LINK_GROUPS.map(group => ({
                     ...group,
-                    name: group.name.replace(' (test)', '')
+                    name: group.name.replace(' (test)', ''),
+                    links: group.links.map(link => ({...link, id: undefined, groupName: undefined})) // Clear custom fields
                 }));
                 
-                let finalCountdowns = STATIC_COUNTDOWNS.map(c => ({
+                let staticCountdowns = STATIC_COUNTDOWNS.map(c => ({
                     ...c,
-                    name: c.name.replace(' (test)', '') 
+                    name: c.name.replace(' (test)', ''),
+                    id: undefined // Clear custom field
                 }));
                 
+                // 2. Get Custom Data
+                const customGroups = getCustomGroups();
+                const customLinks = getCustomLinks();
                 const customCountdowns = getCustomCountdowns();
                 
-                customCountdowns.forEach(customC => {
-                    const { id, ...cleanCountdown } = customC; 
-                    finalCountdowns.push(cleanCountdown);
+                // 3. Create a map of all final link groups
+                const finalGroupsMap = new Map();
+                
+                // Add Static Groups
+                staticLinkGroups.forEach(group => finalGroupsMap.set(group.name, {...group}));
+                
+                // Add Custom Groups
+                customGroups.forEach(group => {
+                    // Custom groups are clean (no '(test)' suffix)
+                    finalGroupsMap.set(group.name, {...group, id: undefined});
                 });
+                
+                // Merge Custom Links into their target groups
+                customLinks.forEach(link => {
+                    const cleanLink = {
+                        name: link.name,
+                        url: link.url,
+                        img: link.img,
+                    };
+                    const targetGroup = finalGroupsMap.get(link.groupName);
+                    if (targetGroup) {
+                        if (!targetGroup.links) {
+                            targetGroup.links = [];
+                        }
+                        targetGroup.links.push(cleanLink);
+                    }
+                    // Note: Links added to static groups will merge here as well.
+                });
+
+                // Final list of groups
+                const finalLinkGroups = Array.from(finalGroupsMap.values());
+                
+                // Final list of countdowns
+                const finalCountdowns = [...staticCountdowns, ...customCountdowns.map(c => ({
+                    name: c.name,
+                    targetDate: c.targetDate,
+                    linkUrl: c.linkUrl,
+                    img: c.img,
+                    timezone: c.timezone
+                }))];
+
                 
                 const consolidatedData = {
                     "linkGroups": finalLinkGroups,
                     "countdowns": finalCountdowns 
                 };
                 
-                // 2. Prepare for Download
+                // 4. Prepare for Download
                 const dataStr = JSON.stringify(consolidatedData, null, 2); 
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 
-                // 3. Trigger Download
+                // 5. Trigger Download
                 const a = document.createElement('a');
                 const date = new Date();
                 const dateString = date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0');
@@ -747,10 +1007,10 @@
                         saveCustomCountdowns(customCountdowns);
                     } else if (expired) {
                         // If expired, store name in static dismissals
-                        const staticDismissals = JSON.parse(localStorage.getItem('static_dismissals') || '[]');
+                        const staticDismissals = getCustomData(state.localStorageKeys.dismissals);
                         if (!staticDismissals.includes(dismissId)) {
                              staticDismissals.push(dismissId);
-                             localStorage.setItem('static_dismissals', JSON.stringify(staticDismissals));
+                             saveCustomData(state.localStorageKeys.dismissals, staticDismissals);
                         }
                     }
 
@@ -809,18 +1069,51 @@
                 let allCountdownsList = data.countdowns || [];
                 const customCountdowns = getCustomCountdowns();
                 
-                const staticDismissals = JSON.parse(localStorage.getItem('static_dismissals') || '[]');
+                const staticDismissals = getCustomData(state.localStorageKeys.dismissals);
                 allCountdownsList = allCountdownsList.filter(c => !staticDismissals.includes(c.name.replace(' (test)', '')));
 
                 const mergedCountdowns = [...allCountdownsList, ...customCountdowns];
 
-                // 2. Render Countdowns (New Logic)
+                // 2. Render Countdowns 
                 startCountdownScroll(mergedCountdowns);
 
 
-                // 3. Render Link Groups (Existing Logic)
-                if (data.linkGroups && data.linkGroups.length > 0) {
-                    data.linkGroups.forEach(group => {
+                // --- MERGE LINK GROUP DATA ---
+                
+                const customGroups = getCustomGroups();
+                const customLinks = getCustomLinks();
+                
+                // Create map of static groups
+                const finalGroupsMap = new Map();
+                data.linkGroups.forEach(group => {
+                    // Use a clean version of the name as the key for linking custom data
+                    const cleanName = group.name.replace(' (test)', '').trim();
+                    finalGroupsMap.set(cleanName, {...group, links: [...(group.links || [])]});
+                });
+
+                // Add custom groups
+                customGroups.forEach(group => {
+                    if (!finalGroupsMap.has(group.name)) {
+                        finalGroupsMap.set(group.name, {...group, links: []});
+                    }
+                });
+                
+                // Add custom links to their target groups
+                customLinks.forEach(link => {
+                    const targetGroup = finalGroupsMap.get(link.groupName);
+                    if (targetGroup) {
+                        targetGroup.links.push(link);
+                    } else {
+                        console.warn(`Link '${link.name}' targets non-existent group '${link.groupName}'.`);
+                    }
+                });
+                
+                const finalLinkGroups = Array.from(finalGroupsMap.values());
+
+
+                // 3. Render Link Groups 
+                if (finalLinkGroups && finalLinkGroups.length > 0) {
+                    finalLinkGroups.forEach(group => {
                         const groupCard = document.createElement('div');
                         // ADDED flex-1 and min-w-[300px] to make the cards fluid but prevent them from becoming too small
                         groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[300px]'; 
@@ -883,6 +1176,7 @@
             // Run the initialization function when the window loads
             window.onload = () => {
                 populateTimezoneDropdown();
+                // populateGroupColorDropdown() is now called inside addGroupButton listener
                 initDashboard();
                 startClockUpdate(); 
             }
