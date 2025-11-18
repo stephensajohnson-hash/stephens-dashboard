@@ -138,7 +138,8 @@
 
 
     <!-- Main Content Container (pt-16 for the smaller toolbar height) -->
-    <main id="dashboard-content" class="max-w-7xl mx-auto pt-16 pb-8">
+    <!-- UPDATED: Removed max-w-7xl mx-auto for full width, kept responsive padding -->
+    <main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
         
         <!-- COUNTDOWN WIDGETS CONTAINER (Overflow hidden, height fixed) -->
         <div id="countdown-widgets" class="mb-8 w-full overflow-hidden h-14 relative">
@@ -151,13 +152,14 @@
         </div>
         <!-- END COUNTDOWN WIDGETS -->
 
-        <div id="link-groups-container" class="flex flex-wrap justify-center gap-6">
+        <!-- UPDATED: Tighter gap (gap-4) and added flex-1 to group cards in JS for fluid width -->
+        <div id="link-groups-container" class="flex flex-wrap justify-center gap-4"> 
             <!-- Link groups will be rendered here -->
         </div>
     </main>
     
     <!-- Debug/Notice Footer -->
-    <footer id="debug-log" class="max-w-7xl mx-auto mt-10 p-4 w-full">
+    <footer id="debug-log" class="w-full px-4 sm:px-8 mt-10 p-4"> <!-- UPDATED: Full width and aligned padding -->
         <!-- Fallback notice or debug messages will be injected here -->
     </footer>
 
@@ -667,14 +669,13 @@
                 if (countdowns.length === 0) return;
                 
                 const totalItems = countdowns.length + (countdowns.length > 1 ? 1 : 0);
-                // Calculate the percentage width each item must take up (100% / Total Items in view, which is 100% / 1 = 100% in our logic here)
-                // Since we want ONE item filling the container width, we calculate the width as 100% / totalItems of the scrollable area.
+                // Calculate the percentage width each item must take up 
                 const itemWidthPercent = 100 / totalItems; 
 
                 // 1. Render Original Items
                 countdowns.forEach(countdown => {
                     const item = createCountdownItem(countdown);
-                    item.style.width = `${100 / (countdowns.length + (countdowns.length > 1 ? 1 : 0))}%`; // Set width here
+                    item.style.width = `${itemWidthPercent}%`; // Set width here
                     countdownScrollContainer.appendChild(item);
                     state.activeCountdownElements.push(item.querySelector('.countdown-time-display')); 
                 });
@@ -682,13 +683,13 @@
                 // 2. Add Clone(s) for seamless looping 
                 if (countdowns.length > 1) {
                     const clone = createCountdownItem(countdowns[0]);
-                    clone.style.width = `${100 / (countdowns.length + 1)}%`; // Set width here
+                    clone.style.width = `${itemWidthPercent}%`; // Set width here
                     countdownScrollContainer.appendChild(clone);
                     state.activeCountdownElements.push(clone.querySelector('.countdown-time-display'));
                 }
                 
                 // 3. Set Container Width 
-                // Total width is totalItems * 100% (e.g., 4 items * 100% = 400%)
+                // Total width is totalItems * 100% 
                 countdownScrollContainer.style.width = `${totalItems * 100}%`;
                 countdownScrollContainer.style.transform = `translateX(0%)`; // Reset to start
                 state.currentScrollIndex = 0;
@@ -704,20 +705,17 @@
                 // Move to the next position
                 state.currentScrollIndex += 1;
                 
-                // Calculate shift based on item width percentage (e.g., 25% of the TOTAL scroll container width)
-                // The item width is 100 / (numCountdowns + 1) of the total scrollable area.
+                // Calculate shift based on item width percentage 
                 const itemWidthPercentOfTotal = 100 / (numCountdowns + 1);
                 const shiftAmount = state.currentScrollIndex * itemWidthPercentOfTotal; 
                 
-                // Apply the slow transition transform
-                // UPDATED: Transition time is 3000ms
+                // Apply the transition transform (3s)
                 countdownScrollContainer.style.transitionDuration = '3000ms';
                 countdownScrollContainer.style.transform = `translateX(-${shiftAmount}%)`;
 
-                // If we hit the clone (index N), reset instantly back to the first item (Index 0)
+                // If we hit the clone, reset instantly back to the first item (Index 0)
                 if (state.currentScrollIndex >= numCountdowns) {
-                    // Use a short delay (longer than the transition) to perform the instant snap
-                    // UPDATED: Delay is 3050ms
+                    // Reset delay (3050ms) is slightly longer than the transition (3000ms)
                     setTimeout(() => {
                         countdownScrollContainer.style.transitionDuration = '0ms'; // Disable transition
                         countdownScrollContainer.style.transform = `translateX(0%)`; // Snap back to 0
@@ -730,7 +728,7 @@
              * Sets up the countdown update and scrolling intervals.
              */
             function startCountdownScroll(countdowns) {
-                if (state.countdownInterval) clearInterval(state.countdownInterval);
+                if (state.scrollInterval) clearInterval(state.scrollInterval); // Fixed potential conflict with interval name
                 if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
 
                 const activeCountdowns = (countdowns || []).filter(c => new Date(c.targetDate).getTime() > new Date().getTime());
@@ -754,7 +752,7 @@
 
                 // 3. Start scroll rotation (6 seconds total cycle time)
                 if (state.allCountdowns.length > 1) { 
-                    // UPDATED: Interval is 6000ms (3s scroll + 3s hold = 6s total display time)
+                    // Interval is 6000ms (3s scroll + 3s hold = 6s total display time)
                     state.scrollInterval = setInterval(animateScroll, 6000); 
                 } else if (state.allCountdowns.length > 0) {
                      countdownScrollContainer.style.width = `100%`; 
@@ -854,7 +852,8 @@
                 if (data.linkGroups && data.linkGroups.length > 0) {
                     data.linkGroups.forEach(group => {
                         const groupCard = document.createElement('div');
-                        groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl w-full max-w-sm';
+                        // ADDED flex-1 and min-w-[300px] to make the cards fluid but prevent them from becoming too small
+                        groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[300px]'; 
 
                         const header = document.createElement('div');
                         const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
