@@ -1,14 +1,15 @@
-import { toggleMenu } from './utils.js';
+// js/main.js — FINAL FIXED VERSION
+import { setData, render } from './ui.js';
 import { updateDateTime } from './calendar.js';
 import { initWeather } from './weather.js';
-import { setData, render } from './ui.js';
-import { loadData, publishData } from './main.js';
 
-let data = [];
+let data = [];  // ← only declared once
 
 // Debug logger
 function log(msg) {
   console.log(`%c[MAIN] ${msg}`, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
+  const debug = document.getElementById('debug');
+  if (debug) debug.textContent = msg;
 }
 
 export async function loadData() {
@@ -47,61 +48,46 @@ export function publishData() {
   log('data.json downloaded');
 }
 
-// Global functions for inline onclicks
-window.toggleMenu = toggleMenu;
+// Global for inline onclicks
 window.publishData = publishData;
-window.addGroup = () => window.ui?.addGroup();
-window.addLink = () => window.ui?.addLink();
 
-// Hamburger menu
-document.getElementById('menu-btn')?.addEventListener('click', (e) => {
-  e.stopPropagation();
-  toggleMenu();
-});
-
-// CRITICAL: Wait for full DOM + all modules loaded
+// Start app — bulletproof timing
 function startApp() {
   log('startApp() called');
 
-  // Force hide popups
-  const calPopup = document.getElementById('calendar-popup');
-  const forePopup = document.getElementById('forecast-popup');
-  if (calPopup) calPopup.classList.remove('show');
-  if (forePopup) forePopup.classList.remove('show');
+  // Hide popups
+  document.getElementById('calendar-popup')?.classList.remove('show');
+  document.getElementById('forecast-popup')?.classList.remove('show');
 
-  // Update date/time
+  // Date/Time
   if (typeof updateDateTime === 'function') {
     updateDateTime();
     log('updateDateTime() ran');
-  } else {
-    log('updateDateTime not ready yet');
   }
 
-  // Update weather
+  // Weather
   if (typeof initWeather === 'function') {
     initWeather();
     log('initWeather() ran');
-  } else {
-    log('initWeather not ready yet');
   }
 
-  // Keep trying every 100ms until both are ready
+  // Retry if not ready
   if (typeof updateDateTime !== 'function' || typeof initWeather !== 'function') {
     setTimeout(startApp, 100);
   }
 }
 
-// Run on DOM ready
+// Run when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  log('DOM loaded — starting app...');
-  loadData().then(() => {
-    startApp();
-    setInterval(updateDateTime, 60000);
-  });
+  log('DOM loaded');
+  loadData().then(startApp);
+  setInterval(() => {
+    if (typeof updateDateTime === 'function') updateDateTime();
+  }, 60000);
 });
 
-// Also run immediately in case modules loaded early
-if (document.readyState === 'complete' || document.readyState === 'interactive') {
-  log('Document already ready — running startApp now');
-  startApp();
+// Run immediately if already loaded
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  log('DOM already ready');
+  loadData().then(startApp);
 }
