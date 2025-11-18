@@ -54,9 +54,9 @@
         <p class="text-lg text-gray-400">Your quick-access portal for work, fun, and life.</p>
     </header>
 
-    <!-- Dashboard Content Container (The Grid) -->
-    <!-- Grid layout is responsive: 1 column on mobile, 2 on medium screens, 3 on large screens -->
-    <main id="dashboard-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+    <!-- Dashboard Content Container (FLEX WRAP for non-uniform layout) -->
+    <!-- Groups will wrap and take up max-w-sm of space, creating the desired flow -->
+    <main id="dashboard-container" class="flex flex-wrap justify-center gap-6 max-w-7xl mx-auto">
         <!-- A simple loading indicator -->
         <p id="loading-indicator" class="col-span-full text-center text-gray-400 p-8">Loading dashboard data...</p>
     </main>
@@ -64,6 +64,116 @@
     <!-- JavaScript for Data Handling and Rendering -->
     <script>
         const container = document.getElementById('dashboard-container');
+
+        // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
+        const EMBEDDED_DATA = {
+            "linkGroups": [
+                {
+                    "name": "PBFCM (test)",
+                    "color": "bg-blue-600/20",
+                    "textColor": "text-blue-400",
+                    "links": [
+                        {"name": "Halo", "url": "https://pbfcm.haloitsm.com", "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"},
+                        {"name": "2025 Bullet Journal", "url": "https://docs.google.com/document/d/1Y2TbxiLuN7K55mL2o_XWDWiTD_bQ8HJLfXjXwEc5m44/edit?tab=t.0#heading=h.clgrn99mtopn", "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"},
+                        {"name": "Dayforce", "url": "https://us251.dayforcehcm.com/MyDayforce/u/Iw_6iFiF-0SPEmVMNfEh7A/Common/#SHViPyZpc0ZpcnN0RmVhdHVyZT10cnVl", "img": "https://play-lh.googleusercontent.com/GzXqzEjylw9Y2FQPvsw34DcYirDrItkNGYInKrkLg-mFP-cgLYmwF223kA67KlD2miU=s256-rw"},
+                        {"name": "3CX", "url": "https://pbfcm.businessphone.com/#/chat/9059", "img": "https://cdn-1.carierista.com/companies/150/2d05df55a3399d793cfbd01657052b4d.png"},
+                        {"name": "Udemy", "url": "https://pbfcm.udemy.com/organization/home/", "img": "https://images.seeklogo.com/logo-png/40/1/udemy-wordmark-logo-png_seeklogo-409220.png"}
+                    ]
+                },
+                {
+                    "name": "Fun (test)",
+                    "color": "bg-amber-600/20",
+                    "textColor": "text-amber-400",
+                    "links": [
+                        {"name": "TikTok", "url": "https://www.tiktok.com/@jaspynj", "img": "https://images.seeklogo.com/logo-png/37/1/tiktok-app-icon-logo-png_seeklogo-373800.png"},
+                        {"name": "Facebook", "url": "https://www.facebook.com/", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Facebook_logo_%28square%29.png/960px-Facebook_logo_%28square%29.png"},
+                        {"name": "Duolingo", "url": "https://www.duolingo.com", "img": "https://images.seeklogo.com/logo-png/45/2/duolingo-logo-png_seeklogo-458347.png"},
+                        {"name": "Instapaper", "url": "http://instapaper.com", "img": "https://play-lh.googleusercontent.com/uQElx_kgheNkInfRZl6_iPZ34HLOpt1KMOiVWmcN_PZFRQ66Ug3vDaAS0eymjsok7g"},
+                        {"name": "FFL", "url": "https://ultimateffl.xyz", "img": "https://www.thebiline.com/wp-content/uploads/2023/11/fantasyFootball.png"},
+                        {"name": "Royal Caribbean", "url": "https://www.royalcaribbean.com", "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"}
+                    ]
+                },
+                {
+                    "name": "Google Apps (test)",
+                    "color": "bg-green-600/20",
+                    "textColor": "text-green-400",
+                    "links": [
+                        {"name": "Gmail", "url": "https://www.gmail.com", "img": "https://icons.iconarchive.com/icons/marcus-roberto/google-play/256/Gmail-icon.png"},
+                        {"name": "Google News", "url": "https://news.google.com/foryou?hl=en-US&gl=US&ceid=US%3Aen", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/da/Google_News_icon.svg/120px-Google_News_icon.svg.png"},
+                        {"name": "Drive", "url": "https://drive.google.com", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/12/Google_Drive_icon_%282020%29.svg/120px-Google_Drive_icon_%282020%29.svg.png"},
+                        {"name": "Keep", "url": "http://keep.google.com", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Google_Keep_icon_%282015-2020%29.svg/512px-Google_Keep_icon_%282015-2020%29.svg.png?20210606170001"},
+                        {"name": "Calendar", "url": "https://www.google.com/calendar/", "img": "https://ssl.gstatic.com/calendar/images/dynamiclogo_2020q4/calendar_13_2x.png"},
+                        {"name": "Contacts", "url": "https://contacts.google.com/#contacts", "img": "https://cdn.jsdelivr.net/gh/homarr-labs/dashboard-icons/svg/google-contacts.svg"},
+                        {"name": "YouTube", "url": "https://www.youtube.com", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"},
+                        {"name": "YouTube Music", "url": "https://music.youtube.com", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/Youtube_Music_icon.svg/512px-Youtube_Music_icon.svg.png"},
+                        {"name": "YouTube TV", "url": "https://tv.youtube.com", "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"},
+                        {"name": "Photos", "url": "https://photos.google.com", "img": "https://images.seeklogo.com/logo-png/26/1/google-photos-logo-png_seeklogo-269651.png"},
+                        {"name": "Messages", "url": "https://messages.android.com", "img": "https://play-lh.googleusercontent.com/9AZOTXU_CpreTFAXUPAmJNkm8VGCb1C90fjJ9pHGcVmpGMDSTq3cUbaQJdBT9Tdp9A=w240-h480-rw"}
+                    ]
+                },
+                {
+                    "name": "Movies & TV (test)",
+                    "color": "bg-purple-600/20",
+                    "textColor": "text-purple-400",
+                    "links": [
+                        {"name": "IMDb", "url": "https://www.imdb.com/", "img": "https://jeremyirons.net/wp-content/uploads/2009/01/imdb-logo-23962421_std.jpg"},
+                        {"name": "TV Time", "url": "https://www.tvtime.com/en", "img": "https://upload.wikimedia.org/wikipedia/commons/3/33/TVShow_Time_logo.png?20160620170449"},
+                        {"name": "Movies Portal", "url": "https://movies.do", "img": "https://placehold.co/60x60/1E40AF/FFFFFF?text=MP"},
+                        {"name": "Bright Star Cinemas", "url": "https://www.brightstarcinemas.com/", "img": "https://placehold.co/60x60/8B5CF6/FFFFFF?text=BSC"},
+                        {"name": "YouTube", "url": "https://www.youtube.com", "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/YouTube_full-color_icon_%282017%29.svg/512px-YouTube_full-color_icon_%282017%29.svg.png?20240107144800"},
+                        {"name": "YouTube TV", "url": "https://tv.youtube.com", "img": "https://images.seeklogo.com/logo-png/61/2/youtube-tv-logo-png_seeklogo-612184.png"}
+                    ]
+                },
+                {
+                    "name": "Shopping (test)",
+                    "color": "bg-pink-600/20",
+                    "textColor": "text-pink-400",
+                    "links": [
+                        {"name": "Amazon", "url": "https://amazon.com", "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"},
+                        {"name": "Walmart", "url": "http://www.walmart.com/", "img": "https://www.designmantic.com/blog/wp-content/uploads/2025/02/Walmart-Logo-Icon.png"},
+                        {"name": "Black Friday", "url": "http://blackfriday.com/", "img": "https://images.seeklogo.com/logo-png/39/1/black-friday-logo-png_seeklogo-391204.png"}
+                    ]
+                },
+                {
+                    "name": "Financial (test)",
+                    "color": "bg-emerald-600/20",
+                    "textColor": "text-emerald-400",
+                    "links": [
+                        {"name": "Alliance Bank", "url": "https://alliancebank.com", "img": "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/styles/article_420/public/2020-03/xVBU_UXM.png?itok=XpQwRzsj"},
+                        {"name": "2025 Budget", "url": "https://docs.google.com/spreadsheets/d/1o3Ab6q4nMFVZIzxM-6lDXCd6jFt-nhHtT5b1yAKgUkw", "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"},
+                        {"name": "Big Money", "url": "https://docs.google.com/spreadsheets/d/17aFT-1c1eZgnvKkHnw8oS2SQzbTh3JnacRS3ChaW9dM/edit?gid=1898418506#gid=1898418506", "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"},
+                        {"name": "Mega Millions", "url": "https://www.megamillions.com", "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"},
+                        {"name": "Power Ball", "url": "https://www.powerball.com/games/home", "img": "https://simublast.com/assets/images/lottery/us-powerball.png"},
+                        {"name": "Book Sales", "url": "https://kdp.amazon.com/en_US/", "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"},
+                        {"name": "Realtor", "url": "http://www.realtor.com", "img": "https://hooquest.com/wp-content/uploads/2018/09/realtor-com-logo-300.png"}
+                    ]
+                },
+                {
+                    "name": "Benefits (test)",
+                    "color": "bg-teal-600/20",
+                    "textColor": "text-teal-400",
+                    "links": [
+                        {"name": "BCBS", "url": "https://mybam.bcbstx.com", "img": "https://play-lh.googleusercontent.com/EQb_e3MXfOxRvT2U_orh3iV-9z_GvgJFUyn0qfYPlcNDHXCKnW04tMqPLbp4EfjCP8w=w240-h480-rw"},
+                        {"name": "MyChart", "url": "https://mychart.christushealth.org/mychart/Authentication/Login?postloginurl=Clinical%2fTestResults", "img": "https://news.med.virginia.edu/files/2023/12/MyChart-1x1-1-200x200.jpg"},
+                        {"name": "BCBS Vision", "url": "https://member.eyemedvisioncare.com/bcbstx/en-us/", "img": "https://www.bcbsil.com/content/bcbs-v2/public-sites/bcbsil/en/home/welcome/shop-plans/vision-insurance/_jcr_content/root/main-par/section_252757724_co/section-par/horizontal_value_pro/value-prop-one/image.coreimg.svg/1743113970660/circle-eye-glasses-icon.svg"},
+                        {"name": "HSA Bank", "url": "https://account.hsabank.com/#/", "img": "https://media.licdn.com/dms/image/v2/D4E22AQG0tY8-IPbPAQ/feedshare-shrink_800/B4EZTXDi.1GYAg-/0/1738774819262?e=1764806400&v=beta&t=S0Rvm5Ve8gQ7zjOjiLHHnd9zMVS3YSbmC4qeWM6zJfg"},
+                        {"name": "Aflac", "url": "https://myaflac.aflac.com/home", "img": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"},
+                        {"name": "Fidelity", "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions", "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1752030331882"}
+                    ]
+                },
+                {
+                    "name": "Coding (test)",
+                    "color": "bg-blue-600/20",
+                    "textColor": "text-blue-400",
+                    "links": [
+                        {"name": "Vercel", "url": "https://vercel.com/stephensajohnson-hashs-projects/stephens-dashboard", "img": "https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/vercel-logo-icon.png"},
+                        {"name": "GitHub", "url": "https://github.com/stephensajohnson-hash/stephens-dashboard/tree/main/dashboard", "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"}
+                    ]
+                }
+            ]
+        };
+        // --- END EMBEDDED DATA ---
+
 
         // Function to create an individual link tile
         function createLinkElement(link) {
@@ -73,18 +183,23 @@
             
             // Set up placeholder image if URL fails (or if it's a local file like /images/...)
             const placeholderLetter = link.name.substring(0, 1).toUpperCase();
+            
+            // Image is now roughly 96x96 (w-full of its parent) and uses rounded-xl
             const imgHtml = `
-                <img
-                    src="${link.img}"
-                    alt="${link.name} icon"
-                    class="w-8 h-8 rounded-full object-cover mr-3 flex-shrink-0"
-                    loading="lazy"
-                    onerror="this.onerror=null;this.src='https://placehold.co/32x32/1F2937/FFFFFF?text=${placeholderLetter}'"
-                />
+                <div class="w-full h-full aspect-square flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner">
+                    <img
+                        src="${link.img}"
+                        alt="${link.name} icon"
+                        class="w-full h-full object-cover p-1 rounded-xl"
+                        loading="lazy"
+                        onerror="this.onerror=null;this.src='https://placehold.co/96x96/1F2937/FFFFFF?text=${placeholderLetter}'; this.className='p-4';"
+                    />
+                </div>
             `;
 
-            linkTile.className = 'flex items-center p-3 text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.02] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out';
-            linkTile.innerHTML = imgHtml + `<span class="truncate font-medium">${link.name}</span>`;
+            // New classes for the vertical icon/label structure
+            linkTile.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.05] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out h-full justify-start';
+            linkTile.innerHTML = imgHtml + `<span class="mt-2 text-sm font-medium truncate w-full">${link.name}</span>`;
             
             return linkTile;
         }
@@ -92,8 +207,9 @@
         /**
          * Renders the dashboard content based on the fetched data.
          * @param {Object} data - The parsed JSON object containing linkGroups.
+         * @param {boolean} isFallback - True if embedded data is being used.
          */
-        function renderDashboard(data) {
+        function renderDashboard(data, isFallback) {
             // Clear the loading message or previous content
             container.innerHTML = ''; 
 
@@ -102,10 +218,19 @@
                 return;
             }
 
+            // Display a notification if fallback data is being used
+            if (isFallback) {
+                const fallbackNote = document.createElement('div');
+                fallbackNote.className = 'col-span-full bg-yellow-900/20 border border-yellow-700 text-yellow-400 p-3 rounded-xl text-center mb-6 w-full';
+                fallbackNote.textContent = 'NOTICE: Using embedded (test) data. The external data.json failed to load (expected in preview environment).';
+                container.appendChild(fallbackNote);
+            }
+
             data.linkGroups.forEach(group => {
                 // Create the card container for the group
                 const groupCard = document.createElement('div');
-                groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl';
+                // Use max-w-sm and w-full to allow for the groups to wrap freely
+                groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl w-full max-w-sm';
 
                 // Create the header
                 const header = document.createElement('div');
@@ -113,9 +238,9 @@
                 const headerClasses = `inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${group.color} ${group.textColor}`;
                 header.innerHTML = `<h2 class="${headerClasses}">${group.name}</h2>`;
 
-                // Create the links grid
+                // Create the links grid (3 columns inside the card)
                 const linksGrid = document.createElement('div');
-                linksGrid.className = 'grid gap-3';
+                linksGrid.className = 'grid grid-cols-3 gap-3';
 
                 // Add links to the grid
                 if (group.links && group.links.length > 0) {
@@ -125,7 +250,7 @@
                     });
                 } else {
                     const emptyMessage = document.createElement('p');
-                    emptyMessage.className = 'text-gray-500 text-sm italic';
+                    emptyMessage.className = 'text-gray-500 text-sm italic col-span-3';
                     emptyMessage.textContent = 'No links in this group.';
                     linksGrid.appendChild(emptyMessage);
                 }
@@ -139,34 +264,34 @@
 
 
         /**
-         * Initializes the dashboard by fetching data from data.json.
+         * Initializes the dashboard by trying to fetch the external data,
+         * or falling back to the embedded data on failure.
          */
         async function initDashboard() {
+            let dashboardData = EMBEDDED_DATA;
+            let isFallback = true;
+            
             try {
-                // Fetch the data.json file from the same directory
-                // FIX: Changed fetch to use a root-relative path '/data.json'
-                const response = await fetch('/data.json');
+                // Try to fetch the external data file
+                const response = await fetch('./data.json');
                 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status} (${response.statusText})`);
+                if (response.ok) {
+                    // Success! Use the fetched data
+                    dashboardData = await response.json();
+                    isFallback = false;
+                    console.log('Successfully loaded external data.json.');
+                } else {
+                    // Fetch succeeded but returned non-OK status (e.g., 404)
+                    console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
                 }
-                
-                const dashboardData = await response.json();
-                
-                // Render the dashboard with the fetched data
-                renderDashboard(dashboardData);
-
             } catch (error) {
-                console.error('Failed to load dashboard data:', error);
-                
-                // Display a user-friendly error message on the screen
-                container.innerHTML = `
-                    <div class="col-span-full bg-red-900/20 border border-red-700 text-red-400 p-6 rounded-xl text-center">
-                        <p class="font-bold mb-2">Error: Could not load configuration data.</p>
-                        <p class="text-sm">Please ensure that the 'data.json' file exists in the root directory and is properly formatted. Check the console for details.</p>
-                    </div>
-                `;
+                // Fetch failed (e.g., URL parsing error in preview, network error)
+                console.error('Failed to fetch external data.json:', error.message);
+                console.warn('Falling back to embedded test data.');
             }
+
+            // Render the dashboard using the determined data source
+            renderDashboard(dashboardData, isFallback);
         }
 
         // Run the initialization function when the window loads
