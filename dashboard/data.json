@@ -284,5 +284,12 @@
         "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
       }
     ]
-  }
+  },
+  "countdowns": [
+    {
+      "title": "Cruise!",
+      "targetDate": "2026-02-01",
+      "image": "https://images.unsplash.com/photo-1567510224892-8f6e4c3e7f7f?w=80&h=80&fit=crop&crop=entropy&auto=format"
+    }
+  ]
 ]
