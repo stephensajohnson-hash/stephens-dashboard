@@ -174,8 +174,7 @@
     "links": [
       {
         "name": "Amazon",
-        "url": "https://amazon.com",
-        "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"
+        "url":, "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"
       },
       {
         "name": "Walmart",
@@ -212,7 +211,7 @@
       {
         "name": "Mega Millions",
         "url": "https://www.megamillions.com",
-        "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
+        "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7  &oe=691C4846"
       },
       {
         "name": "Power Ball",
