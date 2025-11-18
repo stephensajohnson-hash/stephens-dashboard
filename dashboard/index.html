@@ -10,6 +10,8 @@
     details summary::-webkit-details-marker { display: none; }
     .icon { transition: all .2s; }
     .icon:hover { transform: translateY(-3px); box-shadow: 0 6px 12px rgba(0,0,0,.4); }
+    .drag-over { border: 2px dashed #3b82f6 !important; background: #dbeafe !important; }
+    .dragging { opacity: 0.5; }
     .weather-svg { width: 22px; height: 22px; }
     .forecast-svg { width: 28px; height: 28px; }
     .popup-panel { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
@@ -33,7 +35,7 @@
       </div>
     </div>
 
-    <!-- COUNTDOWN IN CENTER -->
+    <!-- COUNTDOWN CENTER -->
     <div id="countdown-display" class="flex items-center gap-2 text-center">
       <img id="countdown-img" src="" alt="" class="rounded w-7 h-7 object-cover">
       <span id="countdown-text">Loading countdown...</span>
@@ -76,13 +78,18 @@
 
   <script>
     let data = [];
+    let dragged = null;
     let countdownIndex = 0;
     let countdownInterval = null;
+
+    function toggleMenu() {
+      document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
+    }
 
     // Load data
     async function loadData() {
       try {
-        const res = await fetch('data.json?v=' + Date.now());
+        const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) data = await res.json();
       } catch (e) {}
       if (!data.length) {
@@ -123,7 +130,7 @@
         d.appendChild(s);
         const grid = document.createElement('div');
         grid.className = 'p-3 grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-3 bg-black';
-        (g.links || []).forEach((l, li) => {
+        (g.links || []).forEach(l => {
           const a = document.createElement('a'); a.href = l.url; a.target = "_blank";
           a.className = 'icon text-center block';
           a.innerHTML = `<img src="${l.img}" class="w-20 h-20 mx-auto rounded object-contain bg-black" 
@@ -194,11 +201,50 @@
       });
     }
 
-    // ... (rest of your working render, drag/drop, addGroup, addLink, date/time, weather — all unchanged)
+    // DATE/TIME
+    function updateDateTime() {
+      const n = new Date();
+      const ds = n.toLocaleDateString('en-US', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+      const ts = n.toLocaleTimeString('en-US', {hour:'numeric', minute:'2-digit', hour12:true}).replace(' AM','am').replace(' PM','pm');
+      document.getElementById('date-time').innerHTML = `${ds} <span class="text-gray-400">${ts}</span>`;
+    }
+
+    // WEATHER
+    function initWeather() {
+      fetch('https://wttr.in/?format=j1')
+        .then(r => r.json())
+        .then(d => {
+          const c = d.current_condition[0];
+          const temp = c.temp_F;
+          const cond = c.weatherDesc[0].value.toLowerCase();
+          const iconMap = {sunny:'Sunny', clear:'Sunny', cloudy:'Cloudy', overcast:'Cloudy', rain:'Rainy', drizzle:'Rainy', snow:'Snow', storm:'Stormy', fog:'Foggy', mist:'Foggy'};
+          const icon = Object.keys(iconMap).find(k => cond.includes(k)) ? iconMap[Object.keys(iconMap).find(k => cond.includes(k))] : 'Partly Cloudy';
+          document.getElementById('weather-icon-svg').innerHTML = icon;
+          document.getElementById('weather-temp').textContent = temp + '°';
+        })
+        .catch(() => {
+          document.getElementById('weather-icon-svg').innerHTML = 'Globe';
+          document.getElementById('weather-temp').textContent = 'offline';
+        });
+    }
+
+    // Hover popups
+    const dateParent = document.getElementById('date-time-link')?.parentElement;
+    if (dateParent) {
+      dateParent.addEventListener('mouseenter', () => document.getElementById('calendar-popup').classList.add('show'));
+      dateParent.addEventListener('mouseleave', () => document.getElementById('calendar-popup').classList.remove('show'));
+    }
+
+    const weatherParent = document.querySelector('#weather-link')?.parentElement;
+    if (weatherParent) {
+      weatherParent.addEventListener('mouseenter', () => document.getElementById('forecast-popup').classList.add('show'));
+      weatherParent.addEventListener('mouseleave', () => document.getElementById('forecast-popup').classList.remove('show'));
+    }
 
     document.addEventListener('DOMContentLoaded', () => {
       loadData();
-      updateDateTime(); setInterval(updateDateTime, 60000);
+      updateDateTime();
+      setInterval(updateDateTime, 60000);
       initWeather();
     });
   </script>
