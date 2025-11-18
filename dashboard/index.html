@@ -19,10 +19,10 @@
       bottom: 0;
       left: 0;
       right: 0;
-      height: 180px;
+      height: 120px;
       background: rgba(0,0,0,0.95);
       color: lime;
-      padding: 10px;
+      padding: 8px 12px;
       font: 12px monospace;
       z-index: 99999;
       overflow-y: auto;
@@ -32,7 +32,7 @@
 </head>
 <body class="min-h-screen bg-black text-white">
 
-  <!-- DEBUG BAR -->
+  <!-- DEBUG BAR (kept for now) -->
   <div id="debug-bar">Debug: Initializing...</div>
 
   <!-- TOP BANNER -->
@@ -92,21 +92,22 @@
   </div>
 
   <script>
-    let data = { groups: [], countdowns: [] };
-    let dragged = null;
+    let data = [];
     let countdownIndex = 0;
     let countdownInterval = null;
-
-    function toggleMenu() {
-      document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
-    }
 
     // Debug
     function debug(msg) {
       console.log('%cDEBUG: ' + msg, 'color: lime; background: black; padding: 2px 6px; border-radius: 4px;');
       const bar = document.getElementById('debug-bar');
-      if (bar) bar.innerHTML += '<br>' + msg;
-      if (bar) bar.scrollTop = bar.scrollHeight;
+      if (bar) {
+        bar.innerHTML += '<br>' + msg;
+        bar.scrollTop = bar.scrollHeight;
+      }
+    }
+
+    function toggleMenu() {
+      document.getElementById('sidebar-menu').classList.toggle('-translate-x-full');
     }
 
     async function loadData() {
@@ -114,21 +115,16 @@
       try {
         const res = await fetch('data.json?t=' + Date.now());
         if (res.ok) {
-          const json = await res.json();
-          if (json.groups) data.groups = json.groups;
-          if (json.countdowns) data.countdowns = json.countdowns;
+          data = await res.json();
           debug('data.json loaded');
         }
       } catch (e) {
         debug('fetch error: ' + e.message);
       }
 
-      // Fallback to localStorage
-      if (data.groups.length === 0) {
+      if (!data || data.length === 0) {
         const saved = localStorage.getItem('dashboardData');
-        const savedData = saved ? JSON.parse(saved) : { groups: [], countdowns: [] };
-        data.groups = savedData.groups || [];
-        data.countdowns = savedData.countdowns || [];
+        data = saved ? JSON.parse(saved) : [];
         debug('using localStorage');
       } else {
         localStorage.setItem('dashboardData', JSON.stringify(data));
@@ -155,7 +151,7 @@
 
     function render() {
       const c = document.getElementById('dashboard'); c.innerHTML = '';
-      data.groups.forEach((g, gi) => {
+      data.forEach((g, gi) => {
         const d = document.createElement('details'); d.open = true;
         d.className = 'bg-black rounded-lg overflow-hidden border border-gray-800 shadow-lg';
         const s = document.createElement('summary');
@@ -181,7 +177,6 @@
     // COUNTDOWN SYSTEM
     function startCountdowns() {
       debug('startCountdowns() called');
-      debug('Countdowns data: ' + JSON.stringify(data.countdowns));
       if (!data.countdowns || data.countdowns.length === 0) {
         document.getElementById('countdown-display').innerHTML = '<span class="text-gray-500">No countdowns</span>';
         return;
@@ -189,7 +184,6 @@
 
       function update() {
         const cd = data.countdowns[countdownIndex];
-        debug('Showing countdown: ' + JSON.stringify(cd));
         const target = new Date(cd.targetDate);
         const now = new Date();
         const diff = target - now;
