@@ -30,9 +30,13 @@ export function publishData() {
   alert('data.json downloaded! Upload to GitHub → redeploy');
 }
 
+// js/main.js — ONLY CHANGE THIS PART
 document.addEventListener('DOMContentLoaded', () => {
-  loadData();
-  updateDateTime();
-  setInterval(updateDateTime, 60000);
-  initWeather();
+  loadData().then(() => {
+    render();
+    updateDateTime();
+    setInterval(updateDateTime, 60000);
+    initWeather();
+  });
 });
+
