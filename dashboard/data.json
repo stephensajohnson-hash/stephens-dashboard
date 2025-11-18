@@ -289,6 +289,13 @@
   ],
   "countdowns": [
     {
+      "name": "Thanksgiving",
+      "targetDate": "2025-11-27T00:00:00",
+      "linkUrl": "#",
+      "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
+      "timezone": "America/Chicago"
+    },
+    {
       "name": "Cruise!",
       "targetDate": "2026-02-01T00:00:00",
       "linkUrl": "https://www.royalcaribbean.com/",
@@ -298,6 +305,13 @@
     {
       "name": "Stephens Retires",
       "targetDate": "2033-03-18T00:00:00",
+      "linkUrl": "#",
+      "img": "https://placehold.co/40x40/374151/FFFFFF?text=NEW",
+      "timezone": "America/Chicago"
+    }
+    {
+      "name": "Thanksgiving",
+      "targetDate": "2025-11-27T00:00:00",
       "linkUrl": "#",
       "img": "https://placehold.co/40x40/374151/FFFFFF?text=NEW",
       "timezone": "America/Chicago"
