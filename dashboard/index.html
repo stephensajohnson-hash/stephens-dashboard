@@ -188,7 +188,7 @@
                     <select id="link-group-select" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
                         <!-- Options populated by JS --></select>
                 </label>
-                <div class="flex justify-end space-x-3 pt-2">
+                <div class="flex justify-end space-space-x-3 pt-2">
                     <button type="button" id="cancel-link-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
                         Cancel
                     </button>
@@ -661,7 +661,7 @@
                 }
             });
             
-            // --- Download Logic (Updated to include custom groups/links) ---
+            // --- Download Logic (Updated for Timestamped Filename) ---
             
             downloadDataButton.addEventListener('click', downloadDataFile);
 
@@ -681,7 +681,7 @@
                     id: undefined // Clear custom field
                 }));
                 
-                // 2. Get Custom Data
+                // 2. Get Custom Data (THIS IS THE FIX)
                 const customGroups = getCustomGroups();
                 const customLinks = getCustomLinks();
                 const customCountdowns = getCustomCountdowns();
@@ -689,16 +689,17 @@
                 // 3. Create a map of all final link groups
                 const finalGroupsMap = new Map();
                 
-                // Add Static Groups
+                // A. Add Static Groups
                 staticLinkGroups.forEach(group => finalGroupsMap.set(group.name, {...group}));
                 
-                // Add Custom Groups
+                // B. Add Custom Groups
                 customGroups.forEach(group => {
-                    // Custom groups are clean (no '(test)' suffix)
-                    finalGroupsMap.set(group.name, {...group, id: undefined});
+                    // Ensure links array is correctly initialized for new groups
+                    const links = (group.links || []).map(link => ({ name: link.name, url: link.url, img: link.img }));
+                    finalGroupsMap.set(group.name, {...group, id: undefined, links: links,});
                 });
                 
-                // Merge Custom Links into their target groups
+                // C. Merge Custom Links into their target groups
                 customLinks.forEach(link => {
                     const cleanLink = {
                         name: link.name,
@@ -712,7 +713,7 @@
                         }
                         targetGroup.links.push(cleanLink);
                     }
-                    // Note: Links added to static groups will merge here as well.
+                    // If targetGroup doesn't exist, the link is just skipped (or logged in console)
                 });
 
                 // Final list of groups
@@ -737,11 +738,14 @@
                 const dataStr = JSON.stringify(consolidatedData, null, 2); 
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 
-                // 5. Trigger Download
+                // 5. Trigger Download with TIMESTAMPED FILENAME (FIXED)
                 const a = document.createElement('a');
-                const date = new Date();
-                const dateString = date.getFullYear() + String(date.getMonth() + 1).padStart(2, '0') + String(date.getDate()).padStart(2, '0');
-                a.download = `data-update-${dateString}.json`;
+                const now = new Date();
+                const dateString = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
+                const timeString = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
+                
+                a.download = `data-update-${dateString}-${timeString}.json`; // e.g., data-update-20251119-084800.json
+                
                 a.href = window.URL.createObjectURL(dataBlob);
                 a.click();
                 
@@ -1185,10 +1189,17 @@
                     finalGroupsMap.set(cleanName, {...group, links: [...(group.links || [])]});
                 });
 
-                // B. Add Custom Groups to map (or overwrite if name conflicts, though custom names should be unique)
+                // B. Add Custom Groups to map (FIX: Ensures they are added to the map for display)
                 customGroups.forEach(group => {
                     // Custom groups are already clean (no '(test)' suffix)
-                    finalGroupsMap.set(group.name, {...group, links: [], id: undefined}); // Ensure links array is initialized and ID is cleared
+                    // We must ensure the static group doesn't accidentally overwrite a custom group's data structure
+                    if (!finalGroupsMap.has(group.name)) {
+                       finalGroupsMap.set(group.name, {...group, links: []}); // Add new custom group
+                    } else {
+                        // If a custom group exists with a name matching a static group, the static group takes priority, 
+                        // but custom links will still merge in section C.
+                        // For a newly created group, it won't exist in the static data, so it gets added here.
+                    }
                 });
                 
                 // C. Merge Custom Links into their target groups
@@ -1205,7 +1216,6 @@
                         }
                         targetGroup.links.push(cleanLink);
                     } else {
-                        // This handles cases where a custom link targets a custom group that hasn't been added yet (unlikely with UI flow)
                         console.warn(`Link '${link.name}' targets non-existent group '${link.groupName}'.`);
                     }
                 });
