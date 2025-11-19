@@ -66,6 +66,11 @@
           "name": "Royal Caribbean",
           "url": "https://www.royalcaribbean.com",
           "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
+        },
+        {
+          "name": "Recipes",
+          "url": "https://stephens-dashboard.vercel.app/recipes.html",
+          "img": "https://dcassetcdn.com/design_img/10150/25224/25224_294121_10150_image.jpg"
         }
       ]
     },
@@ -311,8 +316,17 @@
     }
   ],
   "stocks": [
-    { "symbol": "TSLA", "shares": 404.0 },
-    { "symbol": "SCHG", "shares": 0 },
-    { "symbol": "SCHD", "shares": 0 }
+    {
+      "symbol": "TSLA",
+      "shares": 404
+    },
+    {
+      "symbol": "SCHG",
+      "shares": 0
+    },
+    {
+      "symbol": "SCHD",
+      "shares": 0
+    }
   ]
 }
