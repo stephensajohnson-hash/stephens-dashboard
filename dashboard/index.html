@@ -77,7 +77,7 @@
     <!-- Fixed Toolbar/Navbar - Height is now smaller (p-2 instead of p-4) --><nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
         <div class="flex items-center">
             <!-- Hamburger Menu Button - Now first and on the far left --><button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-4">
-                <svg class="w-6 h-6 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
             <!-- Date and Time Display - Immediately follows the menu button --><div id="datetime" class="text-sm sm:text-base font-medium">
                 <!-- Date and time injected here by JS, with colored time span --></div>
@@ -349,7 +349,7 @@
                 { name: "Rose Blush", bg: "bg-rose-600/20", text: "text-rose-400" }
             ];
 
-            // --- EMBEDDED DATA FOR PREVIEW/FALLBACK ---
+            // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
             const EMBEDDED_DATA = {
                 "linkGroups": [
                     {
@@ -483,23 +483,14 @@
             };
             // --- END EMBEDDED DATA ---
 
+            // --- CORE FUNCTION EXPOSURE ---
+            // Expose navigateCarousel and dismissCountdown to the global window object
+            window.navigateCarousel = navigateCarousel;
+            window.dismissCountdown = dismissCountdown;
+            // --- END CORE FUNCTION EXPOSURE ---
 
-            // Global state for rotation
-            const state = {
-                // allCountdowns now holds the list of ALL items (Forecast Panel + Countdown items)
-                allCountdowns: [],
-                currentCardIndex: 0, // NEW: Index for the active carousel item
-                animationFrameId: null,
-                localStorageKeys: {
-                    countdowns: 'sd_custom_countdowns',
-                    groups: 'sd_custom_groups',
-                    links: 'sd_custom_links',
-                    dismissals: 'sd_static_dismissals'
-                }
-            };
-
-            // Expose navigateCarousel to the window object so the buttons can call it
-            window.navigateCarousel = (direction) => {
+            // --- CAROUSEL NAVIGATION ---
+            function navigateCarousel(direction) {
                 const totalItems = state.allCountdowns.length;
                 if (totalItems === 0) return;
 
@@ -515,7 +506,156 @@
                 showCard(newIndex);
             }
             
-            // --- Helper Functions (Moved to the top for guaranteed scope access) ---
+            /**
+             * Function to manage the display of the active carousel card.
+             * NOTE: This MUST be defined before it is called by navigateCarousel
+             */
+            function showCard(newIndex) {
+                const totalItems = state.allCountdowns.length;
+                if (totalItems === 0) return;
+
+                // Ensure index loops correctly
+                newIndex = (newIndex + totalItems) % totalItems;
+                
+                const itemData = state.allCountdowns[newIndex];
+                let newElement;
+
+                // Create the appropriate card element
+                if (itemData.type === 'forecast') {
+                    newElement = createForecastPanel();
+                } else {
+                    // Pass the index for unique ID creation
+                    newElement = createCountdownItem(itemData, newIndex); 
+                }
+
+                // Apply transition logic
+                carouselContentWrapper.style.opacity = '0';
+                
+                setTimeout(() => {
+                    carouselContentWrapper.innerHTML = '';
+                    carouselContentWrapper.appendChild(newElement);
+                    state.currentCardIndex = newIndex;
+                    
+                    // Fade in
+                    carouselContentWrapper.style.opacity = '1';
+                }, 300); // 300ms matches the CSS transition
+
+            }
+
+            
+            /**
+             * Function to dismiss a countdown (for the 'X' button)
+             * NOTE: This MUST be defined before it is exposed above and used in createCountdownItem.
+             */
+            function dismissCountdown(event, dismissId, expired = false) {
+                event.preventDefault();
+                event.stopPropagation();
+
+                // 1. Remove from local state
+                const initialLength = state.allCountdowns.length;
+                
+                // Determine if this is a static item or a custom user item
+                const isCustom = dismissId.startsWith('user_');
+                
+                state.allCountdowns = state.allCountdowns.filter(c => (c.id || c.name.replace(' (test)', '')) !== dismissId);
+
+                if (state.allCountdowns.length < initialLength) {
+                    if (isCustom) {
+                        // 2a. If custom, remove from custom local storage list
+                        let customCountdowns = getCustomCountdowns();
+                        customCountdowns = customCountdowns.filter(c => c.id !== dismissId);
+                        saveCustomCountdowns(customCountdowns);
+                    } else {    
+                        // 2b. If static, add to the static dismissals list
+                        const staticDismissals = getCustomData(state.localStorageKeys.dismissals);
+                        const cleanName = dismissId.replace(' (test)', ''); // Ensure we save the clean name
+                        if (!staticDismissals.includes(cleanName)) {
+                             staticDismissals.push(cleanName);
+                             saveCustomData(state.localStorageKeys.dismissals, staticDismissals);
+                        }
+                    }
+
+                    // 3. Re-render and restart carousel
+                    initCarousel(state.allCountdowns);
+                }
+            }
+            
+            /**
+             * Calculates the time remaining and formats it.
+             */
+            function formatTimeRemaining(countdown) {
+                const targetDate = new Date(countdown.targetDate);
+                const now = new Date();
+                const diffMs = targetDate.getTime() - now.getTime();
+                
+                if (diffMs <= 0) return null; // Expired
+
+                const msInDay = 1000 * 60 * 60 * 24;
+                const totalDays = Math.floor(diffMs / msInDay);
+                
+                const years = Math.floor(totalDays / 365);
+                let remainingDays = totalDays % 365;
+
+                const months = Math.floor(remainingDays / 30);
+                const days = remainingDays % 30;
+
+                let primaryDisplay = [];
+                if (years > 0) {
+                    primaryDisplay.push(`${years} Year${years > 1 ? 's' : ''}`);
+                    if (months > 0) primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
+                } else if (months > 0) {
+                    primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
+                    if (days > 0) primaryDisplay.push(`${days} Day${days > 1 ? 's' : ''}`);
+                } else {
+                    const remainingMs = diffMs % msInDay;
+                    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+                    
+                    if (totalDays > 0) primaryDisplay.push(`${totalDays} Day${totalDays > 1 ? 's' : ''}`);
+                    if (totalDays < 1) primaryDisplay.push(`${hours}h ${minutes}m ${seconds}s`);
+                }
+
+                let finalDisplay = primaryDisplay.filter(part => !part.startsWith('0 '));
+                
+                const totalDaysString = finalDisplay.length > 1 ? `[${totalDays} days]` : `(${totalDays} days)`;
+
+                const timeString = finalDisplay.join(' ');
+                
+                return `${timeString} ${totalDaysString}`;
+            }
+
+            /**
+             * FIX: Exposed function now correctly updates the time display.
+             */
+            function updateTimeDisplay() {
+                if (!state.allCountdowns.length) {
+                    // Stop the loop if there are no items
+                    if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+                    return;
+                }
+
+                // Loop through all active elements and update their text
+                state.allCountdowns.forEach((item, index) => {
+                    // Only update countdown items, not forecast items
+                    if (item.type === 'countdown') {
+                        const timeString = formatTimeRemaining(item);
+                        // Find the corresponding time element using the index of the countdown in the ALL_COUNTDOWNS array
+                        const timeDisplayElement = carouselContentWrapper.querySelector(`#card-${index} .countdown-time-display`);
+
+                        if (timeString === null) {
+                            const dismissedId = item.id || item.name;
+                            window.dismissCountdown(new Event('synthetic'), dismissedId, true);
+                        } else if (timeDisplayElement) {
+                            timeDisplayElement.textContent = timeString;
+                        }
+                    }
+                });
+
+                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
+            }
+            
+            // --- Helper Functions (Cont.) ---
             
             // Icon mapping for forecast cards
             function getForecastEmoji(iconCode) {
@@ -622,9 +762,46 @@
                 return item;
             }
 
-            // --- END Helper Functions ---
+            /**
+             * NEW: Populates the carousel state and calls the display function.
+             * NOTE: This must be defined before renderDashboard calls it.
+             */
+            function initCarousel(mergedItems) {
+                // Clear any previous animation loops
+                if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+
+                // Filter out non-item entries (null/expired countdowns)
+                const activeItems = mergedItems.filter(item => item !== null);
+
+                // Hide/show control buttons based on item count
+                const prevButton = document.getElementById('prev-button');
+                const nextButton = document.getElementById('next-button');
+                
+                if (activeItems.length <= 1) {
+                    prevButton.classList.add('hidden');
+                    nextButton.classList.add('hidden');
+                } else {
+                    prevButton.classList.remove('hidden');
+                    nextButton.classList.remove('hidden');
+                }
 
 
+                if (activeItems.length === 0) {
+                    countdownWidgetsContainer.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
+                    return;
+                }
+
+                // IMPORTANT: The state.allCountdowns now holds the merged list of active items
+                state.allCountdowns = activeItems; 
+                state.currentCardIndex = 0;
+
+                // 1. Start the time update loop (Fixed "Loading..." issue)
+                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
+
+                // 2. Show the first card
+                showCard(state.currentCardIndex);
+            }
+            
             // --- LOCAL STORAGE FUNCTIONS (Generalized) ---
 
             function getCustomData(key) {
@@ -1056,144 +1233,6 @@
             }
             
             /**
-             * Calculates the time remaining and formats it.
-             */
-            function formatTimeRemaining(countdown) {
-                const targetDate = new Date(countdown.targetDate);
-                const now = new Date();
-                const diffMs = targetDate.getTime() - now.getTime();
-                
-                if (diffMs <= 0) return null; // Expired
-
-                const msInDay = 1000 * 60 * 60 * 24;
-                const totalDays = Math.floor(diffMs / msInDay);
-                
-                const years = Math.floor(totalDays / 365);
-                let remainingDays = totalDays % 365;
-
-                const months = Math.floor(remainingDays / 30);
-                const days = remainingDays % 30;
-
-                let primaryDisplay = [];
-                if (years > 0) {
-                    primaryDisplay.push(`${years} Year${years > 1 ? 's' : ''}`);
-                    if (months > 0) primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
-                } else if (months > 0) {
-                    primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
-                    if (days > 0) primaryDisplay.push(`${days} Day${days > 1 ? 's' : ''}`);
-                } else {
-                    const remainingMs = diffMs % msInDay;
-                    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-                    
-                    if (totalDays > 0) primaryDisplay.push(`${totalDays} Day${totalDays > 1 ? 's' : ''}`);
-                    if (totalDays < 1) primaryDisplay.push(`${hours}h ${minutes}m ${seconds}s`);
-                }
-
-                let finalDisplay = primaryDisplay.filter(part => !part.startsWith('0 '));
-                
-                const totalDaysString = finalDisplay.length > 1 ? `[${totalDays} days]` : `(${totalDays} days)`;
-
-                const timeString = finalDisplay.join(' ');
-                
-                return `${timeString} ${totalDaysString}`;
-            }
-            
-            /**
-             * Function to manage the display of the active carousel card.
-             */
-            function showCard(newIndex) {
-                const totalItems = state.allCountdowns.length;
-                if (totalItems === 0) return;
-
-                // Ensure index loops correctly
-                newIndex = (newIndex + totalItems) % totalItems;
-                
-                const itemData = state.allCountdowns[newIndex];
-                let newElement;
-
-                // Create the appropriate card element
-                if (itemData.type === 'forecast') {
-                    newElement = createForecastPanel();
-                } else {
-                    // Pass the index for unique ID creation
-                    newElement = createCountdownItem(itemData, newIndex); 
-                }
-
-                // Apply transition logic
-                carouselContentWrapper.style.opacity = '0';
-                
-                setTimeout(() => {
-                    carouselContentWrapper.innerHTML = '';
-                    carouselContentWrapper.appendChild(newElement);
-                    state.currentCardIndex = newIndex;
-                    
-                    // Fade in
-                    carouselContentWrapper.style.opacity = '1';
-                }, 300); // 300ms matches the CSS transition
-
-            }
-
-
-            /**
-             * NEW: Populates the carousel state and calls the display function.
-             */
-            function initCarousel(mergedItems) {
-                // Clear any previous animation loops
-                if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
-
-                // Filter out non-item entries (null/expired countdowns)
-                const activeItems = mergedItems.filter(item => item !== null);
-
-                if (activeItems.length === 0) {
-                    countdownWidgetsContainer.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
-                    return;
-                }
-
-                // IMPORTANT: The state.allCountdowns now holds the merged list of active items
-                state.allCountdowns = activeItems; 
-                state.currentCardIndex = 0;
-
-                // 1. Start the time update loop (Fixed "Loading..." issue)
-                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
-
-                // 2. Show the first card
-                showCard(state.currentCardIndex);
-            }
-
-            /**
-             * FIX: Exposed function now correctly updates the time display.
-             */
-            function updateTimeDisplay() {
-                if (!state.allCountdowns.length) {
-                    // Stop the loop if there are no items
-                    if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
-                    return;
-                }
-
-                // Loop through all active elements and update their text
-                state.allCountdowns.forEach((item, index) => {
-                    // Only update countdown items, not forecast items
-                    if (item.type === 'countdown') {
-                        const timeString = formatTimeRemaining(item);
-                        // Find the corresponding time element using the index of the countdown in the ALL_COUNTDOWNS array
-                        const timeDisplayElement = carouselContentWrapper.querySelector(`#card-${index} .countdown-time-display`);
-
-                        if (timeString === null) {
-                            const dismissedId = item.id || item.name;
-                            window.dismissCountdown(new Event('synthetic'), dismissedId, true);
-                        } else if (timeDisplayElement) {
-                            timeDisplayElement.textContent = timeString;
-                        }
-                    }
-                });
-
-                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
-            }
-
-
-            /**
              * Renders the dashboard content based on the fetched data.
              */
             async function renderDashboard(data, isFallback) {
@@ -1330,7 +1369,8 @@
                 
                 // The fetch should only determine the STATIC/BASE data.
                 try {
-                    const response = await fetch('./data.json');
+                    // FIX: Revert fetch path to root-relative for better preview compatibility
+                    const response = await fetch('/data.json'); 
                     
                     if (response.ok) {
                         dashboardData = await response.json();
@@ -1353,6 +1393,41 @@
                 // CRITICAL FIX: The logic to clear custom local storage on fetch success is REMOVED.
                 // This is now done manually via the "Clear Draft Data" button.
             }
+            
+            // --- Helper Functions (Cont.) ---
+            
+            // Timezone Dropdown
+            function populateTimezoneDropdown() {
+                const select = document.getElementById('countdown-timezone');
+                select.innerHTML = ''; 
+                
+                TIMEZONES.forEach(tz => {
+                    const option = document.createElement('option');
+                    option.value = tz.value;
+                    option.textContent = tz.name;
+                    if (tz.value === 'America/Chicago') {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            }
+
+            // Color Dropdown
+            function populateGroupColorDropdown() {
+                groupThemeSelect.innerHTML = ''; 
+                
+                COLOR_PALETTE.forEach(theme => {
+                    const option = document.createElement('option');
+                    // Store the BG and Text classes as a JSON string in the value
+                    option.value = JSON.stringify({ bg: theme.bg, text: theme.text });
+                    option.textContent = theme.name;
+                    if (theme.name.includes('(Default)')) {
+                        option.selected = true;
+                    }
+                    groupThemeSelect.appendChild(option);
+                });
+            }
+
 
             // Run the initialization function when the window loads
             window.onload = () => {
