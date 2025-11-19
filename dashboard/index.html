@@ -606,7 +606,12 @@
             // Populate Group Dropdown for Add Link Modal
             function populateGroupDropdown() {
                 // Get all link groups currently rendered (static + custom)
-                const allGroups = [...STATIC_LINK_GROUPS, ...getCustomGroups()];
+                // We MUST re-fetch static and custom data every time the dropdown is opened
+                const staticGroups = STATIC_LINK_GROUPS.map(g => ({...g, name: g.name.replace(' (test)', '').trim()}));
+                const customGroups = getCustomGroups();
+
+                const allGroups = [...staticGroups, ...customGroups];
+
                 linkGroupSelect.innerHTML = '';
 
                 if (allGroups.length === 0) {
@@ -619,7 +624,7 @@
 
                 allGroups.forEach(group => {
                     const option = document.createElement('option');
-                    // Use the group name without '(test)' suffix for the value
+                    // Use the clean name (no test suffix) for the value
                     const name = group.name.replace(' (test)', '').trim(); 
                     option.value = name;
                     option.textContent = name;
@@ -1166,32 +1171,41 @@
                 startCountdownScroll(mergedCountdowns);
 
 
-                // --- MERGE LINK GROUP DATA ---
+                // --- MERGE LINK GROUP DATA (FIXED LOGIC) ---
                 
                 const customGroups = getCustomGroups();
                 const customLinks = getCustomLinks();
                 
-                // Create map of static groups
+                // Create map of ALL groups (static first, then overwrite/add custom)
                 const finalGroupsMap = new Map();
+                
+                // A. Add Static Groups to map
                 data.linkGroups.forEach(group => {
-                    // Use a clean version of the name as the key for linking custom data
                     const cleanName = group.name.replace(' (test)', '').trim();
                     finalGroupsMap.set(cleanName, {...group, links: [...(group.links || [])]});
                 });
 
-                // Add custom groups
+                // B. Add Custom Groups to map (or overwrite if name conflicts, though custom names should be unique)
                 customGroups.forEach(group => {
-                    if (!finalGroupsMap.has(group.name)) {
-                        finalGroupsMap.set(group.name, {...group, links: []});
-                    }
+                    // Custom groups are already clean (no '(test)' suffix)
+                    finalGroupsMap.set(group.name, {...group, links: [], id: undefined}); // Ensure links array is initialized and ID is cleared
                 });
                 
-                // Add custom links to their target groups
+                // C. Merge Custom Links into their target groups
                 customLinks.forEach(link => {
+                    const cleanLink = {
+                        name: link.name,
+                        url: link.url,
+                        img: link.img,
+                    };
                     const targetGroup = finalGroupsMap.get(link.groupName);
                     if (targetGroup) {
-                        targetGroup.links.push(link);
+                        if (!targetGroup.links) {
+                            targetGroup.links = [];
+                        }
+                        targetGroup.links.push(cleanLink);
                     } else {
+                        // This handles cases where a custom link targets a custom group that hasn't been added yet (unlikely with UI flow)
                         console.warn(`Link '${link.name}' targets non-existent group '${link.groupName}'.`);
                     }
                 });
@@ -1203,7 +1217,7 @@
                 if (finalLinkGroups && finalLinkGroups.length > 0) {
                     finalLinkGroups.forEach(group => {
                         const groupCard = document.createElement('div');
-                        // UPDATED min-w-[300px] to min-w-[440px] to safely contain 3 x 120px links + gaps/padding
+                        // min-w-[440px] to safely contain 3 x 120px links + gaps/padding
                         groupCard.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[440px]'; 
 
                         const header = document.createElement('div');
