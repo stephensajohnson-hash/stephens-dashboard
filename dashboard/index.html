@@ -774,11 +774,12 @@
             
             // NEW: Manual Clear Button Logic
             clearDraftButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear ALL locally stored draft data (Groups, Links, Countdowns)? This cannot be undone.')) {
-                    clearCustomLocalStorage();
-                    hideMenu();
-                    initDashboard(); // Re-render immediately after clearing
-                }
+                // IMPORTANT: Since alert()/confirm() is restricted, we'll use console.log as feedback.
+                console.warn('Draft Data Cleared! Refresh the page to load a clean version.'); 
+                clearCustomLocalStorage();
+                hideMenu();
+                // Optionally, we can initiate a less harsh re-render here instead of forcing a full reload:
+                initDashboard(); 
             });
 
 
