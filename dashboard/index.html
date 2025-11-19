@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.5.1</title>
+    <title>Stephens' Dashboard V0.5.2</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -143,7 +143,7 @@
             </button>
 
 
-            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.5.1</p>
+            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.5.2</p>
         </div>
     </div>
     
@@ -533,8 +533,14 @@
                       "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
                       "timezone": "America/Chicago"
                     }
+                ],
+                // --- NEW: EMBEDDED STOCKS DATA (FIXED) ---
+                "stocks": [
+                    { "symbol": "TSLA", "shares": 0.0, "type": "stock" },
+                    { "symbol": "SCHG", "shares": 50.0, "type": "stock" },
+                    { "symbol": "SCHD", "shares": 100.0, "type": "stock" }
                 ]
-                // --- END EMBEDDED COUNTDOWN DATA ---
+                // --- END EMBEDDED STOCKS DATA ---
             };
             // --- END EMBEDDED DATA ---
 
@@ -578,7 +584,7 @@
                 // Create the appropriate card element
                 if (itemData.type === 'forecast') {
                     newElement = createForecastPanel();
-                } else if (itemData.type === 'stocks') { // NEW: Stock Panel Check
+                } else if (itemData.type === 'stocks') { // Stock Panel Check
                     newElement = createStockPanel(itemData.data);
                 } else {
                     // Pass the index for unique ID creation
@@ -914,31 +920,43 @@
                 const panel = document.createElement('div');
                 panel.className = 'flex flex-col w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-y-auto'; 
                 
-                // Header Row
-                panel.innerHTML = `
-                    <div class="flex text-xs text-gray-400 font-semibold uppercase sticky top-0 bg-gray-800 border-b border-gray-700 p-2">
-                        <div class="w-1/4 stock-row-cell">Symbol</div>
-                        <div class="w-1/4 stock-row-cell text-right">Price</div>
-                        <div class="w-1/4 stock-row-cell text-right">Change ($)</div>
-                        <div class="w-1/4 stock-row-cell text-right">Change (%)</div>
-                    </div>
-                `;
-
-                // Data Rows
-                stockData.forEach(stock => {
-                    const priceColor = getStockColor(stock.change);
-                    const row = document.createElement('div');
-                    row.className = 'flex text-sm border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50';
-                    
-                    row.innerHTML = `
-                        <div class="w-1/4 stock-row-cell font-bold text-white">${stock.symbol}</div>
-                        <div class="w-1/4 stock-row-cell text-right font-mono">${stock.price.toFixed(2)}</div>
-                        <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.change.toFixed(2)}</div>
-                        <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.percentChange.toFixed(2)}%</div>
+                // Add Status/Loading row (Visible if no data or API error)
+                if (stockData.length === 0 || stockData[0].status !== 'LIVE' && stockData[0].status !== 'MOCK DATA') {
+                     // Determine if it's an API error or just empty
+                     const status = stockData.length > 0 ? stockData[0].status : 'No symbols tracked.';
+                     
+                     panel.innerHTML = `
+                        <div class="p-4 text-sm text-yellow-400 bg-yellow-900/20 rounded-lg">
+                            ⚠️ Stock Data Status: <span class="font-bold">${status}</span>
+                            <p class="text-xs mt-1 text-gray-400">Ensure Alpha Vantage key is active and check rate limits (5 calls/min).</p>
+                        </div>
+                     `;
+                } else {
+                    // Header Row
+                    panel.innerHTML = `
+                        <div class="flex text-xs text-gray-400 font-semibold uppercase sticky top-0 bg-gray-800 border-b border-gray-700 p-2">
+                            <div class="w-1/4 stock-row-cell">Symbol</div>
+                            <div class="w-1/4 stock-row-cell text-right">Price</div>
+                            <div class="w-1/4 stock-row-cell text-right">Change ($)</div>
+                            <div class="w-1/4 stock-row-cell text-right">Change (%)</div>
+                        </div>
                     `;
-                    panel.appendChild(row);
-                });
 
+                    // Data Rows
+                    stockData.forEach(stock => {
+                        const priceColor = getStockColor(stock.change);
+                        const row = document.createElement('div');
+                        row.className = 'flex text-sm border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50';
+                        
+                        row.innerHTML = `
+                            <div class="w-1/4 stock-row-cell font-bold text-white">${stock.symbol}</div>
+                            <div class="w-1/4 stock-row-cell text-right font-mono">${stock.price.toFixed(2)}</div>
+                            <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.change.toFixed(2)}</div>
+                            <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.percentChange.toFixed(2)}%</div>
+                        `;
+                        panel.appendChild(row);
+                    });
+                }
                 item.appendChild(panel);
                 return item;
             }
@@ -1118,11 +1136,13 @@
                 const newStock = {
                     symbol: document.getElementById('stock-symbol').value.trim().toUpperCase(),
                     shares: parseFloat(document.getElementById('stock-shares').value) || 0,
-                    id: 'stock_' + Date.now()
+                    id: 'stock_' + Date.now(),
+                    type: 'stock'
                 };
                 
                 if (!newStock.symbol) {
-                    alert("Stock symbol is required.");
+                    // NOTE: Cannot use alert, using console.error for feedback
+                    console.error("Stock symbol is required.");
                     return;
                 }
 
@@ -1461,26 +1481,31 @@
             // --- Stock Fetch Function (Uses Alpha Vantage) ---
             async function fetchStockQuotes(symbols) {
                 const ALPHA_VANTAGE_KEY = 'RK2NW9YS1D7BTE8L'; 
-                const mockQuotes = {
-                    "TSLA": { price: 250.75, change: 5.25, percentChange: 2.14 },
-                    "SCHG": { price: 65.40, change: -0.80, percentChange: -1.21 },
-                    "SCHD": { price: 80.12, change: 0.15, percentChange: 0.19 },
-                    "MSFT": { price: 420.00, change: 0.00, percentChange: 0.00 }
-                };
-
-                const quotes = [];
                 
+                // Initialize quotes with loading data
+                let quotes = symbols.map(stock => ({
+                    symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0, 
+                    status: 'Loading...' // Status field for debugging
+                }));
+                
+                // If API key is not active or set up, fill with a placeholder error
                 if (ALPHA_VANTAGE_KEY === 'YOUR_ALPHA_VANTAGE_KEY_HERE') {
-                     // Use mock data if API key is placeholder
-                     console.warn("Using MOCK STOCK DATA. Add your Alpha Vantage API key for live quotes.");
-                     symbols.forEach(stock => {
-                        const mock = mockQuotes[stock.symbol] || { price: 0, change: 0, percentChange: 0 };
-                        quotes.push({ ...stock, ...mock });
-                     });
-                     stockQuotes = quotes;
-                     return;
+                     quotes = symbols.map(stock => ({
+                        symbol: stock.symbol, shares: stock.shares || 0, price: 100.00, change: 1.50, percentChange: 1.5, status: 'MOCK DATA'
+                    }));
+                    stockQuotes = quotes;
+                    return;
                 }
                 
+                if (symbols.length === 0) {
+                    stockQuotes = [];
+                    return;
+                }
+
+                
+                const successfulQuotes = [];
+                let apiError = false;
+
                 // NOTE: Fetching multiple symbols requires multiple API calls which can hit rate limits (5 calls per minute on free tier).
                 for (const stock of symbols) {
                     const apiUrl = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.symbol}&apikey=${ALPHA_VANTAGE_KEY}`;
@@ -1489,24 +1514,45 @@
                         const data = await response.json();
                         
                         const quote = data['Global Quote'];
+                        
+                        // Check for API errors (rate limits, invalid key, or invalid symbol)
+                        if (data['Note'] || data['Error Message']) {
+                            apiError = data['Note'] || data['Error Message'] || "API Error";
+                            // Use fallback loading data and break the loop to prevent further rate limiting
+                            quotes[0].status = apiError; 
+                            break; 
+                        }
 
                         if (quote && quote['05. price']) {
-                            quotes.push({
+                            successfulQuotes.push({
                                 symbol: stock.symbol,
                                 shares: stock.shares || 0,
                                 price: parseFloat(quote['05. price']),
                                 change: parseFloat(quote['09. change']),
-                                percentChange: parseFloat(quote['10. change percent'].replace('%', ''))
+                                percentChange: parseFloat(quote['10. change percent'].replace('%', '')),
+                                status: 'LIVE'
                             });
                         } else {
-                            quotes.push({ symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0 });
+                            successfulQuotes.push({ 
+                                symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0, 
+                                status: 'Symbol Not Found'
+                            });
                         }
                     } catch (error) {
                         console.error(`Error fetching stock ${stock.symbol}:`, error);
-                        quotes.push({ symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0 });
+                        apiError = "Fetch Failed";
+                        break; 
                     }
                 }
-                stockQuotes = quotes;
+                
+                if (apiError) {
+                    // If an API error occurred, return a state that shows the error message
+                    stockQuotes = symbols.map(stock => ({
+                        symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0, status: apiError
+                    }));
+                } else {
+                    stockQuotes = successfulQuotes;
+                }
             }
             // --- END Stock Fetch Function ---
             
@@ -1527,7 +1573,7 @@
                 // A. Save the Static Data (for download and clean name retrieval)
                 STATIC_LINK_GROUPS = data.linkGroups || [];
                 STATIC_COUNTDOWNS = data.countdowns || [];
-                STATIC_STOCKS = data.stocks || [];
+                STATIC_STOCKS = data.stocks || []; // FIX: Get stocks from data
                 
                 linkGroupsContainer.innerHTML = ''; 
                 debugLog.innerHTML = ''; // Clear the debug log on re-render
@@ -1542,7 +1588,9 @@
 
                 // --- MERGE STOCK DATA ---
                 const customStocks = getCustomStocks();
-                const mergedStocks = [...(data.stocks || []), ...customStocks];
+                // FIX: Ensure symbols from embedded data are included for preview
+                const staticStockSymbols = STATIC_STOCKS.map(s => ({symbol: s.symbol.replace(' (test)', ''), shares: s.shares}));
+                const mergedStocks = [...staticStockSymbols, ...customStocks];
                 
                 // Fetch stock quotes (this updates the global `stockQuotes` array)
                 await fetchStockQuotes(mergedStocks); 
