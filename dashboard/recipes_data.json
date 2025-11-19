@@ -1,0 +1,127 @@
+{
+  "categories": ["Bread", "Soup", "Dessert"],
+  "availableTags": ["gluten free", "keto", "dairy free"],
+  "recipes": [
+    {
+      "id": "1",
+      "title": "Hearty Classic Chili",
+      "category": "Soup",
+      "description": "A comforting, slow-cooked classic with a blend of ground beef, beans, and smoky spices. (Now with full macro data for the whole batch!)",
+      "tags": ["Dinner", "Comfort Food", "Slow Cooker"],
+      "prepTime": "15 mins",
+      "cookTime": "4 hours",
+      "servings": 8,
+      "image": "https://placehold.co/400x250/111827/ffffff?text=Chili+Image",
+      "source": {
+        "description": "Adapted from Grandma's original recipe.",
+        "url": ""
+      },
+      "ingredients": [
+        {
+          "sectionTitle": "Base",
+          "list": [
+            {
+              "name": "Ground Beef (80/20)",
+              "quantity": 2,
+              "unit": "pounds",
+              "notes": "",
+              "macros": { "fat": 110, "carbs": 0, "fiber": 0, "protein": 140, "calories": 1500 }
+            },
+            {
+              "name": "Diced Onion",
+              "quantity": 1,
+              "unit": "",
+              "notes": "medium",
+              "macros": { "fat": 0, "carbs": 10, "fiber": 3, "protein": 1, "calories": 40 }
+            },
+            {
+              "name": "Garlic",
+              "quantity": 3,
+              "unit": "cloves",
+              "notes": "minced",
+              "macros": { "fat": 0, "carbs": 3, "fiber": 0, "protein": 1, "calories": 15 }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Wet & Canned Goods",
+          "list": [
+            {
+              "name": "Diced Tomatoes",
+              "quantity": 28,
+              "unit": "ounces",
+              "notes": "undrained",
+              "macros": { "fat": 0, "carbs": 25, "fiber": 6, "protein": 5, "calories": 100 }
+            },
+            {
+              "name": "Kidney Beans",
+              "quantity": 15,
+              "unit": "ounces",
+              "notes": "drained and rinsed",
+              "macros": { "fat": 2, "carbs": 40, "fiber": 15, "protein": 15, "calories": 220 }
+            },
+            {
+              "name": "Tomato Paste",
+              "quantity": 6,
+              "unit": "ounces",
+              "notes": "",
+              "macros": { "fat": 0, "carbs": 20, "fiber": 4, "protein": 6, "calories": 80 }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Spices",
+          "list": [
+            {
+              "name": "Chili Powder",
+              "quantity": 4,
+              "unit": "tablespoons",
+              "notes": "",
+              "macros": { "fat": 2, "carbs": 8, "fiber": 4, "protein": 1, "calories": 40 }
+            },
+            {
+              "name": "Cumin",
+              "quantity": 2,
+              "unit": "teaspoons",
+              "notes": "",
+              "macros": { "fat": 1, "carbs": 3, "fiber": 1, "protein": 1, "calories": 15 }
+            },
+            {
+              "name": "Smoked Paprika",
+              "quantity": 1,
+              "unit": "teaspoon",
+              "notes": "",
+              "macros": { "fat": 0, "carbs": 1, "fiber": 1, "protein": 0, "calories": 5 }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Preparation",
+          "steps": [
+            "Brown the ground beef in a large pot and drain excess grease.",
+            "Add onion and cook until softened, about 5 minutes.",
+            "Stir in garlic and cook for 1 minute until fragrant.",
+            "Transfer mixture to a slow cooker."
+          ]
+        },
+        {
+          "sectionTitle": "Slow Cooking",
+          "steps": [
+            "Stir in all canned goods (tomatoes and beans) and spices.",
+            "Mix thoroughly to ensure all spices are distributed.",
+            "Cook on low for 4 hours, or on high for 2 hours, stirring occasionally."
+          ]
+        },
+        {
+          "sectionTitle": "Serving Suggestion",
+          "steps": [
+            "Serve hot with your favorite toppings.",
+            "Suggested toppings include shredded cheddar cheese, sour cream, and chopped green onions."
+          ]
+        }
+      ]
+    }
+  ]
+}
