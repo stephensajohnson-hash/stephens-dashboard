@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.9</title>
+    <title>Stephens' Recipes V0.5.10</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -59,7 +59,7 @@
             <button id="add-tag-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Tag</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.9</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.10</p>
         </div>
     </div>
 
@@ -112,7 +112,6 @@
             <div class="flex-1 overflow-y-auto p-6">
                 <form id="full-recipe-form">
                     <input type="hidden" id="form-recipe-id">
-                    
                     <!-- TAB: GENERAL -->
                     <div id="tab-general" class="tab-content space-y-4">
                         <div><label class="block text-sm text-gray-400 mb-1">Title</label><input type="text" id="form-title" required class="w-full bg-gray-800 border border-gray-600 rounded p-2 text-white"></div>
@@ -171,35 +170,36 @@
     <!-- JS Logic -->
     <script>
         (function() {
-            // --- DOM Elements ---
+            // --- 1. VARIABLES & CONSTANTS ---
             const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
             const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content') };
             const menuModal = document.getElementById('menu-modal');
             
-            // Modal Elements
-            const recipeModal = document.getElementById('recipe-form-modal');
+            const modals = {
+                recipe: document.getElementById('recipe-form-modal'),
+                category: document.getElementById('add-category-modal'),
+                tag: document.getElementById('add-tag-modal')
+            };
+
             const ingContainer = document.getElementById('ingredients-container');
             const instContainer = document.getElementById('instructions-container');
             
-            // State
             let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
             let isTagMode = false;
             let currentEditingId = null;
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
-
-            // --- EMBEDDED DATA ---
+            
             const EMBEDDED_RECIPES = {
                 "categories": ["Bread", "Soup", "Dessert"], "availableTags": ["gluten free", "keto", "dairy free"],
-                "recipes": [
-                    { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] }
-                ]
+                "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ]
             };
 
-            // --- HELPERS ---
+            // --- 2. HELPER FUNCTIONS ---
             function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
             function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-            
-            // Helper to merge static and custom recipes (Custom overrides Static if ID matches)
+            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+
             function getAllRecipes() {
                 const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
                 const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
@@ -209,7 +209,82 @@
                 return Array.from(map.values());
             }
 
-            // --- UI FUNCTIONS ---
+            // --- 3. UI FUNCTIONS ---
+            function toggleMenu() {
+                const isHidden = menuModal.classList.contains('opacity-0');
+                if (isHidden) {
+                    menuModal.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                } else {
+                    menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                }
+            }
+            
+            function hideMenu() {
+                 menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+
+            function showDetailView(recipeId) {
+                currentEditingId = String(recipeId);
+                const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
+                if (!recipe) return;
+
+                views.list.classList.add('hidden');
+                views.detail.classList.remove('hidden');
+                window.scrollTo(0,0);
+                
+                // Calc Macros
+                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
+                if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
+                const s = recipe.servings || 1;
+                const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
+
+                containers.detail.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-6 mb-8">
+                        <img src="${recipe.image}" class="w-full md:w-1/3 rounded-xl object-cover h-64 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title}</h1>
+                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
+                            <div class="flex gap-4 mb-6 text-sm">
+                                <span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span>
+                                <span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span>
+                                <span class="bg-gray-700 px-3 py-1 rounded">Serves: <strong>${recipe.servings}</strong></span>
+                            </div>
+                            <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700">
+                                <h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3>
+                                <div class="grid grid-cols-5 gap-2 text-center">
+                                    <div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Cals</div></div>
+                                    <div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Prot</div></div>
+                                    <div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carb</div></div>
+                                    <div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div>
+                                    <div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div>
+                            <h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>
+                            ${(recipe.ingredients || []).map(section => `
+                                <div class="mb-6">
+                                    <h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3>
+                                    <ul class="space-y-2">${section.list.map(ing => `<li class="flex justify-between border-b border-gray-700/50 pb-1"><span class="text-gray-200"><span class="font-bold text-white">${ing.quantity} ${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic">${ing.notes||''}</span></li>`).join('')}</ul>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>
+                            ${(recipe.instructions || []).map(section => `
+                                <div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2">${step}</li>`).join('')}</ol></div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    ${recipe.source ? `<div class="mt-10 pt-6 border-t border-gray-700 text-sm text-gray-500 text-center"><span class="font-semibold">Source:</span> ${recipe.source.description} ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="text-blue-400 hover:underline ml-1 transition">View Original &rarr;</a>` : ''}</div>` : ''}
+                `;
+                
+                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe);
+                document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+            }
+
             function renderRecipeGroups() {
                 views.detail.classList.add('hidden');
                 views.list.classList.remove('hidden');
@@ -217,7 +292,6 @@
                 const customCats = getCustomData(state.localStorageKeys.categories);
                 const customTags = getCustomData(state.localStorageKeys.tags);
                 
-                // Merge and deduplicate categories/tags
                 const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
                 const allTags = [...STATIC_TAGS, ...customTags].filter((v, i, a) => a.indexOf(v) === i);
 
@@ -226,9 +300,13 @@
                 
                 containers.groups.innerHTML = '';
                 
-                // Update Toggle Buttons
-                document.getElementById('group-by-category').className = !isTagMode ? "px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white" : "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700";
-                document.getElementById('group-by-tag').className = isTagMode ? "px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white" : "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700";
+                if(isTagMode) {
+                    document.getElementById('group-by-tag').className = "px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700";
+                    document.getElementById('group-by-category').className = "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700";
+                } else {
+                    document.getElementById('group-by-category').className = "px-4 py-2 text-sm font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700";
+                    document.getElementById('group-by-tag').className = "px-4 py-2 text-sm font-medium rounded-md text-gray-400 hover:bg-gray-700";
+                }
 
                 const groupedRecipes = new Map();
                 allRecipes.forEach(recipe => {
@@ -282,117 +360,7 @@
                 if(containers.groups.innerHTML === '') containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
             }
 
-            // --- DETAIL VIEW ---
-            function showDetailView(recipeId) {
-                currentEditingId = String(recipeId);
-                const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
-                if (!recipe) return;
-
-                views.list.classList.add('hidden');
-                views.detail.classList.remove('hidden');
-                window.scrollTo(0,0);
-                
-                // Calc Macros
-                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
-                if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
-                const s = recipe.servings || 1;
-                const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
-
-                containers.detail.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-6 mb-8">
-                        <img src="${recipe.image}" class="w-full md:w-1/3 rounded-xl object-cover h-64 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
-                        <div class="flex-1 flex flex-col justify-center">
-                            <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
-                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
-                            <div class="flex gap-4 mb-6 text-sm">
-                                <span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span>
-                                <span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span>
-                                <span class="bg-gray-700 px-3 py-1 rounded">Serves: <strong>${recipe.servings}</strong></span>
-                            </div>
-                            <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700">
-                                <h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3>
-                                <div class="grid grid-cols-5 gap-2 text-center">
-                                    <div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500">Cals</div></div>
-                                    <div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500">Prot</div></div>
-                                    <div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500">Carb</div></div>
-                                    <div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500">Fat</div></div>
-                                    <div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500">Fib</div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div>
-                            <h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>
-                            ${(recipe.ingredients || []).map(section => `
-                                <div class="mb-6">
-                                    <h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3>
-                                    <ul class="space-y-2">${section.list.map(ing => `<li class="flex justify-between border-b border-gray-700/50 pb-1"><span class="text-gray-200"><span class="font-bold text-white">${ing.quantity} ${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic">${ing.notes||''}</span></li>`).join('')}</ul>
-                                </div>
-                            `).join('')}
-                        </div>
-                        <div>
-                            <h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>
-                            ${(recipe.instructions || []).map(section => `
-                                <div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2">${step}</li>`).join('')}</ol></div>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    ${recipe.source ? `
-                    <div class="mt-10 pt-6 border-t border-gray-700 text-sm text-gray-500 text-center">
-                        <span class="font-semibold">Source:</span> ${recipe.source.description} 
-                        ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="text-blue-400 hover:underline ml-1 transition">View Original &rarr;</a>` : ''}
-                    </div>` : ''}
-                `;
-                
-                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe);
-                document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
-            }
-
-            // --- RECIPE FORM LOGIC ---
-            function openRecipeModal(recipe = null) {
-                currentEditingId = recipe ? recipe.id : null;
-                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
-                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
-                
-                // Reset
-                document.getElementById('full-recipe-form').reset();
-                ingContainer.innerHTML = ''; instContainer.innerHTML = '';
-                
-                // Populate Categories Dropdown
-                // FIX: Merge static and custom categories for the dropdown
-                const customCats = getCustomData(state.localStorageKeys.categories);
-                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
-                const catSelect = document.getElementById('form-category');
-                catSelect.innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
-
-                if (recipe) {
-                    // Fill fields
-                    document.getElementById('form-title').value = recipe.title;
-                    document.getElementById('form-desc').value = recipe.description;
-                    catSelect.value = recipe.category;
-                    document.getElementById('form-servings').value = recipe.servings;
-                    document.getElementById('form-prep').value = recipe.prepTime;
-                    document.getElementById('form-cook').value = recipe.cookTime;
-                    document.getElementById('form-image').value = recipe.image;
-                    if(recipe.source) {
-                        document.getElementById('form-source-desc').value = recipe.source.description || '';
-                        document.getElementById('form-source-url').value = recipe.source.url || '';
-                    }
-                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
-                    
-                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
-                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
-                } else {
-                    addIngredientSection();
-                    addInstructionSection();
-                }
-                
-                recipeModal.classList.remove('hidden');
-                switchTab('tab-general');
-            }
-
+            // --- FORM LOGIC ---
             function addIngredientSection(data = null) {
                 const div = document.createElement('div');
                 div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
@@ -455,12 +423,82 @@
                 else addStep();
                 instContainer.appendChild(div);
             }
+            
+            function openRecipeModal(recipe = null) {
+                currentEditingId = recipe ? recipe.id : null;
+                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
+                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
+                document.getElementById('full-recipe-form').reset();
+                ingContainer.innerHTML = ''; instContainer.innerHTML = '';
+                
+                const customCats = getCustomData(state.localStorageKeys.categories);
+                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
+                document.getElementById('form-category').innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
 
-            // --- SAVE RECIPE ---
-            document.getElementById('save-recipe-btn').onclick = () => {
+                if (recipe) {
+                    document.getElementById('form-title').value = recipe.title;
+                    document.getElementById('form-desc').value = recipe.description;
+                    document.getElementById('form-category').value = recipe.category;
+                    document.getElementById('form-servings').value = recipe.servings;
+                    document.getElementById('form-prep').value = recipe.prepTime;
+                    document.getElementById('form-cook').value = recipe.cookTime;
+                    document.getElementById('form-image').value = recipe.image;
+                    if(recipe.source) {
+                        document.getElementById('form-source-desc').value = recipe.source.description || '';
+                        document.getElementById('form-source-url').value = recipe.source.url || '';
+                    }
+                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
+                    
+                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
+                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
+                } else {
+                    addIngredientSection();
+                    addInstructionSection();
+                }
+                modals.recipe.classList.remove('hidden');
+                switchTab('tab-general');
+            }
+
+            function switchTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
+                    b.classList.add('text-gray-400');
+                });
+                document.querySelector(`[data-tab="${tabId}"]`).classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+            }
+
+            // --- EVENT BINDING ---
+            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
+            document.getElementById('close-menu-button').onclick = hideMenu;
+            document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); });
+
+            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
+            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
+            document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); hideMenu(); };
+            document.getElementById('download-data-button').onclick = downloadDataFile;
+            
+            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); modals.tag.classList.add('hidden'); });
+            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
+            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
+
+            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
+            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
+            document.getElementById('save-recipe-btn').onclick = saveRecipe;
+            document.getElementById('category-form').onsubmit = saveCategory;
+            document.getElementById('tag-form').onsubmit = saveTag;
+            document.getElementById('clear-draft-button').onclick = clearDraftData;
+            
+            document.getElementById('group-by-category').onclick = () => { isTagMode = false; renderRecipeGroups(); };
+            document.getElementById('group-by-tag').onclick = () => { isTagMode = true; renderRecipeGroups(); };
+            document.getElementById('back-to-list').onclick = renderRecipeGroups;
+
+            // --- ACTIONS ---
+            function saveRecipe() {
                 const title = document.getElementById('form-title').value;
                 if(!title) return alert("Title is required");
-
                 const newRecipe = {
                     id: currentEditingId || 'user_rec_' + Date.now(),
                     title: title,
@@ -470,37 +508,22 @@
                     prepTime: document.getElementById('form-prep').value,
                     cookTime: document.getElementById('form-cook').value,
                     image: document.getElementById('form-image').value,
-                    source: {
-                        description: document.getElementById('form-source-desc').value,
-                        url: document.getElementById('form-source-url').value
-                    },
+                    source: { description: document.getElementById('form-source-desc').value, url: document.getElementById('form-source-url').value },
                     tags: document.getElementById('form-tags').value.split(',').map(t => t.trim()).filter(t => t),
-                    ingredients: [],
-                    instructions: []
+                    ingredients: [], instructions: []
                 };
-
-                // Harvest Ingredients
+                
                 document.querySelectorAll('.ing-section').forEach(sec => {
                     const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] };
                     sec.querySelectorAll('.ing-row').forEach(row => {
                         section.list.push({
-                            name: row.querySelector('.ing-name').value,
-                            quantity: row.querySelector('.ing-qty').value,
-                            unit: row.querySelector('.ing-unit').value,
-                            notes: row.querySelector('.ing-notes').value,
-                            macros: {
-                                calories: parseFloat(row.querySelector('.macro-cal').value) || 0,
-                                protein: parseFloat(row.querySelector('.macro-pro').value) || 0,
-                                carbs: parseFloat(row.querySelector('.macro-carb').value) || 0,
-                                fat: parseFloat(row.querySelector('.macro-fat').value) || 0,
-                                fiber: parseFloat(row.querySelector('.macro-fib').value) || 0
-                            }
+                            name: row.querySelector('.ing-name').value, quantity: row.querySelector('.ing-qty').value, unit: row.querySelector('.ing-unit').value, notes: row.querySelector('.ing-notes').value,
+                            macros: { calories: parseFloat(row.querySelector('.macro-cal').value)||0, protein: parseFloat(row.querySelector('.macro-pro').value)||0, carbs: parseFloat(row.querySelector('.macro-carb').value)||0, fat: parseFloat(row.querySelector('.macro-fat').value)||0, fiber: parseFloat(row.querySelector('.macro-fib').value)||0 }
                         });
                     });
                     newRecipe.ingredients.push(section);
                 });
 
-                // Harvest Instructions
                 document.querySelectorAll('.inst-section').forEach(sec => {
                     const section = { sectionTitle: sec.querySelector('.section-title').value, steps: [] };
                     sec.querySelectorAll('.step-text').forEach(txt => section.steps.push(txt.value));
@@ -508,61 +531,15 @@
                 });
 
                 let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const idx = customRecipes.findIndex(r => r.id === newRecipe.id);
-                if (idx >= 0) customRecipes[idx] = newRecipe;
-                else customRecipes.push(newRecipe);
+                const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id));
+                if (idx >= 0) customRecipes[idx] = newRecipe; else customRecipes.push(newRecipe);
                 
                 saveCustomData(state.localStorageKeys.recipes, customRecipes);
-                
-                recipeModal.classList.add('hidden');
-                if (currentEditingId) showDetailView(newRecipe.id);
-                else renderRecipeGroups();
-            };
-
-            function deleteRecipe(id) {
-                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const newParams = customRecipes.filter(r => r.id !== id);
-                saveCustomData(state.localStorageKeys.recipes, newParams);
-                renderRecipeGroups();
+                modals.recipe.classList.add('hidden');
+                if (currentEditingId) showDetailView(newRecipe.id); else renderRecipeGroups();
             }
 
-            // --- TAB LOGIC ---
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.onclick = (e) => switchTab(e.target.dataset.tab);
-            });
-            function switchTab(tabId) {
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                document.getElementById(tabId).classList.remove('hidden');
-                document.querySelectorAll('.tab-btn').forEach(b => {
-                    b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
-                    b.classList.add('text-gray-400');
-                });
-                const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
-                activeBtn.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
-                activeBtn.classList.remove('text-gray-400');
-            }
-
-            // --- MENU & SIMPLE MODAL LOGIC ---
-            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); menuModal.classList.toggle('hidden'); menuModal.classList.toggle('opacity-0'); };
-            document.getElementById('close-menu-button').onclick = () => menuModal.classList.add('opacity-0');
-            document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) menuModal.classList.add('opacity-0'); });
-
-            const modals = {
-                recipe: document.getElementById('recipe-form-modal'),
-                category: document.getElementById('add-category-modal'),
-                tag: document.getElementById('add-tag-modal')
-            };
-
-            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); menuModal.classList.add('opacity-0'); };
-            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); menuModal.classList.add('opacity-0'); };
-            document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); menuModal.classList.add('opacity-0'); };
-
-            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
-            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
-            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); modals.tag.classList.add('hidden'); });
-
-            document.getElementById('category-form').onsubmit = (e) => {
+            function saveCategory(e) {
                 e.preventDefault();
                 const val = document.getElementById('category-modal-input').value.trim();
                 if(val) {
@@ -570,8 +547,9 @@
                     if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
                     modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
-            };
-             document.getElementById('tag-form').onsubmit = (e) => {
+            }
+
+            function saveTag(e) {
                 e.preventDefault();
                 const val = document.getElementById('tag-modal-input').value.trim();
                 if(val) {
@@ -579,25 +557,23 @@
                     if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
                     modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
-            };
-            
-            document.getElementById('clear-draft-button').onclick = () => {
-                localStorage.removeItem(state.localStorageKeys.recipes);
-                localStorage.removeItem(state.localStorageKeys.categories);
-                localStorage.removeItem(state.localStorageKeys.tags);
-                menuModal.classList.add('opacity-0');
-                initRecipeDashboard();
-            };
+            }
 
-            document.getElementById('download-data-button').onclick = () => {
-                const customRecs = getCustomData(state.localStorageKeys.recipes);
-                // Clean up static recipes before export to avoid bloat
+            function deleteRecipe(id) {
+                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
+                let customRecipes = getCustomData(state.localStorageKeys.recipes);
+                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
+                saveCustomData(state.localStorageKeys.recipes, newParams);
+                renderRecipeGroups();
+            }
+
+            function downloadDataFile() {
+                hideMenu(); 
+                const customRecipes = getCustomData(state.localStorageKeys.recipes);
                 const cleanStatic = STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')}));
-                // Merge static and custom for a full backup
-                // Logic: Use a map by ID to ensure we export the latest version of every recipe
                 const exportMap = new Map();
                 cleanStatic.forEach(r => exportMap.set(String(r.id), r));
-                customRecs.forEach(r => exportMap.set(String(r.id), r)); // Custom overrides static
+                customRecipes.forEach(r => exportMap.set(String(r.id), r)); 
 
                 const data = {
                     recipes: Array.from(exportMap.values()),
@@ -609,10 +585,17 @@
                 a.href = URL.createObjectURL(blob);
                 a.download = `recipes-data-${new Date().toISOString().slice(0,10)}.json`;
                 a.click();
-                menuModal.classList.add('opacity-0');
-            };
+            }
+            
+            function clearDraftData() {
+                localStorage.removeItem(state.localStorageKeys.recipes);
+                localStorage.removeItem(state.localStorageKeys.categories);
+                localStorage.removeItem(state.localStorageKeys.tags);
+                hideMenu();
+                initRecipeDashboard();
+            }
 
-            // --- INIT ---
+            // --- INITIALIZATION ---
             async function initRecipeDashboard() {
                 let data = EMBEDDED_RECIPES;
                 try { const res = await fetch('/recipes_data.json'); if(res.ok) data = await res.json(); } catch(e) {}
@@ -620,20 +603,19 @@
                 renderRecipeGroups();
             }
 
-            // Weather & Clock
             async function updateWeather() {
                 const LOCATION_ZIP = '75482,us'; const API_KEY = '87256fe2710631542ff491e4c5d73306'; 
                 try {
                     const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`);
                     if(res.ok) {
-                        const d = await res.json();
-                        document.getElementById('weather-current-temp').textContent = `${Math.round(d.main.temp)}°`;
-                        document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(d.main.temp)}`;
-                        document.getElementById('weather-low').textContent = `${Math.round(d.main.temp_min)}°`;
-                        document.getElementById('weather-low').className = `low-temp-offset mr-1 text-xs ${getTempColor(d.main.temp_min)}`;
-                        document.getElementById('weather-high').textContent = `${Math.round(d.main.temp_max)}°`;
-                        document.getElementById('weather-high').className = `high-temp-offset text-xs ${getTempColor(d.main.temp_max)}`;
-                        document.getElementById('weather-icon').innerHTML = getForecastEmoji(d.weather[0].icon);
+                        const data = await res.json();
+                        document.getElementById('weather-current-temp').textContent = `${Math.round(data.main.temp)}°`;
+                        document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(data.main.temp)}`;
+                        document.getElementById('weather-low').textContent = `${Math.round(data.main.temp_min)}°`;
+                        document.getElementById('weather-low').className = `low-temp-offset mr-1 text-xs ${getTempColor(data.main.temp_min)}`;
+                        document.getElementById('weather-high').textContent = `${Math.round(data.main.temp_max)}°`;
+                        document.getElementById('weather-high').className = `high-temp-offset text-xs ${getTempColor(data.main.temp_max)}`;
+                        document.getElementById('weather-icon').innerHTML = getForecastEmoji(data.weather[0].icon);
                     }
                 } catch(e) {}
             }
