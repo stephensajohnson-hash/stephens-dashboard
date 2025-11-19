@@ -774,11 +774,12 @@
             
             // NEW: Manual Clear Button Logic
             clearDraftButton.addEventListener('click', () => {
-                if (confirm('Are you sure you want to clear ALL locally stored draft data (Groups, Links, Countdowns)? This cannot be undone.')) {
-                    clearCustomLocalStorage();
-                    hideMenu();
-                    initDashboard(); // Re-render immediately after clearing
-                }
+                // IMPORTANT: Since alert()/confirm() is restricted, we'll use console.log as feedback.
+                console.warn('Draft Data Cleared! Refresh the page to load a clean version.'); 
+                clearCustomLocalStorage();
+                hideMenu();
+                // Optionally, we can initiate a less harsh re-render here instead of forcing a full reload:
+                initDashboard(); 
             });
 
 
@@ -1293,7 +1294,8 @@
             async function initDashboard() {
                 let dashboardData = EMBEDDED_DATA;
                 let isFallback = true;
-                
+                let fetchSuccess = false; // Track if fetch was successful
+
                 // The fetch should only determine the STATIC/BASE data.
                 try {
                     const response = await fetch('./data.json');
@@ -1301,6 +1303,7 @@
                     if (response.ok) {
                         dashboardData = await response.json();
                         isFallback = false;
+                        fetchSuccess = true; // Set success flag
                         console.log('Successfully loaded external data.json.');
                     } else {
                         console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
@@ -1313,8 +1316,12 @@
                 // FIX: Always render with the static data + the current local storage data.
                 renderDashboard(dashboardData, isFallback);
 
-                // CRITICAL FIX: The logic to clear custom local storage on fetch success is REMOVED.
-                // This is now done manually via the "Clear Draft Data" button.
+                // CRITICAL FIX: The clearing logic runs here, conditional on successful fetch.
+                // This clears the old draft data so the *next* page load is clean.
+                if (fetchSuccess) {
+                    console.log("External file detected. Clearing local draft data for next session.");
+                    clearCustomLocalStorage();
+                }
             }
 
             // Run the initialization function when the window loads
