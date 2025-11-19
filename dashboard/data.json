@@ -149,12 +149,12 @@
         {
           "name": "Movies Portal",
           "url": "https://movies.do",
-          "img": "/images/movies portal.jpg"
+          "img": "https://placehold.co/60x60/1E40AF/FFFFFF?text=MP"
         },
         {
           "name": "Bright Star Cinemas",
           "url": "https://www.brightstarcinemas.com/",
-          "img": "/images/bright star cinemas.png"
+          "img": "https://placehold.co/60x60/8B5CF6/FFFFFF?text=BSC"
         },
         {
           "name": "YouTube",
@@ -285,52 +285,9 @@
           "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
         }
       ]
-    },
-    {
-      "name": "AI",
-      "color": "bg-fuchsia-600/20",
-      "textColor": "text-fuchsia-400",
-      "links": [
-        {
-          "name": "Grok",
-          "url": "https://grok.com/?referrer=website",
-          "img": "https://preview.redd.it/say-what-you-want-about-grok-but-theyve-nailed-the-logo-v0-kuwycuuzjsoe1.jpeg?auto=webp&s=70a12c7235af848c43943ffbcbe007f123dde19b"
-        },
-        {
-          "name": "Gemini",
-          "url": "https://gemini.google.com/app",
-          "img": "https://images.seeklogo.com/logo-png/62/1/google-gemini-icon-logo-png_seeklogo-623016.png"
-        }
-      ]
-    },
-    {
-      "name": "Pending Recipes",
-      "color": "bg-blue-600/20",
-      "textColor": "text-blue-400",
-      "links": [
-        {
-          "name": "Oat and Flax Wraps",
-          "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube",
-          "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7c/93/1a/7c931afe-e38a-a545-c75d-9d3073eb3ff6/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/200x200ia-75.webp"
-        }
-      ]
     }
   ],
   "countdowns": [
-    {
-      "name": "Thanksgiving",
-      "targetDate": "2025-11-27T00:00:00",
-      "linkUrl": "https://www.facebook.com/groups/522257848201031",
-      "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
-      "timezone": "America/Chicago"
-    },
-    {
-      "name": "Christmas",
-      "targetDate": "2025-12-25T00:00:00",
-      "linkUrl": "https://www.facebook.com/groups/522257848201031",
-      "img": "https://i0.wp.com/acountrygirlslife.com/wp-content/uploads/2023/11/Christmas-Tree-Cakes-Recipe-5.jpg?resize=1024%2C1536&ssl=1",
-      "timezone": "America/Chicago"
-    },
     {
       "name": "Cruise!",
       "targetDate": "2026-02-01T00:00:00",
@@ -339,11 +296,23 @@
       "timezone": "America/Chicago"
     },
     {
+      "name": "Thanksgiving",
+      "targetDate": "2025-11-27T00:00:00",
+      "linkUrl": "#",
+      "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
+      "timezone": "America/Chicago"
+    },
+    {
       "name": "Stephens Retires",
-      "targetDate": "2033-03-26T00:00:00",
-      "linkUrl": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
+      "targetDate": "2033-03-18T00:00:00",
+      "linkUrl": "#",
       "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
       "timezone": "America/Chicago"
     }
+  ],
+  "stocks": [
+    { "symbol": "TSLA", "shares": 404.0 },
+    { "symbol": "SCHG", "shares": 0 },
+    { "symbol": "SCHD", "shares": 0 }
   ]
 }
