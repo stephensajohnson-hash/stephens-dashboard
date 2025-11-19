@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.4</title>
+    <title>Stephens' Dashboard V0.5.1</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,6 +69,11 @@
             width: 100%;
             height: 100%;
         }
+        /* Stock Panel Specific Styling */
+        .stock-row-cell {
+            padding-top: 4px;
+            padding-bottom: 4px;
+        }
     </style>
     <script>
         tailwind.config = {
@@ -96,10 +101,13 @@
         <!-- CURRENT Weather Display Container --><div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
             <!-- UPDATED: Display Current Temp first, followed by Low/High/Icon -->
             <span class="flex items-center" id="weather-content">
-                <span id="weather-current-temp" class="text-lg text-red-400 font-bold mr-3">--°</span>
-                <span id="weather-low" class="low-temp-offset text-blue-300 mr-1 text-xs">--°</span>
+                <!-- Current Temp uses dynamic color now -->
+                <span id="weather-current-temp" class="text-lg font-bold mr-3">--°</span>
+                <!-- Low Temp uses dynamic color now -->
+                <span id="weather-low" class="low-temp-offset mr-1 text-xs">--°</span>
                 <span class="mr-1 text-xl" id="weather-icon">...</span>
-                <span id="weather-high" class="high-temp-offset text-green-300 text-xs">--°</span>
+                <!-- High Temp uses dynamic color now -->
+                <span id="weather-high" class="high-temp-offset text-xs">--°</span>
             </span>
         </div>
     </nav>
@@ -122,6 +130,9 @@
             <!-- NEW: Add Link Button --><button id="add-link-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
                 Add Link
             </button>
+            <!-- NEW: Add Stock Button --><button id="add-stock-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
+                Add Stock
+            </button>
             
             <!-- Download Data Button --><button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
                 Download Data File
@@ -132,7 +143,7 @@
             </button>
 
 
-            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.4</p>
+            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.5.1</p>
         </div>
     </div>
     
@@ -237,6 +248,32 @@
     </div>
     <!-- END: Add Link Modal Form -->
 
+    <!-- MODAL 4: Add Stock Modal Form (Hidden by default) --><div id="add-stock-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 shadow-2xl w-full max-w-lg mx-auto transform scale-95 transition-transform duration-300">
+            <h2 class="text-2xl font-bold mb-4 border-b border-gray-700 pb-2">Add Stock to Track</h2>
+            <form id="stock-form" class="space-y-4">
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Stock Symbol (e.g., TSLA, SCHD):</span>
+                    <input type="text" id="stock-symbol" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500 uppercase">
+                </label>
+                <label class="block">
+                    <span class="text-gray-400 text-sm">Shares Owned (Optional, for portfolio tracking):</span>
+                    <input type="number" id="stock-shares" min="0" value="0" class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
+                </label>
+                
+                <div class="flex justify-end space-x-3 pt-2">
+                    <button type="button" id="cancel-stock-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
+                        Cancel
+                    </button>
+                    <button type="submit" class="px-4 py-2 text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:ring-4 focus:ring-purple-500/50">
+                        Track Stock
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- END: Add Stock Modal Form -->
+
 
     <!-- Main Content Container (pt-16 for the smaller toolbar height) --><main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
         
@@ -281,19 +318,23 @@
             const addCountdownButton = document.getElementById('add-countdown-button');
             const addGroupButton = document.getElementById('add-group-button');
             const addLinkButton = document.getElementById('add-link-button');
-            const clearDraftButton = document.getElementById('clear-draft-button'); // NEW BUTTON
+            const addStockButton = document.getElementById('add-stock-button'); 
+            const clearDraftButton = document.getElementById('clear-draft-button'); 
 
             const addCountdownModal = document.getElementById('add-countdown-modal');
             const addGroupModal = document.getElementById('add-group-modal');
             const addLinkModal = document.getElementById('add-link-modal');
+            const addStockModal = document.getElementById('add-stock-modal'); 
 
             const countdownForm = document.getElementById('countdown-form');
             const groupForm = document.getElementById('group-form');
             const linkForm = document.getElementById('link-form');
+            const stockForm = document.getElementById('stock-form'); 
 
             const cancelCountdownButton = document.getElementById('cancel-countdown-button');
             const cancelGroupButton = document.getElementById('cancel-group-button');
             const cancelLinkButton = document.getElementById('cancel-link-button');
+            const cancelStockButton = document.getElementById('cancel-stock-button'); 
 
             const linkGroupSelect = document.getElementById('link-group-select');
             const groupThemeSelect = document.getElementById('group-theme');
@@ -307,8 +348,10 @@
             // --- Global State & Constants ---
             let STATIC_LINK_GROUPS = [];
             let STATIC_COUNTDOWNS = [];
+            let STATIC_STOCKS = []; 
             let STATIC_DATA_COPY = {}; 
             let forecastItems = []; 
+            let stockQuotes = []; // Array to hold live stock data (populated by API fetch)
             let clockInterval = null;
 
             // Global state for carousel
@@ -320,6 +363,7 @@
                     countdowns: 'sd_custom_countdowns',
                     groups: 'sd_custom_groups',
                     links: 'sd_custom_links',
+                    stocks: 'sd_custom_stocks', 
                     dismissals: 'sd_static_dismissals'
                 }
             };
@@ -534,6 +578,8 @@
                 // Create the appropriate card element
                 if (itemData.type === 'forecast') {
                     newElement = createForecastPanel();
+                } else if (itemData.type === 'stocks') { // NEW: Stock Panel Check
+                    newElement = createStockPanel(itemData.data);
                 } else {
                     // Pass the index for unique ID creation
                     newElement = createCountdownItem(itemData, newIndex); 
@@ -648,7 +694,7 @@
 
                 // Loop through all active elements and update their text
                 state.allCountdowns.forEach((item, index) => {
-                    // Only update countdown items, not forecast items
+                    // Only update countdown items, not forecast or stock items
                     if (item.type === 'countdown') {
                         const timeString = formatTimeRemaining(item);
                         // Find the corresponding time element using the index of the countdown in the ALL_COUNTDOWNS array
@@ -669,6 +715,7 @@
                             }
                         }
                     }
+                    // NOTE: Stock data is currently not set for real-time updates as it requires frequent API polling.
                 });
 
                 state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
@@ -692,6 +739,14 @@
                 if (t < 60) return 'text-sky-300/80';     // Cool/Cold
                 
                 return 'text-white';
+            }
+            
+            // Determines the color class for stock change based on value
+            function getStockColor(change) {
+                const c = parseFloat(change);
+                if (c > 0) return 'text-green-400';
+                if (c < 0) return 'text-red-400';
+                return 'text-gray-400';
             }
             
             // Icon mapping for forecast cards
@@ -767,10 +822,10 @@
                             </div>
 
                             <!-- Icon and Temps (Middle - Centered Vertically) -->
-                            <div class="flex items-center justify-center w-full">
+                            <div class="flex items-center justify-center w-full relative">
                                 
                                 <!-- Low Temp (Left of Icon, Lower Offset) - NEW POSITIONING -->
-                                <div class="text-center absolute left-[30%] -translate-x-1/2">
+                                <div class="text-center absolute left-[30%] -translate-x-1/2 bottom-1/2">
                                     <span class="${lowTempColor} low-temp-offset text-lg font-bold">
                                         ${forecast.temp_min}°
                                     </span>
@@ -782,7 +837,7 @@
                                 </span>
                                 
                                 <!-- High Temp (Right of Icon, Higher Offset) - NEW POSITIONING -->
-                                <div class="text-center absolute right-[30%] translate-x-1/2">
+                                <div class="text-center absolute right-[30%] translate-x-1/2 top-1/2">
                                     <span class="${highTempColor} high-temp-offset text-lg font-bold">
                                         ${forecast.temp_max}°
                                     </span>
@@ -846,6 +901,45 @@
                         </button>
                     </a>
                 `;
+                return item;
+            }
+
+            /**
+             * NEW: Creates the stock quote panel.
+             */
+            function createStockPanel(stockData) {
+                const item = document.createElement('div');
+                item.className = 'w-full h-full p-2';
+                
+                const panel = document.createElement('div');
+                panel.className = 'flex flex-col w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-y-auto'; 
+                
+                // Header Row
+                panel.innerHTML = `
+                    <div class="flex text-xs text-gray-400 font-semibold uppercase sticky top-0 bg-gray-800 border-b border-gray-700 p-2">
+                        <div class="w-1/4 stock-row-cell">Symbol</div>
+                        <div class="w-1/4 stock-row-cell text-right">Price</div>
+                        <div class="w-1/4 stock-row-cell text-right">Change ($)</div>
+                        <div class="w-1/4 stock-row-cell text-right">Change (%)</div>
+                    </div>
+                `;
+
+                // Data Rows
+                stockData.forEach(stock => {
+                    const priceColor = getStockColor(stock.change);
+                    const row = document.createElement('div');
+                    row.className = 'flex text-sm border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50';
+                    
+                    row.innerHTML = `
+                        <div class="w-1/4 stock-row-cell font-bold text-white">${stock.symbol}</div>
+                        <div class="w-1/4 stock-row-cell text-right font-mono">${stock.price.toFixed(2)}</div>
+                        <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.change.toFixed(2)}</div>
+                        <div class="w-1/4 stock-row-cell text-right font-mono ${priceColor}">${stock.percentChange.toFixed(2)}%</div>
+                    `;
+                    panel.appendChild(row);
+                });
+
+                item.appendChild(panel);
                 return item;
             }
 
@@ -918,6 +1012,9 @@
             
             const getCustomLinks = () => getCustomData(state.localStorageKeys.links);
             const saveCustomLinks = (data) => saveCustomData(state.localStorageKeys.links, data);
+
+            const getCustomStocks = () => getCustomData(state.localStorageKeys.stocks); 
+            const saveCustomStocks = (data) => saveCustomData(state.localStorageKeys.stocks, data);
 
 
             // --- MODAL AND FORM LOGIC ---
@@ -1008,6 +1105,33 @@
                 hideModal(addLinkModal);
                 initDashboard();
             });
+            
+            // Stock Modal
+            addStockButton.addEventListener('click', () => {
+                showModal(addStockModal);
+                stockForm.reset(); 
+            });
+            cancelStockButton.addEventListener('click', () => hideModal(addStockModal));
+
+            stockForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const newStock = {
+                    symbol: document.getElementById('stock-symbol').value.trim().toUpperCase(),
+                    shares: parseFloat(document.getElementById('stock-shares').value) || 0,
+                    id: 'stock_' + Date.now()
+                };
+                
+                if (!newStock.symbol) {
+                    alert("Stock symbol is required.");
+                    return;
+                }
+
+                const customStocks = getCustomStocks();
+                customStocks.push(newStock);
+                saveCustomStocks(customStocks);
+                hideModal(addStockModal);
+                initDashboard();
+            });
 
 
             // Populate Group Dropdown for Add Link Modal
@@ -1088,10 +1212,17 @@
                     id: undefined 
                 }));
                 
+                let staticStocks = STATIC_STOCKS.map(s => ({
+                    ...s,
+                    symbol: s.symbol.replace(' (test)', ''),
+                    id: undefined 
+                }));
+                
                 // 2. Get Custom Data (Load current draft data from localStorage)
                 const customGroups = getCustomGroups();
                 const customLinks = getCustomLinks();
                 const customCountdowns = getCustomCountdowns();
+                const customStocks = getCustomStocks(); 
                 
                 // 3. Create a map of all final link groups
                 const finalGroupsMap = new Map();
@@ -1146,10 +1277,16 @@
                     timezone: c.timezone
                 }))];
 
+                // Final list of stocks
+                const finalStocks = [...staticStocks, ...customStocks.map(s => ({
+                    symbol: s.symbol,
+                    shares: s.shares || 0
+                }))];
                 
                 const consolidatedData = {
                     "linkGroups": finalLinkGroups,
-                    "countdowns": finalCountdowns 
+                    "countdowns": finalCountdowns,
+                    "stocks": finalStocks 
                 };
                 
                 // 4. Prepare for Download
@@ -1228,7 +1365,7 @@
                 }, msUntilNextMinute);
             }
 
-            // --- NEW: Consolidated Weather Update Function ---
+            // --- Consolidated Weather Update Function ---
             async function updateWeatherWidgets() {
                 
                 const LOCATION_ZIP = '75482,us'; // Sulphur Springs, TX
@@ -1302,7 +1439,18 @@
                     const iconCode = currentData.weather[0].icon;
                     
                     weatherIcon.innerHTML = getForecastEmoji(iconCode);
-                    weatherCurrentTemp.textContent = `${currentTemp}°`; // FIX: Current Temp
+                    
+                    // Apply dynamic color classes
+                    const currentTempColor = getTempColor(currentTemp);
+                    const lowTempColor = getTempColor(todayForecast.temp_min);
+                    const highTempColor = getTempColor(todayForecast.temp_max);
+
+                    // Update UI using dynamic color classes
+                    weatherCurrentTemp.className = `text-lg font-bold mr-3 ${currentTempColor}`; 
+                    weatherLow.className = `low-temp-offset mr-1 text-xs ${lowTempColor}`;
+                    weatherHigh.className = `high-temp-offset text-xs ${highTempColor}`;
+
+                    weatherCurrentTemp.textContent = `${currentTemp}°`; 
                     weatherLow.textContent = `${todayForecast.temp_min}°`;
                     weatherHigh.textContent = `${todayForecast.temp_max}°`;
                     document.getElementById('weather-display').title = `Current: ${currentTemp}°F | Today's Range: ${todayForecast.temp_min}°F - ${todayForecast.temp_max}°F`;
@@ -1310,11 +1458,64 @@
             }
             // --- END Weather Update Function ---
             
+            // --- Stock Fetch Function (Uses Alpha Vantage) ---
+            async function fetchStockQuotes(symbols) {
+                const ALPHA_VANTAGE_KEY = 'RK2NW9YS1D7BTE8L'; 
+                const mockQuotes = {
+                    "TSLA": { price: 250.75, change: 5.25, percentChange: 2.14 },
+                    "SCHG": { price: 65.40, change: -0.80, percentChange: -1.21 },
+                    "SCHD": { price: 80.12, change: 0.15, percentChange: 0.19 },
+                    "MSFT": { price: 420.00, change: 0.00, percentChange: 0.00 }
+                };
+
+                const quotes = [];
+                
+                if (ALPHA_VANTAGE_KEY === 'YOUR_ALPHA_VANTAGE_KEY_HERE') {
+                     // Use mock data if API key is placeholder
+                     console.warn("Using MOCK STOCK DATA. Add your Alpha Vantage API key for live quotes.");
+                     symbols.forEach(stock => {
+                        const mock = mockQuotes[stock.symbol] || { price: 0, change: 0, percentChange: 0 };
+                        quotes.push({ ...stock, ...mock });
+                     });
+                     stockQuotes = quotes;
+                     return;
+                }
+                
+                // NOTE: Fetching multiple symbols requires multiple API calls which can hit rate limits (5 calls per minute on free tier).
+                for (const stock of symbols) {
+                    const apiUrl = `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=${stock.symbol}&apikey=${ALPHA_VANTAGE_KEY}`;
+                    try {
+                        const response = await fetch(apiUrl);
+                        const data = await response.json();
+                        
+                        const quote = data['Global Quote'];
+
+                        if (quote && quote['05. price']) {
+                            quotes.push({
+                                symbol: stock.symbol,
+                                shares: stock.shares || 0,
+                                price: parseFloat(quote['05. price']),
+                                change: parseFloat(quote['09. change']),
+                                percentChange: parseFloat(quote['10. change percent'].replace('%', ''))
+                            });
+                        } else {
+                            quotes.push({ symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0 });
+                        }
+                    } catch (error) {
+                        console.error(`Error fetching stock ${stock.symbol}:`, error);
+                        quotes.push({ symbol: stock.symbol, shares: stock.shares || 0, price: 0, change: 0, percentChange: 0 });
+                    }
+                }
+                stockQuotes = quotes;
+            }
+            // --- END Stock Fetch Function ---
+            
             // Function to clear all custom local storage keys
             function clearCustomLocalStorage() {
                 localStorage.removeItem(state.localStorageKeys.groups);
                 localStorage.removeItem(state.localStorageKeys.links);
                 localStorage.removeItem(state.localStorageKeys.countdowns);
+                localStorage.removeItem(state.localStorageKeys.stocks);
                 localStorage.removeItem(state.localStorageKeys.dismissals); // Clear dismissals too
                 console.log("Custom local storage cleared successfully.");
             }
@@ -1326,6 +1527,7 @@
                 // A. Save the Static Data (for download and clean name retrieval)
                 STATIC_LINK_GROUPS = data.linkGroups || [];
                 STATIC_COUNTDOWNS = data.countdowns || [];
+                STATIC_STOCKS = data.stocks || [];
                 
                 linkGroupsContainer.innerHTML = ''; 
                 debugLog.innerHTML = ''; // Clear the debug log on re-render
@@ -1337,6 +1539,14 @@
                     fallbackNote.innerHTML = '<p class="font-bold">DEBUG WARNING:</p> <p class="text-sm">Using embedded (test) data. The external <code class="font-mono">data.json</code> failed to load (expected in preview environment).</p>';
                     debugLog.appendChild(fallbackNote);
                 }
+
+                // --- MERGE STOCK DATA ---
+                const customStocks = getCustomStocks();
+                const mergedStocks = [...(data.stocks || []), ...customStocks];
+                
+                // Fetch stock quotes (this updates the global `stockQuotes` array)
+                await fetchStockQuotes(mergedStocks); 
+
 
                 // --- MERGE COUNTDOWN & FORECAST DATA ---
                 
@@ -1351,13 +1561,15 @@
                 // Filter out static items that have been dismissed
                 allCountdownsList = allCountdownsList.filter(c => !staticDismissals.includes(c.name.replace(' (test)', '').trim()));
 
-                // Merge Forecasts (first), Static Countdowns, and Custom Countdowns
-                // FIX: Ensure forecastItems is only added if it has data
+                // Merge Forecasts (first), Stocks (second), Static Countdowns, and Custom Countdowns
                 let mergedItems = [];
                 if (forecastItems.length > 0) {
-                    mergedItems.push({type: 'forecast', data: forecastItems}); // Add the forecast panel as ONE item
+                    mergedItems.push({type: 'forecast', data: forecastItems}); // 1. Forecast Panel
                 }
-                mergedItems = [...mergedItems, ...allCountdownsList, ...customCountdowns];
+                if (stockQuotes.length > 0) {
+                    mergedItems.push({type: 'stocks', data: stockQuotes}); // 2. Stock Panel
+                }
+                mergedItems = [...mergedItems, ...allCountdownsList, ...customCountdowns]; // 3. Countdowns
 
 
                 // 2. Initialize Carousel
