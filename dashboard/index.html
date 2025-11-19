@@ -696,6 +696,7 @@
                 customGroups.forEach(group => {
                     // Ensure links array is correctly initialized for new groups
                     const links = (group.links || []).map(link => ({ name: link.name, url: link.url, img: link.img }));
+                    // Use clean group name for the key in the map
                     finalGroupsMap.set(group.name, {...group, id: undefined, links: links,});
                 });
                 
@@ -1266,17 +1267,16 @@
             async function initDashboard() {
                 let dashboardData = EMBEDDED_DATA;
                 let isFallback = true;
-                
+                let fetchSuccess = false; // Track if fetch was successful
+
                 try {
                     const response = await fetch('./data.json');
                     
                     if (response.ok) {
                         dashboardData = await response.json();
                         isFallback = false;
+                        fetchSuccess = true;
                         console.log('Successfully loaded external data.json.');
-                        
-                        // *** FIX: If data.json loads, clear all custom data to use JSON as source of truth ***
-                        clearCustomLocalStorage();
                     } else {
                         console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
                     }
@@ -1285,7 +1285,19 @@
                     console.warn('Falling back to embedded test data.');
                 }
 
+                // FIX: Render with custom data *before* deciding whether to clear local storage.
                 renderDashboard(dashboardData, isFallback);
+
+                // Now, if the fetch succeeded, we clear the old custom data.
+                // If we are in the preview (isFallback=true), we keep the custom data.
+                if (fetchSuccess) {
+                    // *** FIX: Only clear localStorage if the real file was successfully loaded. ***
+                    clearCustomLocalStorage();
+                }
+
+                // If fetch failed (e.g., preview mode), renderDashboard has already run using embedded data + local storage.
+                // If fetch succeeded, renderDashboard has run using fetched data + local storage, 
+                // and local storage is now cleared for the next session.
             }
 
             // Run the initialization function when the window loads
