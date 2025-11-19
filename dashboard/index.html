@@ -38,13 +38,14 @@
         }
         
         /* Custom classes for offset temperatures */
+        /* INCREASED OFFSET */
         .low-temp-offset {
             position: relative;
-            top: 2px; /* Move slightly down */
+            top: 6px; /* Move slightly down for visual separation */
         }
         .high-temp-offset {
             position: relative;
-            bottom: 2px; /* Move slightly up */
+            bottom: 6px; /* Move slightly up for visual separation */
         }
         /* Carousel Container Styling */
         #carousel-content-wrapper {
@@ -664,7 +665,7 @@
                             if (dateDisplayElement) {
                                 const targetDate = new Date(item.targetDate);
                                 const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
-                                dateDisplayElement.textContent = `Due: ${targetDate.toLocaleDateString('en-US', dateOptions)}`;
+                                dateDisplayElement.textContent = `${targetDate.toLocaleDateString('en-US', dateOptions)}`;
                             }
                         }
                     }
@@ -674,6 +675,24 @@
             }
             
             // --- Helper Functions (Cont.) ---
+
+            /**
+             * Determines the color class for a temperature based on its value.
+             * @param {number} temp - The temperature in degrees Fahrenheit.
+             * @returns {string} Tailwind CSS text color class.
+             */
+            function getTempColor(temp) {
+                if (temp === '--') return 'text-gray-400';
+                const t = parseInt(temp);
+                
+                if (t >= 80) return 'text-red-500';      // Hot
+                if (t > 70) return 'text-green-400';
+                if (t >= 60) return 'text-green-400/80';  // Warm
+                if (t < 50) return 'text-sky-300';
+                if (t < 60) return 'text-sky-300/80';     // Cool/Cold
+                
+                return 'text-white';
+            }
             
             // Icon mapping for forecast cards
             function getForecastEmoji(iconCode) {
@@ -731,28 +750,44 @@
                     
                     const dayCard = document.createElement('div');
                     // Use flex-1 to ensure even spacing for all 6 days across the container
-                    dayCard.className = `flex flex-col items-center justify-center h-full flex-shrink-0 border-r border-gray-700 last:border-r-0 px-2 flex-1`; 
+                    dayCard.className = `flex h-full flex-shrink-0 border-r border-gray-700 last:border-r-0 px-2 flex-1 relative`; 
                     
+                    // Determine temp colors
+                    const lowTempColor = getTempColor(forecast.temp_min);
+                    const highTempColor = getTempColor(forecast.temp_max);
+
                     dayCard.innerHTML = `
-                        <!-- Date and Day Abbreviation -->
-                        <div class="text-xs text-gray-400 font-medium whitespace-nowrap">
-                            ${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}
-                        </div>
-                        
-                        <!-- Icon (large) and Temps (offset) -->
-                        <div class="flex items-center justify-center h-8 my-1">
-                            <!-- Low Temp (Blue, Lower Offset) -->
-                            <span class="low-temp-offset text-blue-300 text-sm font-semibold mr-1">
-                                ${forecast.temp_min}°
-                            </span>
+                        <!-- Inner container for layout -->
+                        <div class="flex flex-col items-center justify-center w-full h-full">
                             
-                            <!-- Large Icon -->
-                            <span class="text-2xl">${getForecastEmoji(forecast.icon)}</span>
-                            
-                            <!-- High Temp (Green, Higher Offset) -->
-                            <span class="high-temp-offset text-green-300 text-sm font-semibold ml-1">
-                                ${forecast.temp_max}°
-                            </span>
+                            <!-- Day and Date (Top Left Corner) -->
+                            <div class="absolute top-1 left-2 text-xs font-medium text-gray-400 text-left">
+                                <div class="text-white font-semibold">${forecast.date.toLocaleDateString('en-US', dayOptions)}</div>
+                                <div class="text-gray-400">${forecast.date.getDate()}</div>
+                            </div>
+
+                            <!-- Icon and Temps (Middle - Centered Vertically) -->
+                            <div class="flex items-center justify-center w-full">
+                                
+                                <!-- Low Temp (Left of Icon, Lower Offset) - NEW POSITIONING -->
+                                <div class="text-center absolute left-[30%] -translate-x-1/2">
+                                    <span class="${lowTempColor} low-temp-offset text-lg font-bold">
+                                        ${forecast.temp_min}°
+                                    </span>
+                                </div>
+                                
+                                <!-- Large Icon (Center) -->
+                                <span class="text-5xl flex justify-center items-center h-full">
+                                    ${getForecastEmoji(forecast.icon)}
+                                </span>
+                                
+                                <!-- High Temp (Right of Icon, Higher Offset) - NEW POSITIONING -->
+                                <div class="text-center absolute right-[30%] translate-x-1/2">
+                                    <span class="${highTempColor} high-temp-offset text-lg font-bold">
+                                        ${forecast.temp_max}°
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     `;
                     panel.appendChild(dayCard);
@@ -775,28 +810,38 @@
                 // Inner card structure
                 item.innerHTML = `
                     <a href="${countdown.linkUrl}" target="_blank" class="flex items-center w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transform transition-all duration-200">
-                        <!-- Image --><img
+                        <!-- Image -->
+                        <img
                             src="${countdown.img}"
                             alt="${countdown.name} icon"
                             class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md flex-shrink-0"
                             onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/FFFFFF?text=${placeholderLetter}';"
                         />
                         
-                        <!-- Text Content -->
+                        <!-- Text Content (FIXED: Horizontal Spread Layout) -->
                         <div class="flex-grow min-w-0 flex items-center justify-between pr-4">
-                            <!-- Left: Name (Bigger) and Target Date -->
-                            <div class="flex flex-col">
-                                <div class="text-base font-bold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
-                                <div class="countdown-target-date text-xs text-gray-500"></div>
+                            
+                            <!-- Left Block: Name & Due Date (Side by Side) -->
+                            <div class="flex items-center space-x-6 flex-grow">
+                                
+                                <!-- Title (Bigger) -->
+                                <div class="text-xl font-extrabold text-white truncate max-w-[200px]">${countdown.name.replace(' (test)', '')}</div>
+                                
+                                <!-- Due Date Text (Subtle Color, Side-by-Side) -->
+                                <div class="flex flex-col justify-center">
+                                    <div class="text-xs font-medium text-gray-400">TARGET DATE</div>
+                                    <div class="countdown-target-date text-sm text-gray-500 whitespace-nowrap"></div>
+                                </div>
                             </div>
 
-                            <!-- Right: Countdown Time (Bigger) -->
-                            <div class="countdown-time-display text-base font-mono text-amber-400 font-semibold flex-shrink-0 ml-4">
+                            <!-- Countdown Time (Closer to Center Content) -->
+                            <div class="countdown-time-display text-xl font-mono text-amber-400 font-bold flex-shrink-0 ml-6 whitespace-nowrap">
                                 Loading...
                             </div>
                         </div>
                         
-                        <!-- Close Button (X) --><button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
+                        <!-- Close Button (X) -->
+                        <button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                         </button>
                     </a>
@@ -829,7 +874,7 @@
 
 
                 if (activeItems.length === 0) {
-                    countdownWidgetsContainer.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
+                    carouselContentWrapper.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
                     return;
                 }
 
