@@ -93,6 +93,10 @@
             <!-- Download Data Button --><button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">
                 Download Data File
             </button>
+            
+            <!-- NEW: Manual Clear Button --><button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">
+                Clear Draft Data (Local)
+            </button>
 
 
             <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.3</p>
@@ -234,6 +238,7 @@
             const addCountdownButton = document.getElementById('add-countdown-button');
             const addGroupButton = document.getElementById('add-group-button');
             const addLinkButton = document.getElementById('add-link-button');
+            const clearDraftButton = document.getElementById('clear-draft-button'); // NEW BUTTON
 
             const addCountdownModal = document.getElementById('add-countdown-modal');
             const addGroupModal = document.getElementById('add-group-modal');
@@ -766,6 +771,15 @@
             function hideMenu() {
                  menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
             }
+            
+            // NEW: Manual Clear Button Logic
+            clearDraftButton.addEventListener('click', () => {
+                if (confirm('Are you sure you want to clear ALL locally stored draft data (Groups, Links, Countdowns)? This cannot be undone.')) {
+                    clearCustomLocalStorage();
+                    hideMenu();
+                    initDashboard(); // Re-render immediately after clearing
+                }
+            });
 
 
             // Function to update the clock display (Accurate to the minute)
@@ -1124,7 +1138,8 @@
                 localStorage.removeItem(state.localStorageKeys.groups);
                 localStorage.removeItem(state.localStorageKeys.links);
                 localStorage.removeItem(state.localStorageKeys.countdowns);
-                console.log("Custom local storage cleared successfully after successful data.json load.");
+                localStorage.removeItem(state.localStorageKeys.dismissals); // Clear dismissals too
+                console.log("Custom local storage cleared successfully.");
             }
             // --- Core Rendering Logic for Links (Unchanged) ---
 
@@ -1278,15 +1293,14 @@
             async function initDashboard() {
                 let dashboardData = EMBEDDED_DATA;
                 let isFallback = true;
-                let fetchSuccess = false; // Track if fetch was successful
-
+                
+                // The fetch should only determine the STATIC/BASE data.
                 try {
                     const response = await fetch('./data.json');
                     
                     if (response.ok) {
                         dashboardData = await response.json();
                         isFallback = false;
-                        fetchSuccess = true;
                         console.log('Successfully loaded external data.json.');
                     } else {
                         console.warn(`External data.json returned status ${response.status}. Falling back to embedded data.`);
@@ -1296,16 +1310,11 @@
                     console.warn('Falling back to embedded test data.');
                 }
 
-                // CRITICAL FIX: Render with custom data first.
-                // This updates STATIC_LINK_GROUPS/STATIC_COUNTDOWNS and renders the view.
+                // FIX: Always render with the static data + the current local storage data.
                 renderDashboard(dashboardData, isFallback);
 
-                // Now, if the fetch succeeded, we clear the old custom data *after* it's been used for the display.
-                if (fetchSuccess) {
-                    // *** FIX: Only clear localStorage if the real file was successfully loaded. ***
-                    // This clears the old drafts, so the next page load will start clean.
-                    clearCustomLocalStorage();
-                }
+                // CRITICAL FIX: The logic to clear custom local storage on fetch success is REMOVED.
+                // This is now done manually via the "Clear Draft Data" button.
             }
 
             // Run the initialization function when the window loads
