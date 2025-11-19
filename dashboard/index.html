@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-FTWARE">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stephens' Dashboard V0.4</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
@@ -200,7 +200,7 @@
                     <select id="link-group-select" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
                         <!-- Options populated by JS --></select>
                 </label>
-                <div class="flex justify-end space-space-x-3 pt-2">
+                <div class="flex justify-end space-x-3 pt-2">
                     <button type="button" id="cancel-link-button" class="px-4 py-2 text-sm font-medium rounded-lg text-gray-400 border border-gray-600 hover:bg-gray-700">
                         Cancel
                     </button>
@@ -915,33 +915,22 @@
                     // --- PROCESS AND RENDER 7-DAY FORECAST DATA ---
                     
                     const dailyForecast = {};
-                    const today = new Date().toDateString();
                     
-                    // Populate with current weather data first (from the list[0] which is current/near current)
                     if (data.list && data.list.length > 0) {
-                        const currentItem = data.list[0];
-                        const dateKey = new Date(currentItem.dt * 1000).toDateString();
                         
-                        dailyForecast[dateKey] = {
-                            date: new Date(currentItem.dt * 1000),
-                            temp_max: Math.round(currentItem.main.temp_max),
-                            temp_min: Math.round(currentItem.main.temp_min),
-                            icon: currentItem.weather[0].icon,
-                            description: currentItem.weather[0].description
-                        };
-                        
-                        // Iterate through 3-hour entries to find high/low for each unique day
+                        // We use a simplified algorithm that ensures we capture the max/min of unique days.
                         data.list.forEach(item => {
                             const date = new Date(item.dt * 1000);
-                            const dateKey = date.toDateString();
+                            const dateKey = date.toDateString(); // Unique key for the day
                             
                             if (!dailyForecast[dateKey]) {
-                                // Initialize new day
+                                // Initialize new day entry
                                 dailyForecast[dateKey] = {
                                     date: date,
                                     temp_max: item.main.temp_max,
                                     temp_min: item.main.temp_min,
-                                    icon: item.weather[0].icon, // Use the weather at 12:00 PM or first available for icon
+                                    // Use the weather icon closest to noon for the day's primary icon
+                                    icon: item.weather[0].icon, 
                                     description: item.weather[0].description
                                 };
                             } else {
@@ -952,8 +941,8 @@
                         });
                     }
 
-                    // Convert map to array and limit to the next 7 days
-                    const forecastArray = Object.values(dailyForecast).slice(0, 7).map(item => ({
+                    // Convert map to array and limit to the 6 unique days reliably provided
+                    const forecastArray = Object.values(dailyForecast).slice(0, 6).map(item => ({
                         ...item,
                         // Round temperatures and map icon
                         temp_max: Math.round(item.temp_max),
@@ -965,9 +954,9 @@
                     
                 } catch (error) {
                     console.error("Forecast initialization failed:", error);
-                    // Add 7 static fallback forecast items if the API fails
-                    forecastItems = Array(7).fill().map((_, i) => ({
-                        date: new Date(Date.now() + i * 86400000), // Next 7 days
+                    // Add 6 static fallback forecast items if the API fails
+                    forecastItems = Array(6).fill().map((_, i) => ({
+                        date: new Date(Date.now() + i * 86400000), // Next 6 days
                         temp_max: '--',
                         temp_min: '--',
                         icon: '04d', // Default to cloudy emoji
@@ -994,15 +983,19 @@
              * NEW: Creates a single forecast card element (the container for 7 days).
              */
             function createForecastPanel() {
+                const item = document.createElement('div');
+                item.className = 'flex-shrink-0 px-3'; 
+                item.style.width = `100%`; // The forecast panel takes up 100% of the viewport width
+                
                 const panel = document.createElement('div');
                 panel.className = 'flex items-center justify-start w-full h-14 bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-2 cursor-default'; 
-                
-                // Add the 7 individual forecast day cards inside the panel
+
+                // Add the individual forecast day cards inside the panel
                 forecastItems.forEach(forecast => {
                     const dayOptions = { weekday: 'short' };
                     
                     const dayCard = document.createElement('div');
-                    dayCard.className = 'flex flex-col items-center justify-center h-full flex-shrink-0 w-[14.28%] min-w-[70px] border-r border-gray-700 last:border-r-0'; // 1/7th width (14.28%)
+                    dayCard.className = 'flex flex-col items-center justify-center h-full flex-shrink-0 w-[16.66%] min-w-[70px] border-r border-gray-700 last:border-r-0'; // 1/6th width (16.66%)
 
                     dayCard.innerHTML = `
                         <div class="text-xs text-gray-400 font-medium">${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}</div>
@@ -1015,14 +1008,81 @@
                     panel.appendChild(dayCard);
                 });
                 
-                const item = document.createElement('div');
-                item.className = 'flex-shrink-0 px-3'; 
-                item.style.width = `100%`; // The forecast panel takes up 100% of the viewport width
-
                 item.appendChild(panel);
                 return item;
             }
 
+
+            /**
+             * Calculates the time remaining and formats it.
+             */
+            function formatTimeRemaining(countdown) {
+                const targetDate = new Date(countdown.targetDate);
+                const now = new Date();
+                const diffMs = targetDate.getTime() - now.getTime();
+                
+                if (diffMs <= 0) return null; // Expired
+
+                const msInDay = 1000 * 60 * 60 * 24;
+                const totalDays = Math.floor(diffMs / msInDay);
+                
+                const years = Math.floor(totalDays / 365);
+                let remainingDays = totalDays % 365;
+
+                const months = Math.floor(remainingDays / 30);
+                const days = remainingDays % 30;
+
+                let primaryDisplay = [];
+                if (years > 0) {
+                    primaryDisplay.push(`${years} Year${years > 1 ? 's' : ''}`);
+                    if (months > 0) primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
+                } else if (months > 0) {
+                    primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
+                    if (days > 0) primaryDisplay.push(`${days} Day${days > 1 ? 's' : ''}`);
+                } else {
+                    const remainingMs = diffMs % msInDay;
+                    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
+                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
+                    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
+                    
+                    if (totalDays > 0) primaryDisplay.push(`${totalDays} Day${totalDays > 1 ? 's' : ''}`);
+                    if (totalDays < 1) primaryDisplay.push(`${hours}h ${minutes}m ${seconds}s`);
+                }
+
+                let finalDisplay = primaryDisplay.filter(part => !part.startsWith('0 '));
+                
+                const totalDaysString = finalDisplay.length > 1 ? `[${totalDays} days]` : `(${totalDays} days)`;
+
+                const timeString = finalDisplay.join(' ');
+                
+                return `${timeString} ${totalDaysString}`;
+            }
+
+            /**
+             * FIX: Exposed function now correctly updates the time display.
+             */
+            function updateTimeDisplay() {
+                if (!state.allCountdowns.length) return;
+
+                // Loop through all active elements and update their text
+                state.allCountdowns.forEach((item, index) => {
+                    // Only update countdown items, not forecast items
+                    if (item.type === 'countdown') {
+                        const timeString = formatTimeRemaining(item);
+                        // Find the index that corresponds to the countdown time display in the separate array
+                        const timeDisplayElement = state.activeCountdownElements[index - (forecastItems.length > 0 ? 1 : 0)]; 
+
+                        if (timeString === null) {
+                            const dismissedId = item.id || item.name;
+                            window.dismissCountdown(new Event('synthetic'), dismissedId, true);
+                        } else if (timeDisplayElement) {
+                            timeDisplayElement.textContent = timeString;
+                        }
+                    }
+                });
+
+                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
+            }
 
             /**
              * Creates a single countdown card element.
@@ -1067,9 +1127,10 @@
 
                 if (mergedItems.length === 0) return;
                 
-                // Since the forecast is a single item, we count it as 1, plus all countdowns
+                // Determine number of unique items (Forecast Panel + individual Countdown items)
                 const numForecastPanels = forecastItems.length > 0 ? 1 : 0; 
-                const numCountdowns = mergedItems.filter(item => item.type === 'countdown').length;
+                const countdownItems = mergedItems.filter(item => item.type === 'countdown');
+                const numCountdowns = countdownItems.length;
                 const numTotalUniqueItems = numForecastPanels + numCountdowns;
                 
                 // Calculate total items including the clone (if necessary)
@@ -1083,7 +1144,7 @@
                 if (forecastItems.length > 0) {
                     itemsToRender.push({ element: createForecastPanel(), type: 'forecast' });
                 }
-                mergedItems.filter(item => item.type === 'countdown').forEach(item => {
+                countdownItems.forEach(item => {
                     itemsToRender.push({ element: createCountdownItem(item), type: 'countdown' });
                 });
 
@@ -1110,7 +1171,7 @@
                         clone = createForecastPanel(); 
                     } else {
                         // Re-create the first countdown clone
-                        const firstCountdownData = mergedItems.filter(item => item.type === 'countdown')[0];
+                        const firstCountdownData = countdownItems[0];
                         clone = createCountdownItem(firstCountdownData); 
                     }
                     
@@ -1185,7 +1246,7 @@
                 if(loadingIndicator) loadingIndicator.style.display = 'none';
 
                 // 2. Start the second-by-second time update loop (only for countdowns)
-                state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
+                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
 
                 // 3. Start scroll rotation (6 seconds total cycle time)
                 if (state.allCountdowns.length > 1) { 
