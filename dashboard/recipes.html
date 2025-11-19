@@ -236,9 +236,21 @@
             }
 
             // --- UI/MENU LOGIC ---
+            
+            // NOTE: Replaced placeholder functions with implementation from index.html
+            function toggleMenu() {
+                const isHidden = menuModal.classList.contains('opacity-0');
+                if (isHidden) {
+                    menuModal.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4');
+                } else {
+                    menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+                }
+            }
 
-            function toggleMenu() { /* ... (Same as index.html) ... */ }
-            function hideMenu() { /* ... (Same as index.html) ... */ }
+            function hideMenu() {
+                 menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+
 
             // Placeholder Modal functions (Will be built out later)
             function showAddRecipeModal() { /* ... */ console.log("Show Add Recipe Modal"); }
@@ -246,8 +258,14 @@
             function showAddTagModal() { /* ... */ console.log("Show Add Tag Modal"); }
 
             // Menu Event Listeners
-            menuButton.addEventListener('click', (e) => { e.stopPropagation(); menuModal.classList.toggle('opacity-0'); menuModal.classList.toggle('pointer-events-none'); menuModal.classList.toggle('-translate-y-4'); });
+            menuButton.addEventListener('click', (e) => { e.stopPropagation(); toggleMenu(); });
             closeMenuButton.addEventListener('click', hideMenu);
+            // Close menu if user clicks anywhere else outside the menu or the button
+            document.addEventListener('click', (e) => {
+                if (!menuModal.contains(e.target) && !menuButton.contains(e.target) && !menuModal.classList.contains('opacity-0')) {
+                    hideMenu();
+                }
+            });
             // Add custom button listeners (for logging for now)
             document.getElementById('add-recipe-button').addEventListener('click', showAddRecipeModal);
             document.getElementById('add-category-button').addEventListener('click', showAddCategoryModal);
@@ -273,8 +291,8 @@
                 const customTags = getCustomData(state.localStorageKeys.tags);
 
                 const finalRecipes = [...STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')})), ...customRecipes];
-                const finalCategories = [...STATIC_CATEGORIES, ...customCategories].filter((v, i, a) => a.indexOf(v) === i);
-                const finalTags = [...STATIC_TAGS, ...customTags].filter((v, i, a) => a.indexOf(v) === i);
+                const finalCategories = [...STATIC_CATEGORIES, ...getCustomData('sd_custom_categories')].filter((v, i, a) => a.indexOf(v) === i);
+                const finalTags = [...STATIC_TAGS, ...getCustomData('sd_custom_tags')].filter((v, i, a) => a.indexOf(v) === i);
                 
                 const consolidatedData = {
                     "recipes": finalRecipes,
@@ -346,11 +364,11 @@
                 if (isTagMode) {
                     groupByTagButton.classList.add('bg-blue-600', 'text-white');
                     groupByTagButton.classList.remove('bg-gray-700', 'text-gray-400');
-                    groupByCategory.classList.remove('bg-blue-600', 'text-white');
-                    groupByCategory.classList.add('bg-gray-700', 'text-gray-400');
+                    groupByCatButton.classList.remove('bg-blue-600', 'text-white');
+                    groupByCatButton.classList.add('bg-gray-700', 'text-gray-400');
                 } else {
-                    groupByCategory.classList.add('bg-blue-600', 'text-white');
-                    groupByCategory.classList.remove('bg-gray-700', 'text-gray-400');
+                    groupByCatButton.classList.add('bg-blue-600', 'text-white');
+                    groupByCatButton.classList.remove('bg-gray-700', 'text-gray-400');
                     groupByTagButton.classList.remove('bg-blue-600', 'text-white');
                     groupByTagButton.classList.add('bg-gray-700', 'text-gray-400');
                 }
@@ -367,7 +385,8 @@
                              if (!groupedRecipes.has(defaultGroup)) groupedRecipes.set(defaultGroup, []);
                              groupedRecipes.get(defaultGroup).push(recipe);
                         } else {
-                            recipeTags.forEach(tag => {
+                            // Only group by tags that are in the AVAILABLE_TAGS list
+                            recipeTags.filter(tag => groupingList.includes(tag)).forEach(tag => {
                                 if (!groupedRecipes.has(tag)) groupedRecipes.set(tag, []);
                                 groupedRecipes.get(tag).push(recipe);
                             });
@@ -382,7 +401,7 @@
 
 
                 // Render Groups
-                [...groupingList, defaultGroup].forEach(groupName => {
+                [...groupingList, defaultGroup].filter((v, i, a) => a.indexOf(v) === i).forEach(groupName => {
                     const recipes = groupedRecipes.get(groupName);
 
                     if (recipes && recipes.length > 0) {
@@ -420,64 +439,71 @@
 
             // --- INIT FUNCTIONS (Time/Weather) ---
             
-            function updateClock() { /* ... (Same as index.html) ... */ }
-            function startClockUpdate() { /* ... (Same as index.html) ... */ }
+            // NOTE: Duplicated/Placeholder functions for environment isolation
+            function updateClock() {
+                const now = new Date();
+                const datePart = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+                const timePart = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase().replace(/\s/g, '');
+
+                let dateWithSuffix = datePart;
+                const dayMatch = datePart.match(/,\s(\w+)\s(\d+)/); 
+                if (dayMatch) {
+                    const day = parseInt(dayMatch[2]);
+                    let suffix;
+                    if (day > 3 && day < 21) suffix = 'th';
+                    else if (day % 10 === 1) suffix = 'st';
+                    else if (day % 10 === 2) suffix = 'nd';
+                    else if (day % 10 === 3) suffix = 'rd';
+                    else suffix = 'th';
+                    dateWithSuffix = datePart.replace(` ${day}`, ` ${day}${suffix}`);
+                }
+
+                document.getElementById('datetime').innerHTML = `
+                    <span class="text-gray-400">${dateWithSuffix}</span>
+                    <span class="text-blue-300 ml-1">${timePart}</span>
+                `;
+            }
+
+            function startClockUpdate() {
+                updateClock();
+                // Minimal clock update for recipes page since full logic is in index.html
+                setInterval(updateClock, 60000); 
+            }
 
             async function updateWeatherWidgets() {
                 const LOCATION_ZIP = '75482,us'; 
                 const API_KEY = '87256fe2710631542ff491e4c5d73306'; 
                 const currentApiUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
-                const forecastApiUrl = `https://api.openweathermap.org/data/2.5/forecast?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
                 
                 let currentData = null;
-                let forecastRawData = null;
 
                 try {
                     const currentResponse = await fetch(currentApiUrl);
                     if (currentResponse.ok) currentData = await currentResponse.json(); 
-                    
-                    const forecastResponse = await fetch(forecastApiUrl);
-                    if (forecastResponse.ok) forecastRawData = await forecastResponse.json(); 
-
                 } catch (error) {
                     console.error("Weather API fetch failed:", error);
                     weatherIcon.innerHTML = 'N/A'; weatherLow.textContent = '--°'; weatherHigh.textContent = '--°'; weatherCurrentTemp.textContent = '--°'; 
                     return;
                 }
                 
-                if (currentData && forecastRawData) {
-                    // Process Forecast Data to get today's min/max
-                    const dailyForecast = {};
-                    forecastRawData.list.forEach(item => {
-                        const dateKey = new Date(item.dt * 1000).toDateString(); 
-                        if (!dailyForecast[dateKey]) {
-                            dailyForecast[dateKey] = { temp_max: item.main.temp_max, temp_min: item.main.temp_min };
-                        } else {
-                            dailyForecast[dateKey].temp_max = Math.max(dailyForecast[dateKey].temp_max, item.main.temp_max);
-                            dailyForecast[dateKey].temp_min = Math.min(dailyForecast[dateKey].temp_min, item.main.temp_min);
-                        }
-                    });
-                    const todayForecast = Object.values(dailyForecast)[0];
+                if (currentData) {
+                    const currentTemp = Math.round(currentData.main.temp); 
+                    const minTemp = Math.round(currentData.main.temp_min);
+                    const maxTemp = Math.round(currentData.main.temp_max);
 
-                    if (todayForecast) {
-                        const currentTemp = Math.round(currentData.main.temp); 
-                        const minTemp = Math.round(todayForecast.temp_min);
-                        const maxTemp = Math.round(todayForecast.temp_max);
+                    const currentTempColor = getTempColor(currentTemp);
+                    const lowTempColor = getTempColor(minTemp);
+                    const highTempColor = getTempColor(maxTemp);
 
-                        const currentTempColor = getTempColor(currentTemp);
-                        const lowTempColor = getTempColor(minTemp);
-                        const highTempColor = getTempColor(maxTemp);
+                    weatherIcon.innerHTML = getForecastEmoji(currentData.weather[0].icon);
+                    weatherCurrentTemp.className = `text-lg font-bold mr-3 ${currentTempColor}`; 
+                    weatherLow.className = `low-temp-offset mr-1 text-xs ${lowTempColor}`;
+                    weatherHigh.className = `high-temp-offset text-xs ${highTempColor}`;
 
-                        weatherIcon.innerHTML = getForecastEmoji(currentData.weather[0].icon);
-                        weatherCurrentTemp.className = `text-lg font-bold mr-3 ${currentTempColor}`; 
-                        weatherLow.className = `low-temp-offset mr-1 text-xs ${lowTempColor}`;
-                        weatherHigh.className = `high-temp-offset text-xs ${highTempColor}`;
-
-                        weatherCurrentTemp.textContent = `${currentTemp}°`; 
-                        weatherLow.textContent = `${minTemp}°`;
-                        weatherHigh.textContent = `${maxTemp}°`;
-                        document.getElementById('weather-display').title = `Current: ${currentTemp}°F | Today's Range: ${minTemp}°F - ${maxTemp}°F`;
-                    }
+                    weatherCurrentTemp.textContent = `${currentTemp}°`; 
+                    weatherLow.textContent = `${minTemp}°`;
+                    weatherHigh.textContent = `${maxTemp}°`;
+                    document.getElementById('weather-display').title = `Current: ${currentTemp}°F | Today's Range: ${minTemp}°F - ${maxTemp}°F`;
                 }
             }
             
