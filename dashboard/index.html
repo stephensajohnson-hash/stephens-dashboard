@@ -661,7 +661,7 @@
                 }
             });
             
-            // --- Download Logic (Updated for Timestamped Filename) ---
+            // --- Download Logic (Updated for Timestamped Filename & Custom Data) ---
             
             downloadDataButton.addEventListener('click', downloadDataFile);
 
@@ -672,16 +672,16 @@
                 const staticLinkGroups = STATIC_LINK_GROUPS.map(group => ({
                     ...group,
                     name: group.name.replace(' (test)', ''),
-                    links: group.links.map(link => ({...link, id: undefined, groupName: undefined})) // Clear custom fields
+                    links: group.links.map(link => ({...link, id: undefined, groupName: undefined})) 
                 }));
                 
                 let staticCountdowns = STATIC_COUNTDOWNS.map(c => ({
                     ...c,
                     name: c.name.replace(' (test)', ''),
-                    id: undefined // Clear custom field
+                    id: undefined 
                 }));
                 
-                // 2. Get Custom Data (THIS IS THE FIX)
+                // 2. Get Custom Data (Load current draft data from localStorage)
                 const customGroups = getCustomGroups();
                 const customLinks = getCustomLinks();
                 const customCountdowns = getCustomCountdowns();
@@ -689,18 +689,27 @@
                 // 3. Create a map of all final link groups
                 const finalGroupsMap = new Map();
                 
-                // A. Add Static Groups
+                // A. Add Static Groups to map
                 staticLinkGroups.forEach(group => finalGroupsMap.set(group.name, {...group}));
                 
                 // B. Add Custom Groups
                 customGroups.forEach(group => {
-                    // Ensure links array is correctly initialized for new groups
-                    const links = (group.links || []).map(link => ({ name: link.name, url: link.url, img: link.img }));
-                    // Use clean group name for the key in the map
-                    finalGroupsMap.set(group.name, {...group, id: undefined, links: links,});
+                    // Create a clean group object for the export
+                    const cleanGroup = {
+                        name: group.name,
+                        color: group.color,
+                        textColor: group.textColor,
+                        links: [] // Links will be added in step C
+                    };
+                    // Set/Overwrite static data with custom group definition if name conflicts (though rare)
+                    finalGroupsMap.set(group.name, cleanGroup);
                 });
                 
-                // C. Merge Custom Links into their target groups
+                // C. Merge ALL Links (Static Links + Custom Links) into their target groups
+                
+                // Process Static Links (already in staticLinkGroups map, but we re-map custom links)
+                
+                // Process Custom Links (Crucial fix: merge custom links into ANY group in the map)
                 customLinks.forEach(link => {
                     const cleanLink = {
                         name: link.name,
@@ -713,8 +722,9 @@
                             targetGroup.links = [];
                         }
                         targetGroup.links.push(cleanLink);
+                    } else {
+                        console.warn(`Download: Link '${link.name}' targets non-existent group '${link.groupName}'. Skipping link export.`);
                     }
-                    // If targetGroup doesn't exist, the link is just skipped (or logged in console)
                 });
 
                 // Final list of groups
@@ -739,13 +749,13 @@
                 const dataStr = JSON.stringify(consolidatedData, null, 2); 
                 const dataBlob = new Blob([dataStr], { type: 'application/json' });
                 
-                // 5. Trigger Download with TIMESTAMPED FILENAME (FIXED)
+                // 5. Trigger Download with TIMESTAMPED FILENAME
                 const a = document.createElement('a');
                 const now = new Date();
                 const dateString = now.getFullYear() + String(now.getMonth() + 1).padStart(2, '0') + String(now.getDate()).padStart(2, '0');
                 const timeString = String(now.getHours()).padStart(2, '0') + String(now.getMinutes()).padStart(2, '0') + String(now.getSeconds()).padStart(2, '0');
                 
-                a.download = `data-update-${dateString}-${timeString}.json`; // e.g., data-update-20251119-084800.json
+                a.download = `data-update-${dateString}-${timeString}.json`; 
                 
                 a.href = window.URL.createObjectURL(dataBlob);
                 a.click();
@@ -1148,10 +1158,12 @@
              * Renders the dashboard content based on the fetched data.
              */
             function renderDashboard(data, isFallback) {
+                // A. Save the Static Data (for download and clean name retrieval)
                 STATIC_LINK_GROUPS = data.linkGroups || [];
                 STATIC_COUNTDOWNS = data.countdowns || [];
                 
                 linkGroupsContainer.innerHTML = ''; 
+                debugLog.innerHTML = ''; // Clear the debug log on re-render
 
                 // 1. Handle Debug Log
                 if (isFallback) {
@@ -1192,15 +1204,11 @@
 
                 // B. Add Custom Groups to map (FIX: Ensures they are added to the map for display)
                 customGroups.forEach(group => {
-                    // Custom groups are already clean (no '(test)' suffix)
+                    const cleanName = group.name.trim(); // Custom groups are already clean
                     // We must ensure the static group doesn't accidentally overwrite a custom group's data structure
-                    if (!finalGroupsMap.has(group.name)) {
-                       finalGroupsMap.set(group.name, {...group, links: []}); // Add new custom group
-                    } else {
-                        // If a custom group exists with a name matching a static group, the static group takes priority, 
-                        // but custom links will still merge in section C.
-                        // For a newly created group, it won't exist in the static data, so it gets added here.
-                    }
+                    if (!finalGroupsMap.has(cleanName)) {
+                       finalGroupsMap.set(cleanName, {...group, links: []}); // Add new custom group
+                    } 
                 });
                 
                 // C. Merge Custom Links into their target groups
@@ -1257,6 +1265,9 @@
                 } else if (!isFallback) {
                     linkGroupsContainer.innerHTML = '<p class="w-full text-gray-500 text-center">No link groups found in data.</p>';
                 }
+                
+                // FIX: Ensure group dropdown is updated with the final merged list
+                populateGroupDropdown();
             }
 
 
@@ -1285,19 +1296,16 @@
                     console.warn('Falling back to embedded test data.');
                 }
 
-                // FIX: Render with custom data *before* deciding whether to clear local storage.
+                // CRITICAL FIX: Render with custom data first.
+                // This updates STATIC_LINK_GROUPS/STATIC_COUNTDOWNS and renders the view.
                 renderDashboard(dashboardData, isFallback);
 
-                // Now, if the fetch succeeded, we clear the old custom data.
-                // If we are in the preview (isFallback=true), we keep the custom data.
+                // Now, if the fetch succeeded, we clear the old custom data *after* it's been used for the display.
                 if (fetchSuccess) {
                     // *** FIX: Only clear localStorage if the real file was successfully loaded. ***
+                    // This clears the old drafts, so the next page load will start clean.
                     clearCustomLocalStorage();
                 }
-
-                // If fetch failed (e.g., preview mode), renderDashboard has already run using embedded data + local storage.
-                // If fetch succeeded, renderDashboard has run using fetched data + local storage, 
-                // and local storage is now cleared for the next session.
             }
 
             // Run the initialization function when the window loads
