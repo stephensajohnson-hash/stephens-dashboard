@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.5</title>
+    <title>Stephens' Dashboard V0.4</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -131,7 +131,7 @@
             </button>
 
 
-            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.5</p>
+            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.4</p>
         </div>
     </div>
     
@@ -240,7 +240,7 @@
     <!-- Main Content Container (pt-16 for the smaller toolbar height) --><main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8"> 
         
         <!-- COUNTDOWN CAROUSEL CONTAINER (Fixed height, relative position for buttons) --><div id="countdown-widgets" class="mb-8 w-full h-14 relative flex items-center justify-center">
-            <!-- REMOVED: Loading indicator text from HTML -->
+            
             
             <!-- Previous Button --><button id="prev-button" onclick="window.navigateCarousel(-1)" class="carousel-control-button left-0 p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -652,12 +652,20 @@
                         const timeString = formatTimeRemaining(item);
                         // Find the corresponding time element using the index of the countdown in the ALL_COUNTDOWNS array
                         const timeDisplayElement = carouselContentWrapper.querySelector(`#card-${index} .countdown-time-display`);
+                        const dateDisplayElement = carouselContentWrapper.querySelector(`#card-${index} .countdown-target-date`);
+
 
                         if (timeString === null) {
                             const dismissedId = item.id || item.name;
                             window.dismissCountdown(new Event('synthetic'), dismissedId, true);
                         } else if (timeDisplayElement) {
                             timeDisplayElement.textContent = timeString;
+                            // Update target date display once per update cycle
+                            if (dateDisplayElement) {
+                                const targetDate = new Date(item.targetDate);
+                                const dateOptions = { year: 'numeric', month: 'short', day: 'numeric' };
+                                dateDisplayElement.textContent = `Due: ${targetDate.toLocaleDateString('en-US', dateOptions)}`;
+                            }
                         }
                     }
                 });
@@ -714,24 +722,37 @@
                 item.className = 'w-full h-full p-2'; 
                 
                 const panel = document.createElement('div');
-                panel.className = 'flex items-center justify-start w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl cursor-default'; 
+                // Use justify-between to spread cards out slightly
+                panel.className = 'flex items-stretch justify-between w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl cursor-default'; 
 
                 // Add the individual forecast day cards inside the panel
                 forecastItems.forEach(forecast => {
                     const dayOptions = { weekday: 'short' };
                     
                     const dayCard = document.createElement('div');
-                    // Calculate width dynamically (100% / number of items)
-                    const itemWidthPercentage = 100 / forecastItems.length; 
-                    dayCard.className = `flex flex-col items-center justify-center h-full flex-shrink-0 border-r border-gray-700 last:border-r-0`; 
-                    dayCard.style.width = `${itemWidthPercentage}%`;
-
+                    // Use flex-1 to ensure even spacing for all 6 days across the container
+                    dayCard.className = `flex flex-col items-center justify-center h-full flex-shrink-0 border-r border-gray-700 last:border-r-0 px-2 flex-1`; 
+                    
                     dayCard.innerHTML = `
-                        <div class="text-xs text-gray-400 font-medium">${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}</div>
-                        <div class="flex items-center text-sm font-semibold">
-                            <span class="low-temp-offset text-blue-300 mr-1 text-xs">${forecast.temp_min}°</span>
-                            <span class="text-xl">${getForecastEmoji(forecast.icon)}</span>
-                            <span class="high-temp-offset text-green-300 ml-1 text-xs">${forecast.temp_max}°</span>
+                        <!-- Date and Day Abbreviation -->
+                        <div class="text-xs text-gray-400 font-medium whitespace-nowrap">
+                            ${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}
+                        </div>
+                        
+                        <!-- Icon (large) and Temps (offset) -->
+                        <div class="flex items-center justify-center h-8 my-1">
+                            <!-- Low Temp (Blue, Lower Offset) -->
+                            <span class="low-temp-offset text-blue-300 text-sm font-semibold mr-1">
+                                ${forecast.temp_min}°
+                            </span>
+                            
+                            <!-- Large Icon -->
+                            <span class="text-2xl">${getForecastEmoji(forecast.icon)}</span>
+                            
+                            <!-- High Temp (Green, Higher Offset) -->
+                            <span class="high-temp-offset text-green-300 text-sm font-semibold ml-1">
+                                ${forecast.temp_max}°
+                            </span>
                         </div>
                     `;
                     panel.appendChild(dayCard);
@@ -757,13 +778,22 @@
                         <!-- Image --><img
                             src="${countdown.img}"
                             alt="${countdown.name} icon"
-                            class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md"
+                            class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md flex-shrink-0"
                             onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/FFFFFF?text=${placeholderLetter}';"
                         />
                         
-                        <!-- Text Content --><div class="flex-grow min-w-0 pr-4">
-                            <div class="text-sm font-semibold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
-                            <div class="countdown-time-display text-xs font-mono text-amber-400">Loading...</div>
+                        <!-- Text Content -->
+                        <div class="flex-grow min-w-0 flex items-center justify-between pr-4">
+                            <!-- Left: Name (Bigger) and Target Date -->
+                            <div class="flex flex-col">
+                                <div class="text-base font-bold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
+                                <div class="countdown-target-date text-xs text-gray-500"></div>
+                            </div>
+
+                            <!-- Right: Countdown Time (Bigger) -->
+                            <div class="countdown-time-display text-base font-mono text-amber-400 font-semibold flex-shrink-0 ml-4">
+                                Loading...
+                            </div>
                         </div>
                         
                         <!-- Close Button (X) --><button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
