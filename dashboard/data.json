@@ -1,5 +1,5 @@
 {
-  "linkGroups": [ 
+  "linkGroups": [
     {
       "name": "PBFCM",
       "color": "bg-blue-600/20",
@@ -300,6 +300,18 @@
           "name": "Gemini",
           "url": "https://gemini.google.com/app",
           "img": "https://images.seeklogo.com/logo-png/62/1/google-gemini-icon-logo-png_seeklogo-623016.png"
+        }
+      ]
+    },
+    {
+      "name": "Pending Recipes",
+      "color": "bg-blue-600/20",
+      "textColor": "text-blue-400",
+      "links": [
+        {
+          "name": "Oat and Flax Wraps",
+          "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube",
+          "img": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/7c/93/1a/7c931afe-e38a-a545-c75d-9d3073eb3ff6/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/200x200ia-75.webp"
         }
       ]
     }
