@@ -56,6 +56,8 @@
             transform: translateY(-50%);
             z-index: 10;
             opacity: 0.7;
+            background-color: rgba(31, 41, 55, 0.5); /* bg-gray-800/50 */
+            border: 1px solid rgba(75, 85, 99, 0.5); /* border-gray-600/50 */
         }
     </style>
     <script>
@@ -253,6 +255,7 @@
         // Use an IIFE (Immediately Invoked Function Expression) to create a private scope 
         // and prevent global variable conflicts in environments that rerun scripts.
         (function() {
+            // --- DOM Element References ---
             const linkGroupsContainer = document.getElementById('link-groups-container');
             const carouselContentWrapper = document.getElementById('carousel-content-wrapper'); 
             const countdownWidgetsContainer = document.getElementById('countdown-widgets');
@@ -290,15 +293,26 @@
             const weatherHigh = document.getElementById('weather-high'); 
             const weatherCurrentTemp = document.getElementById('weather-current-temp'); 
 
-            // Variable to hold the original static data for the download function
+            // --- Global State & Constants ---
             let STATIC_LINK_GROUPS = [];
             let STATIC_COUNTDOWNS = [];
             let STATIC_DATA_COPY = {}; 
-            let forecastItems = []; // Array to hold processed 6-day forecast items
-
-            // Variable to hold the clock interval
+            let forecastItems = []; 
             let clockInterval = null;
 
+            // Global state for carousel
+            const state = {
+                allCountdowns: [],
+                currentCardIndex: 0, 
+                animationFrameId: null,
+                localStorageKeys: {
+                    countdowns: 'sd_custom_countdowns',
+                    groups: 'sd_custom_groups',
+                    links: 'sd_custom_links',
+                    dismissals: 'sd_static_dismissals'
+                }
+            };
+            
             // List of common IANA timezones
             const TIMEZONES = [
                 { name: "Central (CT) - Default", value: "America/Chicago" },
@@ -335,7 +349,7 @@
                 { name: "Rose Blush", bg: "bg-rose-600/20", text: "text-rose-400" }
             ];
 
-            // --- EMBEDDED DATA FOR PREVIEW/FALLBACK (Identified by '(test)' in names) ---
+            // --- EMBEDDED DATA FOR PREVIEW/FALLBACK ---
             const EMBEDDED_DATA = {
                 "linkGroups": [
                     {
@@ -474,7 +488,6 @@
             const state = {
                 // allCountdowns now holds the list of ALL items (Forecast Panel + Countdown items)
                 allCountdowns: [],
-                activeCountdownElements: [], // Stores references to all time display elements
                 currentCardIndex: 0, // NEW: Index for the active carousel item
                 animationFrameId: null,
                 localStorageKeys: {
@@ -502,39 +515,114 @@
                 showCard(newIndex);
             }
             
-            // --- TIMEZONE DROPDOWN POPULATION ---
+            // --- Helper Functions (Moved to the top for guaranteed scope access) ---
             
-            function populateTimezoneDropdown() {
-                const select = document.getElementById('countdown-timezone');
-                select.innerHTML = ''; 
+            // Icon mapping for forecast cards
+            function getForecastEmoji(iconCode) {
+                if (iconCode && iconCode.includes('01')) return '☀️'; 
+                else if (iconCode && iconCode.includes('02')) return '🌤️';
+                else if (iconCode && iconCode.includes('03')) return '🌥️';
+                else if (iconCode && iconCode.includes('04')) return '☁️';
+                else if (iconCode && (iconCode.includes('09') || iconCode.includes('10'))) return '🌧️';
+                else if (iconCode && iconCode.includes('11')) return '⛈️';
+                else if (iconCode && iconCode.includes('13')) return '❄️';
+                else if (iconCode && iconCode.includes('50')) return '🌫️';
+                return '❓';
+            }
+            
+            // Creates a single link element tile
+            function createLinkElement(link) {
+                const linkTile = document.createElement('a');
+                linkTile.href = link.url;
+                linkTile.target = '_blank';
                 
-                TIMEZONES.forEach(tz => {
-                    const option = document.createElement('option');
-                    option.value = tz.value;
-                    option.textContent = tz.name;
-                    if (tz.value === 'America/Chicago') {
-                        option.selected = true;
-                    }
-                    select.appendChild(option);
-                });
+                const placeholderLetter = link.name.substring(0, 1).toUpperCase();
+                
+                const imgHtml = `
+                    <div class="w-24 h-24 flex items-center justify-center bg-gray-900 rounded-xl overflow-hidden shadow-inner"> 
+                        <img
+                            src="${link.img}"
+                            alt="${link.name} icon"
+                            class="w-full h-full object-cover p-1 rounded-xl"
+                            loading="lazy"
+                            onerror="this.onerror=null;this.src='https://placehold.co/96x96/1F2937/FFFFFF?text=${placeholderLetter}'; this.className='p-4';"
+                        />
+                    </div>
+                `;
+
+                // min-w-[120px] to ensure tiles don't get too small and maintain aspect ratio
+                linkTile.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-[1.05] active:scale-[0.98] transform shadow-lg transition duration-150 ease-in-out h-full justify-start min-w-[120px]'; 
+                linkTile.innerHTML = imgHtml + `<span class="mt-2 text-sm font-medium truncate w-full">${link.name}</span>`;
+                
+                return linkTile;
             }
 
-            // --- COLOR DROPDOWN POPULATION ---
-            
-            function populateGroupColorDropdown() {
-                groupThemeSelect.innerHTML = ''; 
+            // Creates the full 6-day forecast card
+            function createForecastPanel() {
+                const item = document.createElement('div');
+                item.className = 'w-full h-full p-2'; 
                 
-                COLOR_PALETTE.forEach(theme => {
-                    const option = document.createElement('option');
-                    // Store the BG and Text classes as a JSON string in the value
-                    option.value = JSON.stringify({ bg: theme.bg, text: theme.text });
-                    option.textContent = theme.name;
-                    if (theme.name.includes('(Default)')) {
-                        option.selected = true;
-                    }
-                    groupThemeSelect.appendChild(option);
+                const panel = document.createElement('div');
+                panel.className = 'flex items-center justify-start w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl cursor-default'; 
+
+                // Add the individual forecast day cards inside the panel
+                forecastItems.forEach(forecast => {
+                    const dayOptions = { weekday: 'short' };
+                    
+                    const dayCard = document.createElement('div');
+                    // Calculate width dynamically (100% / number of items)
+                    const itemWidthPercentage = 100 / forecastItems.length; 
+                    dayCard.className = `flex flex-col items-center justify-center h-full flex-shrink-0 border-r border-gray-700 last:border-r-0`; 
+                    dayCard.style.width = `${itemWidthPercentage}%`;
+
+                    dayCard.innerHTML = `
+                        <div class="text-xs text-gray-400 font-medium">${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}</div>
+                        <div class="flex items-center text-sm font-semibold">
+                            <span class="low-temp-offset text-blue-300 mr-1 text-xs">${forecast.temp_min}°</span>
+                            <span class="text-xl">${getForecastEmoji(forecast.icon)}</span>
+                            <span class="high-temp-offset text-green-300 ml-1 text-xs">${forecast.temp_max}°</span>
+                        </div>
+                    `;
+                    panel.appendChild(dayCard);
                 });
+                
+                item.appendChild(panel);
+                return item;
             }
+            
+            // Creates a single countdown card
+            function createCountdownItem(countdown, index) {
+                const placeholderLetter = countdown.name.substring(0, 1);
+                const dismissId = countdown.id || countdown.name.replace(' (test)', ''); 
+                
+                const item = document.createElement('div');
+                item.className = 'w-full h-full p-2'; 
+                item.id = `card-${index}`; // Assign a unique ID for targeting
+
+                // Inner card structure
+                item.innerHTML = `
+                    <a href="${countdown.linkUrl}" target="_blank" class="flex items-center w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transform transition-all duration-200">
+                        <!-- Image --><img
+                            src="${countdown.img}"
+                            alt="${countdown.name} icon"
+                            class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md"
+                            onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/FFFFFF?text=${placeholderLetter}';"
+                        />
+                        
+                        <!-- Text Content --><div class="flex-grow min-w-0 pr-4">
+                            <div class="text-sm font-semibold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
+                            <div class="countdown-time-display text-xs font-mono text-amber-400">Loading...</div>
+                        </div>
+                        
+                        <!-- Close Button (X) --><button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </a>
+                `;
+                return item;
+            }
+
+            // --- END Helper Functions ---
 
 
             // --- LOCAL STORAGE FUNCTIONS (Generalized) ---
@@ -597,6 +685,7 @@
                     img: document.getElementById('countdown-img').value.trim() || 'https://placehold.co/40x40/374151/FFFFFF?text=NEW',
                     id: 'user_' + Date.now(), 
                     timezone: document.getElementById('countdown-timezone').value, 
+                    type: 'countdown' // Explicitly set type for merging
                 };
                 const customCountdowns = getCustomCountdowns();
                 customCountdowns.push(newCountdown);
@@ -903,7 +992,7 @@
                     weatherIcon.innerHTML = 'N/A';
                     weatherLow.textContent = '--°';
                     weatherHigh.textContent = '--°';
-                    weatherCurrentTemp.textContent = '--°'; // FIX: Current temp fallback
+                    weatherCurrentTemp.textContent = '--°'; 
                     document.getElementById('weather-display').title = `Error fetching weather.`;
                     // Generate fallback for scrolling forecast
                     forecastItems = Array(6).fill().map((_, i) => ({
@@ -954,63 +1043,18 @@
                     weatherHigh.textContent = `${todayForecast.temp_max}°`;
                     document.getElementById('weather-display').title = `Current: ${currentTemp}°F | Today's Range: ${todayForecast.temp_min}°F - ${todayForecast.temp_max}°F`;
                 }
-
-                // 4. Trigger Full Dashboard Render (Including Forecasts/Countdowns)
-                // We don't need STATIC_DATA_COPY here, we use the original data variable passed into renderDashboard
-                // The current data for renderDashboard is assumed to be stored in the copy during initDashboard
             }
             // --- END Weather Update Function ---
             
-            // Icon mapping for forecast cards
-            function getForecastEmoji(iconCode) {
-                if (iconCode.includes('01')) return '☀️'; 
-                else if (iconCode.includes('02')) return '🌤️';
-                else if (iconCode.includes('03')) return '🌥️';
-                else if (iconCode.includes('04')) return '☁️';
-                else if (iconCode.includes('09') || iconCode.includes('10')) return '🌧️';
-                else if (iconCode.includes('11')) return '⛈️';
-                else if (iconCode.includes('13')) return '❄️';
-                else if (iconCode.includes('50')) return '🌫️';
-                return '❓';
+            // Function to clear all custom local storage keys
+            function clearCustomLocalStorage() {
+                localStorage.removeItem(state.localStorageKeys.groups);
+                localStorage.removeItem(state.localStorageKeys.links);
+                localStorage.removeItem(state.localStorageKeys.countdowns);
+                localStorage.removeItem(state.localStorageKeys.dismissals); // Clear dismissals too
+                console.log("Custom local storage cleared successfully.");
             }
-
-            /**
-             * NEW: Creates a single forecast card element (the container for 7 days).
-             */
-            function createForecastPanel() {
-                const item = document.createElement('div');
-                item.className = 'w-full h-full p-2'; 
-                
-                const panel = document.createElement('div');
-                // The forecast panel now needs to handle its own background and border to look like a single card
-                panel.className = 'flex items-center justify-start w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl cursor-default'; 
-
-                // Add the individual forecast day cards inside the panel
-                forecastItems.forEach(forecast => {
-                    const dayOptions = { weekday: 'short' };
-                    
-                    const dayCard = document.createElement('div');
-                    // Calculate width dynamically (100% / number of items)
-                    const itemWidthPercentage = 100 / forecastItems.length; 
-                    dayCard.className = `flex flex-col items-center justify-center h-full flex-shrink-0 border-r border-gray-700 last:border-r-0`; 
-                    dayCard.style.width = `${itemWidthPercentage}%`;
-
-                    dayCard.innerHTML = `
-                        <div class="text-xs text-gray-400 font-medium">${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}</div>
-                        <div class="flex items-center text-sm font-semibold">
-                            <span class="low-temp-offset text-blue-300 mr-1 text-xs">${forecast.temp_min}°</span>
-                            <span class="text-xl">${getForecastEmoji(forecast.icon)}</span>
-                            <span class="high-temp-offset text-green-300 ml-1 text-xs">${forecast.temp_max}°</span>
-                        </div>
-                    `;
-                    panel.appendChild(dayCard);
-                });
-                
-                item.appendChild(panel);
-                return item;
-            }
-
-
+            
             /**
              * Calculates the time remaining and formats it.
              */
@@ -1055,6 +1099,68 @@
                 
                 return `${timeString} ${totalDaysString}`;
             }
+            
+            /**
+             * Function to manage the display of the active carousel card.
+             */
+            function showCard(newIndex) {
+                const totalItems = state.allCountdowns.length;
+                if (totalItems === 0) return;
+
+                // Ensure index loops correctly
+                newIndex = (newIndex + totalItems) % totalItems;
+                
+                const itemData = state.allCountdowns[newIndex];
+                let newElement;
+
+                // Create the appropriate card element
+                if (itemData.type === 'forecast') {
+                    newElement = createForecastPanel();
+                } else {
+                    // Pass the index for unique ID creation
+                    newElement = createCountdownItem(itemData, newIndex); 
+                }
+
+                // Apply transition logic
+                carouselContentWrapper.style.opacity = '0';
+                
+                setTimeout(() => {
+                    carouselContentWrapper.innerHTML = '';
+                    carouselContentWrapper.appendChild(newElement);
+                    state.currentCardIndex = newIndex;
+                    
+                    // Fade in
+                    carouselContentWrapper.style.opacity = '1';
+                }, 300); // 300ms matches the CSS transition
+
+            }
+
+
+            /**
+             * NEW: Populates the carousel state and calls the display function.
+             */
+            function initCarousel(mergedItems) {
+                // Clear any previous animation loops
+                if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
+
+                // Filter out non-item entries (null/expired countdowns)
+                const activeItems = mergedItems.filter(item => item !== null);
+
+                if (activeItems.length === 0) {
+                    countdownWidgetsContainer.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
+                    return;
+                }
+
+                // IMPORTANT: The state.allCountdowns now holds the merged list of active items
+                state.allCountdowns = activeItems; 
+                state.currentCardIndex = 0;
+
+                // 1. Start the time update loop (Fixed "Loading..." issue)
+                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
+
+                // 2. Show the first card
+                showCard(state.currentCardIndex);
+            }
 
             /**
              * FIX: Exposed function now correctly updates the time display.
@@ -1084,100 +1190,6 @@
                 });
 
                 state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
-            }
-
-            /**
-             * Creates a single countdown card element.
-             */
-            function createCountdownItem(countdown, index) {
-                const placeholderLetter = countdown.name.substring(0, 1);
-                const dismissId = countdown.id || countdown.name.replace(' (test)', ''); 
-                
-                const item = document.createElement('div');
-                item.className = 'w-full h-full p-2'; 
-                item.id = `card-${index}`; // Assign a unique ID for targeting
-
-                // Inner card structure
-                item.innerHTML = `
-                    <a href="${countdown.linkUrl}" target="_blank" class="flex items-center w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transform transition-all duration-200">
-                        <!-- Image --><img
-                            src="${countdown.img}"
-                            alt="${countdown.name} icon"
-                            class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md"
-                            onerror="this.onerror=null;this.src='https://placehold.co/40x40/374151/FFFFFF?text=${placeholderLetter}';"
-                        />
-                        
-                        <!-- Text Content --><div class="flex-grow min-w-0 pr-4">
-                            <div class="text-sm font-semibold text-white truncate">${countdown.name.replace(' (test)', '')}</div>
-                            <div class="countdown-time-display text-xs font-mono text-amber-400">Loading...</div>
-                        </div>
-                        
-                        <!-- Close Button (X) --><button onclick="window.dismissCountdown(event, '${dismissId}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500 flex-shrink-0">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
-                    </a>
-                `;
-                return item;
-            }
-
-            /**
-             * NEW: Populates the carousel state and calls the display function.
-             */
-            function initCarousel(mergedItems) {
-                // Clear any previous animation loops
-                if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
-
-                // Filter out non-item entries (null/expired countdowns)
-                const activeItems = mergedItems.filter(item => item !== null);
-
-                if (activeItems.length === 0) {
-                    countdownWidgetsContainer.innerHTML = '<p class="w-full text-center text-gray-400 p-4">No active events or forecasts to display.</p>';
-                    return;
-                }
-
-                // IMPORTANT: The state.allCountdowns now holds the merged list of active items
-                state.allCountdowns = activeItems; 
-                state.currentCardIndex = 0;
-
-                // 1. Start the time update loop (Fixed "Loading..." issue)
-                state.animationFrameId = requestAnimationFrame(updateTimeDisplay);
-
-                // 2. Show the first card
-                showCard(state.currentCardIndex);
-            }
-
-            /**
-             * NEW: Displays the card at the given index with a transition.
-             */
-            function showCard(newIndex) {
-                const totalItems = state.allCountdowns.length;
-                if (totalItems === 0) return;
-
-                // Ensure index loops correctly
-                newIndex = (newIndex + totalItems) % totalItems;
-                
-                const itemData = state.allCountdowns[newIndex];
-                let newElement;
-
-                // Create the appropriate card element
-                if (itemData.type === 'forecast') {
-                    newElement = createForecastPanel();
-                } else {
-                    newElement = createCountdownItem(itemData, newIndex);
-                }
-
-                // Apply transition logic
-                carouselContentWrapper.style.opacity = '0';
-                
-                setTimeout(() => {
-                    carouselContentWrapper.innerHTML = '';
-                    carouselContentWrapper.appendChild(newElement);
-                    state.currentCardIndex = newIndex;
-                    
-                    // Fade in
-                    carouselContentWrapper.style.opacity = '1';
-                }, 300); // 300ms matches the CSS transition
-
             }
 
 
