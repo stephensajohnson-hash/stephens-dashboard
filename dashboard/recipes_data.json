@@ -1,45 +1,64 @@
 {
-  "categories": ["Bread", "Soup", "Dessert"],
-  "availableTags": ["gluten free", "keto", "dairy free"],
   "recipes": [
     {
       "id": "1",
-      "title": "Hearty Classic Chili",
-      "category": "Soup",
+      "title": "Chili",
       "description": "A comforting, slow-cooked classic with a blend of ground beef, beans, and smoky spices. (Now with full macro data for the whole batch!)",
-      "tags": ["Dinner", "Comfort Food", "Slow Cooker"],
+      "category": "Soup",
+      "servings": 8,
       "prepTime": "15 mins",
       "cookTime": "4 hours",
-      "servings": 8,
       "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_913/k%2FPhoto%2FRecipes%2F2023-11-chili%2Fchili-2",
       "source": {
-        "description": "Adapted from Grandma's original recipe.",
+        "description": "Cayce's Recipe",
         "url": ""
       },
+      "tags": [
+        "Keto",
+        "Gluten Free"
+      ],
       "ingredients": [
         {
           "sectionTitle": "Base",
           "list": [
             {
               "name": "Ground Beef (80/20)",
-              "quantity": 2,
+              "quantity": "2",
               "unit": "pounds",
               "notes": "",
-              "macros": { "fat": 110, "carbs": 0, "fiber": 0, "protein": 140, "calories": 1500 }
+              "macros": {
+                "calories": 1500,
+                "protein": 140,
+                "carbs": 0,
+                "fat": 110,
+                "fiber": 0
+              }
             },
             {
               "name": "Diced Onion",
-              "quantity": 1,
+              "quantity": "1",
               "unit": "",
               "notes": "medium",
-              "macros": { "fat": 0, "carbs": 10, "fiber": 3, "protein": 1, "calories": 40 }
+              "macros": {
+                "calories": 40,
+                "protein": 1,
+                "carbs": 10,
+                "fat": 0,
+                "fiber": 3
+              }
             },
             {
               "name": "Garlic",
-              "quantity": 3,
+              "quantity": "3",
               "unit": "cloves",
               "notes": "minced",
-              "macros": { "fat": 0, "carbs": 3, "fiber": 0, "protein": 1, "calories": 15 }
+              "macros": {
+                "calories": 15,
+                "protein": 1,
+                "carbs": 3,
+                "fat": 0,
+                "fiber": 0
+              }
             }
           ]
         },
@@ -48,24 +67,42 @@
           "list": [
             {
               "name": "Diced Tomatoes",
-              "quantity": 28,
+              "quantity": "28",
               "unit": "ounces",
               "notes": "undrained",
-              "macros": { "fat": 0, "carbs": 25, "fiber": 6, "protein": 5, "calories": 100 }
+              "macros": {
+                "calories": 100,
+                "protein": 5,
+                "carbs": 25,
+                "fat": 0,
+                "fiber": 6
+              }
             },
             {
               "name": "Kidney Beans",
-              "quantity": 15,
+              "quantity": "15",
               "unit": "ounces",
               "notes": "drained and rinsed",
-              "macros": { "fat": 2, "carbs": 40, "fiber": 15, "protein": 15, "calories": 220 }
+              "macros": {
+                "calories": 220,
+                "protein": 15,
+                "carbs": 40,
+                "fat": 2,
+                "fiber": 15
+              }
             },
             {
               "name": "Tomato Paste",
-              "quantity": 6,
+              "quantity": "6",
               "unit": "ounces",
               "notes": "",
-              "macros": { "fat": 0, "carbs": 20, "fiber": 4, "protein": 6, "calories": 80 }
+              "macros": {
+                "calories": 80,
+                "protein": 6,
+                "carbs": 20,
+                "fat": 0,
+                "fiber": 4
+              }
             }
           ]
         },
@@ -74,24 +111,42 @@
           "list": [
             {
               "name": "Chili Powder",
-              "quantity": 4,
+              "quantity": "4",
               "unit": "tablespoons",
               "notes": "",
-              "macros": { "fat": 2, "carbs": 8, "fiber": 4, "protein": 1, "calories": 40 }
+              "macros": {
+                "calories": 40,
+                "protein": 1,
+                "carbs": 8,
+                "fat": 2,
+                "fiber": 4
+              }
             },
             {
               "name": "Cumin",
-              "quantity": 2,
+              "quantity": "2",
               "unit": "teaspoons",
               "notes": "",
-              "macros": { "fat": 1, "carbs": 3, "fiber": 1, "protein": 1, "calories": 15 }
+              "macros": {
+                "calories": 15,
+                "protein": 1,
+                "carbs": 3,
+                "fat": 1,
+                "fiber": 1
+              }
             },
             {
               "name": "Smoked Paprika",
-              "quantity": 1,
+              "quantity": "1",
               "unit": "teaspoon",
               "notes": "",
-              "macros": { "fat": 0, "carbs": 1, "fiber": 1, "protein": 0, "calories": 5 }
+              "macros": {
+                "calories": 5,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 1
+              }
             }
           ]
         }
@@ -122,6 +177,169 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763590797634",
+      "title": "Doctor's Daily Bread",
+      "description": "A hearty bread made with only nuts and seeds.  It's a dense brick but Cayce loves having bread again.",
+      "category": "Bread",
+      "servings": 12,
+      "prepTime": "10 Minutes",
+      "cookTime": "1 Hour 15 Minutes",
+      "image": "https://ik.thedoctorskitchen.com/tr:n-medium/doctors-daily-bread_cZ58RgYL8",
+      "source": {
+        "description": "The Doctor's Kitchen",
+        "url": "https://www.thedoctorskitchen.com/recipes/doctor-s-daily-bread"
+      },
+      "tags": [
+        "Keto",
+        "Cayce Diet",
+        "Dairy Free",
+        "Gluten Free",
+        "Grain Free"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Dry Ingredients",
+          "list": [
+            {
+              "name": "Hemp Hearts",
+              "quantity": "20",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Psyllium Husk",
+              "quantity": "35",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Amaranth Flour",
+              "quantity": "150",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Mixed Nuts",
+              "quantity": "150",
+              "unit": "g",
+              "notes": "Chopped",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Mixed Seeds",
+              "quantity": "150",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sea Salt",
+              "quantity": "1 1/2",
+              "unit": "tsp",
+              "notes": "Fine",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Wet Ingredients",
+          "list": [
+            {
+              "name": "Water",
+              "quantity": "400",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Extra Virgin Olive Oil",
+              "quantity": "3",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Directions",
+          "steps": [
+            "Line a 2lb loaf tin with parchment paper and/or lightly grease with olive oil. ",
+            "Mix dry ingredients in a medium bowl.",
+            "Pour in the water and olive oil and mix well.  Start with half the water.",
+            "Pack the mixture into your prepared tin.",
+            "Leave it to soak for 30 minutes - 8 hours at this stage. (overnight is best)",
+            "Bake for 60 minutes at 375 or 335 with convection. ",
+            "Remove from the tin and bake for a further 15 minutes. ",
+            "Remove from the oven and allow to cool completely before slicing. (this takes a long time)"
+          ]
+        }
+      ]
     }
+  ],
+  "categories": [
+    "Bread",
+    "Soup",
+    "Dessert"
+  ],
+  "availableTags": [
+    "gluten free",
+    "keto",
+    "dairy free",
+    "test"
   ]
 }
