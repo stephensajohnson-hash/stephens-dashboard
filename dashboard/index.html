@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-FTWARE">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.3</title>
+    <title>Stephens' Dashboard V0.4</title>
     <!-- NEW: Favicon added --><link rel="icon" href="/images/favicon.png">
     <!-- Load Tailwind CSS CDN --><script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -41,6 +41,15 @@
         #countdown-scroll-container {
             transition: transform 3s ease-in-out; 
         }
+        /* Custom classes for offset temperatures */
+        .low-temp-offset {
+            position: relative;
+            top: 2px; /* Move slightly down */
+        }
+        .high-temp-offset {
+            position: relative;
+            bottom: 2px; /* Move slightly up */
+        }
     </style>
     <script>
         tailwind.config = {
@@ -65,7 +74,7 @@
                 <!-- Date and time injected here by JS, with colored time span --></div>
         </div>
 
-        <!-- NEW: Weather Display Container --><div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
+        <!-- CURRENT Weather Display Container --><div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
             <span class="mr-2" id="weather-icon">Loading...</span>
             <span id="weather-temp" class="text-white font-medium"></span>
         </div>
@@ -99,7 +108,7 @@
             </button>
 
 
-            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.3</p>
+            <!-- UPDATED VERSION --><p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard Version 0.4</p>
         </div>
     </div>
     
@@ -154,8 +163,7 @@
                 <label class="block">
                     <span class="text-gray-400 text-sm">Color Theme:</span>
                     <select id="group-theme" required class="mt-1 block w-full rounded-lg bg-gray-700 border-gray-600 text-white p-2.5 focus:border-blue-500 focus:ring-blue-500">
-                        <!-- Options populated by JS -->
-                    </select>
+                        <!-- Options populated by JS --></select>
                 </label>
                 
                 <div class="flex justify-end space-x-3 pt-2">
@@ -212,7 +220,7 @@
             <p id="loading-indicator" class="w-full text-center text-gray-400 p-8">Loading dashboard data...</p>
             
             <!-- SCROLL CONTAINER (This element moves horizontally) --><div id="countdown-scroll-container" class="flex flex-nowrap h-full transition-transform duration-1000 ease-in-out absolute inset-0">
-                <!-- Countdown items will be rendered here. Each item is w-full. --></div>
+                <!-- Forecast items will be rendered here first, followed by Countdown items. --></div>
         </div>
         <!-- END COUNTDOWN WIDGETS --><!-- UPDATED: Tighter gap (gap-4) and added flex-1 to group cards in JS for fluid width --><div id="link-groups-container" class="flex flex-wrap justify-center gap-4"> 
             <!-- Link groups will be rendered here --></div>
@@ -263,6 +271,7 @@
             // Variable to hold the original static data for the download function
             let STATIC_LINK_GROUPS = [];
             let STATIC_COUNTDOWNS = [];
+            let forecastItems = []; // NEW: Array to hold processed 7-day forecast items
 
             // Variable to hold the clock interval
             let clockInterval = null;
@@ -835,13 +844,12 @@
                 
                 weatherIcon.textContent = '...';
                 weatherTemp.textContent = 'Loading';
-                document.getElementById('weather-display').title = `Fetching weather for ${LOCATION_ZIP}...`;
+                document.getElementById('weather-display').title = `Fetching current weather for ${LOCATION_ZIP}...`;
 
                 // OpenWeatherMap Current Weather API URL (using imperial units)
                 const apiUrl = `https://api.openweathermap.org/data/2.5/weather?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
                 
                 try {
-                    // This check is now satisfied with the correct key length, but useful for quick debug
                     if (API_KEY.length !== 32) {
                         throw new Error("Invalid API Key length.");
                     }
@@ -849,14 +857,13 @@
                     const response = await fetch(apiUrl);
                     
                     if (!response.ok) {
-                         // Attempt to read error message from API response
                          const errorData = await response.json();
                          throw new Error(`API returned status ${response.status}: ${errorData.message || 'Unknown error'}`);
                     }
                     
                     const data = await response.json();
                     
-                    // --- PROCESS AND RENDER DATA ---
+                    // --- PROCESS AND RENDER CURRENT WEATHER DATA (Toolbar) ---
                     
                     const temp = Math.round(data.main.temp);
                     const description = data.weather[0].description;
@@ -865,7 +872,6 @@
                     const iconCode = data.weather[0].icon;
                     let emojiIcon = '❓'; 
 
-                    // Map common icon groups to Emojis
                     if (iconCode.includes('01')) emojiIcon = '☀️';       // Clear sky
                     else if (iconCode.includes('02')) emojiIcon = '🌤️';    // Few clouds
                     else if (iconCode.includes('03')) emojiIcon = '🌥️';    // Scattered clouds
@@ -882,91 +888,144 @@
 
 
                 } catch (error) {
-                    console.error("Weather initialization failed:", error);
+                    console.error("Current Weather initialization failed:", error);
                     weatherIcon.textContent = 'N/A';
                     weatherTemp.textContent = '--';
                     document.getElementById('weather-display').title = `Error fetching weather. Check console for details.`;
                 }
             }
-            // --- END Weather Fetch Function ---
+            // --- END Current Weather Fetch Function ---
 
-
-            // --- Countdown Scrolling Logic ---
-
-            /**
-             * Calculates the time remaining and formats it.
-             * @param {Object} countdown - The countdown object.
-             * @returns {string} The formatted time string.
-             */
-            function formatTimeRemaining(countdown) {
-                const targetDate = new Date(countdown.targetDate);
-                const now = new Date();
-                const diffMs = targetDate.getTime() - now.getTime();
+            // --- NEW: Forecast Fetch Function (Scrolling Bar) ---
+            async function fetchForecast() {
+                const LOCATION_ZIP = '75482,us';
+                const API_KEY = '87256fe2710631542ff491e4c5d73306'; 
                 
-                if (diffMs <= 0) return null; // Expired
-
-                const msInDay = 1000 * 60 * 60 * 24;
-                const totalDays = Math.floor(diffMs / msInDay);
+                // OpenWeatherMap 5-day / 3-hour forecast API URL
+                const apiUrl = `https://api.openweathermap.org/data/2.5/forecast?zip=${LOCATION_ZIP}&units=imperial&appid=${API_KEY}`;
                 
-                const years = Math.floor(totalDays / 365);
-                let remainingDays = totalDays % 365;
-
-                const months = Math.floor(remainingDays / 30);
-                const days = remainingDays % 30;
-
-                let primaryDisplay = [];
-                if (years > 0) {
-                    primaryDisplay.push(`${years} Year${years > 1 ? 's' : ''}`);
-                    if (months > 0) primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
-                } else if (months > 0) {
-                    primaryDisplay.push(`${months} Month${months > 1 ? 's' : ''}`);
-                    if (days > 0) primaryDisplay.push(`${days} Day${days > 1 ? 's' : ''}`);
-                } else {
-                    const remainingMs = diffMs % msInDay;
-                    const hours = Math.floor(remainingMs / (1000 * 60 * 60));
-                    const minutes = Math.floor((remainingMs % (1000 * 60 * 60)) / (1000 * 60));
-                    const seconds = Math.floor((remainingMs % (1000 * 60)) / 1000);
-                    
-                    if (totalDays > 0) primaryDisplay.push(`${totalDays} Day${totalDays > 1 ? 's' : ''}`);
-                    if (totalDays < 1) primaryDisplay.push(`${hours}h ${minutes}m ${seconds}s`);
-                }
-
-                let finalDisplay = primaryDisplay.filter(part => !part.startsWith('0 '));
-                
-                const totalDaysString = finalDisplay.length > 1 ? `[${totalDays} days]` : `(${totalDays} days)`;
-
-                const timeString = finalDisplay.join(' ');
-                
-                return `${timeString} ${totalDaysString}`;
-            }
-
-            /**
-             * Updates the text content of all active countdown timers (per animation frame).
-             */
-            function updateCountdownTimeDisplay() {
-                if (!state.allCountdowns.length) return;
-
-                // Loop through all active elements and update their text
-                state.allCountdowns.forEach((countdown, index) => {
-                    const timeString = formatTimeRemaining(countdown);
-                    const element = state.activeCountdownElements[index];
-
-                    if (timeString === null) {
-                        // If expired, trigger dismissal
-                        const dismissedId = countdown.id || countdown.name;
-                        window.dismissCountdown(new Event('synthetic'), dismissedId, true);
-                    } else if (element) {
-                        element.textContent = timeString;
+                try {
+                    const response = await fetch(apiUrl);
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(`Forecast API returned status ${response.status}: ${errorData.message || 'Unknown error'}`);
                     }
-                });
+                    const data = await response.json();
+                    
+                    // --- PROCESS AND RENDER 7-DAY FORECAST DATA ---
+                    
+                    const dailyForecast = {};
+                    const today = new Date().toDateString();
+                    
+                    // Populate with current weather data first (from the list[0] which is current/near current)
+                    if (data.list && data.list.length > 0) {
+                        const currentItem = data.list[0];
+                        const dateKey = new Date(currentItem.dt * 1000).toDateString();
+                        
+                        dailyForecast[dateKey] = {
+                            date: new Date(currentItem.dt * 1000),
+                            temp_max: Math.round(currentItem.main.temp_max),
+                            temp_min: Math.round(currentItem.main.temp_min),
+                            icon: currentItem.weather[0].icon,
+                            description: currentItem.weather[0].description
+                        };
+                        
+                        // Iterate through 3-hour entries to find high/low for each unique day
+                        data.list.forEach(item => {
+                            const date = new Date(item.dt * 1000);
+                            const dateKey = date.toDateString();
+                            
+                            if (!dailyForecast[dateKey]) {
+                                // Initialize new day
+                                dailyForecast[dateKey] = {
+                                    date: date,
+                                    temp_max: item.main.temp_max,
+                                    temp_min: item.main.temp_min,
+                                    icon: item.weather[0].icon, // Use the weather at 12:00 PM or first available for icon
+                                    description: item.weather[0].description
+                                };
+                            } else {
+                                // Update max/min for existing day
+                                dailyForecast[dateKey].temp_max = Math.max(dailyForecast[dateKey].temp_max, item.main.temp_max);
+                                dailyForecast[dateKey].temp_min = Math.min(dailyForecast[dateKey].temp_min, item.main.temp_min);
+                            }
+                        });
+                    }
 
-                state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
+                    // Convert map to array and limit to the next 7 days
+                    const forecastArray = Object.values(dailyForecast).slice(0, 7).map(item => ({
+                        ...item,
+                        // Round temperatures and map icon
+                        temp_max: Math.round(item.temp_max),
+                        temp_min: Math.round(item.temp_min),
+                        type: 'forecast' // Tag as forecast item for rendering
+                    }));
+                    
+                    forecastItems = forecastArray;
+                    
+                } catch (error) {
+                    console.error("Forecast initialization failed:", error);
+                    // Add 7 static fallback forecast items if the API fails
+                    forecastItems = Array(7).fill().map((_, i) => ({
+                        date: new Date(Date.now() + i * 86400000), // Next 7 days
+                        temp_max: '--',
+                        temp_min: '--',
+                        icon: '04d', // Default to cloudy emoji
+                        description: 'Loading Error',
+                        type: 'forecast'
+                    }));
+                }
             }
+            
+            // Icon mapping for forecast cards
+            function getForecastEmoji(iconCode) {
+                if (iconCode.includes('01')) return '☀️'; 
+                else if (iconCode.includes('02')) return '🌤️';
+                else if (iconCode.includes('03')) return '🌥️';
+                else if (iconCode.includes('04')) return '☁️';
+                else if (iconCode.includes('09') || iconCode.includes('10')) return '🌧️';
+                else if (iconCode.includes('11')) return '⛈️';
+                else if (iconCode.includes('13')) return '❄️';
+                else if (iconCode.includes('50')) return '🌫️';
+                return '❓';
+            }
+
+            /**
+             * NEW: Creates a single forecast card element (the container for 7 days).
+             */
+            function createForecastPanel() {
+                const panel = document.createElement('div');
+                panel.className = 'flex items-center justify-start w-full h-14 bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-2 cursor-default'; 
+                
+                // Add the 7 individual forecast day cards inside the panel
+                forecastItems.forEach(forecast => {
+                    const dayOptions = { weekday: 'short' };
+                    
+                    const dayCard = document.createElement('div');
+                    dayCard.className = 'flex flex-col items-center justify-center h-full flex-shrink-0 w-[14.28%] min-w-[70px] border-r border-gray-700 last:border-r-0'; // 1/7th width (14.28%)
+
+                    dayCard.innerHTML = `
+                        <div class="text-xs text-gray-400 font-medium">${forecast.date.toLocaleDateString('en-US', dayOptions)} ${forecast.date.getDate()}</div>
+                        <div class="flex items-center text-sm font-semibold">
+                            <span class="low-temp-offset text-blue-300 mr-1 text-xs">${forecast.temp_min}°</span>
+                            <span class="text-xl">${getForecastEmoji(forecast.icon)}</span>
+                            <span class="high-temp-offset text-green-300 ml-1 text-xs">${forecast.temp_max}°</span>
+                        </div>
+                    `;
+                    panel.appendChild(dayCard);
+                });
+                
+                const item = document.createElement('div');
+                item.className = 'flex-shrink-0 px-3'; 
+                item.style.width = `100%`; // The forecast panel takes up 100% of the viewport width
+
+                item.appendChild(panel);
+                return item;
+            }
+
 
             /**
              * Creates a single countdown card element.
-             * @param {Object} countdown - The countdown data.
-             * @returns {HTMLElement} The created countdown item div.
              */
             function createCountdownItem(countdown) {
                 const placeholderLetter = countdown.name.substring(0, 1);
@@ -995,42 +1054,78 @@
                         </button>
                     </a>
                 `;
-
+                item.style.width = `100%`; // Placeholder, will be overwritten by renderAllCountdowns
                 return item;
             }
 
             /**
-             * Renders all countdowns into the scroll container, including a clone for looping.
+             * Renders all merged items (Forecasts + Countdowns) into the scroll container.
              */
-            function renderAllCountdowns(countdowns) {
+            function renderAllCountdowns(mergedItems) {
                 countdownScrollContainer.innerHTML = '';
                 state.activeCountdownElements = [];
 
-                if (countdowns.length === 0) return;
+                if (mergedItems.length === 0) return;
                 
-                const totalItems = countdowns.length + (countdowns.length > 1 ? 1 : 0);
-                // Calculate the percentage width each item must take up 
-                const itemWidthPercent = 100 / totalItems; 
+                // Since the forecast is a single item, we count it as 1, plus all countdowns
+                const numForecastPanels = forecastItems.length > 0 ? 1 : 0; 
+                const numCountdowns = mergedItems.filter(item => item.type === 'countdown').length;
+                const numTotalUniqueItems = numForecastPanels + numCountdowns;
+                
+                // Calculate total items including the clone (if necessary)
+                const totalItemsWithClone = numTotalUniqueItems + (numTotalUniqueItems > 1 ? 1 : 0);
+                
+                // Calculate the percentage width each item must take up (100% for full screen view)
+                const itemWidthPercent = 100 / totalItemsWithClone; 
 
                 // 1. Render Original Items
-                countdowns.forEach(countdown => {
-                    const item = createCountdownItem(countdown);
-                    item.style.width = `${itemWidthPercent}%`; // Set width here
-                    countdownScrollContainer.appendChild(item);
-                    state.activeCountdownElements.push(item.querySelector('.countdown-time-display')); 
+                let itemsToRender = [];
+                if (forecastItems.length > 0) {
+                    itemsToRender.push({ element: createForecastPanel(), type: 'forecast' });
+                }
+                mergedItems.filter(item => item.type === 'countdown').forEach(item => {
+                    itemsToRender.push({ element: createCountdownItem(item), type: 'countdown' });
+                });
+
+
+                itemsToRender.forEach(itemContainer => {
+                    const { element, type } = itemContainer;
+                    element.style.width = `${itemWidthPercent}%`; // Set width here
+                    countdownScrollContainer.appendChild(element);
+                    
+                    if (type === 'countdown') {
+                        // Only Countdown items need their time element tracked for continuous update
+                        state.activeCountdownElements.push(element.querySelector('.countdown-time-display')); 
+                    }
                 });
                 
                 // 2. Add Clone(s) for seamless looping 
-                if (countdowns.length > 1) {
-                    const clone = createCountdownItem(countdowns[0]);
+                if (numTotalUniqueItems > 1) {
+                    const firstItemContainer = itemsToRender[0];
+                    const { element: firstElement, type: firstType } = firstItemContainer;
+
+                    let clone;
+                    if (firstType === 'forecast') {
+                        // Re-create the full forecast panel clone
+                        clone = createForecastPanel(); 
+                    } else {
+                        // Re-create the first countdown clone
+                        const firstCountdownData = mergedItems.filter(item => item.type === 'countdown')[0];
+                        clone = createCountdownItem(firstCountdownData); 
+                    }
+                    
                     clone.style.width = `${itemWidthPercent}%`; // Set width here
                     countdownScrollContainer.appendChild(clone);
-                    state.activeCountdownElements.push(clone.querySelector('.countdown-time-display'));
+                    
+                    // If the first item was a countdown, also track its cloned time display
+                    if (firstType === 'countdown') {
+                         state.activeCountdownElements.push(clone.querySelector('.countdown-time-display'));
+                    }
                 }
                 
                 // 3. Set Container Width 
-                // Total width is totalItems * 100% 
-                countdownScrollContainer.style.width = `${totalItems * 100}%`;
+                // Total width is totalItemsWithClone * 100% 
+                countdownScrollContainer.style.width = `${totalItemsWithClone * 100}%`;
                 countdownScrollContainer.style.transform = `translateX(0%)`; // Reset to start
                 state.currentScrollIndex = 0;
             }
@@ -1039,14 +1134,14 @@
              * Handles the CSS transform for scrolling and manages the seamless loop reset.
              */
             function animateScroll() {
-                const numCountdowns = state.allCountdowns.length;
-                if (numCountdowns <= 1) return;
+                const numItems = state.allCountdowns.length; // Uses the merged length
+                if (numItems <= 1) return;
 
                 // Move to the next position
                 state.currentScrollIndex += 1;
                 
                 // Calculate shift based on item width percentage 
-                const itemWidthPercentOfTotal = 100 / (numCountdowns + 1);
+                const itemWidthPercentOfTotal = 100 / (numItems + 1);
                 const shiftAmount = state.currentScrollIndex * itemWidthPercentOfTotal; 
                 
                 // Apply the transition transform (3s)
@@ -1054,7 +1149,7 @@
                 countdownScrollContainer.style.transform = `translateX(-${shiftAmount}%)`;
 
                 // If we hit the clone, reset instantly back to the first item (Index 0)
-                if (state.currentScrollIndex >= numCountdowns) {
+                if (state.currentScrollIndex >= numItems) {
                     // Reset delay (3050ms) is slightly longer than the transition (3000ms)
                     setTimeout(() => {
                         countdownScrollContainer.style.transitionDuration = '0ms'; // Disable transition
@@ -1067,19 +1162,21 @@
             /**
              * Sets up the countdown update and scrolling intervals.
              */
-            function startCountdownScroll(countdowns) {
-                if (state.scrollInterval) clearInterval(state.scrollInterval); // Fixed potential conflict with interval name
+            function startCountdownScroll(mergedItems) {
+                if (state.scrollInterval) clearInterval(state.scrollInterval); 
                 if (state.animationFrameId) cancelAnimationFrame(state.animationFrameId);
 
-                const activeCountdowns = (countdowns || []).filter(c => new Date(c.targetDate).getTime() > new Date().getTime());
+                // Filter out non-item entries (null/expired countdowns)
+                const activeItems = mergedItems.filter(item => item !== null);
 
-                // Clear container and state if no active countdowns
-                if (activeCountdowns.length === 0) {
+                // Clear container and state if no active items
+                if (activeItems.length === 0) {
                     countdownWidgetsContainer.innerHTML = '';
                     return;
                 }
                 
-                state.allCountdowns = activeCountdowns;
+                // IMPORTANT: The state.allCountdowns now holds the merged list of active items
+                state.allCountdowns = activeItems; 
 
                 // 1. Render all cards
                 renderAllCountdowns(state.allCountdowns);
@@ -1087,7 +1184,7 @@
                 // Remove the loading indicator now that the container has content
                 if(loadingIndicator) loadingIndicator.style.display = 'none';
 
-                // 2. Start the second-by-second time update loop
+                // 2. Start the second-by-second time update loop (only for countdowns)
                 state.animationFrameId = requestAnimationFrame(updateCountdownTimeDisplay);
 
                 // 3. Start scroll rotation (6 seconds total cycle time)
@@ -1108,10 +1205,10 @@
                 // 1. Remove from local state
                 const initialLength = state.allCountdowns.length;
                 
-                // Determine if this is a static item or a custom user item
+                // Find and filter the countdown item based on its ID/Name
                 const isCustom = dismissId.startsWith('user_');
                 
-                state.allCountdowns = state.allCountdowns.filter(c => (c.id || c.name.replace(' (test)', '')) !== dismissId);
+                state.allCountdowns = state.allCountdowns.filter(c => c.type !== 'countdown' || (c.id || c.name.replace(' (test)', '')) !== dismissId);
 
                 if (state.allCountdowns.length < initialLength) {
                     if (isCustom) {
@@ -1173,7 +1270,7 @@
             /**
              * Renders the dashboard content based on the fetched data.
              */
-            function renderDashboard(data, isFallback) {
+            async function renderDashboard(data, isFallback) {
                 // A. Save the Static Data (for download and clean name retrieval)
                 STATIC_LINK_GROUPS = data.linkGroups || [];
                 STATIC_COUNTDOWNS = data.countdowns || [];
@@ -1189,19 +1286,24 @@
                     debugLog.appendChild(fallbackNote);
                 }
 
-                // --- MERGE COUNTDOWN DATA ---
+                // --- MERGE COUNTDOWN & FORECAST DATA ---
                 
-                let allCountdownsList = data.countdowns || [];
-                const customCountdowns = getCustomCountdowns();
+                // Fetch the forecast data (this updates the global `forecastItems` array)
+                await fetchForecast(); 
+
+                // Prepare countdowns
+                let allCountdownsList = (data.countdowns || []).map(c => ({...c, type: 'countdown'}));
+                const customCountdowns = getCustomCountdowns().map(c => ({...c, type: 'countdown'}));
                 
                 const staticDismissals = getCustomData(state.localStorageKeys.dismissals);
                 // Filter out static items that have been dismissed
                 allCountdownsList = allCountdownsList.filter(c => !staticDismissals.includes(c.name.replace(' (test)', '').trim()));
 
-                const mergedCountdowns = [...allCountdownsList, ...customCountdowns];
+                // Merge Forecasts (first), Static Countdowns, and Custom Countdowns
+                const mergedItems = [...forecastItems, ...allCountdownsList, ...customCountdowns];
 
-                // 2. Render Countdowns 
-                startCountdownScroll(mergedCountdowns);
+                // 2. Render Countdowns/Forecasts 
+                startCountdownScroll(mergedItems);
 
 
                 // --- MERGE LINK GROUP DATA (FIXED LOGIC) ---
@@ -1218,10 +1320,9 @@
                     finalGroupsMap.set(cleanName, {...group, links: [...(group.links || [])]});
                 });
 
-                // B. Add Custom Groups to map (FIX: Ensures they are added to the map for display)
+                // B. Add Custom Groups to map 
                 customGroups.forEach(group => {
                     const cleanName = group.name.trim(); // Custom groups are already clean
-                    // We must ensure the static group doesn't accidentally overwrite a custom group's data structure
                     if (!finalGroupsMap.has(cleanName)) {
                        finalGroupsMap.set(cleanName, {...group, links: []}); // Add new custom group
                     } 
@@ -1312,7 +1413,7 @@
                 }
 
                 // FIX: Always render with the static data + the current local storage data.
-                renderDashboard(dashboardData, isFallback);
+                await renderDashboard(dashboardData, isFallback);
 
                 // CRITICAL FIX: The logic to clear custom local storage on fetch success is REMOVED.
                 // This is now done manually via the "Clear Draft Data" button.
@@ -1324,7 +1425,7 @@
                 // populateGroupColorDropdown() is now called inside addGroupButton listener
                 initDashboard();
                 startClockUpdate(); 
-                // NEW: Initialize weather widget
+                // NEW: Initialize current weather widget
                 fetchWeather();
             }
         })(); // End of IIFE
