@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.18</title>
+    <title>Stephens' Recipes V0.5.20</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -56,34 +56,30 @@
             </div>
             <button id="add-recipe-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">Add New Recipe</button>
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
-            <!-- Add Tag Button Removed -->
+            <!-- Tag Button Removed -->
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.18</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.20</p>
         </div>
     </div>
 
     <!-- LIST VIEW Container -->
     <main id="recipes-content" class="px-4 sm:px-8 pt-16 pb-8">
-        <!-- Tag/Category toggle removed in favor of Tag Cloud -->
-        <div id="recipe-groups-container" class="flex flex-col space-y-8"></div>
-        
         <!-- Tag Cloud Section -->
-        <div id="tag-cloud-wrapper" class="mt-12 pt-8 border-t border-gray-700">
-            <h3 class="text-xl font-bold text-white mb-4 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+        <div id="tag-cloud-wrapper" class="mb-8 pb-4 border-b border-gray-700">
+            <h3 class="text-sm font-bold text-gray-400 mb-2 flex items-center uppercase tracking-wider">
                 Browse by Tag
             </h3>
-            <div id="tag-cloud-container" class="flex flex-wrap gap-2">
-                <!-- Tags injected here -->
-            </div>
+            <div id="tag-cloud-container" class="flex flex-wrap gap-2"></div>
         </div>
+
+        <div id="recipe-groups-container" class="flex flex-col space-y-8"></div>
     </main>
 
     <!-- DETAIL VIEW Container -->
     <main id="recipe-detail-view" class="px-4 sm:px-8 pt-16 pb-8 hidden">
-        <div class="flex justify-between items-start mb-4">
-            <button id="back-to-list" class="flex items-center text-gray-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-gray-800">
+        <div class="flex justify-between items-start mb-4 z-40 relative">
+            <button id="back-to-list" class="flex items-center text-gray-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-gray-800 bg-gray-800 border border-gray-700">
                 <span class="mr-1">←</span> Back
             </button>
             <div class="flex space-x-2">
@@ -159,7 +155,7 @@
         </div>
     </div>
 
-    <!-- Simple Modals (Category Only now) -->
+    <!-- Simple Modals -->
     <div id="add-category-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
             <h2 class="text-xl font-bold mb-4">Add Category</h2>
@@ -185,11 +181,7 @@
             let currentFilterTag = null;
             let currentEditingId = null;
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
-            
-            const EMBEDDED_RECIPES = {
-                "categories": ["Bread", "Soup", "Dessert"], "availableTags": ["gluten free", "keto", "dairy free"],
-                "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ]
-            };
+            const EMBEDDED_RECIPES = { "categories": ["Bread", "Soup", "Dessert"], "availableTags": ["gluten free", "keto", "dairy free"], "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ] };
 
             // --- 2. GLOBAL FUNCTIONS (Exposed) ---
             
@@ -248,6 +240,44 @@
                 saveCustomData(state.localStorageKeys.recipes, newParams);
                 renderRecipeGroups();
             };
+
+            // FIXED: Expose showDetailView for inline onclick
+            window.showDetailView = function(recipeId) {
+                currentEditingId = String(recipeId);
+                const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
+                if (!recipe) return;
+
+                views.list.classList.add('hidden');
+                views.detail.classList.remove('hidden');
+                window.scrollTo(0,0);
+                
+                // Calc Macros
+                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
+                if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
+                const s = recipe.servings || 1;
+                const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
+                ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
+
+                containers.detail.innerHTML = `
+                    <div class="flex flex-col md:flex-row gap-6 mb-8">
+                        <img src="${recipe.image}" class="w-full md:w-1/3 rounded-xl object-cover h-64 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
+                        <div class="flex-1 flex flex-col justify-center">
+                            <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
+                            ${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}
+                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
+                            <div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Serves: <strong>${recipe.servings}</strong></span></div>
+                            <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Cals</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Prot</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carb</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div>
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => `<li class="flex justify-between border-b border-gray-700/50 pb-1"><span class="text-gray-200"><span class="font-bold text-white">${ing.quantity} ${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic">${ing.notes||''}</span></li>`).join('')}</ul></div>`).join('')}</div>
+                        <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2">${step}</li>`).join('')}</ol></div>`).join('')}</div>
+                    </div>
+                `;
+                
+                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe);
+                document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+            }
 
             // --- INTERNAL HELPERS ---
             function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
@@ -382,125 +412,64 @@
                 if (currentEditingId) showDetailView(newRecipe.id); else renderRecipeGroups();
             }
 
-            function renderRecipeGroups() {
-                views.detail.classList.add('hidden');
-                views.list.classList.remove('hidden');
-                const allRecipes = getAllRecipes();
-                containers.groups.innerHTML = '';
-                
-                // TAG CLOUD RENDER
-                const allTagsSet = new Set([...STATIC_TAGS, ...getCustomData(state.localStorageKeys.tags)]);
-                // Add tags from actual recipes if missing
-                allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
-                const allTags = Array.from(allTagsSet).sort();
-                
-                containers.tags.innerHTML = allTags.map(tag => 
-                    `<button onclick="filterByTag('${tag}')" class="px-3 py-1 rounded-full text-sm font-medium bg-gray-800 border border-gray-600 hover:bg-blue-600 hover:border-blue-500 hover:text-white transition">${tag}</button>`
-                ).join('');
-
-                // Filter Mode or Default Mode
-                if (currentFilterTag) {
-                    const filteredRecipes = allRecipes.filter(r => (r.tags || []).includes(currentFilterTag));
-                    const section = document.createElement('section');
-                    section.innerHTML = `
-                        <div class="flex items-center justify-between mb-4">
-                            <h2 class="text-2xl font-bold text-white">Recipes Tagged: <span class="text-blue-400">${currentFilterTag}</span></h2>
-                            <button onclick="clearTagFilter()" class="text-sm bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-gray-200">Clear Filter ✕</button>
-                        </div>`;
-                    
-                    if (filteredRecipes.length === 0) {
-                        section.innerHTML += `<p class="text-gray-500">No recipes found with this tag.</p>`;
-                    } else {
-                        const grid = document.createElement('div');
-                        grid.className = 'flex flex-wrap gap-4 justify-start';
-                        filteredRecipes.forEach(r => grid.appendChild(createRecipeCard(r)));
-                        section.appendChild(grid);
-                    }
-                    containers.groups.appendChild(section);
-                } else {
-                    // Default Category View
-                    const customCats = getCustomData(state.localStorageKeys.categories);
-                    const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
-                    const groupedRecipes = new Map();
-                    const defaultGroup = 'Uncategorized';
-                    
-                    allRecipes.forEach(recipe => {
-                        const cat = recipe.category || defaultGroup;
-                        if (!groupedRecipes.has(cat)) groupedRecipes.set(cat, []);
-                        groupedRecipes.get(cat).push(recipe);
-                    });
-
-                    [...allCategories, defaultGroup].forEach(groupName => {
-                        const recipes = groupedRecipes.get(groupName);
-                        if (recipes && recipes.length > 0) {
-                            const section = document.createElement('section');
-                            section.innerHTML = `<div class="bg-gray-800 border border-gray-700 inline-block px-4 py-1.5 rounded-full mb-4 text-lg font-semibold text-white shadow-md">${groupName.replace(' (test)', '')}</div>`;
-                            const grid = document.createElement('div');
-                            grid.className = 'flex flex-wrap gap-4 justify-start';
-                            recipes.forEach(r => grid.appendChild(createRecipeCard(r)));
-                            section.appendChild(grid);
-                            containers.groups.appendChild(section);
-                        }
-                    });
-                    if(containers.groups.innerHTML === '') containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
+            function saveCategory(e) {
+                e.preventDefault();
+                const val = document.getElementById('category-modal-input').value.trim();
+                if(val) {
+                    const d = getCustomData(state.localStorageKeys.categories);
+                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
+                    modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
             }
 
             function createRecipeCard(r) {
-                const card = document.createElement('div');
-                card.className = 'recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200';
-                card.onclick = () => showDetailView(r.id);
                 const letter = r.title.charAt(0).toUpperCase();
-                // Tags in card are clickable
-                const tagHTML = (r.tags || []).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
-                
-                card.innerHTML = `
-                    <img src="${r.image}" class="w-full h-32 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/1F2937/FFFFFF?text=${letter}';"/>
-                    <div class="p-3">
-                        <h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)', '')}</h3>
-                        <p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p>
-                        <div class="flex flex-wrap gap-1">${tagHTML}</div>
-                    </div>`;
-                return card;
-            }
-
-            function showDetailView(recipeId) {
-                currentEditingId = String(recipeId);
-                const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
-                if (!recipe) return;
-
-                views.list.classList.add('hidden');
-                views.detail.classList.remove('hidden');
-                window.scrollTo(0,0);
-                
-                // Calc Macros
-                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
-                if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
-                const s = recipe.servings || 1;
-                const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
-                ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
-
-                containers.detail.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-6 mb-8">
-                        <img src="${recipe.image}" class="w-full md:w-1/3 rounded-xl object-cover h-64 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
-                        <div class="flex-1 flex flex-col justify-center">
-                            <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
-                            ${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}
-                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
-                            <div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Serves: <strong>${recipe.servings}</strong></span></div>
-                            <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Cals</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Prot</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carb</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div>
+                const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
+                return `
+                    <div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')">
+                        <img src="${r.image}" class="w-full h-32 object-cover" onerror="this.onerror=null;this.src='https://placehold.co/400x250/1F2937/FFFFFF?text=${letter}';"/>
+                        <div class="p-3">
+                            <h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)', '')}</h3>
+                            <p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p>
+                            <div class="flex flex-wrap gap-1">${tags}</div>
                         </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => `<li class="flex justify-between border-b border-gray-700/50 pb-1"><span class="text-gray-200"><span class="font-bold text-white">${ing.quantity} ${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic">${ing.notes||''}</span></li>`).join('')}</ul></div>`).join('')}</div>
-                        <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2">${step}</li>`).join('')}</ol></div>`).join('')}</div>
-                    </div>
-                `;
-                
-                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe);
-                document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+                    </div>`;
             }
+            function renderRecipeGroups() {
+                views.detail.classList.add('hidden');
+                views.list.classList.remove('hidden');
+                const allRecipes = getAllRecipes();
+                const customCats = getCustomData(state.localStorageKeys.categories);
+                const customTags = getCustomData(state.localStorageKeys.tags);
+                const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
+                const allTags = [...STATIC_TAGS, ...customTags].filter((v, i, a) => a.indexOf(v) === i);
+                containers.groups.innerHTML = '';
 
+                // Update Tag Cloud
+                const allTagsSet = new Set([...STATIC_TAGS, ...customTags]);
+                allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
+                const sortedTags = Array.from(allTagsSet).sort();
+                document.getElementById('tag-cloud-container').innerHTML = sortedTags.map(tag => `<button onclick="filterByTag('${tag}')" class="px-3 py-1 rounded-full text-sm font-medium bg-gray-800 border border-gray-600 hover:bg-blue-600 hover:text-white transition">${tag}</button>`).join('');
+
+                // Render filtered
+                if (currentFilterTag) {
+                    const filtered = allRecipes.filter(r => (r.tags || []).includes(currentFilterTag));
+                    containers.groups.innerHTML = `<div class="flex items-center justify-between mb-4"><h2 class="text-2xl font-bold text-white">Recipes Tagged: <span class="text-blue-400">${currentFilterTag}</span></h2><button onclick="clearTagFilter()" class="text-sm bg-gray-700 px-3 py-1 rounded text-gray-200">Clear Filter ✕</button></div><div class="flex flex-wrap gap-4 justify-start">${filtered.map(r => createRecipeCard(r)).join('')}</div>`;
+                    return;
+                }
+
+                // Render Categories
+                const grouped = new Map();
+                allRecipes.forEach(r => { const c = r.category || 'Uncategorized'; if(!grouped.has(c)) grouped.set(c, []); grouped.get(c).push(r); });
+                [...allCategories, 'Uncategorized'].forEach(cat => {
+                    const recipes = grouped.get(cat);
+                    if(recipes && recipes.length) {
+                        containers.groups.innerHTML += `<section><div class="bg-gray-800 border border-gray-700 inline-block px-4 py-1.5 rounded-full mb-4 text-lg font-semibold text-white shadow-md">${cat.replace(' (test)', '')}</div><div class="flex flex-wrap gap-4 justify-start">${recipes.map(r => createRecipeCard(r)).join('')}</div></section>`;
+                    }
+                });
+                if(!containers.groups.innerHTML) containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
+            }
+            
             function downloadDataFile() {
                 hideMenu(); 
                 const customRecipes = getCustomData(state.localStorageKeys.recipes);
@@ -522,15 +491,36 @@
                 hideMenu();
                 initRecipeDashboard();
             }
-            function saveCategory(e) {
-                e.preventDefault();
-                const val = document.getElementById('category-modal-input').value.trim();
-                if(val) {
-                    const d = getCustomData(state.localStorageKeys.categories);
-                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
-                    modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
-                }
-            }
+
+            // --- 3. EXPOSE & BIND ---
+            // Explicitly expose global functions for inline onclicks to find
+            window.openRecipeModal = openRecipeModal;
+            window.deleteRecipe = deleteRecipe;
+            window.showDetailView = showDetailView;
+            window.filterByTag = filterByTag;
+            window.clearTagFilter = clearTagFilter;
+
+            // Bind Events AFTER definition
+            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
+            document.getElementById('close-menu-button').onclick = hideMenu;
+            document.body.onclick = (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); };
+
+            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
+            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
+            document.getElementById('download-data-button').onclick = downloadDataFile;
+            
+            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); });
+            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
+            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
+
+            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
+            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
+            document.getElementById('save-recipe-btn').onclick = saveRecipe;
+            document.getElementById('back-to-list').onclick = renderRecipeGroups;
+            document.getElementById('category-form').onsubmit = saveCategory;
+            document.getElementById('clear-draft-button').onclick = clearDraftData;
+            // Removed Tag specific bindings as button is removed
 
             // --- INITIALIZATION ---
             async function initRecipeDashboard() {
@@ -556,33 +546,7 @@
                     }
                 } catch(e) {}
             }
-            function updateClock() {
-                const now = new Date();
-                const date = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-                const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
-                document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${date}</span> <span class="text-blue-300 ml-1">${time}</span>`;
-            }
-
-            // --- EVENT BINDING ---
-            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
-            document.getElementById('close-menu-button').onclick = hideMenu;
-            document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); });
-
-            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
-            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
-            document.getElementById('download-data-button').onclick = downloadDataFile;
-            
-            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); });
-            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
-            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
-
-            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
-            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
-            document.getElementById('save-recipe-btn').onclick = saveRecipe;
-            
-            document.getElementById('category-form').onsubmit = saveCategory;
-            document.getElementById('clear-draft-button').onclick = clearDraftData;
+            function updateClock() { const now = new Date(); document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; }
 
             window.onload = () => { initRecipeDashboard(); setInterval(updateClock, 1000); updateClock(); updateWeather(); };
         })();
