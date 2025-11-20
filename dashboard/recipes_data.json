@@ -532,7 +532,8 @@
       },
       "tags": [
         "Keto",
-        "Beef"
+        "Beef",
+        "Gluten Free"
       ],
       "ingredients": [
         {
@@ -544,10 +545,10 @@
               "unit": "lb",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
+                "calories": 680,
+                "protein": 92,
                 "carbs": 0,
-                "fat": 0,
+                "fat": 32,
                 "fiber": 0
               }
             },
@@ -557,11 +558,11 @@
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 340,
+                "protein": 13,
+                "carbs": 11,
+                "fat": 27,
+                "fiber": 6
               }
             },
             {
@@ -570,7 +571,7 @@
               "unit": "tsp",
               "notes": "chopped",
               "macros": {
-                "calories": 0,
+                "calories": 1,
                 "protein": 0,
                 "carbs": 0,
                 "fat": 0,
@@ -583,7 +584,7 @@
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 1,
                 "protein": 0,
                 "carbs": 0,
                 "fat": 0,
@@ -596,9 +597,9 @@
               "unit": "tsp",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 8,
                 "protein": 0,
-                "carbs": 0,
+                "carbs": 2,
                 "fat": 0,
                 "fiber": 0
               }
@@ -666,10 +667,10 @@
               "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
+                "calories": 200,
+                "protein": 0.5,
                 "carbs": 0,
-                "fat": 0,
+                "fat": 15,
                 "fiber": 0
               }
             },
@@ -679,10 +680,10 @@
               "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 269,
                 "protein": 0,
                 "carbs": 0,
-                "fat": 0,
+                "fat": 28,
                 "fiber": 0
               }
             },
@@ -692,11 +693,11 @@
               "unit": "cup",
               "notes": "sliced",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 15,
+                "protein": 2.2,
+                "carbs": 2.3,
+                "fat": 0.2,
+                "fiber": 0.7
               }
             },
             {
@@ -705,11 +706,11 @@
               "unit": "cup",
               "notes": "sliced",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 34,
+                "protein": 1,
+                "carbs": 8,
+                "fat": 1,
+                "fiber": 1.7
               }
             },
             {
@@ -718,9 +719,9 @@
               "unit": "tsp",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 2.5,
                 "protein": 0,
-                "carbs": 0,
+                "carbs": 0.5,
                 "fat": 0,
                 "fiber": 0
               }
@@ -731,7 +732,7 @@
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 5,
                 "protein": 0,
                 "carbs": 0,
                 "fat": 0,
@@ -744,10 +745,10 @@
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
+                "calories": 240,
+                "protein": 4,
+                "carbs": 4,
+                "fat": 20,
                 "fiber": 0
               }
             }
