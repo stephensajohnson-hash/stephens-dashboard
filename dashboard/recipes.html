@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.15</title>
+    <title>Stephens' Recipes V0.5.16</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -59,7 +59,7 @@
             <button id="add-tag-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Tag</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.15</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.16</p>
         </div>
     </div>
 
@@ -171,14 +171,17 @@
     <script>
         (function() {
             // --- 1. VARIABLES & CONSTANTS ---
+            // Defined inside IIFE
             const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
             const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content') };
             const menuModal = document.getElementById('menu-modal');
+            
             const modals = {
                 recipe: document.getElementById('recipe-form-modal'),
                 category: document.getElementById('add-category-modal'),
                 tag: document.getElementById('add-tag-modal')
             };
+
             const ingContainer = document.getElementById('ingredients-container');
             const instContainer = document.getElementById('instructions-container');
             
@@ -192,8 +195,9 @@
                 "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ]
             };
 
-            // --- 2. FUNCTION DEFINITIONS ---
+            // --- 2. GLOBAL FUNCTIONS (Exposed for HTML onclick) ---
 
+            // Data Helpers
             function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
             function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
             function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
@@ -208,6 +212,7 @@
                 return Array.from(map.values());
             }
 
+            // UI Helpers
             function toggleMenu() {
                 const isHidden = menuModal.classList.contains('opacity-0');
                 if (isHidden) {
@@ -234,6 +239,56 @@
                     activeBtn.classList.remove('text-gray-400');
                 }
             }
+            
+            // We expose these functions to window so they can be called from onclick handlers in HTML
+            window.openRecipeModal = function(recipe = null) {
+                currentEditingId = recipe ? recipe.id : null;
+                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
+                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
+                
+                // Reset
+                document.getElementById('full-recipe-form').reset();
+                ingContainer.innerHTML = ''; instContainer.innerHTML = '';
+                
+                // Populate Categories Dropdown
+                const customCats = getCustomData(state.localStorageKeys.categories);
+                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
+                const catSelect = document.getElementById('form-category');
+                catSelect.innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
+
+                if (recipe) {
+                    document.getElementById('form-title').value = recipe.title;
+                    document.getElementById('form-desc').value = recipe.description;
+                    catSelect.value = recipe.category;
+                    document.getElementById('form-servings').value = recipe.servings;
+                    document.getElementById('form-prep').value = recipe.prepTime;
+                    document.getElementById('form-cook').value = recipe.cookTime;
+                    document.getElementById('form-image').value = recipe.image;
+                    if(recipe.source) {
+                        document.getElementById('form-source-desc').value = recipe.source.description || '';
+                        document.getElementById('form-source-url').value = recipe.source.url || '';
+                    }
+                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
+                    
+                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
+                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
+                } else {
+                    addIngredientSection();
+                    addInstructionSection();
+                }
+                
+                modals.recipe.classList.remove('hidden');
+                switchTab('tab-general');
+                hideMenu();
+            };
+
+            window.deleteRecipe = function(id) {
+                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
+                let customRecipes = getCustomData(state.localStorageKeys.recipes);
+                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
+                saveCustomData(state.localStorageKeys.recipes, newParams);
+                renderRecipeGroups();
+            };
 
             function addIngredientSection(data = null) {
                 const div = document.createElement('div');
@@ -364,7 +419,7 @@
                 modals.recipe.classList.add('hidden');
                 if (currentEditingId) showDetailView(newRecipe.id);
                 else renderRecipeGroups();
-            };
+            }
 
             function saveCategory(e) {
                 e.preventDefault();
@@ -384,14 +439,6 @@
                     if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
                     modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
-            }
-
-            function deleteRecipe(id) {
-                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
-                saveCustomData(state.localStorageKeys.recipes, newParams);
-                renderRecipeGroups();
             }
 
             function showDetailView(recipeId) {
@@ -463,8 +510,8 @@
                     </div>
                 `;
                 
-                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe);
-                document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+                document.getElementById('edit-recipe-btn').onclick = () => window.openRecipeModal(recipe);
+                document.getElementById('delete-recipe-btn').onclick = () => window.deleteRecipe(recipe.id);
             }
 
             function renderRecipeGroups() {
@@ -606,7 +653,7 @@
             document.getElementById('close-menu-button').onclick = hideMenu;
             document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); });
 
-            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
+            document.getElementById('add-recipe-button').onclick = () => { window.openRecipeModal(); hideMenu(); };
             document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
             document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); hideMenu(); };
             document.getElementById('download-data-button').onclick = downloadDataFile;
