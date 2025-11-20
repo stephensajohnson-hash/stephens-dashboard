@@ -1380,6 +1380,136 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763675466895",
+      "title": "Cornbread Dressing",
+      "description": "Family Thanksgiving dressing adapted to fit in a standard 9x12 pan.  Multiply up if you are cooking for a bigger crew.",
+      "category": "Southern Food",
+      "servings": 8,
+      "prepTime": "15 minutes",
+      "cookTime": "15 minutes",
+      "image": "https://iheartrecipes.com/wp-content/uploads/2018/10/dressing-3dressingmarked-1024x683.jpg",
+      "source": {
+        "description": "Tempie Johnson",
+        "url": ""
+      },
+      "tags": [
+        "Thanksgiving",
+        "Texas"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Cornbread",
+              "quantity": "1",
+              "unit": "pan",
+              "notes": "See Cornbread Recipe",
+              "macros": {
+                "calories": 1936,
+                "protein": 64,
+                "carbs": 280,
+                "fat": 64,
+                "fiber": 32
+              }
+            },
+            {
+              "name": "Onion",
+              "quantity": "1/2",
+              "unit": "",
+              "notes": "diced",
+              "macros": {
+                "calories": 22,
+                "protein": 0.5,
+                "carbs": 5,
+                "fat": 0,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "celery",
+              "quantity": "3",
+              "unit": "stalks",
+              "notes": "diced",
+              "macros": {
+                "calories": 19,
+                "protein": 1,
+                "carbs": 4,
+                "fat": 0,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Turkey or Chicken Broth",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "maybe a little more",
+              "macros": {
+                "calories": 20,
+                "protein": 2,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "",
+              "unit": "to taste",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Pepper",
+              "quantity": "",
+              "unit": "to taste",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sage",
+              "quantity": "",
+              "unit": "to taste",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "crumble 1 pan cornbread in large mixing bowl",
+            "Add 1/2 diced onion and 3 stalks diced celery to small stock pot and cover with water.",
+            "Boil onions and celery until they soften.",
+            "Pour onions, celery, and water over cornbread.",
+            "Pour broth over cornbread a little at a time and mix well until mixture is thick but wet - not runny.",
+            "Add salt, pepper, and sage to taste.",
+            "Spread in 9x12 dish and bake at 350 until brown."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
