@@ -1023,12 +1023,166 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763667587699",
+      "title": "Un-Stuffed Peppers",
+      "description": "All the flavors of stuff bell peppers with easier preparation and less pepper per bite for those that don't like bells that much.",
+      "category": "American",
+      "servings": 5,
+      "prepTime": "10 minutes",
+      "cookTime": "35 minutes",
+      "image": "https://iwashyoudry.com/wp-content/uploads/2020/08/Classic-Stuffed-Peppers-6.jpg",
+      "source": {
+        "description": "I Wash You Dry",
+        "url": "https://iwashyoudry.com/easy-stuffed-peppers-recipe/"
+      },
+      "tags": [
+        "Keto",
+        "Gluten Free",
+        "Grain Free"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Ingredients",
+          "list": [
+            {
+              "name": "Ground Beef",
+              "quantity": "1",
+              "unit": "lb",
+              "notes": "",
+              "macros": {
+                "calories": 680,
+                "protein": 92,
+                "carbs": 0,
+                "fat": 32,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion",
+              "quantity": "1",
+              "unit": "",
+              "notes": "diced",
+              "macros": {
+                "calories": 44,
+                "protein": 1.2,
+                "carbs": 10.3,
+                "fat": 0.1,
+                "fiber": 1.9
+              }
+            },
+            {
+              "name": "Bell Peppers",
+              "quantity": "2",
+              "unit": "",
+              "notes": "coarsely chopped",
+              "macros": {
+                "calories": 60,
+                "protein": 2,
+                "carbs": 14,
+                "fat": 0,
+                "fiber": 6
+              }
+            },
+            {
+              "name": "Organic Tomato Sauce",
+              "quantity": "15",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 140,
+                "protein": 7,
+                "carbs": 28,
+                "fat": 0,
+                "fiber": 7
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cajun Seasoning",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cheddar Cheese",
+              "quantity": "1 1/2",
+              "unit": "cups",
+              "notes": "shredded",
+              "macros": {
+                "calories": 354,
+                "protein": 21,
+                "carbs": 4.5,
+                "fat": 28,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cauliflower",
+              "quantity": "10",
+              "unit": "oz",
+              "notes": "chopped",
+              "macros": {
+                "calories": 80,
+                "protein": 6,
+                "carbs": 18,
+                "fat": 1,
+                "fiber": 7
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Directions",
+          "steps": [
+            "Brown 1 lb ground beef.  Add in 1 Tbsp minced garlic, and 1 chopped onion when beef is half done.",
+            "Add 10 oz cauliflower, 2 Bell Peppers, can tomato sauce, ½ Tsp Salt, 1 Tsp Cajun Seasoning, 1 Tbsp All Purpose Seasoning, ¼ Tsp Black Pepper.  Stir and bring to a boil.",
+            "Reduce heat to simmer, cover pan for 15 minutes or until cauliflower is done.",
+            "Add cheese to top and allow to melt."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
     "American",
     "Bread",
-    "Soup"      
+    "Soup"
   ],
   "availableTags": []
 }
