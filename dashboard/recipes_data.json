@@ -181,7 +181,7 @@
       "title": "Doctor's Daily Bread",
       "description": "A hearty bread made with only nuts and seeds.  It's a dense brick but Cayce loves having bread again.",
       "category": "Bread",
-      "servings": 12,
+      "servings": 10,
       "prepTime": "10 Minutes",
       "cookTime": "1 Hour 15 Minutes",
       "image": "https://ik.thedoctorskitchen.com/tr:n-medium/doctors-daily-bread_cZ58RgYL8",
@@ -206,11 +206,11 @@
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 120,
+                "protein": 3,
+                "carbs": 1,
+                "fat": 10,
+                "fiber": 1
               }
             },
             {
@@ -219,11 +219,11 @@
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
+                "calories": 70,
+                "protein": 1.6,
+                "carbs": 27,
                 "fat": 0,
-                "fiber": 0
+                "fiber": 27
               }
             },
             {
@@ -232,11 +232,11 @@
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 555,
+                "protein": 22,
+                "carbs": 100,
+                "fat": 4,
+                "fiber": 10
               }
             },
             {
@@ -245,11 +245,11 @@
               "unit": "g",
               "notes": "Chopped",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 911,
+                "protein": 30,
+                "carbs": 28,
+                "fat": 91,
+                "fiber": 8
               }
             },
             {
@@ -258,11 +258,11 @@
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 0,
-                "protein": 0,
-                "carbs": 0,
-                "fat": 0,
-                "fiber": 0
+                "calories": 841,
+                "protein": 32,
+                "carbs": 32,
+                "fat": 72,
+                "fiber": 15
               }
             },
             {
@@ -302,10 +302,10 @@
               "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 0,
+                "calories": 360,
                 "protein": 0,
                 "carbs": 0,
-                "fat": 0,
+                "fat": 42,
                 "fiber": 0
               }
             }
@@ -510,6 +510,5 @@
     "Soup",
     "Dessert"
   ],
-  "availableTags": [
-  ]
+  "availableTags": []
 }
