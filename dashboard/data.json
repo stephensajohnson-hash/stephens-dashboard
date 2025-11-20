@@ -290,6 +290,18 @@
           "img": "https://cdn.iconscout.com/icon/free/png-512/free-github-logo-icon-svg-download-png-8630395.png?f=webp&w=256"
         }
       ]
+    },
+    {
+      "name": "Pending Recipes",
+      "color": "bg-lime-600/20",
+      "textColor": "text-lime-400",
+      "links": [
+        {
+          "name": "Oat and Flax Wraps",
+          "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube",
+          "img": "https://ik.thedoctorskitchen.com/tr:n-medium/app/hp-pod.png"
+        }
+      ]
     }
   ],
   "countdowns": [
