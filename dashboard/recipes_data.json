@@ -25,13 +25,13 @@
               "name": "Ground Beef",
               "quantity": "3",
               "unit": "pounds",
-              "notes": "Wagyu",
+              "notes": "organic",
               "macros": {
                 "calories": 2040,
                 "protein": 276,
                 "carbs": 0,
-                "fat": 110,
-                "fiber": 96
+                "fat": 96,
+                "fiber": 0
               }
             },
             {
