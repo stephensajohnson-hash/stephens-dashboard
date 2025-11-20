@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.14</title>
+    <title>Stephens' Recipes V0.5.15</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -59,7 +59,7 @@
             <button id="add-tag-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Tag</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.14</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.15</p>
         </div>
     </div>
 
@@ -355,7 +355,6 @@
                 });
 
                 let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                // Use string ID for comparison
                 const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id));
                 if (idx >= 0) customRecipes[idx] = newRecipe;
                 else customRecipes.push(newRecipe);
@@ -365,7 +364,7 @@
                 modals.recipe.classList.add('hidden');
                 if (currentEditingId) showDetailView(newRecipe.id);
                 else renderRecipeGroups();
-            }
+            };
 
             function saveCategory(e) {
                 e.preventDefault();
@@ -385,47 +384,6 @@
                     if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
                     modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
-            }
-            
-            function openRecipeModal(recipe = null) {
-                currentEditingId = recipe ? recipe.id : null;
-                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
-                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
-                
-                // Reset form
-                document.getElementById('full-recipe-form').reset();
-                ingContainer.innerHTML = ''; 
-                instContainer.innerHTML = '';
-                
-                // Populate Categories
-                const customCats = getCustomData(state.localStorageKeys.categories);
-                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
-                const catSelect = document.getElementById('form-category');
-                catSelect.innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
-
-                if (recipe) {
-                    document.getElementById('form-title').value = recipe.title;
-                    document.getElementById('form-desc').value = recipe.description;
-                    catSelect.value = recipe.category;
-                    document.getElementById('form-servings').value = recipe.servings;
-                    document.getElementById('form-prep').value = recipe.prepTime;
-                    document.getElementById('form-cook').value = recipe.cookTime;
-                    document.getElementById('form-image').value = recipe.image;
-                    if(recipe.source) {
-                        document.getElementById('form-source-desc').value = recipe.source.description || '';
-                        document.getElementById('form-source-url').value = recipe.source.url || '';
-                    }
-                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
-                    
-                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
-                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
-                } else {
-                    addIngredientSection();
-                    addInstructionSection();
-                }
-                
-                modals.recipe.classList.remove('hidden');
-                switchTab('tab-general');
             }
 
             function deleteRecipe(id) {
@@ -450,6 +408,9 @@
                 if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
                 const s = recipe.servings || 1;
                 const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
+                
+                // Net Carbs calc
+                ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
 
                 containers.detail.innerHTML = `
                     <div class="flex flex-col md:flex-row gap-6 mb-8">
@@ -472,10 +433,11 @@
                             </div>
                             <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700">
                                 <h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3>
-                                <div class="grid grid-cols-5 gap-2 text-center">
+                                <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center">
                                     <div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Cals</div></div>
                                     <div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Prot</div></div>
                                     <div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carb</div></div>
+                                    <div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div>
                                     <div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div>
                                     <div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div>
                                 </div>
