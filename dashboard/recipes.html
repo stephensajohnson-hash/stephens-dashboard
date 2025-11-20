@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.6.15</title>
+    <title>Stephens' Recipes V0.6.16</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,7 +69,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.15</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.16</p>
         </div>
     </div>
 
@@ -191,14 +191,14 @@
             
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
             
-            // EMBEDDED DATA
+            // EMBEDDED DATA (Full Test Set)
             const EMBEDDED_RECIPES = {
               "recipes": [
                 { "id": "1", "title": "Chili", "category": "Soup", "servings": 12, "prepTime": "90 minutes", "cookTime": "30 minutes", "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_913/k%2FPhoto%2FRecipes%2F2023-11-chili%2Fchili-2", "source": { "description": "Cayce's Recipe", "url": "" }, "tags": [ "Keto", "Gluten Free", "Beef", "Texas", "Cayce Diet" ], "ingredients": [ { "sectionTitle": "Base", "list": [ { "name": "Ground Beef", "quantity": "3", "unit": "pounds", "notes": "Wagyu", "macros": { "calories": 2040, "protein": 276, "carbs": 0, "fat": 96, "fiber": 0 } }, { "name": "Onion", "quantity": "1", "unit": "", "notes": "medium", "macros": { "calories": 60, "protein": 2, "carbs": 14, "fat": 0, "fiber": 3 } }, { "name": "Garlic", "quantity": "12", "unit": "cloves", "notes": "minced", "macros": { "calories": 15, "protein": 1.6, "carbs": 12.3, "fat": 0.3, "fiber": 0 } }, { "name": "Organic Tomato Sauce", "quantity": "15", "unit": "oz", "notes": "", "macros": { "calories": 140, "protein": 7, "carbs": 28, "fat": 0, "fiber": 7 } }, { "name": "Spinach", "quantity": "1", "unit": "cup", "notes": "chopped", "macros": { "calories": 7, "protein": 4, "carbs": 5, "fat": 0.5, "fiber": 3 } } ] }, { "sectionTitle": "Spices", "list": [ { "name": "Chili Powder", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sea Salt", "quantity": "1", "unit": "tbsp", "notes": "Redmond's", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Cumin", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Chipotle Chile Pepper", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Smoked Paprika", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Brown 3 lbs Ground Beef until mostly done (it will continue to cook)", "Add Onion (chopped) and 12 cloves garlic (minced)", "Cook for 3-5 minutes until onions brown a bit", "Add Spices and Tomatoes", "Bring to a boil and let it simmer for 30 minutes." ] }, { "sectionTitle": "", "steps": [] } ] },
-                { "id": "user_rec_1763590797634", "title": "Doctor's Daily Bread", "category": "Bread", "servings": 10, "prepTime": "10 Minutes", "cookTime": "1 Hour 15 Minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/doctors-daily-bread_cZ58RgYL8", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/doctor-s-daily-bread" }, "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Dry Ingredients", "list": [ { "name": "Hemp Hearts", "quantity": "20", "unit": "g", "notes": "", "macros": { "calories": 120, "protein": 3, "carbs": 1, "fat": 10, "fiber": 1 } }, { "name": "Psyllium Husk", "quantity": "35", "unit": "g", "notes": "", "macros": { "calories": 70, "protein": 1.6, "carbs": 27, "fat": 0, "fiber": 27 } }, { "name": "Amaranth Flour", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 555, "protein": 22, "carbs": 100, "fat": 4, "fiber": 10 } }, { "name": "Mixed Nuts", "quantity": "150", "unit": "g", "notes": "Chopped", "macros": { "calories": 911, "protein": 30, "carbs": 28, "fat": 91, "fiber": 8 } }, { "name": "Mixed Seeds", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 841, "protein": 32, "carbs": 32, "fat": 72, "fiber": 15 } }, { "name": "Sea Salt", "quantity": "1 1/2", "unit": "tsp", "notes": "Fine", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] }, { "sectionTitle": "Wet Ingredients", "list": [ { "name": "Water", "quantity": "400", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Extra Virgin Olive Oil", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 360, "protein": 0, "carbs": 0, "fat": 42, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Line a 2lb loaf tin...", "Mix dry ingredients...", "Pour in water and oil...", "Pack mixture...", "Leave to soak...", "Bake 60 mins...", "Remove from tin...", "Cool completely." ] } ] },
-                { "id": "user_rec_1763611965884", "title": "Oat and Flax Wraps", "category": "Bread", "servings": 4, "prepTime": "5 minutes", "cookTime": "20 minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps" }, "tags": [ "Keto", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Oat Flour", "quantity": "75", "unit": "g", "notes": "", "macros": { "calories": 303, "protein": 11.3, "carbs": 48.8, "fat": 6.7, "fiber": 10 } }, { "name": "Ground Flaxseed", "quantity": "25", "unit": "g", "notes": "", "macros": { "calories": 134, "protein": 6, "carbs": 7, "fat": 10, "fiber": 6 } }, { "name": "Water", "quantity": "250", "unit": "g", "notes": "", "macros": {} }, { "name": "Salt", "quantity": "4", "unit": "g", "notes": "", "macros": {} } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Gather ingredients.", "Blend oats.", "Add rest and blend.", "Cook in pan." ] } ] },
-                { "id": "user_rec_1763611965885", "title": "Chickpea and Flax Wraps", "category": "Bread", "servings": 4, "prepTime": "5 minutes", "cookTime": "20 minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube" }, "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Chickpea Flour", "quantity": "75", "unit": "g", "notes": "", "macros": { "calories": 290, "protein": 17, "carbs": 17, "fat": 1.5, "fiber": 7 } }, { "name": "Ground Flaxseed", "quantity": "25", "unit": "g", "notes": "", "macros": { "calories": 134, "protein": 6, "carbs": 7, "fat": 10, "fiber": 6 } }, { "name": "Water", "quantity": "250", "unit": "g", "notes": "", "macros": {} }, { "name": "Salt", "quantity": "4", "unit": "g", "notes": "", "macros": {} } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Gather ingredients.", "Blend flour, flax, water, salt.", "Cook in pan." ] } ] },
-                { "id": "user_rec_1763650159154", "title": "Keto Salisbury Steak", "category": "American", "servings": 3, "prepTime": "10 minutes", "cookTime": "18 minutes", "image": "https://www.ibreatheimhungry.com/wp-content/uploads/2021/07/IMG_0882-2.jpg", "source": { "description": "I Breathe I'm Hungry", "url": "https://www.ibreatheimhungry.com/low-carb-salisbury-steak-with-mushroom-gravy/" }, "tags": [ "Keto", "Beef" ], "ingredients": [ { "sectionTitle": "Steak Ingredients", "list": [ { "name": "Ground Beef", "quantity": "1", "unit": "lb", "notes": "", "macros": { "calories": 680, "protein": 92, "carbs": 0, "fat": 32, "fiber": 0 } }, { "name": "Almond Flour", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 340, "protein": 13, "carbs": 11, "fat": 27, "fiber": 6 } }, { "name": "Fresh Parsley", "quantity": "1 1/2", "unit": "tsp", "notes": "chopped", "macros": {} }, { "name": "Beef Broth", "quantity": "1/8", "unit": "cup", "notes": "", "macros": {} }, { "name": "Worcestershire Sauce", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Garlic Powder", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Dried Onion Flakes", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Salt", "quantity": "3/4", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Black Pepper", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": {} } ] }, { "sectionTitle": "Gravy Ingredients", "list": [ { "name": "Butter", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 200, "protein": 0.5, "carbs": 0, "fat": 15, "fiber": 0 } }, { "name": "Bacon Grease", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 269, "protein": 0, "carbs": 0, "fat": 28, "fiber": 0 } }, { "name": "Button Mushrooms", "quantity": "1", "unit": "cup", "notes": "sliced", "macros": { "calories": 15, "protein": 2.2, "carbs": 2.3, "fat": 0.2, "fiber": 0.7 } }, { "name": "Yellow Onions", "quantity": "1/2", "unit": "cup", "notes": "sliced", "macros": { "calories": 34, "protein": 1, "carbs": 8, "fat": 1, "fiber": 1.7 } }, { "name": "Worcestershire Sauce", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 2.5, "protein": 0, "carbs": 0.5, "fat": 0, "fiber": 0 } }, { "name": "Beef Broth", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 5, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sour Cream", "quantity": "1/4", "unit": "cup", "notes": "", "macros": { "calories": 240, "protein": 4, "carbs": 4, "fat": 20, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Steak Directions", "steps": [ "Combine steak ingredients...", "Form patties...", "Bake..." ] }, { "sectionTitle": "Gravy Directions", "steps": [ "Melt fat...", "Add mushrooms...", "Add onions...", "Add broth...", "Add sour cream...", "Season...", "Serve." ] } ] },
+                { "id": "user_rec_1763590797634", "title": "Doctor's Daily Bread", "category": "Bread", "servings": 10, "prepTime": "10 Minutes", "cookTime": "1 Hour 15 Minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/doctors-daily-bread_cZ58RgYL8", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/doctor-s-daily-bread" }, "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Dry Ingredients", "list": [ { "name": "Hemp Hearts", "quantity": "20", "unit": "g", "notes": "", "macros": { "calories": 120, "protein": 3, "carbs": 1, "fat": 10, "fiber": 1 } }, { "name": "Psyllium Husk", "quantity": "35", "unit": "g", "notes": "", "macros": { "calories": 70, "protein": 1.6, "carbs": 27, "fat": 0, "fiber": 27 } }, { "name": "Amaranth Flour", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 555, "protein": 22, "carbs": 100, "fat": 4, "fiber": 10 } }, { "name": "Mixed Nuts", "quantity": "150", "unit": "g", "notes": "Chopped", "macros": { "calories": 911, "protein": 30, "carbs": 28, "fat": 91, "fiber": 8 } }, { "name": "Mixed Seeds", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 841, "protein": 32, "carbs": 32, "fat": 72, "fiber": 15 } }, { "name": "Sea Salt", "quantity": "1 1/2", "unit": "tsp", "notes": "Fine", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] }, { "sectionTitle": "Wet Ingredients", "list": [ { "name": "Water", "quantity": "400", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Extra Virgin Olive Oil", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 360, "protein": 0, "carbs": 0, "fat": 42, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Line a 2lb loaf tin with parchment paper and/or lightly grease with olive oil. ", "Mix dry ingredients in a medium bowl.", "Pour in the water and olive oil and mix well.  Start with half the water.", "Pack the mixture into your prepared tin.", "Leave it to soak for 30 minutes - 8 hours at this stage. (overnight is best)", "Bake for 60 minutes at 375 or 335 with convection. ", "Remove from the tin and bake for a further 15 minutes. ", "Remove from the oven and allow to cool completely before slicing. (this takes a long time)" ] } ] },
+                { "id": "user_rec_1763611965884", "title": "Oat and Flax Wraps", "category": "Bread", "servings": 4, "prepTime": "5 minutes", "cookTime": "20 minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps" }, "tags": [ "Keto", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Oat Flour", "quantity": "75", "unit": "g", "notes": "", "macros": { "calories": 303, "protein": 11.3, "carbs": 48.8, "fat": 6.7, "fiber": 10 } }, { "name": "Ground Flaxseed", "quantity": "25", "unit": "g", "notes": "", "macros": { "calories": 134, "protein": 6, "carbs": 7, "fat": 10, "fiber": 6 } }, { "name": "Water", "quantity": "250", "unit": "g", "notes": "", "macros": {} }, { "name": "Salt", "quantity": "4", "unit": "g", "notes": "", "macros": {} } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Gather and prepare your ingredients.", "Place the oats into a blender and blend until you have a flour-like consistency.", "Add the flax, water, and salt and blend again until you have a smooth batter.  Start with half the water then add more later to fully mix well.", "Heat a small amount of olive oil in a non-stick pan over medium heat. Pour in the batter and gently swirl it around the pan or use the back of a spoon, until you have a wide flat surface. Cook for 3-4 minutes on each side, until they are sturdy enough to flip without breaking. Remove onto a wire rack to cool before using. (The batter will thicken as it rests, add small splashes of water to loosen as needed)." ] } ] },
+                { "id": "user_rec_1763611965885", "title": "Chickpea and Flax Wraps", "category": "Bread", "servings": 4, "prepTime": "5 minutes", "cookTime": "20 minutes", "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W", "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube" }, "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Chickpea Flour", "quantity": "75", "unit": "g", "notes": "", "macros": { "calories": 290, "protein": 17, "carbs": 17, "fat": 1.5, "fiber": 7 } }, { "name": "Ground Flaxseed", "quantity": "25", "unit": "g", "notes": "", "macros": { "calories": 134, "protein": 6, "carbs": 7, "fat": 10, "fiber": 6 } }, { "name": "Water", "quantity": "250", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Salt", "quantity": "4", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Gather and prepare your ingredients.", "Add the chickpea flour, flax, water, and salt and blend again until you have a smooth batter.  Start with half the water then add more later to fully mix well.", "Heat a small amount of olive oil in a non-stick pan over medium heat. Pour in the batter and gently swirl it around the pan or use the back of a spoon, until you have a wide flat surface. Cook for 3-4 minutes on each side, until they are sturdy enough to flip without breaking. Remove onto a wire rack to cool before using. (The batter will thicken as it rests, add small splashes of water to loosen as needed)." ] } ] },
+                { "id": "user_rec_1763650159154", "title": "Keto Salisbury Steak", "category": "American", "servings": 3, "prepTime": "10 minutes", "cookTime": "18 minutes", "image": "https://www.ibreatheimhungry.com/wp-content/uploads/2021/07/IMG_0882-2.jpg", "source": { "description": "I Breathe I'm Hungry", "url": "https://www.ibreatheimhungry.com/low-carb-salisbury-steak-with-mushroom-gravy/" }, "tags": [ "Keto", "Beef" ], "ingredients": [ { "sectionTitle": "Steak Ingredients", "list": [ { "name": "Ground Beef", "quantity": "1", "unit": "lb", "notes": "", "macros": { "calories": 680, "protein": 92, "carbs": 0, "fat": 32, "fiber": 0 } }, { "name": "Almond Flour", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 340, "protein": 13, "carbs": 11, "fat": 27, "fiber": 6 } }, { "name": "Fresh Parsley", "quantity": "1 1/2", "unit": "tsp", "notes": "chopped", "macros": {} }, { "name": "Beef Broth", "quantity": "1/8", "unit": "cup", "notes": "", "macros": {} }, { "name": "Worcestershire Sauce", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Garlic Powder", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Dried Onion Flakes", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Salt", "quantity": "3/4", "unit": "tsp", "notes": "", "macros": {} }, { "name": "Black Pepper", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": {} } ] }, { "sectionTitle": "Gravy Ingredients", "list": [ { "name": "Butter", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 200, "protein": 0.5, "carbs": 0, "fat": 15, "fiber": 0 } }, { "name": "Bacon Grease", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 269, "protein": 0, "carbs": 0, "fat": 28, "fiber": 0 } }, { "name": "Button Mushrooms", "quantity": "1", "unit": "cup", "notes": "sliced", "macros": { "calories": 15, "protein": 2.2, "carbs": 2.3, "fat": 0.2, "fiber": 0.7 } }, { "name": "Yellow Onions", "quantity": "1/2", "unit": "cup", "notes": "sliced", "macros": { "calories": 34, "protein": 1, "carbs": 8, "fat": 1, "fiber": 1.7 } }, { "name": "Worcestershire Sauce", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 2.5, "protein": 0, "carbs": 0.5, "fat": 0, "fiber": 0 } }, { "name": "Beef Broth", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 5, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sour Cream", "quantity": "1/4", "unit": "cup", "notes": "", "macros": { "calories": 240, "protein": 4, "carbs": 4, "fat": 20, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Steak Directions", "steps": [ "Combine all of the steak ingredients in a medium sized bowl and mix well.", "Form into 3 oval patties, about 1 inch thick, and place them on a cookie sheet.", "Bake in a preheated 375° (F) oven for 18 minutes." ] }, { "sectionTitle": "Gravy Directions", "steps": [ "Melt the butter and bacon fat (if using) in a large skillet (4 Tbsp total).", "Add the 1 cup mushrooms and cook on medium high heat until golden brown (about 3 minutes per side.)", "Add the 1/2 cup onions and cook for 5 minutes over medium heat, until golden and soft.", "Add the 1/2 cup broth and the 1/4 tsp Worcestershire sauce, stir and cook for 3 minutes, stirring to scrape any bits off of the bottom of the pan.", "Add the 1/4 cup sour cream, stir well, and remove from the heat. (if you want a thicker gravy you can cook it on low for a 5 extra minutes to condense it.)", "Season with salt and pepper to taste.", "Serve over the warm Salisbury Steaks" ] } ] },
                 { "id": "user_rec_1763652731628", "title": "Roasted Turkey", "category": "American", "servings": 16, "prepTime": "30 minutes", "cookTime": "2 hours 15 minutes", "image": "https://images.ctfassets.net/lufu0clouua1/2cSQKvJYskEqgyaAYawE48/7b71e49f5de264f38541c055926f8f5a/classic-roast-turkey.jpg", "source": { "description": "Americas Test Kitchen", "url": "https://www.americastestkitchen.com/" }, "tags": [ "Thanksgiving", "Keto" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Turkey", "quantity": "12", "unit": "lb", "notes": "Reserve Giblets", "macros": { "calories": 3800, "protein": 390, "carbs": 0, "fat": 175, "fiber": 0 } }, { "name": "Salt", "quantity": "4", "unit": "Tbsp", "notes": "", "macros": {} }, { "name": "Sugar", "quantity": "4", "unit": "Tbsp", "notes": "", "macros": {} }, { "name": "Avocado Oil", "quantity": "3 1/2", "unit": "Tsp", "notes": "", "macros": {} }, { "name": "Baking Powder", "quantity": "1", "unit": "Tsp", "notes": "", "macros": {} } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Combine salt/sugar...", "Roast..." ] } ] },
                 { "id": "user_rec_1763653389089", "title": "Turkey Gravy", "category": "American", "servings": 16, "prepTime": "30 minutes", "cookTime": "3 1/2 hours", "image": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg", "source": { "description": "America's Test Kitchen", "url": "https://www.americastestkitchen.com/recipes/11217-our-favorite-turkey-gravy" }, "tags": [ "Thanksgiving", "Gluten Free", "Dairy Free" ], "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Reserved Giblets", "quantity": "1", "unit": "", "notes": "", "macros": {} }, { "name": "Carrot", "quantity": "1", "unit": "", "notes": "", "macros": {} }, { "name": "Onions", "quantity": "2", "unit": "", "notes": "", "macros": {} }, { "name": "Garlic", "quantity": "6", "unit": "cloves", "notes": "", "macros": {} }, { "name": "Turkey Broth", "quantity": "6", "unit": "cups", "notes": "", "macros": { "calories": 120, "protein": 12, "carbs": 0, "fat": 6, "fiber": 0 } }, { "name": "Thyme", "quantity": "6", "unit": "sprigs", "notes": "", "macros": {} }, { "name": "Flour Mix", "quantity": "1/4", "unit": "cup", "notes": "GF", "macros": { "calories": 110, "protein": 4, "carbs": 23, "fat": 0, "fiber": 0.25 } }, { "name": "Avocado Oil", "quantity": "1", "unit": "Tbsp", "notes": "", "macros": { "calories": 124, "protein": 0, "carbs": 0, "fat": 14, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Heat oven...", "Roast...", "Strain...", "Simmer..." ] } ] }
               ],
@@ -219,7 +219,6 @@
                 return isNaN(total) ? 0 : total;
             }
             
-            // NEW Helper for formatting strings with fractions
             function prettifyFractions(str) {
                 if(!str) return '';
                 return str.replace(/(^|\s)1\/2(?!\d)/g, '$1½')
@@ -246,6 +245,34 @@
                 if (whole > 0 && bestFrac) return `${whole} ${bestFrac}`;
                 if (whole > 0) return String(whole);
                 return bestFrac || num.toFixed(1).replace('.0', '');
+            }
+            
+            // Helper to calculate Macros per recipe
+            function calculateRecipeMacros(recipe) {
+                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
+                if (recipe.ingredients) {
+                    recipe.ingredients.forEach(sec => {
+                        if (sec.list) sec.list.forEach(ing => {
+                            if (ing.macros) {
+                                tm.fat += (ing.macros.fat || 0);
+                                tm.carbs += (ing.macros.carbs || 0);
+                                tm.fiber += (ing.macros.fiber || 0);
+                                tm.protein += (ing.macros.protein || 0);
+                                tm.calories += (ing.macros.calories || 0);
+                            }
+                        });
+                    });
+                }
+                const s = recipe.servings || 1;
+                const ps = {
+                    fat: Math.round(tm.fat / s),
+                    carbs: Math.round(tm.carbs / s),
+                    fiber: Math.round(tm.fiber / s),
+                    protein: Math.round(tm.protein / s),
+                    calories: Math.round(tm.calories / s)
+                };
+                ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
+                return ps;
             }
 
             function convertUnits(qty, unit) {
@@ -283,23 +310,41 @@
                 currentSpan.textContent = newVal;
                 const baseServings = currentRecipeBase.servings || 1;
                 const ratio = newVal / baseServings;
+
                 document.querySelectorAll('.ingredient-line').forEach(line => {
                     const baseQty = parseFloat(line.dataset.baseQty);
                     if (!isNaN(baseQty) && baseQty > 0) {
                         const newQty = baseQty * ratio;
                         const unit = line.dataset.unit || "";
+                        
                         let result;
-                        if (unit === 'g' || unit === 'ml') { result = { display: Math.round(newQty).toString(), unit: unit }; } 
-                        else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) { result = convertUnits(newQty, unit); } 
-                        else { result = { display: formatQuantity(newQty), unit: unit }; }
+                        if (unit === 'g' || unit === 'ml' || unit === 'oz' || unit === 'lb' || unit === 'pounds') {
+                             result = { display: (Math.round(newQty * 10) / 10).toString(), unit: unit }; 
+                             if (unit === 'g' || unit === 'ml') result.display = Math.round(newQty).toString();
+                             if (unit === 'lb' || unit === 'pounds' || unit === 'oz') result.display = formatQuantity(newQty);
+                        } else {
+                             result = convertUnits(newQty, unit);
+                        }
+
                         line.querySelector('.qty-display').textContent = result.display;
                         line.querySelector('.unit-display').textContent = result.unit;
                     }
                 });
+                
+                // REMOVED INSTRUCTION SCALING
             };
 
-            window.toggleMenu = function() { menuModal.classList.toggle('hidden'); menuModal.classList.toggle('opacity-0'); };
-            window.hideMenu = function() { menuModal.classList.add('opacity-0'); setTimeout(() => menuModal.classList.add('hidden'), 300); };
+            window.toggleMenu = function() {
+                const m = document.getElementById('menu-modal');
+                if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+                else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+            };
+
+            window.hideMenu = function() {
+                const m = document.getElementById('menu-modal');
+                m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            };
+
             window.filterByTag = function(tag) { currentFilterTag = tag; renderRecipeGroups(); window.scrollTo(0,0); };
             window.clearTagFilter = function() { currentFilterTag = null; renderRecipeGroups(); };
             
@@ -396,20 +441,15 @@
                 views.detail.classList.remove('hidden');
                 window.scrollTo(0,0);
                 
-                // Calc Macros
-                let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
-                if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
-                const s = recipe.servings || 1;
-                const ps = { fat: Math.round(tm.fat/s), carbs: Math.round(tm.carbs/s), fiber: Math.round(tm.fiber/s), protein: Math.round(tm.protein/s), calories: Math.round(tm.calories/s) };
-                ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
+                const ps = calculateRecipeMacros(recipe);
 
                 containers.detail.innerHTML = `
                     <div class="flex flex-col md:flex-row gap-6 mb-8">
-                        <img src="${recipe.image}" class="w-full md:w-1/3 rounded-xl object-cover h-64 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
+                        <img src="${recipe.image}" class="w-full md:w-1/2 rounded-xl object-cover h-96 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
                         <div class="flex-1 flex flex-col justify-center">
                             <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
                             ${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}
-                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
+                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description || ''}</p>
                             <div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><div class="bg-gray-700 px-3 py-1 rounded flex items-center space-x-2 select-none"><span>Serves:</span><button onclick="window.updateServings(-1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">−</button><strong id="current-servings">${recipe.servings}</strong><button onclick="window.updateServings(1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">+</button></div></div>
                             <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Calories</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Protein</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carbs</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div>
                         </div>
@@ -466,11 +506,25 @@
             }
 
             function createRecipeCard(r) {
+                const ps = calculateRecipeMacros(r);
                 const letter = r.title.charAt(0).toUpperCase();
                 const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
+                
                 return `
                     <div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')">
-                        <img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
+                        <img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3">
+                            <h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3>
+                            <p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p>
+                            <!-- Macro Summary -->
+                            <div class="flex gap-2 text-[10px] text-gray-300 mb-2 font-mono border-t border-b border-gray-700/50 py-1">
+                                <span class="text-white font-bold">${ps.calories}</span> Cal | 
+                                <span class="text-blue-300">${ps.protein}g</span> P | 
+                                <span class="text-emerald-300">${ps.netCarbs}g</span> NC | 
+                                <span class="text-yellow-300">${ps.fat}g</span> F
+                            </div>
+                            <div class="flex flex-wrap gap-1">${tags}</div>
+                        </div>
+                    </div>`;
             }
 
             function downloadDataFile() {
@@ -513,7 +567,7 @@
             document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); });
             document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
             document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => window.switchTab(e.target.dataset.tab));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
 
             document.getElementById('add-ing-section-btn').onclick = () => window.addIngredientSection();
             document.getElementById('add-inst-section-btn').onclick = () => window.addInstructionSection();
