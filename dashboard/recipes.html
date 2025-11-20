@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.11</title>
+    <title>Stephens' Recipes V0.5.14</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -59,7 +59,7 @@
             <button id="add-tag-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Tag</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.11</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.14</p>
         </div>
     </div>
 
@@ -174,13 +174,11 @@
             const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
             const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content') };
             const menuModal = document.getElementById('menu-modal');
-            
             const modals = {
                 recipe: document.getElementById('recipe-form-modal'),
                 category: document.getElementById('add-category-modal'),
                 tag: document.getElementById('add-tag-modal')
             };
-
             const ingContainer = document.getElementById('ingredients-container');
             const instContainer = document.getElementById('instructions-container');
             
@@ -194,7 +192,8 @@
                 "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ]
             };
 
-            // --- 2. HELPER FUNCTIONS ---
+            // --- 2. FUNCTION DEFINITIONS ---
+
             function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
             function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
             function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
@@ -209,7 +208,6 @@
                 return Array.from(map.values());
             }
 
-            // --- 3. UI FUNCTIONS ---
             function toggleMenu() {
                 const isHidden = menuModal.classList.contains('opacity-0');
                 if (isHidden) {
@@ -221,6 +219,221 @@
             
             function hideMenu() {
                  menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4');
+            }
+
+            function switchTab(tabId) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(b => {
+                    b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
+                    b.classList.add('text-gray-400');
+                });
+                const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+                if(activeBtn) {
+                    activeBtn.classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
+                    activeBtn.classList.remove('text-gray-400');
+                }
+            }
+
+            function addIngredientSection(data = null) {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
+                div.innerHTML = `
+                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec hover:text-red-300 whitespace-nowrap">Remove Section</button></div>
+                    <div class="rows-container space-y-2"></div>
+                    <button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>
+                `;
+                const rowsContainer = div.querySelector('.rows-container');
+                
+                const addRow = (ing = null) => {
+                    const row = document.createElement('div');
+                    row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
+                    row.innerHTML = `
+                        <input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}">
+                        <input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}">
+                        <input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}">
+                        <input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}">
+                        <button type="button" class="col-span-1 text-red-400 hover:text-red-200 remove-row">X</button>
+                        <button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros hover:text-white">▼ Macros</button>
+                        <div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded">
+                            <div><label class="text-[10px] text-gray-400 block">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.calories : ''}"></div>
+                            <div><label class="text-[10px] text-gray-400 block">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.protein : ''}"></div>
+                            <div><label class="text-[10px] text-gray-400 block">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.carbs : ''}"></div>
+                            <div><label class="text-[10px] text-gray-400 block">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fat : ''}"></div>
+                            <div><label class="text-[10px] text-gray-400 block">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fiber : ''}"></div>
+                        </div>
+                    `;
+                    row.querySelector('.remove-row').onclick = () => row.remove();
+                    row.querySelector('.toggle-macros').onclick = () => row.querySelector('.macro-fields').classList.toggle('hidden');
+                    rowsContainer.appendChild(row);
+                };
+                
+                div.querySelector('.add-row-btn').onclick = () => addRow();
+                div.querySelector('.remove-sec').onclick = () => div.remove();
+                
+                if (data && data.list) data.list.forEach(i => addRow(i));
+                else addRow(); // Add one empty row by default
+                
+                ingContainer.appendChild(div);
+            }
+
+            function addInstructionSection(data = null) {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section';
+                div.innerHTML = `
+                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec">Remove</button></div>
+                    <div class="steps-container space-y-2"></div>
+                    <button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>
+                `;
+                const stepsContainer = div.querySelector('.steps-container');
+                
+                const addStep = (text = '') => {
+                    const row = document.createElement('div');
+                    row.className = 'flex gap-2 step-row';
+                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center hover:text-red-200">X</button>`;
+                    row.querySelector('.remove-step').onclick = () => row.remove();
+                    stepsContainer.appendChild(row);
+                };
+                
+                div.querySelector('.add-step-btn').onclick = () => addStep();
+                div.querySelector('.remove-sec').onclick = () => div.remove();
+                
+                if(data && data.steps) data.steps.forEach(s => addStep(s));
+                else addStep();
+                
+                instContainer.appendChild(div);
+            }
+
+            function saveRecipe() {
+                const title = document.getElementById('form-title').value;
+                if(!title) return alert("Title is required");
+
+                const newRecipe = {
+                    id: currentEditingId || 'user_rec_' + Date.now(),
+                    title: title,
+                    description: document.getElementById('form-desc').value,
+                    category: document.getElementById('form-category').value,
+                    servings: parseInt(document.getElementById('form-servings').value) || 1,
+                    prepTime: document.getElementById('form-prep').value,
+                    cookTime: document.getElementById('form-cook').value,
+                    image: document.getElementById('form-image').value,
+                    source: {
+                        description: document.getElementById('form-source-desc').value,
+                        url: document.getElementById('form-source-url').value
+                    },
+                    tags: document.getElementById('form-tags').value.split(',').map(t => t.trim()).filter(t => t),
+                    ingredients: [],
+                    instructions: []
+                };
+
+                // Harvest Ingredients
+                document.querySelectorAll('.ing-section').forEach(sec => {
+                    const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] };
+                    sec.querySelectorAll('.ing-row').forEach(row => {
+                        section.list.push({
+                            name: row.querySelector('.ing-name').value,
+                            quantity: row.querySelector('.ing-qty').value,
+                            unit: row.querySelector('.ing-unit').value,
+                            notes: row.querySelector('.ing-notes').value,
+                            macros: {
+                                calories: parseFloat(row.querySelector('.macro-cal').value) || 0,
+                                protein: parseFloat(row.querySelector('.macro-pro').value) || 0,
+                                carbs: parseFloat(row.querySelector('.macro-carb').value) || 0,
+                                fat: parseFloat(row.querySelector('.macro-fat').value) || 0,
+                                fiber: parseFloat(row.querySelector('.macro-fib').value) || 0
+                            }
+                        });
+                    });
+                    newRecipe.ingredients.push(section);
+                });
+
+                // Harvest Instructions
+                document.querySelectorAll('.inst-section').forEach(sec => {
+                    const section = { sectionTitle: sec.querySelector('.section-title').value, steps: [] };
+                    sec.querySelectorAll('.step-text').forEach(txt => section.steps.push(txt.value));
+                    newRecipe.instructions.push(section);
+                });
+
+                let customRecipes = getCustomData(state.localStorageKeys.recipes);
+                // Use string ID for comparison
+                const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id));
+                if (idx >= 0) customRecipes[idx] = newRecipe;
+                else customRecipes.push(newRecipe);
+                
+                saveCustomData(state.localStorageKeys.recipes, customRecipes);
+                
+                modals.recipe.classList.add('hidden');
+                if (currentEditingId) showDetailView(newRecipe.id);
+                else renderRecipeGroups();
+            }
+
+            function saveCategory(e) {
+                e.preventDefault();
+                const val = document.getElementById('category-modal-input').value.trim();
+                if(val) {
+                    const d = getCustomData(state.localStorageKeys.categories);
+                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
+                    modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
+                }
+            }
+
+            function saveTag(e) {
+                e.preventDefault();
+                const val = document.getElementById('tag-modal-input').value.trim();
+                if(val) {
+                    const d = getCustomData(state.localStorageKeys.tags);
+                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
+                    modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
+                }
+            }
+            
+            function openRecipeModal(recipe = null) {
+                currentEditingId = recipe ? recipe.id : null;
+                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
+                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
+                
+                // Reset form
+                document.getElementById('full-recipe-form').reset();
+                ingContainer.innerHTML = ''; 
+                instContainer.innerHTML = '';
+                
+                // Populate Categories
+                const customCats = getCustomData(state.localStorageKeys.categories);
+                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
+                const catSelect = document.getElementById('form-category');
+                catSelect.innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
+
+                if (recipe) {
+                    document.getElementById('form-title').value = recipe.title;
+                    document.getElementById('form-desc').value = recipe.description;
+                    catSelect.value = recipe.category;
+                    document.getElementById('form-servings').value = recipe.servings;
+                    document.getElementById('form-prep').value = recipe.prepTime;
+                    document.getElementById('form-cook').value = recipe.cookTime;
+                    document.getElementById('form-image').value = recipe.image;
+                    if(recipe.source) {
+                        document.getElementById('form-source-desc').value = recipe.source.description || '';
+                        document.getElementById('form-source-url').value = recipe.source.url || '';
+                    }
+                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
+                    
+                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
+                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
+                } else {
+                    addIngredientSection();
+                    addInstructionSection();
+                }
+                
+                modals.recipe.classList.remove('hidden');
+                switchTab('tab-general');
+            }
+
+            function deleteRecipe(id) {
+                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
+                let customRecipes = getCustomData(state.localStorageKeys.recipes);
+                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
+                saveCustomData(state.localStorageKeys.recipes, newParams);
+                renderRecipeGroups();
             }
 
             function showDetailView(recipeId) {
@@ -244,11 +457,11 @@
                         <div class="flex-1 flex flex-col justify-center">
                             <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
                             
-                            <!-- UPDATED: Source Display in Header -->
+                            <!-- Source Link -->
                             ${recipe.source ? `
                             <div class="text-sm text-blue-300 mb-4 font-medium">
-                                Source: ${recipe.source.description}
-                                ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white ml-1">(Link)</a>` : ''}
+                                Source: 
+                                ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}
                             </div>` : ''}
 
                             <p class="text-gray-400 italic mb-6 text-lg">${recipe.description}</p>
@@ -367,239 +580,6 @@
                 if(containers.groups.innerHTML === '') containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
             }
 
-            // --- FORM LOGIC ---
-            function addIngredientSection(data = null) {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
-                div.innerHTML = `
-                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec hover:text-red-300 whitespace-nowrap">Remove Section</button></div>
-                    <div class="rows-container space-y-2"></div>
-                    <button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>
-                `;
-                const rowsContainer = div.querySelector('.rows-container');
-                const addRow = (ing = null) => {
-                    const row = document.createElement('div');
-                    row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
-                    row.innerHTML = `
-                        <input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}">
-                        <input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}">
-                        <input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}">
-                        <input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}">
-                        <button type="button" class="col-span-1 text-red-400 hover:text-red-200 remove-row">X</button>
-                        <button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros hover:text-white">▼ Macros</button>
-                        <div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded">
-                            <div><label class="text-[10px] text-gray-400 block">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.calories : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.protein : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.carbs : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fat : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fiber : ''}"></div>
-                        </div>
-                    `;
-                    row.querySelector('.remove-row').onclick = () => row.remove();
-                    row.querySelector('.toggle-macros').onclick = () => row.querySelector('.macro-fields').classList.toggle('hidden');
-                    rowsContainer.appendChild(row);
-                };
-                
-                div.querySelector('.add-row-btn').onclick = () => addRow();
-                div.querySelector('.remove-sec').onclick = () => div.remove();
-                if (data && data.list) data.list.forEach(i => addRow(i));
-                else addRow();
-                ingContainer.appendChild(div);
-            }
-
-            function addInstructionSection(data = null) {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section';
-                div.innerHTML = `
-                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec">Remove</button></div>
-                    <div class="steps-container space-y-2"></div>
-                    <button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>
-                `;
-                const stepsContainer = div.querySelector('.steps-container');
-                const addStep = (text = '') => {
-                    const row = document.createElement('div');
-                    row.className = 'flex gap-2 step-row';
-                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center hover:text-red-200">X</button>`;
-                    row.querySelector('.remove-step').onclick = () => row.remove();
-                    stepsContainer.appendChild(row);
-                };
-                
-                div.querySelector('.add-step-btn').onclick = () => addStep();
-                div.querySelector('.remove-sec').onclick = () => div.remove();
-                if(data && data.steps) data.steps.forEach(s => addStep(s));
-                else addStep();
-                instContainer.appendChild(div);
-            }
-            
-            function openRecipeModal(recipe = null) {
-                currentEditingId = recipe ? recipe.id : null;
-                document.getElementById('recipe-modal-title').textContent = recipe ? "Edit Recipe" : "Add Recipe";
-                document.getElementById('form-recipe-id').value = recipe ? recipe.id : "";
-                
-                // Reset
-                document.getElementById('full-recipe-form').reset();
-                ingContainer.innerHTML = ''; instContainer.innerHTML = '';
-                
-                // Populate Categories Dropdown
-                // FIX: Merge static and custom categories for the dropdown
-                const customCats = getCustomData(state.localStorageKeys.categories);
-                const allCats = [...STATIC_CATEGORIES, ...customCats].filter((v,i,a)=>a.indexOf(v)===i);
-                const catSelect = document.getElementById('form-category');
-                catSelect.innerHTML = allCats.map(c => `<option>${c}</option>`).join('');
-
-                if (recipe) {
-                    // Fill fields
-                    document.getElementById('form-title').value = recipe.title;
-                    document.getElementById('form-desc').value = recipe.description;
-                    catSelect.value = recipe.category;
-                    document.getElementById('form-servings').value = recipe.servings;
-                    document.getElementById('form-prep').value = recipe.prepTime;
-                    document.getElementById('form-cook').value = recipe.cookTime;
-                    document.getElementById('form-image').value = recipe.image;
-                    if(recipe.source) {
-                        document.getElementById('form-source-desc').value = recipe.source.description || '';
-                        document.getElementById('form-source-url').value = recipe.source.url || '';
-                    }
-                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
-                    
-                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
-                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
-                } else {
-                    addIngredientSection();
-                    addInstructionSection();
-                }
-                
-                recipeModal.classList.remove('hidden');
-                switchTab('tab-general');
-            }
-
-            function switchTab(tabId) {
-                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-                document.getElementById(tabId).classList.remove('hidden');
-                document.querySelectorAll('.tab-btn').forEach(b => {
-                    b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500');
-                    b.classList.add('text-gray-400');
-                });
-                document.querySelector(`[data-tab="${tabId}"]`).classList.add('text-blue-400', 'border-b-2', 'border-blue-500');
-            }
-
-            // --- EVENT BINDING ---
-            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
-            document.getElementById('close-menu-button').onclick = hideMenu;
-            document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); });
-
-            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
-            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
-            document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); hideMenu(); };
-            document.getElementById('download-data-button').onclick = downloadDataFile;
-            
-            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); modals.tag.classList.add('hidden'); });
-            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
-            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
-
-            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
-            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
-            document.getElementById('save-recipe-btn').onclick = saveRecipe;
-            document.getElementById('category-form').onsubmit = saveCategory;
-            document.getElementById('tag-form').onsubmit = saveTag;
-            document.getElementById('clear-draft-button').onclick = clearDraftData;
-            
-            document.getElementById('group-by-category').onclick = () => { isTagMode = false; renderRecipeGroups(); };
-            document.getElementById('group-by-tag').onclick = () => { isTagMode = true; renderRecipeGroups(); };
-            document.getElementById('back-to-list').onclick = renderRecipeGroups;
-
-            // --- ACTIONS ---
-            function saveRecipe() {
-                const title = document.getElementById('form-title').value;
-                if(!title) return alert("Title is required");
-
-                const newRecipe = {
-                    id: currentEditingId || 'user_rec_' + Date.now(),
-                    title: title,
-                    description: document.getElementById('form-desc').value,
-                    category: document.getElementById('form-category').value,
-                    servings: parseInt(document.getElementById('form-servings').value) || 1,
-                    prepTime: document.getElementById('form-prep').value,
-                    cookTime: document.getElementById('form-cook').value,
-                    image: document.getElementById('form-image').value,
-                    source: {
-                        description: document.getElementById('form-source-desc').value,
-                        url: document.getElementById('form-source-url').value
-                    },
-                    tags: document.getElementById('form-tags').value.split(',').map(t => t.trim()).filter(t => t),
-                    ingredients: [],
-                    instructions: []
-                };
-
-                // Harvest Ingredients
-                document.querySelectorAll('.ing-section').forEach(sec => {
-                    const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] };
-                    sec.querySelectorAll('.ing-row').forEach(row => {
-                        section.list.push({
-                            name: row.querySelector('.ing-name').value,
-                            quantity: row.querySelector('.ing-qty').value,
-                            unit: row.querySelector('.ing-unit').value,
-                            notes: row.querySelector('.ing-notes').value,
-                            macros: {
-                                calories: parseFloat(row.querySelector('.macro-cal').value) || 0,
-                                protein: parseFloat(row.querySelector('.macro-pro').value) || 0,
-                                carbs: parseFloat(row.querySelector('.macro-carb').value) || 0,
-                                fat: parseFloat(row.querySelector('.macro-fat').value) || 0,
-                                fiber: parseFloat(row.querySelector('.macro-fib').value) || 0
-                            }
-                        });
-                    });
-                    newRecipe.ingredients.push(section);
-                });
-
-                // Harvest Instructions
-                document.querySelectorAll('.inst-section').forEach(sec => {
-                    const section = { sectionTitle: sec.querySelector('.section-title').value, steps: [] };
-                    sec.querySelectorAll('.step-text').forEach(txt => section.steps.push(txt.value));
-                    newRecipe.instructions.push(section);
-                });
-
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id));
-                if (idx >= 0) customRecipes[idx] = newRecipe;
-                else customRecipes.push(newRecipe);
-                
-                saveCustomData(state.localStorageKeys.recipes, customRecipes);
-                
-                recipeModal.classList.add('hidden');
-                if (currentEditingId) showDetailView(newRecipe.id);
-                else renderRecipeGroups();
-            };
-
-            function saveCategory(e) {
-                e.preventDefault();
-                const val = document.getElementById('category-modal-input').value.trim();
-                if(val) {
-                    const d = getCustomData(state.localStorageKeys.categories);
-                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
-                    modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
-                }
-            }
-
-            function saveTag(e) {
-                e.preventDefault();
-                const val = document.getElementById('tag-modal-input').value.trim();
-                if(val) {
-                    const d = getCustomData(state.localStorageKeys.tags);
-                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
-                    modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
-                }
-            }
-
-            function deleteRecipe(id) {
-                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
-                saveCustomData(state.localStorageKeys.recipes, newParams);
-                renderRecipeGroups();
-            }
-
             function downloadDataFile() {
                 hideMenu(); 
                 const customRecipes = getCustomData(state.localStorageKeys.recipes);
@@ -636,7 +616,6 @@
                 renderRecipeGroups();
             }
 
-            // Weather & Clock
             async function updateWeather() {
                 const LOCATION_ZIP = '75482,us'; const API_KEY = '87256fe2710631542ff491e4c5d73306'; 
                 try {
@@ -659,6 +638,33 @@
                 const time = now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true }).toLowerCase();
                 document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${date}</span> <span class="text-blue-300 ml-1">${time}</span>`;
             }
+
+            // --- EVENT BINDING (AT THE END) ---
+            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
+            document.getElementById('close-menu-button').onclick = hideMenu;
+            document.addEventListener('click', (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); });
+
+            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
+            document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
+            document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); hideMenu(); };
+            document.getElementById('download-data-button').onclick = downloadDataFile;
+            
+            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); modals.tag.classList.add('hidden'); });
+            document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
+            document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
+
+            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
+            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
+            document.getElementById('save-recipe-btn').onclick = saveRecipe;
+            document.getElementById('back-to-list').onclick = renderRecipeGroups;
+            document.getElementById('group-by-category').onclick = () => { isTagMode = false; renderRecipeGroups(); };
+            document.getElementById('group-by-tag').onclick = () => { isTagMode = true; renderRecipeGroups(); };
+
+            document.getElementById('category-form').onsubmit = saveCategory;
+            document.getElementById('tag-form').onsubmit = saveTag;
+            
+            document.getElementById('clear-draft-button').onclick = clearDraftData;
 
             window.onload = () => { initRecipeDashboard(); setInterval(updateClock, 1000); updateClock(); updateWeather(); };
         })();
