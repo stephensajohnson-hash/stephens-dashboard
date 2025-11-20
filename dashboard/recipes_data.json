@@ -3,11 +3,11 @@
     {
       "id": "1",
       "title": "Chili",
-      "description": "A comforting, slow-cooked classic with a blend of ground beef, beans, and smoky spices. (Now with full macro data for the whole batch!)",
+      "description": "A friend and family favorite.  Cowboys and Chili anyone?",
       "category": "Soup",
-      "servings": 8,
-      "prepTime": "15 mins",
-      "cookTime": "4 hours",
+      "servings": 12,
+      "prepTime": "90 minutes",
+      "cookTime": "30 minutes",
       "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_913/k%2FPhoto%2FRecipes%2F2023-11-chili%2Fchili-2",
       "source": {
         "description": "Cayce's Recipe",
@@ -22,86 +22,68 @@
           "sectionTitle": "Base",
           "list": [
             {
-              "name": "Ground Beef (80/20)",
-              "quantity": "2",
+              "name": "Ground Beef",
+              "quantity": "3",
               "unit": "pounds",
-              "notes": "",
+              "notes": "Wagyu",
               "macros": {
-                "calories": 1500,
-                "protein": 140,
+                "calories": 2040,
+                "protein": 276,
                 "carbs": 0,
                 "fat": 110,
-                "fiber": 0
+                "fiber": 96
               }
             },
             {
-              "name": "Diced Onion",
+              "name": "Onion",
               "quantity": "1",
               "unit": "",
               "notes": "medium",
               "macros": {
-                "calories": 40,
-                "protein": 1,
-                "carbs": 10,
+                "calories": 60,
+                "protein": 2,
+                "carbs": 14,
                 "fat": 0,
                 "fiber": 3
               }
             },
             {
               "name": "Garlic",
-              "quantity": "3",
+              "quantity": "12",
               "unit": "cloves",
               "notes": "minced",
               "macros": {
                 "calories": 15,
-                "protein": 1,
-                "carbs": 3,
-                "fat": 0,
+                "protein": 1.6,
+                "carbs": 12.3,
+                "fat": 0.3,
                 "fiber": 0
               }
-            }
-          ]
-        },
-        {
-          "sectionTitle": "Wet & Canned Goods",
-          "list": [
-            {
-              "name": "Diced Tomatoes",
-              "quantity": "28",
-              "unit": "ounces",
-              "notes": "undrained",
-              "macros": {
-                "calories": 100,
-                "protein": 5,
-                "carbs": 25,
-                "fat": 0,
-                "fiber": 6
-              }
             },
             {
-              "name": "Kidney Beans",
+              "name": "Organic Tomato Sauce",
               "quantity": "15",
-              "unit": "ounces",
-              "notes": "drained and rinsed",
-              "macros": {
-                "calories": 220,
-                "protein": 15,
-                "carbs": 40,
-                "fat": 2,
-                "fiber": 15
-              }
-            },
-            {
-              "name": "Tomato Paste",
-              "quantity": "6",
-              "unit": "ounces",
+              "unit": "oz",
               "notes": "",
               "macros": {
-                "calories": 80,
-                "protein": 6,
-                "carbs": 20,
+                "calories": 140,
+                "protein": 7,
+                "carbs": 28,
                 "fat": 0,
-                "fiber": 4
+                "fiber": 7
+              }
+            },
+            {
+              "name": "Spinach",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "chopped",
+              "macros": {
+                "calories": 7,
+                "protein": 4,
+                "carbs": 5,
+                "fat": 0.5,
+                "fiber": 3
               }
             }
           ]
@@ -111,41 +93,67 @@
           "list": [
             {
               "name": "Chili Powder",
-              "quantity": "4",
-              "unit": "tablespoons",
+              "quantity": "3",
+              "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 40,
-                "protein": 1,
-                "carbs": 8,
-                "fat": 2,
-                "fiber": 4
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sea Salt",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "Redmond's",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
               }
             },
             {
               "name": "Cumin",
               "quantity": "2",
-              "unit": "teaspoons",
+              "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 15,
-                "protein": 1,
-                "carbs": 3,
-                "fat": 1,
-                "fiber": 1
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chipotle Chile Pepper",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
               }
             },
             {
               "name": "Smoked Paprika",
-              "quantity": "1",
-              "unit": "teaspoon",
+              "quantity": "1 1/2",
+              "unit": "tsp",
               "notes": "",
               "macros": {
-                "calories": 5,
+                "calories": 0,
                 "protein": 0,
-                "carbs": 1,
+                "carbs": 0,
                 "fat": 0,
-                "fiber": 1
+                "fiber": 0
               }
             }
           ]
@@ -153,28 +161,18 @@
       ],
       "instructions": [
         {
-          "sectionTitle": "Preparation",
+          "sectionTitle": "Directions",
           "steps": [
-            "Brown the ground beef in a large pot and drain excess grease.",
-            "Add onion and cook until softened, about 5 minutes.",
-            "Stir in garlic and cook for 1 minute until fragrant.",
-            "Transfer mixture to a slow cooker."
+            "Brown 3 lbs Ground Beef until mostly done (it will continue to cook)",
+            "Add Onion (chopped) and 12 cloves garlic (minced)",
+            "Cook for 3-5 minutes until onions brown a bit",
+            "Add Spices and Tomatoes",
+            "Bring to a boil and let it simmer for 30 minutes."
           ]
         },
         {
-          "sectionTitle": "Slow Cooking",
-          "steps": [
-            "Stir in all canned goods (tomatoes and beans) and spices.",
-            "Mix thoroughly to ensure all spices are distributed.",
-            "Cook on low for 4 hours, or on high for 2 hours, stirring occasionally."
-          ]
-        },
-        {
-          "sectionTitle": "Serving Suggestion",
-          "steps": [
-            "Serve hot with your favorite toppings.",
-            "Suggested toppings include shredded cheddar cheese, sour cream, and chopped green onions."
-          ]
+          "sectionTitle": "",
+          "steps": []
         }
       ]
     },
