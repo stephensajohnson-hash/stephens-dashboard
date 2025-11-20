@@ -419,4 +419,97 @@
     {
       "id": "user_rec_1763611965885",
       "title": "Chickpea and Flax Wraps",
-      "description": "With just four simple ingredients, these hom
+      "description": "With just four simple ingredients, these homemade wraps are quick, wholesome, and endlessly versatile. Forget the shop-bought versions — once you try making your own, you’ll never look back.\n\n",
+      "category": "Bread",
+      "servings": 4,
+      "prepTime": "5 minutes",
+      "cookTime": "20 minutes",
+      "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W",
+      "source": {
+        "description": "The Doctor's Kitchen",
+        "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube"
+      },
+      "tags": [
+        "Keto",
+        "Gluten Free",
+        "Cayce Diet"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Ingredients",
+          "list": [
+            {
+              "name": "Chickpea Flour",
+              "quantity": "75",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 290,
+                "protein": 17,
+                "carbs": 17,
+                "fat": 1.5,
+                "fiber": 7
+              }
+            },
+            {
+              "name": "Ground Flaxseed",
+              "quantity": "25",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 134,
+                "protein": 6,
+                "carbs": 7,
+                "fat": 10,
+                "fiber": 6
+              }
+            },
+            {
+              "name": "Water",
+              "quantity": "250",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "4",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Directions",
+          "steps": [
+            "Gather and prepare your ingredients.",
+            "Add the chickpea flour, flax, water, and salt and blend again until you have a smooth batter.  Start with half the water then add more later to fully mix well.",
+            "Heat a small amount of olive oil in a non-stick pan over medium heat. Pour in the batter and gently swirl it around the pan or use the back of a spoon, until you have a wide flat surface. Cook for 3-4 minutes on each side, until they are sturdy enough to flip without breaking. Remove onto a wire rack to cool before using. (The batter will thicken as it rests, add small splashes of water to loosen as needed)."
+          ]
+        }
+      ]
+    }
+  ],
+  "categories": [
+    "Bread",
+    "Soup",
+    "Dessert"
+  ],
+  "availableTags": [
+  ]
+}
