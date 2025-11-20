@@ -195,11 +195,8 @@
       "tags": [
         "Keto",
         "Cayce Diet",
-        "Dairy Free",
         "Gluten Free",
-        "Grain Free",
-        "Vegetarian",
-        "Fiber"
+        "High Fiber"
       ],
       "ingredients": [
         {
@@ -348,11 +345,8 @@
       },
       "tags": [
         "Keto",
-        "Dairy Free",
         "Gluten Free",
-        "Grain Free",
-        "Vegetarian",
-        "Fiber"
+        "High Fiber"
       ],
       "ingredients": [
         {
@@ -441,11 +435,8 @@
       "tags": [
         "Keto",
         "Cayce Diet",
-        "Dairy Free",
         "Gluten Free",
-        "Grain Free",
-        "Vegetarian",
-        "Fiber"
+        "High Fiber"
       ],
       "ingredients": [
         {
@@ -793,7 +784,8 @@
       },
       "tags": [
         "Thanksgiving",
-        "Keto"
+        "Keto",
+        "Poultry"
       ],
       "ingredients": [
         {
@@ -895,8 +887,7 @@
       },
       "tags": [
         "Thanksgiving",
-        "Gluten Free",
-        "Dairy Free"
+        "Gluten Free"
       ],
       "ingredients": [
         {
@@ -1040,7 +1031,7 @@
       "tags": [
         "Keto",
         "Gluten Free",
-        "Grain Free"
+        "Beef"
       ],
       "ingredients": [
         {
