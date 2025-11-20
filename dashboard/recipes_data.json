@@ -1501,13 +1501,114 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763679890645",
+      "title": "Mayonnaise",
+      "description": "Why buy it when you can make it at home in 5 minutes!",
+      "category": "Condiments",
+      "servings": 20,
+      "prepTime": "",
+      "cookTime": "5 minutes",
+      "image": "https://www.wholesomeyum.com/wp-content/uploads/2018/04/wholesomeyum-Homemade-Mayonnaise-Recipe-12-683x683.jpg",
+      "source": {
+        "description": "Wholesome Yum",
+        "url": "https://www.wholesomeyum.com/mayonnaise-recipe/"
+      },
+      "tags": [
+        "Keto"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Avocado Oil",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 1927,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 218,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Large Egg",
+              "quantity": "1",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 72,
+                "protein": 6,
+                "carbs": 0.4,
+                "fat": 5,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Apple Cider Vinegar",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Dijon Mustard",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 5,
+                "protein": 0.2,
+                "carbs": 0.4,
+                "fat": 0.3,
+                "fiber": 0.2
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Crack the 1 egg into large mouth quart sized mason jar",
+            "Add the 1 Tsp Dijon mustard, 2 Tsp apple cider vinegar, and 1 Tsp salt on top of the eggs, trying not to disturb the eggs. Do not whisk or stir.",
+            "Pour the oil on top. Again, do not whisk or stir.",
+            "Carefully submerge an immersion blender into the bottom of the jar, so that it's right where the egg is. Blend on low power for about 20 seconds without moving, until you see most of the jar has turned white. Then, slowly start to move the blender upward, without lifting the blender out into the air. Once you reach the top of the oil, slowly move back down to the bottom. Go up and down like this a few times, until mayonnaise forms."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
     "American",
     "Bread",
     "Soup",
-    "Southern Food"
+    "Southern Food",
+    "Condiments"
   ],
   "availableTags": []
 }
