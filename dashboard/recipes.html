@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.6.6</title>
+    <title>Stephens' Recipes V0.6.12</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,7 +69,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.6</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.12</p>
         </div>
     </div>
 
@@ -166,147 +166,41 @@
     <div id="add-category-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
             <h2 class="text-xl font-bold mb-4">Add Category</h2>
-            <form id="category-form"><input type="text" id="category-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
+            <form id="category-form" onsubmit="saveCategory(event)"><input type="text" id="category-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
         </div>
     </div>
 
     <!-- JS Logic -->
     <script>
         (function() {
-            // --- 1. VARIABLES & CONSTANTS ---
-            const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
-            const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content'), tags: document.getElementById('tag-cloud-container') };
+            // --- VARIABLES ---
             const menuModal = document.getElementById('menu-modal');
-            const modals = {
-                recipe: document.getElementById('recipe-form-modal'),
-                category: document.getElementById('add-category-modal')
-            };
             const ingContainer = document.getElementById('ingredients-container');
             const instContainer = document.getElementById('instructions-container');
-            
+            const modals = { recipe: document.getElementById('recipe-form-modal'), category: document.getElementById('add-category-modal') };
+            const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
+            const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content'), tags: document.getElementById('tag-cloud-container') };
+
             let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
-            let currentFilterTag = null, currentEditingId = null, isTagMode = false;
-            let currentRecipeBase = null; 
-            
+            let currentFilterTag = null, currentEditingId = null;
+            let currentRecipeBase = null;
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
-            
-            // --- UPDATED DATASET FROM USER ---
-            const EMBEDDED_RECIPES = {
-              "recipes": [
-                {
-                  "id": "1",
-                  "title": "Chili",
-                  "description": "A friend and family favorite.  Cowboys and Chili anyone?",
-                  "category": "Soup",
-                  "servings": 12,
-                  "prepTime": "90 minutes",
-                  "cookTime": "30 minutes",
-                  "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_913/k%2FPhoto%2FRecipes%2F2023-11-chili%2Fchili-2",
-                  "source": { "description": "Cayce's Recipe", "url": "" },
-                  "tags": [ "Keto", "Gluten Free", "Beef", "Texas", "Cayce Diet" ],
-                  "ingredients": [
-                    { "sectionTitle": "Base", "list": [ { "name": "Ground Beef", "quantity": "3", "unit": "pounds", "notes": "Wagyu", "macros": { "calories": 2040, "protein": 276, "carbs": 0, "fat": 96, "fiber": 0 } }, { "name": "Onion", "quantity": "1", "unit": "", "notes": "medium", "macros": { "calories": 60, "protein": 2, "carbs": 14, "fat": 0, "fiber": 3 } }, { "name": "Garlic", "quantity": "12", "unit": "cloves", "notes": "minced", "macros": { "calories": 15, "protein": 1.6, "carbs": 12.3, "fat": 0.3, "fiber": 0 } }, { "name": "Organic Tomato Sauce", "quantity": "15", "unit": "oz", "notes": "", "macros": { "calories": 140, "protein": 7, "carbs": 28, "fat": 0, "fiber": 7 } }, { "name": "Spinach", "quantity": "1", "unit": "cup", "notes": "chopped", "macros": { "calories": 7, "protein": 4, "carbs": 5, "fat": 0.5, "fiber": 3 } } ] },
-                    { "sectionTitle": "Spices", "list": [ { "name": "Chili Powder", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sea Salt", "quantity": "1", "unit": "tbsp", "notes": "Redmond's", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Cumin", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Chipotle Chile Pepper", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Smoked Paprika", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] }
-                  ],
-                  "instructions": [ { "sectionTitle": "Directions", "steps": [ "Brown 3 lbs Ground Beef until mostly done (it will continue to cook)", "Add Onion (chopped) and 12 cloves garlic (minced)", "Cook for 3-5 minutes until onions brown a bit", "Add Spices and Tomatoes", "Bring to a boil and let it simmer for 30 minutes." ] }, { "sectionTitle": "", "steps": [] } ]
-                },
-                {
-                  "id": "user_rec_1763590797634",
-                  "title": "Doctor's Daily Bread",
-                  "description": "A hearty bread made with only nuts and seeds.",
-                  "category": "Bread",
-                  "servings": 10,
-                  "prepTime": "10 Minutes",
-                  "cookTime": "1 Hour 15 Minutes",
-                  "image": "https://ik.thedoctorskitchen.com/tr:n-medium/doctors-daily-bread_cZ58RgYL8",
-                  "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/doctor-s-daily-bread" },
-                  "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ],
-                  "ingredients": [
-                    { "sectionTitle": "Dry Ingredients", "list": [ { "name": "Hemp Hearts", "quantity": "20", "unit": "g", "notes": "", "macros": { "calories": 120, "protein": 3, "carbs": 1, "fat": 10, "fiber": 1 } }, { "name": "Psyllium Husk", "quantity": "35", "unit": "g", "notes": "", "macros": { "calories": 70, "protein": 1.6, "carbs": 27, "fat": 0, "fiber": 27 } }, { "name": "Amaranth Flour", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 555, "protein": 22, "carbs": 100, "fat": 4, "fiber": 10 } }, { "name": "Mixed Nuts", "quantity": "150", "unit": "g", "notes": "Chopped", "macros": { "calories": 911, "protein": 30, "carbs": 28, "fat": 91, "fiber": 8 } }, { "name": "Mixed Seeds", "quantity": "150", "unit": "g", "notes": "", "macros": { "calories": 841, "protein": 32, "carbs": 32, "fat": 72, "fiber": 15 } }, { "name": "Sea Salt", "quantity": "1 1/2", "unit": "tsp", "notes": "Fine", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] },
-                    { "sectionTitle": "Wet Ingredients", "list": [ { "name": "Water", "quantity": "400", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Extra Virgin Olive Oil", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 360, "protein": 0, "carbs": 0, "fat": 42, "fiber": 0 } } ] }
-                  ],
-                  "instructions": [ { "sectionTitle": "Directions", "steps": [ "Line a 2lb loaf tin with parchment paper and/or lightly grease with olive oil. ", "Mix dry ingredients in a medium bowl.", "Pour in the water and olive oil and mix well.  Start with half the water.", "Pack the mixture into your prepared tin.", "Leave it to soak for 30 minutes - 8 hours at this stage. (overnight is best)", "Bake for 60 minutes at 375 or 335 with convection. ", "Remove from the tin and bake for a further 15 minutes. ", "Remove from the oven and allow to cool completely before slicing. (this takes a long time)" ] } ]
-                },
-                {
-                  "id": "user_rec_1763611965885",
-                  "title": "Chickpea and Flax Wraps",
-                  "description": "With just four simple ingredients, these homemade wraps are quick, wholesome, and endlessly versatile.",
-                  "category": "Bread",
-                  "servings": 4,
-                  "prepTime": "5 minutes",
-                  "cookTime": "20 minutes",
-                  "image": "https://ik.thedoctorskitchen.com/tr:n-medium/oat-and-flax-wraps_P81WRQ96W",
-                  "source": { "description": "The Doctor's Kitchen", "url": "https://www.thedoctorskitchen.com/recipes/oat-and-flax-wraps?utm_medium=referral&utm_campaign=healthy-wraps-youtube-sept25&utm_source=youtube" },
-                  "tags": [ "Keto", "Cayce Diet", "Dairy Free", "Gluten Free", "Grain Free", "Vegetarian", "Fiber" ],
-                  "ingredients": [ { "sectionTitle": "Ingredients", "list": [ { "name": "Chickpea Flour", "quantity": "75", "unit": "g", "notes": "", "macros": { "calories": 290, "protein": 17, "carbs": 17, "fat": 1.5, "fiber": 7 } }, { "name": "Ground Flaxseed", "quantity": "25", "unit": "g", "notes": "", "macros": { "calories": 134, "protein": 6, "carbs": 7, "fat": 10, "fiber": 6 } }, { "name": "Water", "quantity": "250", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Salt", "quantity": "4", "unit": "g", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] } ],
-                  "instructions": [ { "sectionTitle": "Directions", "steps": [ "Gather and prepare your ingredients.", "Add the chickpea flour, flax, water, and salt and blend again until you have a smooth batter.  Start with half the water then add more later to fully mix well.", "Heat a small amount of olive oil in a non-stick pan over medium heat. Pour in the batter and gently swirl it around the pan or use the back of a spoon, until you have a wide flat surface. Cook for 3-4 minutes on each side, until they are sturdy enough to flip without breaking. Remove onto a wire rack to cool before using. (The batter will thicken as it rests, add small splashes of water to loosen as needed)." ] } ]
-                },
-                {
-                  "id": "user_rec_1763650159154",
-                  "title": "Keto Salisbury Steak",
-                  "description": "Stephens loved frozen Salisbury Steaks so this is a substitute to make it keto.",
-                  "category": "American",
-                  "servings": 3,
-                  "prepTime": "10 minutes",
-                  "cookTime": "18 minutes",
-                  "image": "https://www.ibreatheimhungry.com/wp-content/uploads/2021/07/IMG_0882-2.jpg",
-                  "source": { "description": "I Breathe I'm Hungry", "url": "https://www.ibreatheimhungry.com/low-carb-salisbury-steak-with-mushroom-gravy/" },
-                  "tags": [ "Keto", "Beef" ],
-                  "ingredients": [
-                    { "sectionTitle": "Steak Ingredients", "list": [ { "name": "Ground Beef", "quantity": "1", "unit": "lb", "notes": "", "macros": { "calories": 680, "protein": 92, "carbs": 0, "fat": 32, "fiber": 0 } }, { "name": "Almond Flour", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 340, "protein": 13, "carbs": 11, "fat": 27, "fiber": 6 } }, { "name": "Fresh Parsley", "quantity": "1 1/2", "unit": "tsp", "notes": "chopped", "macros": { "calories": 1, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Beef Broth", "quantity": "1/8", "unit": "cup", "notes": "", "macros": { "calories": 1, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Worcestershire Sauce", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": { "calories": 8, "protein": 0, "carbs": 2, "fat": 0, "fiber": 0 } }, { "name": "Garlic Powder", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Dried Onion Flakes", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Salt", "quantity": "3/4", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Black Pepper", "quantity": "1/4", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] },
-                    { "sectionTitle": "Gravy Ingredients", "list": [ { "name": "Butter", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 200, "protein": 0.5, "carbs": 0, "fat": 15, "fiber": 0 } }, { "name": "Bacon Grease", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 269, "protein": 0, "carbs": 0, "fat": 28, "fiber": 0 } }, { "name": "Button Mushrooms", "quantity": "1", "unit": "cup", "notes": "sliced", "macros": { "calories": 15, "protein": 2.2, "carbs": 2.3, "fat": 0.2, "fiber": 0.7 } }, { "name": "Yellow Onions", "quantity": "1/2", "unit": "cup", "notes": "sliced", "macros": { "calories": 34, "protein": 1, "carbs": 8, "fat": 1, "fiber": 1.7 } }, { "name": "Worcestershire Sauce", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 2.5, "protein": 0, "carbs": 0.5, "fat": 0, "fiber": 0 } }, { "name": "Beef Broth", "quantity": "1/2", "unit": "cup", "notes": "", "macros": { "calories": 5, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sour Cream", "quantity": "1/4", "unit": "cup", "notes": "", "macros": { "calories": 240, "protein": 4, "carbs": 4, "fat": 20, "fiber": 0 } } ] }
-                  ],
-                  "instructions": [
-                    { "sectionTitle": "Steak Directions", "steps": [ "Combine all of the steak ingredients in a medium sized bowl and mix well.", "Form into 3 oval patties, about 1 inch thick, and place them on a cookie sheet.", "Bake in a preheated 375° (F) oven for 18 minutes." ] },
-                    { "sectionTitle": "Gravy Directions", "steps": [ "Melt the butter and bacon fat (if using) in a large skillet (4 Tbsp total).", "Add the 1 cup mushrooms and cook on medium high heat until golden brown (about 3 minutes per side.)", "Add the 1/2 cup onions and cook for 5 minutes over medium heat, until golden and soft.", "Add the 1/2 cup broth and the 1/4 tsp Worcestershire sauce, stir and cook for 3 minutes, stirring to scrape any bits off of the bottom of the pan.", "Add the 1/4 cup sour cream, stir well, and remove from the heat. (if you want a thicker gravy you can cook it on low for a 5 extra minutes to condense it.)", "Season with salt and pepper to taste.", "Serve over the warm Salisbury Steaks" ] }
-                  ]
-                },
-                {
-                  "id": "user_rec_1763652731628",
-                  "title": "Roasted Turkey",
-                  "description": "Is it Thanksgiving?",
-                  "category": "American",
-                  "servings": 16,
-                  "prepTime": "30 minutes",
-                  "cookTime": "2 hours 15 minutes",
-                  "image": "https://images.ctfassets.net/lufu0clouua1/2cSQKvJYskEqgyaAYawE48/7b71e49f5de264f38541c055926f8f5a/classic-roast-turkey.jpg",
-                  "source": { "description": "Americas Test Kitchen", "url": "https://www.americastestkitchen.com/articles/590-everything-you-need-to-know-to-make-the-perfect-thanksgiving-turkey?extcode=KGBKM001G&utm_medium=cpc&utm_source=google&utm_campaign=Brand|America%27s_Test_Kitchen|AMT&utm_term=americas%20test%20kitchen%20turkey&utm_content=seRbT9fd8|pcrid|783245142911|pkw|americas%20test%20kitchen%20turkey|pdv|c|pmt|b|productid||pgrid|169339641523|cpgnid|21322604783|ptaid|kwd-10075922075|adext|310170937739|&gad_source=1&gad_campaignid=21322604783&gbraid=0AAAAAD-Lx3rTtZ0u9NVFHO_FyLNHgmln5&gclid=CjwKCAiAlfvIBhA6EiwAcErpyWkH_gPBej2qfUTWqhpgyjJ2slTVSsCaXnwWsHMZs1H98ImStdc01RoC3O0QAvD_BwE" },
-                  "tags": [ "Thanksgiving", "Keto" ],
-                  "ingredients": [
-                    { "sectionTitle": "Ingredients", "list": [ { "name": "Turkey", "quantity": "12", "unit": "lb", "notes": "Reserve Giblets and Neck", "macros": { "calories": 3800, "protein": 390, "carbs": 0, "fat": 175, "fiber": 0 } }, { "name": "Salt", "quantity": "4", "unit": "Tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sugar", "quantity": "4", "unit": "Tbsp", "notes": "", "macros": { "calories": 195, "protein": 0, "carbs": 50, "fat": 0, "fiber": 0 } }, { "name": "Avocado Oil", "quantity": "3 1/2", "unit": "Tsp", "notes": "", "macros": { "calories": 108, "protein": 0, "carbs": 0, "fat": 12.25, "fiber": 0 } }, { "name": "Baking Powder", "quantity": "1", "unit": "Tsp", "notes": "", "macros": { "calories": 2, "protein": 0, "carbs": 2, "fat": 0, "fiber": 0 } } ] }
-                  ],
-                  "instructions": [
-                    { "sectionTitle": "Directions", "steps": [ "Combine 4 tablespoons salt and sugar in bowl. Place turkey, breast side up, on counter. Using your fingers, carefully loosen skin covering breast and legs. Rub 4 teaspoons salt-sugar mixture under skin of each breast, 2 teaspoons under skin of each leg, and remaining salt-sugar mixture inside cavity. Tuck wings behind back and tie legs together with kitchen twine. Place turkey on wire rack set in rimmed baking sheet and refrigerate, uncovered, for 24 to 48 hours.", "At least 30 minutes before roasting turkey, adjust oven rack to lowest position, set baking stone on rack, set roasting pan on baking stone, and heat oven to 500 degrees. Combine 1 1/2 teaspoons oil and baking powder in small bowl. Pat turkey dry with paper towels. Rub oil mixture evenly over turkey. Cover turkey breast with double layer of aluminum foil.", "Remove roasting pan from oven. Drizzle remaining 2 tablespoons oil into roasting pan. Place turkey, breast side up, in pan and return pan to oven. Reduce oven temperature to 425 degrees and roast for 45 minutes.", "Remove foil, reduce oven temperature to 325 degrees, and continue to roast until breast registers 160 degrees and drumsticks/thighs register 175 degrees, 1 to 1 1/2 hours longer.", "Using spatula, loosen turkey from roasting pan; transfer to carving board and let rest, uncovered, for 45 minutes." ] }
-                  ]
-                },
-                {
-                  "id": "user_rec_1763653389089",
-                  "title": "Turkey Gravy",
-                  "description": "Giblets and Neck anyone?",
-                  "category": "American",
-                  "servings": 16,
-                  "prepTime": "30 minutes",
-                  "cookTime": "3 1/2 hours",
-                  "image": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg",
-                  "source": { "description": "America's Test Kitchen", "url": "https://www.americastestkitchen.com/recipes/11217-our-favorite-turkey-gravy" },
-                  "tags": [ "Thanksgiving", "Gluten Free", "Dairy Free" ],
-                  "ingredients": [
-                    { "sectionTitle": "Ingredients", "list": [ { "name": "Reserved Giblets and Turkey Neck", "quantity": "1", "unit": "", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 10, "fiber": 0 } }, { "name": "Medium Carrot", "quantity": "1", "unit": "", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Small Onions", "quantity": "2", "unit": "", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Garlic", "quantity": "6", "unit": "cloves", "notes": "unpeeled", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Turkey Broth", "quantity": "6", "unit": "cups", "notes": "", "macros": { "calories": 120, "protein": 12, "carbs": 0, "fat": 6, "fiber": 0 } }, { "name": "Fresh Thyme", "quantity": "6", "unit": "sprigs", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Flour Mix", "quantity": "1/4", "unit": "cup", "notes": "gluten free if needed", "macros": { "calories": 110, "protein": 4, "carbs": 23, "fat": 0, "fiber": 0.25 } }, { "name": "Avocado Oil", "quantity": "1", "unit": "Tbsp", "notes": "", "macros": { "calories": 124, "protein": 0, "carbs": 0, "fat": 14, "fiber": 0 } } ] }
-                  ],
-                  "instructions": [
-                    { "sectionTitle": "Directions", "steps": [ "Heat oven to 450 degrees. Place oil, turkey trimmings, carrot, celery, onions, and garlic in cast iron pan.  Roast, stirring every 10 minutes, until well-browned, 40 to 50 minutes.", "Remove pan from oven, and place over burner set at high heat; add 4 cups turkey broth and bring to boil, scraping up browned bits on bottom of pan with wooden spoon.", "Transfer contents of pan to large saucepan. Add 2 cups turkey broth, 3 cups water, and thyme; bring to boil over high heat. Reduce heat to low and simmer until reduced by half, about 1 1/2 hours. ", "Strain stock into large container. Cool to room temperature; cover with plastic wrap and refrigerate until fat congeals, at least 1 hour.", "To finish gravy, skim fat from stock using soup spoon; reserve fat. Pour stock through fine-mesh strainer to remove remaining bits of fat; discard bits in strainer. \nBring stock to simmer in medium saucepan over medium-high heat. \n", "In second medium saucepan, heat 4 tablespoons reserved turkey fat over medium-high heat until bubbling; whisk in flour and cook, whisking constantly, until combined and honey-colored, about 2 minutes. Continuing to whisk constantly, gradually add hot stock; bring to boil, then reduce heat to medium-low and simmer, stirring occasionally, until slightly thickened, about 5 minutes. Season to taste with salt and pepper and serve with turkey.", " (Can be refrigerated up to 3 days; reheat in medium saucepan over medium heat until hot, about 8 minutes.)" ] }
-                  ]
-                }
-              ],
-              "categories": [ "Bread", "Soup", "Dessert", "American" ],
-              "availableTags": []
+            const EMBEDDED_RECIPES = { 
+                "categories": ["Bread", "Soup", "Dessert"], 
+                "availableTags": ["gluten free", "keto", "dairy free"], 
+                "recipes": [ { "id": "1", "title": "Hearty Classic Chili", "category": "Soup", "description": "Test recipe.", "tags": ["Dinner"], "prepTime": "15m", "cookTime": "4h", "servings": 8, "image": "https://placehold.co/400x250/111827/ffffff?text=Chili", "ingredients": [{ "sectionTitle": "Base", "list": [{ "name": "Beef", "quantity": 2, "unit": "lbs", "macros": { "fat":110,"carbs":0,"protein":140,"calories":1500 } }] }], "instructions": [{ "sectionTitle": "Prep", "steps": ["Cook."] }] } ] 
             };
 
-            // --- 2. KITCHEN MATH & HELPERS (Defined First) ---
+            // --- HELPERS (Hoisted) ---
+            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
+            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+            
             function parseQuantity(q) {
                 if (!q) return 0;
                 if (typeof q === 'number') return q;
-                const parts = q.split(' ');
+                const parts = String(q).split(' ');
                 let total = 0;
                 parts.forEach(p => {
                     if (p.includes('/')) { const [n, d] = p.split('/'); total += parseFloat(n) / parseFloat(d); }
@@ -316,31 +210,32 @@
             }
 
             function formatQuantity(num) {
-                if (num === 0) return "";
+                if (num <= 0.02) return "Pinch";
+                if (num <= 0) return "";
+                const fractions = [ { val: 0.125, str: "1/8" }, { val: 0.25, str: "1/4" }, { val: 0.333, str: "1/3" }, { val: 0.5, str: "1/2" }, { val: 0.666, str: "2/3" }, { val: 0.75, str: "3/4" } ];
                 const whole = Math.floor(num);
-                const fraction = num - whole;
-                const tolerance = 0.05;
-                const closeTo = (val, target) => Math.abs(val - target) < tolerance;
-                let fracStr = "";
-                if (closeTo(fraction, 0)) fracStr = "";
-                else if (closeTo(fraction, 1/8)) fracStr = "1/8";
-                else if (closeTo(fraction, 1/4)) fracStr = "1/4";
-                else if (closeTo(fraction, 1/3)) fracStr = "1/3";
-                else if (closeTo(fraction, 1/2)) fracStr = "1/2";
-                else if (closeTo(fraction, 2/3)) fracStr = "2/3";
-                else if (closeTo(fraction, 3/4)) fracStr = "3/4";
-                else if (closeTo(fraction, 1)) { return String(whole + 1); }
-                else fracStr = fraction.toFixed(1).replace('.0', '');
-
-                if (whole > 0 && fracStr) return `${whole} ${fracStr}`;
+                let decimal = num - whole;
+                let bestFrac = "";
+                for (let f of fractions) { if (Math.abs(decimal - f.val) < 0.1) { decimal = f.val; bestFrac = f.str; break; } }
+                if (Math.abs(decimal - 1) < 0.1) return String(whole + 1);
+                if (Math.abs(decimal) < 0.1) return whole > 0 ? String(whole) : "Pinch";
+                if (whole > 0 && bestFrac) return `${whole} ${bestFrac}`;
                 if (whole > 0) return String(whole);
-                return fracStr;
+                return bestFrac || num.toFixed(1).replace('.0', '');
             }
 
-            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
-            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
-            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+            function convertUnits(qty, unit) {
+                let newQty = qty;
+                let newUnit = unit ? unit.toLowerCase().trim() : "";
+                if (newUnit === 'tablespoon' || newUnit === 'tbsp' || newUnit === 'tbs') newUnit = 'Tbsp';
+                if (newUnit === 'teaspoon' || newUnit === 'tsp') newUnit = 'tsp';
+                if (newUnit === 'cup' || newUnit === 'cups') newUnit = 'cup';
+                if (newUnit === 'cup' && newQty < 0.25) { newQty = newQty * 16; newUnit = 'Tbsp'; }
+                if (newUnit === 'Tbsp' && newQty < 0.34) { newQty = newQty * 3; newUnit = 'tsp'; }
+                if (newUnit === 'tsp' && newQty < 0.125) { return { qty: 0, display: "Pinch", unit: "" }; }
+                return { qty: newQty, unit: newUnit, display: formatQuantity(newQty) };
+            }
+
             function getAllRecipes() {
                 const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
                 const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
@@ -350,7 +245,57 @@
                 return Array.from(map.values());
             }
 
-            // --- 3. EXPOSED GLOBAL FUNCTIONS ---
+            // --- UI & EXPOSED FUNCTIONS ---
+            function toggleMenu() {
+                if (menuModal.classList.contains('opacity-0')) { menuModal.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+                else { menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+            }
+            function hideMenu() { menuModal.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+
+            // Expose helper functions to window for HTML onclick
+            window.toggleMenu = toggleMenu;
+            window.hideMenu = hideMenu;
+            
+            window.switchTab = function(tabId) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500'); b.classList.add('text-gray-400'); });
+                const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+                if(activeBtn) { activeBtn.classList.add('text-blue-400', 'border-b-2', 'border-blue-500'); activeBtn.classList.remove('text-gray-400'); }
+            };
+
+            window.addIngredientSection = function(data = null) {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
+                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove</button></div><div class="rows-container space-y-2"></div><button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>`;
+                const rowsContainer = div.querySelector('.rows-container');
+                const addRow = (ing = null) => {
+                    const row = document.createElement('div');
+                    row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
+                    row.innerHTML = `<input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}"><input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}"><input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}"><input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}"><button type="button" class="col-span-1 text-red-400 remove-row" onclick="this.parentElement.remove()">X</button><button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros" onclick="this.nextElementSibling.classList.toggle('hidden')">▼ Macros</button><div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded"><div><label class="text-[10px]">Cal</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.calories:''}"></div><div><label class="text-[10px]">Pro</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.protein:''}"></div><div><label class="text-[10px]">Carb</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.carbs:''}"></div><div><label class="text-[10px]">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fat:''}"></div><div><label class="text-[10px]">Fib</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fiber:''}"></div></div>`;
+                    rowsContainer.appendChild(row);
+                };
+                div.querySelector('.add-row-btn').onclick = () => addRow();
+                if (data && data.list) data.list.forEach(i => addRow(i)); else addRow();
+                ingContainer.appendChild(div);
+            };
+
+            window.addInstructionSection = function(data = null) {
+                const div = document.createElement('div');
+                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section';
+                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove</button></div><div class="steps-container space-y-2"></div><button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>`;
+                const stepsContainer = div.querySelector('.steps-container');
+                const addStep = (text = '') => {
+                    const row = document.createElement('div');
+                    row.className = 'flex gap-2 step-row';
+                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center" onclick="this.parentElement.remove()">X</button>`;
+                    stepsContainer.appendChild(row);
+                };
+                div.querySelector('.add-step-btn').onclick = () => addStep();
+                if(data && data.steps) data.steps.forEach(s => addStep(s)); else addStep();
+                instContainer.appendChild(div);
+            };
+
             window.updateServings = function(change) {
                 if (!currentRecipeBase) return;
                 const currentSpan = document.getElementById('current-servings');
@@ -367,17 +312,46 @@
                     if (!isNaN(baseQty) && baseQty > 0) {
                         const newQty = baseQty * ratio;
                         const unit = line.dataset.unit || "";
-                        let displayQty = (unit === 'g' || unit === 'ml') ? Math.round(newQty) : formatQuantity(newQty);
-                        line.querySelector('.qty-display').textContent = displayQty;
+                        let result;
+                        if (unit === 'g' || unit === 'ml' || unit === 'oz' || unit === 'lb' || unit === 'pounds') {
+                             result = { display: (Math.round(newQty * 10) / 10).toString(), unit: unit }; 
+                             if (unit === 'g' || unit === 'ml') result.display = Math.round(newQty).toString();
+                             if (unit === 'lb' || unit === 'pounds' || unit === 'oz') result.display = formatQuantity(newQty);
+                        } else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) {
+                             result = convertUnits(newQty, unit);
+                        } else {
+                             result = { display: formatQuantity(newQty), unit: unit };
+                        }
+                        line.querySelector('.qty-display').textContent = result.display;
+                        line.querySelector('.unit-display').textContent = result.unit;
                     }
+                });
+                
+                document.querySelectorAll('.instruction-step').forEach(step => {
+                    let text = step.dataset.originalText;
+                    if (currentRecipeBase.ingredients) {
+                        currentRecipeBase.ingredients.forEach(section => {
+                            section.list.forEach(ing => {
+                                const q = parseQuantity(ing.quantity);
+                                if (q > 0) {
+                                    const unit = ing.unit ? ing.unit.trim() : "";
+                                    const qStr = ing.quantity.toString().replace('/', '\\/');
+                                    const uStr = unit ? `\\s*${unit}s?` : "";
+                                    const searchPattern = new RegExp(`\\b${qStr}${uStr}\\b`, 'gi');
+                                    const newQVal = q * ratio;
+                                    let replaceStr = "";
+                                     if (unit === 'g' || unit === 'ml') { replaceStr = `${Math.round(newQVal)} ${unit}`; } 
+                                     else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) { const conv = convertUnits(newQVal, unit); replaceStr = `${conv.display} ${conv.unit}`; } 
+                                     else { replaceStr = `${formatQuantity(newQVal)} ${unit}`; }
+                                    text = text.replace(searchPattern, replaceStr.trim());
+                                }
+                            });
+                        });
+                    }
+                    step.textContent = text;
                 });
             };
 
-            window.toggleMenu = function() { menuModal.classList.toggle('hidden'); menuModal.classList.toggle('opacity-0'); };
-            window.hideMenu = function() { menuModal.classList.add('opacity-0'); setTimeout(() => menuModal.classList.add('hidden'), 300); };
-            window.filterByTag = function(tag) { currentFilterTag = tag; renderRecipeGroups(); window.scrollTo(0,0); };
-            window.clearTagFilter = function() { currentFilterTag = null; renderRecipeGroups(); };
-            
             window.saveRecipe = function() {
                 const title = document.getElementById('form-title').value;
                 if(!title) return alert("Title is required");
@@ -397,10 +371,7 @@
                 document.querySelectorAll('.ing-section').forEach(sec => {
                     const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] };
                     sec.querySelectorAll('.ing-row').forEach(row => {
-                        section.list.push({
-                            name: row.querySelector('.ing-name').value, quantity: row.querySelector('.ing-qty').value, unit: row.querySelector('.ing-unit').value, notes: row.querySelector('.ing-notes').value,
-                            macros: { calories: parseFloat(row.querySelector('.macro-cal').value)||0, protein: parseFloat(row.querySelector('.macro-pro').value)||0, carbs: parseFloat(row.querySelector('.macro-carb').value)||0, fat: parseFloat(row.querySelector('.macro-fat').value)||0, fiber: parseFloat(row.querySelector('.macro-fib').value)||0 }
-                        });
+                        section.list.push({ name: row.querySelector('.ing-name').value, quantity: row.querySelector('.ing-qty').value, unit: row.querySelector('.ing-unit').value, notes: row.querySelector('.ing-notes').value, macros: { calories: parseFloat(row.querySelector('.macro-cal').value)||0, protein: parseFloat(row.querySelector('.macro-pro').value)||0, carbs: parseFloat(row.querySelector('.macro-carb').value)||0, fat: parseFloat(row.querySelector('.macro-fat').value)||0, fiber: parseFloat(row.querySelector('.macro-fib').value)||0 } });
                     });
                     newRecipe.ingredients.push(section);
                 });
@@ -417,6 +388,14 @@
                 if (currentEditingId) window.showDetailView(newRecipe.id); else renderRecipeGroups();
             };
 
+            window.deleteRecipe = function(id) {
+                if(!confirm("Delete recipe?")) return;
+                let customRecipes = getCustomData(state.localStorageKeys.recipes);
+                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
+                saveCustomData(state.localStorageKeys.recipes, newParams);
+                renderRecipeGroups();
+            };
+
             window.saveCategory = function(e) {
                 e.preventDefault();
                 const val = document.getElementById('category-modal-input').value.trim();
@@ -425,14 +404,6 @@
                     if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); }
                     modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
-            };
-
-            window.deleteRecipe = function(id) {
-                if(!confirm("Are you sure? This only deletes local custom recipes.")) return;
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const newParams = customRecipes.filter(r => String(r.id) !== String(id));
-                saveCustomData(state.localStorageKeys.recipes, newParams);
-                renderRecipeGroups();
             };
 
             window.openRecipeModal = function(recipe = null) {
@@ -454,11 +425,11 @@
                     document.getElementById('form-image').value = recipe.image;
                     if(recipe.source) { document.getElementById('form-source-desc').value = recipe.source.description; document.getElementById('form-source-url').value = recipe.source.url; }
                     document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
-                    if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec));
-                    if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec));
-                } else { addIngredientSection(); addInstructionSection(); }
+                    if(recipe.ingredients) recipe.ingredients.forEach(sec => window.addIngredientSection(sec));
+                    if(recipe.instructions) recipe.instructions.forEach(sec => window.addInstructionSection(sec));
+                } else { window.addIngredientSection(); window.addInstructionSection(); }
                 modals.recipe.classList.remove('hidden');
-                switchTab('tab-general');
+                window.switchTab('tab-general');
                 hideMenu();
             };
 
@@ -471,7 +442,6 @@
                 views.detail.classList.remove('hidden');
                 window.scrollTo(0,0);
                 
-                // Calc Macros
                 let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
                 if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
                 const s = recipe.servings || 1;
@@ -492,62 +462,18 @@
                     <div class="grid md:grid-cols-2 gap-8">
                         <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { 
                             const baseQty = parseQuantity(ing.quantity);
-                            return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${ing.quantity}</span> <span class="font-bold text-white">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${ing.notes||''}</span></li>`
+                            return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${ing.quantity}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${ing.notes||''}</span></li>`
                         }).join('')}</ul></div>`).join('')}</div>
-                        <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2">${step}</li>`).join('')}</ol></div>`).join('')}</div>
+                        <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${step}</li>`).join('')}</ol></div>`).join('')}</div>
                     </div>
                 `;
                 document.getElementById('edit-recipe-btn').onclick = () => window.openRecipeModal(recipe);
                 document.getElementById('delete-recipe-btn').onclick = () => window.deleteRecipe(recipe.id);
             };
 
-            // --- INTERNAL UI LOGIC ---
-            function renderRecipeGroups() {
-                views.detail.classList.add('hidden');
-                views.list.classList.remove('hidden');
-                const allRecipes = getAllRecipes();
-                const customCats = getCustomData(state.localStorageKeys.categories);
-                const customTags = getCustomData(state.localStorageKeys.tags);
-                const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
-                const allTags = [...STATIC_TAGS, ...customTags].filter((v, i, a) => a.indexOf(v) === i);
-                containers.groups.innerHTML = '';
-
-                // Update Tag Cloud
-                const allTagsSet = new Set([...STATIC_TAGS, ...customTags]);
-                allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
-                const sortedTags = Array.from(allTagsSet).sort();
-                
-                const getSize = c => c>3?"text-4xl font-black":c>2?"text-2xl font-bold":c>1?"text-lg font-semibold":"text-xs font-normal text-gray-400";
-                const colors = ["text-blue-400","text-green-400","text-yellow-400","text-red-400","text-purple-400","text-pink-400"];
-                const counts = {}; allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
-                containers.tags.innerHTML = sortedTags.map(tag => `<button onclick="filterByTag('${tag}')" class="tag-cloud-item ${getSize(counts[tag])} ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`).join('');
-
-                if (currentFilterTag) {
-                    const filtered = allRecipes.filter(r => (r.tags || []).includes(currentFilterTag));
-                    containers.groups.innerHTML = `<div class="flex items-center justify-between mb-4"><h2 class="text-2xl font-bold text-white">Recipes Tagged: <span class="text-blue-400">${currentFilterTag}</span></h2><button onclick="clearTagFilter()" class="text-sm bg-gray-700 px-3 py-1 rounded text-gray-200">Clear Filter ✕</button></div><div class="flex flex-wrap gap-4 justify-start">${filtered.map(r => createRecipeCard(r)).join('')}</div>`;
-                    return;
-                }
-
-                const grouped = new Map();
-                allRecipes.forEach(r => { const c = r.category || 'Uncategorized'; if(!grouped.has(c)) grouped.set(c, []); grouped.get(c).push(r); });
-                [...allCategories, 'Uncategorized'].forEach(cat => {
-                    const recipes = grouped.get(cat);
-                    if(recipes && recipes.length) {
-                        containers.groups.innerHTML += `<section><div class="bg-gray-800 border border-gray-700 inline-block px-4 py-1.5 rounded-full mb-4 text-lg font-semibold text-white shadow-md">${cat.replace(' (test)', '')}</div><div class="flex flex-wrap gap-4 justify-start">${recipes.map(r => createRecipeCard(r)).join('')}</div></section>`;
-                    }
-                });
-                if(!containers.groups.innerHTML) containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
-            }
-
-            function createRecipeCard(r) {
-                const letter = r.title.charAt(0).toUpperCase();
-                const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
-                return `
-                    <div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')">
-                        <img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
-            }
-
-            function downloadDataFile() {
+            window.filterByTag = function(tag) { currentFilterTag = tag; renderRecipeGroups(); window.scrollTo(0,0); };
+            window.clearTagFilter = function() { currentFilterTag = null; renderRecipeGroups(); };
+            window.downloadDataFile = function() {
                 hideMenu(); 
                 const customRecipes = getCustomData(state.localStorageKeys.recipes);
                 const cleanStatic = STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')}));
@@ -560,43 +486,76 @@
                 a.href = URL.createObjectURL(blob);
                 a.download = `recipes-data-${new Date().toISOString().slice(0,10)}.json`;
                 a.click();
-            }
-            function clearDraftData() {
+            };
+            window.clearDraftData = function() {
                 localStorage.removeItem(state.localStorageKeys.recipes);
                 localStorage.removeItem(state.localStorageKeys.categories);
                 localStorage.removeItem(state.localStorageKeys.tags);
                 hideMenu();
                 initRecipeDashboard();
+            };
+
+            function createRecipeCard(r) {
+                const letter = r.title.charAt(0).toUpperCase();
+                const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
+                return `<div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')"><img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
             }
 
-            // --- 3. EXPOSE & BIND ---
-            window.openRecipeModal = openRecipeModal;
-            window.deleteRecipe = deleteRecipe;
-            window.showDetailView = showDetailView;
-            window.filterByTag = filterByTag;
-            window.clearTagFilter = clearTagFilter;
+            function renderRecipeGroups() {
+                views.detail.classList.add('hidden');
+                views.list.classList.remove('hidden');
+                const allRecipes = getAllRecipes();
+                containers.groups.innerHTML = '';
+                const allTagsSet = new Set([...STATIC_TAGS, ...getCustomData(state.localStorageKeys.tags)]);
+                allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
+                const sortedTags = Array.from(allTagsSet).sort();
+                const getSize = c => c>3?"text-4xl font-black":c>2?"text-2xl font-bold":c>1?"text-lg font-semibold":"text-xs font-normal text-gray-400";
+                const colors = ["text-blue-400","text-green-400","text-yellow-400","text-red-400","text-purple-400","text-pink-400"];
+                const counts = {}; allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
+                containers.tags.innerHTML = sortedTags.map(tag => `<button onclick="filterByTag('${tag}')" class="tag-cloud-item ${getSize(counts[tag])} ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`).join('');
 
+                if (currentFilterTag) {
+                    const filtered = allRecipes.filter(r => (r.tags || []).includes(currentFilterTag));
+                    containers.groups.innerHTML = `<div class="flex items-center justify-between mb-4"><h2 class="text-2xl font-bold text-white">Recipes Tagged: <span class="text-blue-400">${currentFilterTag}</span></h2><button onclick="clearTagFilter()" class="text-sm bg-gray-700 px-3 py-1 rounded text-gray-200">Clear Filter ✕</button></div><div class="flex flex-wrap gap-4 justify-start">${filtered.map(r => createRecipeCard(r)).join('')}</div>`;
+                    return;
+                }
+
+                const customCats = getCustomData(state.localStorageKeys.categories);
+                const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
+                const grouped = new Map();
+                allRecipes.forEach(r => { const c = r.category || 'Uncategorized'; if(!grouped.has(c)) grouped.set(c, []); grouped.get(c).push(r); });
+                
+                [...allCategories, 'Uncategorized'].forEach(cat => {
+                    const recipes = grouped.get(cat);
+                    if(recipes && recipes.length) {
+                        containers.groups.innerHTML += `<section><div class="bg-gray-800 border border-gray-700 inline-block px-4 py-1.5 rounded-full mb-4 text-lg font-semibold text-white shadow-md">${cat.replace(' (test)', '')}</div><div class="flex flex-wrap gap-4 justify-start">${recipes.map(r => createRecipeCard(r)).join('')}</div></section>`;
+                    }
+                });
+                if(!containers.groups.innerHTML) containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
+            }
+
+            // --- EVENT HANDLERS ---
             document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
             document.getElementById('close-menu-button').onclick = hideMenu;
             document.body.onclick = (e) => { if (!menuModal.contains(e.target) && !document.getElementById('menu-button').contains(e.target)) hideMenu(); };
 
-            document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
+            document.getElementById('add-recipe-button').onclick = () => { window.openRecipeModal(); hideMenu(); };
             document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
-            document.getElementById('download-data-button').onclick = downloadDataFile;
+            document.getElementById('download-data-button').onclick = window.downloadDataFile;
+            document.getElementById('clear-draft-button').onclick = window.clearDraftData;
             
             document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); });
             document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
             document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => window.switchTab(e.target.dataset.tab));
 
-            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
-            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
-            document.getElementById('save-recipe-btn').onclick = saveRecipe;
+            document.getElementById('add-ing-section-btn').onclick = () => window.addIngredientSection();
+            document.getElementById('add-inst-section-btn').onclick = () => window.addInstructionSection();
+            document.getElementById('save-recipe-btn').onclick = window.saveRecipe;
             document.getElementById('back-to-list').onclick = renderRecipeGroups;
             document.getElementById('category-form').onsubmit = saveCategory;
-            document.getElementById('clear-draft-button').onclick = clearDraftData;
 
-            // --- INITIALIZATION ---
+            // --- INIT ---
             async function initRecipeDashboard() {
                 let data = EMBEDDED_RECIPES;
                 try { const res = await fetch('/recipes_data.json'); if(res.ok) data = await res.json(); } catch(e) {}
