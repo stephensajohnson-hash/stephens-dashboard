@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.5.17</title>
+    <title>Stephens' Recipes V0.5.18</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -55,11 +55,11 @@
                 <button id="close-menu-button" class="text-gray-400 hover:text-white p-1">X</button>
             </div>
             <button id="add-recipe-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">Add New Recipe</button>
-            <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">Add New Category</button>
-            <button id="add-tag-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Tag</button>
+            <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
+            <!-- Add Tag Button Removed -->
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.17</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.5.18</p>
         </div>
     </div>
 
@@ -159,17 +159,11 @@
         </div>
     </div>
 
-    <!-- Simple Modals -->
+    <!-- Simple Modals (Category Only now) -->
     <div id="add-category-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
             <h2 class="text-xl font-bold mb-4">Add Category</h2>
             <form id="category-form"><input type="text" id="category-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
-        </div>
-    </div>
-    <div id="add-tag-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
-            <h2 class="text-xl font-bold mb-4">Add Tag</h2>
-            <form id="tag-form"><input type="text" id="tag-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
         </div>
     </div>
 
@@ -182,8 +176,7 @@
             const menuModal = document.getElementById('menu-modal');
             const modals = {
                 recipe: document.getElementById('recipe-form-modal'),
-                category: document.getElementById('add-category-modal'),
-                tag: document.getElementById('add-tag-modal')
+                category: document.getElementById('add-category-modal')
             };
             const ingContainer = document.getElementById('ingredients-container');
             const instContainer = document.getElementById('instructions-container');
@@ -538,15 +531,6 @@
                     modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
                 }
             }
-            function saveTag(e) {
-                e.preventDefault();
-                const val = document.getElementById('tag-modal-input').value.trim();
-                if(val) {
-                    const d = getCustomData(state.localStorageKeys.tags);
-                    if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.tags, d); }
-                    modals.tag.classList.add('hidden'); e.target.reset(); renderRecipeGroups();
-                }
-            }
 
             // --- INITIALIZATION ---
             async function initRecipeDashboard() {
@@ -586,10 +570,9 @@
 
             document.getElementById('add-recipe-button').onclick = () => { openRecipeModal(); hideMenu(); };
             document.getElementById('add-category-button').onclick = () => { modals.category.classList.remove('hidden'); hideMenu(); };
-            document.getElementById('add-tag-button').onclick = () => { modals.tag.classList.remove('hidden'); hideMenu(); };
             document.getElementById('download-data-button').onclick = downloadDataFile;
             
-            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); modals.tag.classList.add('hidden'); });
+            document.querySelectorAll('.close-simple-modal').forEach(b => b.onclick = () => { modals.category.classList.add('hidden'); });
             document.getElementById('cancel-recipe-btn').onclick = () => modals.recipe.classList.add('hidden');
             document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
             document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
@@ -597,10 +580,8 @@
             document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
             document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
             document.getElementById('save-recipe-btn').onclick = saveRecipe;
-            document.getElementById('back-to-list').onclick = renderRecipeGroups;
             
             document.getElementById('category-form').onsubmit = saveCategory;
-            document.getElementById('tag-form').onsubmit = saveTag;
             document.getElementById('clear-draft-button').onclick = clearDraftData;
 
             window.onload = () => { initRecipeDashboard(); setInterval(updateClock, 1000); updateClock(); updateWeather(); };
