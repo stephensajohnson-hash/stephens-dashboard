@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.6.13</title>
+    <title>Stephens' Recipes V0.6.14</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,7 +69,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.13</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.14</p>
         </div>
     </div>
 
@@ -186,6 +186,7 @@
             
             let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
             let currentFilterTag = null, currentEditingId = null, isTagMode = false;
+            // State for scaling
             let currentRecipeBase = null; 
             
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
@@ -400,7 +401,7 @@
               "availableTags": []
             };
 
-            // --- 2. KITCHEN MATH & HELPERS (Defined First) ---
+            // --- 2. FUNCTION DEFINITIONS ---
             function parseQuantity(q) {
                 if (!q) return 0;
                 if (typeof q === 'number') return q;
@@ -414,33 +415,15 @@
             }
 
             function formatQuantity(num) {
-                if (num <= 0.02) return "Pinch"; // Minimum non-zero
+                if (num <= 0.02) return "Pinch";
                 if (num <= 0) return "";
-
-                // Snap to fractions
-                const fractions = [
-                    { val: 0.125, str: "1/8" }, { val: 0.25, str: "1/4" }, { val: 0.333, str: "1/3" },
-                    { val: 0.5, str: "1/2" }, { val: 0.666, str: "2/3" }, { val: 0.75, str: "3/4" }
-                ];
-                
+                const fractions = [ { val: 0.125, str: "1/8" }, { val: 0.25, str: "1/4" }, { val: 0.333, str: "1/3" }, { val: 0.5, str: "1/2" }, { val: 0.666, str: "2/3" }, { val: 0.75, str: "3/4" } ];
                 const whole = Math.floor(num);
                 let decimal = num - whole;
-                
-                // Find closest fraction within 10% tolerance
                 let bestFrac = "";
-                for (let f of fractions) {
-                    if (Math.abs(decimal - f.val) < 0.1) {
-                        decimal = f.val; // snap
-                        bestFrac = f.str;
-                        break;
-                    }
-                }
-                
-                // If close to next whole number
+                for (let f of fractions) { if (Math.abs(decimal - f.val) < 0.1) { decimal = f.val; bestFrac = f.str; break; } }
                 if (Math.abs(decimal - 1) < 0.1) return String(whole + 1);
-                // If close to 0
                 if (Math.abs(decimal) < 0.1) return whole > 0 ? String(whole) : "Pinch";
-
                 if (whole > 0 && bestFrac) return `${whole} ${bestFrac}`;
                 if (whole > 0) return String(whole);
                 return bestFrac || num.toFixed(1).replace('.0', '');
@@ -449,27 +432,12 @@
             function convertUnits(qty, unit) {
                 let newQty = qty;
                 let newUnit = unit ? unit.toLowerCase().trim() : "";
-                
-                // Normalize
                 if (newUnit === 'tablespoon' || newUnit === 'tbsp' || newUnit === 'tbs') newUnit = 'Tbsp';
                 if (newUnit === 'teaspoon' || newUnit === 'tsp') newUnit = 'tsp';
                 if (newUnit === 'cup' || newUnit === 'cups') newUnit = 'cup';
-
-                // Cups -> Tbsp
-                if (newUnit === 'cup' && newQty < 0.25) {
-                    newQty = newQty * 16;
-                    newUnit = 'Tbsp';
-                }
-                // Tbsp -> Tsp
-                if (newUnit === 'Tbsp' && newQty < 0.34) {
-                    newQty = newQty * 3;
-                    newUnit = 'tsp';
-                }
-                // Tsp -> Pinch
-                if (newUnit === 'tsp' && newQty < 0.125) {
-                     return { qty: 0, display: "Pinch", unit: "" }; 
-                }
-
+                if (newUnit === 'cup' && newQty < 0.25) { newQty = newQty * 16; newUnit = 'Tbsp'; }
+                if (newUnit === 'Tbsp' && newQty < 0.34) { newQty = newQty * 3; newUnit = 'tsp'; }
+                if (newUnit === 'tsp' && newQty < 0.125) { return { qty: 0, display: "Pinch", unit: "" }; }
                 return { qty: newQty, unit: newUnit, display: formatQuantity(newQty) };
             }
 
@@ -487,61 +455,43 @@
             }
 
             // --- 3. EXPOSED GLOBAL FUNCTIONS ---
-            // ADD INGREDIENT HELPER (Restored)
+            window.switchTab = function(tabId) {
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
+                document.getElementById(tabId).classList.remove('hidden');
+                document.querySelectorAll('.tab-btn').forEach(b => { b.classList.remove('text-blue-400', 'border-b-2', 'border-blue-500'); b.classList.add('text-gray-400'); });
+                const activeBtn = document.querySelector(`[data-tab="${tabId}"]`);
+                if(activeBtn) { activeBtn.classList.add('text-blue-400', 'border-b-2', 'border-blue-500'); activeBtn.classList.remove('text-gray-400'); }
+            };
+
             window.addIngredientSection = function(data = null) {
                 const div = document.createElement('div');
                 div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
-                div.innerHTML = `
-                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec hover:text-red-300 whitespace-nowrap" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div>
-                    <div class="rows-container space-y-2"></div>
-                    <button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>
-                `;
+                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div><div class="rows-container space-y-2"></div><button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>`;
                 const rowsContainer = div.querySelector('.rows-container');
                 const addRow = (ing = null) => {
                     const row = document.createElement('div');
                     row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
-                    row.innerHTML = `
-                        <input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}">
-                        <input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}">
-                        <input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}">
-                        <input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}">
-                        <button type="button" class="col-span-1 text-red-400 hover:text-red-200 remove-row" onclick="this.parentElement.remove()">X</button>
-                        <button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros hover:text-white" onclick="this.nextElementSibling.classList.toggle('hidden')">▼ Macros</button>
-                        <div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded">
-                            <div><label class="text-[10px] text-gray-400 block">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.calories : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.protein : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.carbs : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fat : ''}"></div>
-                            <div><label class="text-[10px] text-gray-400 block">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing && ing.macros ? ing.macros.fiber : ''}"></div>
-                        </div>
-                    `;
+                    row.innerHTML = `<input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}"><input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}"><input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}"><input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}"><button type="button" class="col-span-1 text-red-400 remove-row" onclick="this.parentElement.remove()">X</button><button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros" onclick="this.nextElementSibling.classList.toggle('hidden')">▼ Macros</button><div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded"><div><label class="text-[10px]">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.calories:''}"></div><div><label class="text-[10px]">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.protein:''}"></div><div><label class="text-[10px]">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.carbs:''}"></div><div><label class="text-[10px]">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fat:''}"></div><div><label class="text-[10px]">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fiber:''}"></div></div>`;
                     rowsContainer.appendChild(row);
                 };
                 div.querySelector('.add-row-btn').onclick = () => addRow();
-                if (data && data.list) data.list.forEach(i => addRow(i));
-                else addRow(); 
+                if (data && data.list) data.list.forEach(i => addRow(i)); else addRow();
                 ingContainer.appendChild(div);
             };
 
-            // ADD INSTRUCTION HELPER (Restored)
             window.addInstructionSection = function(data = null) {
                 const div = document.createElement('div');
                 div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section';
-                div.innerHTML = `
-                    <div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove</button></div>
-                    <div class="steps-container space-y-2"></div>
-                    <button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>
-                `;
+                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove</button></div><div class="steps-container space-y-2"></div><button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>`;
                 const stepsContainer = div.querySelector('.steps-container');
                 const addStep = (text = '') => {
                     const row = document.createElement('div');
                     row.className = 'flex gap-2 step-row';
-                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center hover:text-red-200" onclick="this.parentElement.remove()">X</button>`;
+                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center" onclick="this.parentElement.remove()">X</button>`;
                     stepsContainer.appendChild(row);
                 };
                 div.querySelector('.add-step-btn').onclick = () => addStep();
-                if(data && data.steps) data.steps.forEach(s => addStep(s));
-                else addStep();
+                if(data && data.steps) data.steps.forEach(s => addStep(s)); else addStep();
                 instContainer.appendChild(div);
             };
 
@@ -552,29 +502,22 @@
                 let newVal = currentVal + change;
                 if (newVal < 1) newVal = 1;
                 currentSpan.textContent = newVal;
-                
                 const baseServings = currentRecipeBase.servings || 1;
                 const ratio = newVal / baseServings;
-
                 document.querySelectorAll('.ingredient-line').forEach(line => {
                     const baseQty = parseFloat(line.dataset.baseQty);
                     if (!isNaN(baseQty) && baseQty > 0) {
                         const newQty = baseQty * ratio;
                         const unit = line.dataset.unit || "";
-                        
                         let result;
-                        if (unit === 'g' || unit === 'ml') {
-                             result = { display: Math.round(newQty).toString(), unit: unit }; 
-                        } else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) {
-                             result = convertUnits(newQty, unit);
-                        } else {
-                             result = { display: formatQuantity(newQty), unit: unit };
-                        }
-
+                        if (unit === 'g' || unit === 'ml') { result = { display: Math.round(newQty).toString(), unit: unit }; } 
+                        else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) { result = convertUnits(newQty, unit); } 
+                        else { result = { display: formatQuantity(newQty), unit: unit }; }
                         line.querySelector('.qty-display').textContent = result.display;
                         line.querySelector('.unit-display').textContent = result.unit;
                     }
                 });
+                // Instructions Search/Replace Removed
             };
 
             window.toggleMenu = function() {
@@ -684,7 +627,6 @@
                 views.detail.classList.remove('hidden');
                 window.scrollTo(0,0);
                 
-                // Calc Macros
                 let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
                 if(recipe.ingredients) recipe.ingredients.forEach(s => s.list && s.list.forEach(i => { if(i.macros) { tm.fat+=i.macros.fat||0; tm.carbs+=i.macros.carbs||0; tm.fiber+=i.macros.fiber||0; tm.protein+=i.macros.protein||0; tm.calories+=i.macros.calories||0; }}));
                 const s = recipe.servings || 1;
@@ -802,8 +744,8 @@
             document.getElementById('close-recipe-modal').onclick = () => modals.recipe.classList.add('hidden');
             document.querySelectorAll('.tab-btn').forEach(btn => btn.onclick = (e) => switchTab(e.target.dataset.tab));
 
-            document.getElementById('add-ing-section-btn').onclick = () => window.addIngredientSection();
-            document.getElementById('add-inst-section-btn').onclick = () => window.addInstructionSection();
+            document.getElementById('add-ing-section-btn').onclick = () => addIngredientSection();
+            document.getElementById('add-inst-section-btn').onclick = () => addInstructionSection();
             document.getElementById('save-recipe-btn').onclick = saveRecipe;
             document.getElementById('back-to-list').onclick = renderRecipeGroups;
             document.getElementById('category-form').onsubmit = saveCategory;
