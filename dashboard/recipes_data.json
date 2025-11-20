@@ -777,6 +777,252 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763652731628",
+      "title": "Roasted Turkey",
+      "description": "Is it Thanksgiving?",
+      "category": "American",
+      "servings": 16,
+      "prepTime": "30 minutes",
+      "cookTime": "2 hours 15 minutes",
+      "image": "https://images.ctfassets.net/lufu0clouua1/2cSQKvJYskEqgyaAYawE48/7b71e49f5de264f38541c055926f8f5a/classic-roast-turkey.jpg",
+      "source": {
+        "description": "Americas Test Kitchen",
+        "url": "https://www.americastestkitchen.com/articles/590-everything-you-need-to-know-to-make-the-perfect-thanksgiving-turkey?extcode=KGBKM001G&utm_medium=cpc&utm_source=google&utm_campaign=Brand|America%27s_Test_Kitchen|AMT&utm_term=americas%20test%20kitchen%20turkey&utm_content=seRbT9fd8|pcrid|783245142911|pkw|americas%20test%20kitchen%20turkey|pdv|c|pmt|b|productid||pgrid|169339641523|cpgnid|21322604783|ptaid|kwd-10075922075|adext|310170937739|&gad_source=1&gad_campaignid=21322604783&gbraid=0AAAAAD-Lx3rTtZ0u9NVFHO_FyLNHgmln5&gclid=CjwKCAiAlfvIBhA6EiwAcErpyWkH_gPBej2qfUTWqhpgyjJ2slTVSsCaXnwWsHMZs1H98ImStdc01RoC3O0QAvD_BwE"
+      },
+      "tags": [
+        "Thanksgiving",
+        "Keto"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Ingredients",
+          "list": [
+            {
+              "name": "Turkey",
+              "quantity": "12",
+              "unit": "lb",
+              "notes": "Reserve Giblets and Neck",
+              "macros": {
+                "calories": 3800,
+                "protein": 390,
+                "carbs": 0,
+                "fat": 175,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "4",
+              "unit": "Tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sugar",
+              "quantity": "4",
+              "unit": "Tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 195,
+                "protein": 0,
+                "carbs": 50,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Avocado Oil",
+              "quantity": "3 1/2",
+              "unit": "Tsp",
+              "notes": "",
+              "macros": {
+                "calories": 108,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 12.25,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Baking Powder",
+              "quantity": "1",
+              "unit": "Tsp",
+              "notes": "",
+              "macros": {
+                "calories": 2,
+                "protein": 0,
+                "carbs": 2,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Directions",
+          "steps": [
+            "Combine 4 tablespoons salt and sugar in bowl. Place turkey, breast side up, on counter. Using your fingers, carefully loosen skin covering breast and legs. Rub 4 teaspoons salt-sugar mixture under skin of each breast, 2 teaspoons under skin of each leg, and remaining salt-sugar mixture inside cavity. Tuck wings behind back and tie legs together with kitchen twine. Place turkey on wire rack set in rimmed baking sheet and refrigerate, uncovered, for 24 to 48 hours.",
+            "At least 30 minutes before roasting turkey, adjust oven rack to lowest position, set baking stone on rack, set roasting pan on baking stone, and heat oven to 500 degrees. Combine 1 1/2 teaspoons oil and baking powder in small bowl. Pat turkey dry with paper towels. Rub oil mixture evenly over turkey. Cover turkey breast with double layer of aluminum foil.",
+            "Remove roasting pan from oven. Drizzle remaining 2 tablespoons oil into roasting pan. Place turkey, breast side up, in pan and return pan to oven. Reduce oven temperature to 425 degrees and roast for 45 minutes.",
+            "Remove foil, reduce oven temperature to 325 degrees, and continue to roast until breast registers 160 degrees and drumsticks/thighs register 175 degrees, 1 to 1 1/2 hours longer.",
+            "Using spatula, loosen turkey from roasting pan; transfer to carving board and let rest, uncovered, for 45 minutes."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763653389089",
+      "title": "Turkey Gravy",
+      "description": "Giblets and Neck anyone?",
+      "category": "American",
+      "servings": 16,
+      "prepTime": "30 minutes",
+      "cookTime": "3 1/2 hours",
+      "image": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg",
+      "source": {
+        "description": "America's Test Kitchen",
+        "url": "https://www.americastestkitchen.com/recipes/11217-our-favorite-turkey-gravy"
+      },
+      "tags": [
+        "Thanksgiving",
+        "Gluten Free",
+        "Dairy Free"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Ingredients",
+          "list": [
+            {
+              "name": "Reserved Giblets and Turkey Neck",
+              "quantity": "1",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 10,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Medium Carrot",
+              "quantity": "1",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Small Onions",
+              "quantity": "2",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic",
+              "quantity": "6",
+              "unit": "cloves",
+              "notes": "unpeeled",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Turkey Broth",
+              "quantity": "6",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 120,
+                "protein": 12,
+                "carbs": 0,
+                "fat": 6,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Fresh Thyme",
+              "quantity": "6",
+              "unit": "sprigs",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Flour Mix",
+              "quantity": "1/4",
+              "unit": "cup",
+              "notes": "gluten free if needed",
+              "macros": {
+                "calories": 110,
+                "protein": 4,
+                "carbs": 23,
+                "fat": 0,
+                "fiber": 0.25
+              }
+            },
+            {
+              "name": "Avocado Oil",
+              "quantity": "1",
+              "unit": "Tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 124,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 14,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Directions",
+          "steps": [
+            "Heat oven to 450 degrees. Place oil, turkey trimmings, carrot, celery, onions, and garlic in cast iron pan.  Roast, stirring every 10 minutes, until well-browned, 40 to 50 minutes.",
+            "Remove pan from oven, and place over burner set at high heat; add 4 cups turkey broth and bring to boil, scraping up browned bits on bottom of pan with wooden spoon.",
+            "Transfer contents of pan to large saucepan. Add 2 cups turkey broth, 3 cups water, and thyme; bring to boil over high heat. Reduce heat to low and simmer until reduced by half, about 1 1/2 hours. ",
+            "Strain stock into large container. Cool to room temperature; cover with plastic wrap and refrigerate until fat congeals, at least 1 hour.",
+            "To finish gravy, skim fat from stock using soup spoon; reserve fat. Pour stock through fine-mesh strainer to remove remaining bits of fat; discard bits in strainer. \nBring stock to simmer in medium saucepan over medium-high heat. \n",
+            "In second medium saucepan, heat 4 tablespoons reserved turkey fat over medium-high heat until bubbling; whisk in flour and cook, whisking constantly, until combined and honey-colored, about 2 minutes. Continuing to whisk constantly, gradually add hot stock; bring to boil, then reduce heat to medium-low and simmer, stirring occasionally, until slightly thickened, about 5 minutes. Season to taste with salt and pepper and serve with turkey.",
+            " (Can be refrigerated up to 3 days; reheat in medium saucepan over medium heat until hot, about 8 minutes.)"
+          ]
+        }
+      ]
     }
   ],
   "categories": [
