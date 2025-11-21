@@ -3135,6 +3135,321 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1763757961410",
+      "title": "Cranberry Salsa",
+      "description": "Debbie brought this to Thanksgiving around 2022 and it was a big hit.",
+      "category": "Sweets",
+      "servings": 8,
+      "prepTime": "15 minutes",
+      "cookTime": "0 minutes",
+      "image": "https://www.yourhomebasedmom.com/wp-content/uploads/2019/11/easy-cranberry-salsa_-768x1154.jpg",
+      "source": {
+        "description": "Debbie Tyler",
+        "url": ""
+      },
+      "tags": [
+        "Thanksgiving"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Cranberries",
+              "quantity": "12",
+              "unit": "oz",
+              "notes": "fresh",
+              "macros": {
+                "calories": 187,
+                "protein": 4,
+                "carbs": 42,
+                "fat": 1,
+                "fiber": 23
+              }
+            },
+            {
+              "name": "Jalapenos",
+              "quantity": "2",
+              "unit": "",
+              "notes": "diced",
+              "macros": {
+                "calories": 8,
+                "protein": 0.2,
+                "carbs": 1.7,
+                "fat": 0.1,
+                "fiber": 0.8
+              }
+            },
+            {
+              "name": "Green Onions",
+              "quantity": "1/4",
+              "unit": "cup",
+              "notes": "sliced",
+              "macros": {
+                "calories": 5,
+                "protein": 1,
+                "carbs": 2,
+                "fat": 0,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "Cilantro",
+              "quantity": "1/4",
+              "unit": "cup",
+              "notes": "chopped",
+              "macros": {
+                "calories": 1,
+                "protein": 0.1,
+                "carbs": 0.15,
+                "fat": 0.02,
+                "fiber": 0.1
+              }
+            },
+            {
+              "name": "Ginger",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 10,
+                "protein": 0.3,
+                "carbs": 2,
+                "fat": 0.3,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "Lemon Juice",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 7,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sugar",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 390,
+                "protein": 0,
+                "carbs": 100,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cream Cheese",
+              "quantity": "8",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 700,
+                "protein": 16,
+                "carbs": 16,
+                "fat": 70,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ritz Crackers",
+              "quantity": "40",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 640,
+                "protein": 8,
+                "carbs": 80,
+                "fat": 36,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Process all ingredients in a food processor",
+            "Chill in refrigerator at least one hour",
+            "Taste and add sugar as needed (more sugar may be needed to counteract the bitterness of cranberries",
+            "Server over softened brick of cream cheese with crackers"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763759074102",
+      "title": "Texas Caviar",
+      "description": "Texas Caviar is an easy appetizer that is perfect for parties! Serve with Fritos!",
+      "category": "Dips",
+      "servings": 20,
+      "prepTime": "20 minutes",
+      "cookTime": "12 hours",
+      "image": "https://www.thegunnysack.com/wp-content/uploads/2019/02/Cowboy-Caviar.jpg",
+      "source": {
+        "description": "",
+        "url": ""
+      },
+      "tags": [
+        "New Year's Eve",
+        "Texas"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Black Eyed Peas",
+              "quantity": "1 1/2 cups",
+              "unit": "",
+              "notes": "drained",
+              "macros": {
+                "calories": 370,
+                "protein": 20,
+                "carbs": 80,
+                "fat": 2,
+                "fiber": 20
+              }
+            },
+            {
+              "name": "Black Beans",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "drained",
+              "macros": {
+                "calories": 109,
+                "protein": 7,
+                "carbs": 20,
+                "fat": 0.4,
+                "fiber": 7
+              }
+            },
+            {
+              "name": "Black Olives",
+              "quantity": "4",
+              "unit": "oz",
+              "notes": "drained",
+              "macros": {
+                "calories": 92,
+                "protein": 1,
+                "carbs": 6,
+                "fat": 8,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Chopped Green Chilies",
+              "quantity": "3 1/2",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 23,
+                "protein": 1,
+                "carbs": 4.5,
+                "fat": 0.5,
+                "fiber": 1.8
+              }
+            },
+            {
+              "name": "Jalapenos",
+              "quantity": "1/4",
+              "unit": "cup",
+              "notes": "diced",
+              "macros": {
+                "calories": 4,
+                "protein": 0.1,
+                "carbs": 0.5,
+                "fat": 0,
+                "fiber": 0.4
+              }
+            },
+            {
+              "name": "Roma Tomatoes",
+              "quantity": "2",
+              "unit": "",
+              "notes": "diced",
+              "macros": {
+                "calories": 22,
+                "protein": 1,
+                "carbs": 4.8,
+                "fat": 0.2,
+                "fiber": 1.5
+              }
+            },
+            {
+              "name": "Bell Peppers",
+              "quantity": "1 1/2",
+              "unit": "",
+              "notes": "chopped",
+              "macros": {
+                "calories": 45,
+                "protein": 2,
+                "carbs": 11,
+                "fat": 0,
+                "fiber": 5
+              }
+            },
+            {
+              "name": "Green Onions",
+              "quantity": "3",
+              "unit": "",
+              "notes": "chopped",
+              "macros": {
+                "calories": 14,
+                "protein": 1,
+                "carbs": 3,
+                "fat": 0.1,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "Avocado",
+              "quantity": "2",
+              "unit": "",
+              "notes": "chopped",
+              "macros": {
+                "calories": 560,
+                "protein": 12,
+                "carbs": 32,
+                "fat": 52,
+                "fiber": 32
+              }
+            },
+            {
+              "name": "Zesty Italian Dressing",
+              "quantity": "12",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 384,
+                "protein": 0,
+                "carbs": 12,
+                "fat": 30,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Combine all ingredients into large bowl and stir.  Cover bowl and refrigerate overnight.  "
+          ]
+        }
+      ]
     }
   ],
   "categories": [
@@ -3145,7 +3460,8 @@
     "Condiments",
     "Italian",
     "Salad",
-    "Sweets"
+    "Sweets",
+    "Dips"
   ],
   "availableTags": []
 }
