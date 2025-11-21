@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.9.6</title>
+    <title>Stephens' Dashboard V0.9.7</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -70,7 +70,7 @@
             
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Draft Data (Local)</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.6</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.7</p>
         </div>
     </div>
 
@@ -302,16 +302,30 @@
             div.appendChild(panel); return div;
         }
 
+        // FIXED: Date parsing logic for accurate countdowns
+        function parseLocalYMD(dateString) {
+             // Splits YYYY-MM-DD or YYYY-MM-DDTHH:mm:ss by non-digits
+             // Constructs Date(y, m-1, d) which implies local time at 00:00:00
+             const parts = dateString.split(/[-T:]/);
+             const y = parseInt(parts[0]);
+             const m = parseInt(parts[1]) - 1; // Months are 0-indexed
+             const d = parseInt(parts[2]);
+             return new Date(y, m, d); 
+        }
+
         function createCountdownItem(c, idx) {
             const div = document.createElement('div'); div.className = 'w-full h-full flex items-center relative group'; 
             const controls = `<div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900/80 rounded-lg p-1 backdrop-blur-sm"><button onclick="openCountdownModal('${c.id}')" class="text-blue-400 hover:text-white p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button><button onclick="deleteItem('${c.id}', 'countdowns')" class="text-red-400 hover:text-white p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>`;
+            
+            // Use the helper to get a stable local date for display
+            const displayDate = parseLocalYMD(c.targetDate).toLocaleDateString();
             
             div.innerHTML = `
                 <a href="${c.linkUrl||'#'}" target="_blank" class="flex items-center justify-center w-full h-full px-8 gap-8 hover:bg-white/5 transition duration-200">
                     ${c.img ? `<img src="${c.img}" class="w-16 h-16 rounded-xl object-cover shadow-lg border border-gray-600">` : ''}
                     <div class="flex flex-col justify-center">
                         <div class="text-3xl font-black text-white tracking-tight">${c.name}</div>
-                        <div class="text-sm text-gray-400 uppercase tracking-widest font-semibold mt-1">${new Date(c.targetDate).toLocaleDateString()}</div>
+                        <div class="text-sm text-gray-400 uppercase tracking-widest font-semibold mt-1">${displayDate}</div>
                     </div>
                     <div class="text-right pl-8">
                          <div class="text-5xl font-mono text-blue-400 font-bold countdown-timer-main" data-target="${c.targetDate}">--</div>
@@ -386,25 +400,26 @@
             const timersMain = document.querySelectorAll('.countdown-timer-main');
             const timersTotal = document.querySelectorAll('.countdown-timer-total');
             
+            const now = new Date();
+            // Midnight Today (Local)
+            const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
             timersMain.forEach(el => {
                 const targetStr = el.dataset.target;
-                const targetDate = new Date(targetStr);
-                const today = new Date();
+                // Use Helper to get Local Midnight of Target
+                const tMidnight = parseLocalYMD(targetStr);
                 
-                // Reset time to midnight for accurate "Day" diff
-                const tMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-                const nMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                
-                const diffTime = tMidnight - nMidnight;
+                const diffTime = tMidnight - todayMidnight;
                 
                 if (diffTime <= 0) {
                     el.textContent = "Today!";
                     el.classList.add('text-green-400');
                     if(el.nextElementSibling) el.nextElementSibling.textContent = "";
                 } else {
-                    let y = tMidnight.getFullYear() - nMidnight.getFullYear();
-                    let m = tMidnight.getMonth() - nMidnight.getMonth();
-                    let d = tMidnight.getDate() - nMidnight.getDate();
+                    // Calculate rough breakdown (approximation for display)
+                    let y = tMidnight.getFullYear() - todayMidnight.getFullYear();
+                    let m = tMidnight.getMonth() - todayMidnight.getMonth();
+                    let d = tMidnight.getDate() - todayMidnight.getDate();
 
                     if (d < 0) {
                         m -= 1;
@@ -427,13 +442,11 @@
             
             timersTotal.forEach(el => {
                 const targetStr = el.dataset.target;
-                const targetDate = new Date(targetStr);
-                const today = new Date();
-                const tMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
-                const nMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                const tMidnight = parseLocalYMD(targetStr);
+                const diffTime = tMidnight - todayMidnight;
                 
-                const diffTime = tMidnight - nMidnight;
                 if (diffTime > 0) {
+                     // Exactly days difference
                      const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
                      el.textContent = `[Total: ${totalDays} Days]`;
                 }
@@ -525,12 +538,9 @@
                 const c = countdowns.find(x => x.id === id);
                 if(c) {
                     document.getElementById('countdown-name').value = c.name;
-                    
-                    // FIX: Format ISO string "YYYY-MM-DDT..." to "YYYY-MM-DD" for input
                     let dateVal = c.targetDate;
                     if (dateVal.includes('T')) dateVal = dateVal.split('T')[0];
                     document.getElementById('countdown-targetDate').value = dateVal;
-                    
                     document.getElementById('countdown-linkUrl').value = c.linkUrl || '';
                     document.getElementById('countdown-img').value = c.img || '';
                 }
@@ -687,13 +697,13 @@
             }
         }
 
-        // Init
+        function updateClock() { const now = new Date(); document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; }
+
         window.onload = () => { 
             fetchData(); 
-            setInterval(() => { 
-                const now = new Date(); 
-                document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; 
-            }, 1000); 
+            setInterval(updateClock, 1000); 
+            updateClock(); 
+            // Weather fetch is called inside fetchData
         };
     </script>
 </body>
