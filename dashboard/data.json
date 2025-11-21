@@ -154,12 +154,12 @@
         {
           "name": "Movies Portal",
           "url": "https://movies.do",
-          "img": "https://placehold.co/60x60/1E40AF/FFFFFF?text=MP"
+          "img": "/images/movies portal.jpg"
         },
         {
           "name": "Bright Star Cinemas",
           "url": "https://www.brightstarcinemas.com/",
-          "img": "https://placehold.co/60x60/8B5CF6/FFFFFF?text=BSC"
+          "img": "/images/bright star cinemas.png"
         },
         {
           "name": "YouTube",
