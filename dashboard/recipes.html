@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.7.4</title>
+    <title>Stephens' Recipes V0.7.6</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -72,7 +72,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.7.4</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.7.6</p>
         </div>
     </div>
 
@@ -101,7 +101,9 @@
                 </button>
             </div>
         </div>
-        <div id="detail-content" class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-2xl max-w-5xl mx-auto"></div>
+        <div id="detail-content" class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-2xl max-w-5xl mx-auto">
+            <!-- Content injected via JS -->
+        </div>
     </main>
     
     <!-- RECIPE MODAL (Full Screen / Tabbed) -->
@@ -231,11 +233,13 @@
                         r.ingredients.forEach(sec => {
                             if(sec.list) {
                                 sec.list.forEach(ing => {
-                                    const name = ing.name.toLowerCase().trim();
+                                    const rawName = ing.name.trim();
+                                    const key = rawName.toLowerCase(); 
                                     const hasMacros = ing.macros && (ing.macros.calories > 0 || ing.macros.protein > 0);
-                                    // Keep the entry with macros if possible
-                                    if (name && (hasMacros || !INGREDIENT_DB[name])) {
-                                         INGREDIENT_DB[name] = ing;
+                                    const existing = INGREDIENT_DB[key];
+                                    const existingHasMacros = existing && existing.macros && (existing.macros.calories > 0 || existing.macros.protein > 0);
+                                    if (key && (!existing || (hasMacros && !existingHasMacros))) {
+                                         INGREDIENT_DB[key] = ing; 
                                     }
                                 });
                             }
@@ -244,28 +248,23 @@
                 });
                 const dl = document.getElementById('ingredient-datalist');
                 if(dl) {
-                    dl.innerHTML = Object.keys(INGREDIENT_DB).sort().map(name => `<option value="${name}">`).join('');
+                    const sortedKeys = Object.keys(INGREDIENT_DB).sort();
+                    dl.innerHTML = sortedKeys.map(key => `<option value="${INGREDIENT_DB[key].name}">`).join('');
                 }
             }
 
             function getNormalizedAmount(qty, unit) {
                 const q = parseQuantity(qty);
-                const u = unit ? unit.toLowerCase().trim().replace(/s$/, '') : ''; // singularize
-
+                const u = unit ? unit.toLowerCase().trim().replace(/s$/, '') : '';
                 if (u === 'g' || u === 'gram') return { val: q, type: 'weight' };
                 if (u === 'oz' || u === 'ounce') return { val: q * 28.35, type: 'weight' };
                 if (u === 'lb' || u === 'pound') return { val: q * 453.6, type: 'weight' };
                 if (u === 'kg' || u === 'kilogram') return { val: q * 1000, type: 'weight' };
-
                 if (u === 'tsp' || u === 'teaspoon') return { val: q, type: 'volume' };
                 if (u === 'tbsp' || u === 'tablespoon') return { val: q * 3, type: 'volume' };
                 if (u === 'cup') return { val: q * 48, type: 'volume' };
                 if (u === 'ml' || u === 'milliliter') return { val: q / 5, type: 'volume' };
                 if (u === 'l' || u === 'liter') return { val: (q * 1000) / 5, type: 'volume' };
-                if (u === 'gal' || u === 'gallon') return { val: q * 768, type: 'volume' };
-                if (u === 'pt' || u === 'pint') return { val: q * 96, type: 'volume' };
-                if (u === 'qt' || u === 'quart') return { val: q * 192, type: 'volume' };
-
                 return { val: q, type: 'count' };
             }
 
@@ -274,30 +273,18 @@
                 const nameInput = row.querySelector('.ing-name');
                 const qtyInput = row.querySelector('.ing-qty');
                 const unitInput = row.querySelector('.ing-unit');
-
                 const name = nameInput.value.toLowerCase().trim();
                 const ref = INGREDIENT_DB[name];
-
-                if (!ref) return; // No match found in DB
-
+                if (!ref) return;
                 const currentQtyRaw = qtyInput.value;
                 const currentUnit = unitInput.value;
-
-                if (!currentQtyRaw) return; // Need quantity to calc
-
+                if (!currentQtyRaw) return;
                 const currentNorm = getNormalizedAmount(currentQtyRaw, currentUnit);
                 const refNorm = getNormalizedAmount(ref.quantity, ref.unit);
-
                 let ratio = 1;
-
                 if (currentNorm.type === refNorm.type) {
-                    if (refNorm.val === 0) ratio = 1;
-                    else ratio = currentNorm.val / refNorm.val;
-                } else {
-                    // Mismatch (e.g. weight vs volume), do not auto-scale macros to avoid errors
-                    return; 
-                }
-
+                    if (refNorm.val === 0) ratio = 1; else ratio = currentNorm.val / refNorm.val;
+                } else { return; }
                 if (ref.macros) {
                     row.querySelector('.macro-cal').value = Math.round((ref.macros.calories || 0) * ratio);
                     row.querySelector('.macro-pro').value = Math.round((ref.macros.protein || 0) * ratio);
@@ -366,7 +353,7 @@
                 const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
                 return `<div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')"><img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex gap-2 text-[10px] text-gray-300 mb-2 font-mono border-t border-b border-gray-700/50 py-1"><span class="text-white font-bold">${ps.calories}</span> Cal | <span class="text-blue-300">${ps.protein}g</span> P | <span class="text-emerald-300">${ps.netCarbs}g</span> NC | <span class="text-yellow-300">${ps.fat}g</span> F</div><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
             }
-            
+
             function renderRecipeGroups() {
                 views.detail.classList.add('hidden');
                 views.list.classList.remove('hidden');
@@ -376,10 +363,8 @@
                 const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
                 containers.groups.innerHTML = '';
 
-                const allTagsSet = new Set([...STATIC_TAGS, ...customTags]);
-                allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
+                const allTagsSet = new Set([...STATIC_TAGS, ...customTags]); allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
                 const sortedTags = Array.from(allTagsSet).sort();
-                
                 const getSize = c => c>3?"text-4xl font-black":c>2?"text-2xl font-bold":c>1?"text-lg font-semibold":"text-xs font-normal text-gray-400";
                 const colors = ["text-blue-400","text-green-400","text-yellow-400","text-red-400","text-purple-400","text-pink-400"];
                 const counts = {}; allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
@@ -406,7 +391,7 @@
             function hideMenu() { document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
             function filterByTag(tag) { currentFilterTag = tag; renderRecipeGroups(); window.scrollTo(0,0); }
             function clearTagFilter() { currentFilterTag = null; renderRecipeGroups(); }
-            function deleteRecipe(id) { if(!confirm("Delete recipe?")) return; let d = getCustomData(state.localStorageKeys.recipes).filter(r => String(r.id) !== String(id)); saveCustomData(state.localStorageKeys.recipes, d); renderRecipeGroups(); }
+            function deleteRecipe(id) { if(!confirm("Delete recipe?")) return; let d = getCustomData(state.localStorageKeys.recipes).filter(r => String(r.id) !== String(id)); saveCustomData(state.localStorageKeys.recipes, d); renderRecipeGroups(); buildIngredientDB(); }
             function saveCategory(e) { e.preventDefault(); const val = document.getElementById('category-modal-input').value.trim(); if(val) { const d = getCustomData(state.localStorageKeys.categories); if(!d.includes(val)) { d.push(val); saveCustomData(state.localStorageKeys.categories, d); } modals.category.classList.add('hidden'); e.target.reset(); renderRecipeGroups(); } }
             
             function updateServings(change) {
@@ -440,9 +425,7 @@
             }
 
             function addIngredientSection(data = null) {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section';
-                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div><div class="rows-container space-y-2"></div><button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>`;
+                const div = document.createElement('div'); div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 ing-section'; div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title (e.g. Sauce)" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div><div class="rows-container space-y-2"></div><button type="button" class="text-xs text-blue-400 mt-2 add-row-btn">+ Add Ingredient</button>`;
                 const rows = div.querySelector('.rows-container');
                 const addRow = (ing = null) => {
                     const row = document.createElement('div'); row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
@@ -453,21 +436,9 @@
                 if (data && data.list) data.list.forEach(i => addRow(i)); else addRow();
                 ingContainer.appendChild(div);
             }
-
+            
             function addInstructionSection(data = null) {
-                const div = document.createElement('div');
-                div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section';
-                div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div><div class="steps-container space-y-2"></div><button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>`;
-                const steps = div.querySelector('.steps-container');
-                const addStep = (text = '') => {
-                    const row = document.createElement('div'); row.className = 'flex gap-2 step-row';
-                    row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center" onclick="this.parentElement.remove()">X</button>`;
-                    steps.appendChild(row);
-                };
-                div.querySelector('.add-step-btn').onclick = () => addStep();
-                if(data && data.steps) data.steps.forEach(s => addStep(s)); else addStep();
-                instContainer.appendChild(div);
-            }
+                const div = document.createElement('div'); div.className = 'bg-gray-800 p-3 rounded-lg border border-gray-700 mb-4 inst-section'; div.innerHTML = `<div class="flex justify-between mb-2"><input type="text" class="section-title font-bold bg-transparent border-b border-gray-600 w-full mr-2" placeholder="Section Title" value="${data ? data.sectionTitle : ''}"><button type="button" class="text-red-400 text-xs remove-sec" onclick="this.parentElement.parentElement.remove()">Remove Section</button></div><div class="steps-container space-y-2"></div><button type="button" class="text-xs text-green-400 mt-2 add-step-btn">+ Add Step</button>`; const steps = div.querySelector('.steps-container'); const addStep = (text = '') => { const row = document.createElement('div'); row.className = 'flex gap-2 step-row'; row.innerHTML = `<textarea class="flex-1 text-sm bg-gray-700 border-gray-600 rounded p-1 step-text text-white" rows="2">${text}</textarea><button type="button" class="text-red-400 remove-step self-center" onclick="this.parentElement.remove()">X</button>`; steps.appendChild(row); }; div.querySelector('.add-step-btn').onclick = () => addStep(); if(data && data.steps) data.steps.forEach(s => addStep(s)); else addStep(); instContainer.appendChild(div); }
 
             function saveRecipe() {
                 const title = document.getElementById('form-title').value;
@@ -503,9 +474,9 @@
                 const ps = calculateRecipeMacros(recipe);
                 containers.detail.innerHTML = `<div class="flex flex-col md:flex-row gap-6 mb-8"><img src="${recipe.image}" class="w-full md:w-1/2 rounded-xl object-cover h-96 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'"><div class="flex-1 flex flex-col justify-center"><h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}<p class="text-gray-400 italic mb-6 text-lg">${recipe.description || ''}</p><div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><div class="bg-gray-700 px-3 py-1 rounded flex items-center space-x-2 select-none"><span>Serves:</span><button onclick="window.updateServings(-1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">−</button><strong id="current-servings">${recipe.servings}</strong><button onclick="window.updateServings(1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">+</button></div></div><div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Calories</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Protein</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carbs</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div></div></div><div class="grid md:grid-cols-2 gap-8"><div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { const baseQty = parseQuantity(ing.quantity); const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty); return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>` }).join('')}</ul></div>`).join('')}</div><div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${prettifyFractions(step)}</li>`).join('')}</ol></div>`).join('')}</div></div>`;
                 const tagsContainer = document.createElement('div'); tagsContainer.className = 'flex flex-wrap gap-1 mb-4'; if(recipe.tags) { recipe.tags.forEach(tag => { const btn = document.createElement('button'); btn.className = 'px-2 py-1 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition'; btn.textContent = tag; btn.onclick = (e) => { e.stopPropagation(); filterByTag(tag); }; tagsContainer.appendChild(btn); }); } containers.detail.querySelector('h1').after(tagsContainer);
-                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe); document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+                document.getElementById('edit-recipe-btn').onclick = () => window.openRecipeModal(recipe); document.getElementById('delete-recipe-btn').onclick = () => window.deleteRecipe(recipe.id);
             }
-
+            
             function downloadDataFile() { hideMenu(); const customRecipes = getCustomData(state.localStorageKeys.recipes); const cleanStatic = STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')})); const exportMap = new Map(); cleanStatic.forEach(r => exportMap.set(String(r.id), r)); customRecipes.forEach(r => exportMap.set(String(r.id), r)); const data = { recipes: Array.from(exportMap.values()), categories: [...STATIC_CATEGORIES, ...getCustomData(state.localStorageKeys.categories)].filter((v,i,a)=>a.indexOf(v)===i), availableTags: [...STATIC_TAGS, ...getCustomData(state.localStorageKeys.tags)].filter((v,i,a)=>a.indexOf(v)===i) }; const blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `recipes-data-${new Date().toISOString().slice(0,10)}.json`; a.click(); }
             function clearDraftData() { localStorage.removeItem(state.localStorageKeys.recipes); localStorage.removeItem(state.localStorageKeys.categories); localStorage.removeItem(state.localStorageKeys.tags); hideMenu(); initRecipeDashboard(); }
 
