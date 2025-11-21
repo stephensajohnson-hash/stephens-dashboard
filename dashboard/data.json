@@ -377,13 +377,12 @@
       "isStatic": true
     },
     {
+      "id": "static_c_2",
       "name": "Stephens Retires",
-      "targetDate": "2033-03-18T00:00:00",
+      "targetDate": "2033-03-26",
       "linkUrl": "https://digital.fidelity.com/prgw/digital/login/full-page?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
       "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
-      "timezone": "America/Chicago",
-      "id": "static_c_2",
-      "isStatic": true
+      "isStatic": false
     }
   ],
   "stocks": [
@@ -397,6 +396,10 @@
     },
     {
       "symbol": "SCHD",
+      "shares": 0
+    },
+    {
+      "symbol": "WMT"
       "shares": 0
     }
   ]
