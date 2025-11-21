@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.6.28</title>
+    <title>Stephens' Recipes V0.7.4</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -37,6 +37,9 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
+    <!-- Datalist for Autocomplete -->
+    <datalist id="ingredient-datalist"></datalist>
+
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
         <div class="flex items-center">
@@ -69,13 +72,14 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.28</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.7.4</p>
         </div>
     </div>
 
     <!-- LIST VIEW Container -->
     <main id="recipes-content" class="px-4 sm:px-8 pt-16 pb-8">
         <div id="recipe-groups-container" class="flex flex-col space-y-8 min-h-[200px]"></div>
+        
         <!-- Tag Cloud Section -->
         <div id="tag-cloud-wrapper" class="mt-16 pt-8 border-t border-gray-700">
             <div id="tag-cloud-container" class="flex flex-wrap gap-x-4 gap-y-2 justify-center items-baseline p-4"></div>
@@ -97,9 +101,7 @@
                 </button>
             </div>
         </div>
-        <div id="detail-content" class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-2xl max-w-5xl mx-auto">
-            <!-- Content injected via JS -->
-        </div>
+        <div id="detail-content" class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-2xl max-w-5xl mx-auto"></div>
     </main>
     
     <!-- RECIPE MODAL (Full Screen / Tabbed) -->
@@ -156,7 +158,7 @@
             <!-- Footer -->
             <div class="p-4 border-t border-gray-700 bg-gray-800 flex justify-end gap-3">
                 <button type="button" id="cancel-recipe-btn" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
-                <button type="button" id="save-recipe-btn" class="bg-blue-600 px-6 py-2 rounded-lg text-white hover:bg-blue-700 font-bold" onclick="saveRecipe()">Save Recipe</button>
+                <button type="button" id="save-recipe-btn" class="bg-blue-600 px-6 py-2 rounded-lg text-white hover:bg-blue-700 font-bold" onclick="window.saveRecipe()">Save Recipe</button>
             </div>
         </div>
     </div>
@@ -165,7 +167,7 @@
     <div id="add-category-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
             <h2 class="text-xl font-bold mb-4">Add Category</h2>
-            <form id="category-form" onsubmit="saveCategory(event)"><input type="text" id="category-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
+            <form id="category-form" onsubmit="window.saveCategory(event)"><input type="text" id="category-modal-input" class="mb-4 w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required><div class="flex justify-end gap-2"><button type="button" class="close-simple-modal text-gray-400 px-3 py-2">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Add</button></div></form>
         </div>
     </div>
 
@@ -173,23 +175,16 @@
     <script>
         (function() {
             // --- 1. VARIABLES & CONSTANTS ---
-            const views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
-            const containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content'), tags: document.getElementById('tag-cloud-container') };
-            const menuModal = document.getElementById('menu-modal');
-            const modals = {
-                recipe: document.getElementById('recipe-form-modal'),
-                category: document.getElementById('add-category-modal')
-            };
-            const ingContainer = document.getElementById('ingredients-container');
-            const instContainer = document.getElementById('instructions-container');
-            
-            let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
-            let currentFilterTag = null, currentEditingId = null, isTagMode = false;
-            let currentRecipeBase = null; 
-            
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
+            let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
+            let currentFilterTag = null, currentEditingId = null, currentRecipeBase = null;
             
-            // EMBEDDED DATA (Full Test Set)
+            // DOM Element refs initialized in onload
+            let views, containers, menuModal, modals, ingContainer, instContainer;
+
+            // Ingredient DB for Auto-Complete
+            let INGREDIENT_DB = {}; 
+
             const EMBEDDED_RECIPES = {
               "recipes": [
                 { "id": "1", "title": "Chili", "category": "Soup", "servings": 12, "prepTime": "90 minutes", "cookTime": "30 minutes", "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fit,w_730,h_913/k%2FPhoto%2FRecipes%2F2023-11-chili%2Fchili-2", "source": { "description": "Cayce's Recipe", "url": "" }, "tags": [ "Keto", "Gluten Free", "Beef", "Texas", "Cayce Diet" ], "ingredients": [ { "sectionTitle": "Base", "list": [ { "name": "Ground Beef", "quantity": "3", "unit": "pounds", "notes": "Wagyu", "macros": { "calories": 2040, "protein": 276, "carbs": 0, "fat": 96, "fiber": 0 } }, { "name": "Onion", "quantity": "1", "unit": "", "notes": "medium", "macros": { "calories": 60, "protein": 2, "carbs": 14, "fat": 0, "fiber": 3 } }, { "name": "Garlic", "quantity": "12", "unit": "cloves", "notes": "minced", "macros": { "calories": 15, "protein": 1.6, "carbs": 12.3, "fat": 0.3, "fiber": 0 } }, { "name": "Organic Tomato Sauce", "quantity": "15", "unit": "oz", "notes": "", "macros": { "calories": 140, "protein": 7, "carbs": 28, "fat": 0, "fiber": 7 } }, { "name": "Spinach", "quantity": "1", "unit": "cup", "notes": "chopped", "macros": { "calories": 7, "protein": 4, "carbs": 5, "fat": 0.5, "fiber": 3 } } ] }, { "sectionTitle": "Spices", "list": [ { "name": "Chili Powder", "quantity": "3", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Sea Salt", "quantity": "1", "unit": "tbsp", "notes": "Redmond's", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Cumin", "quantity": "2", "unit": "tbsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Chipotle Chile Pepper", "quantity": "1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } }, { "name": "Smoked Paprika", "quantity": "1 1/2", "unit": "tsp", "notes": "", "macros": { "calories": 0, "protein": 0, "carbs": 0, "fat": 0, "fiber": 0 } } ] } ], "instructions": [ { "sectionTitle": "Directions", "steps": [ "Brown 3 lbs Ground Beef until mostly done (it will continue to cook)", "Add Onion (chopped) and 12 cloves garlic (minced)", "Cook for 3-5 minutes until onions brown a bit", "Add Spices and Tomatoes", "Bring to a boil and let it simmer for 30 minutes." ] }, { "sectionTitle": "", "steps": [] } ] },
@@ -204,7 +199,114 @@
               "availableTags": []
             };
 
-            // --- 2. HELPER FUNCTIONS (Defined) ---
+            // --- 2. FUNCTION DEFINITIONS ---
+            function initDOM() {
+                views = { list: document.getElementById('recipes-content'), detail: document.getElementById('recipe-detail-view') };
+                containers = { groups: document.getElementById('recipe-groups-container'), detail: document.getElementById('detail-content'), tags: document.getElementById('tag-cloud-container') };
+                menuModal = document.getElementById('menu-modal');
+                modals = { recipe: document.getElementById('recipe-form-modal'), category: document.getElementById('add-category-modal') };
+                ingContainer = document.getElementById('ingredients-container');
+                instContainer = document.getElementById('instructions-container');
+            }
+
+            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
+            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+
+            function getAllRecipes() {
+                const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
+                const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
+                const map = new Map();
+                staticRecs.forEach(r => map.set(String(r.id), r));
+                customRecs.forEach(r => map.set(String(r.id), r));
+                return Array.from(map.values());
+            }
+
+            function buildIngredientDB() {
+                INGREDIENT_DB = {};
+                const all = getAllRecipes();
+                all.forEach(r => {
+                    if(r.ingredients) {
+                        r.ingredients.forEach(sec => {
+                            if(sec.list) {
+                                sec.list.forEach(ing => {
+                                    const name = ing.name.toLowerCase().trim();
+                                    const hasMacros = ing.macros && (ing.macros.calories > 0 || ing.macros.protein > 0);
+                                    // Keep the entry with macros if possible
+                                    if (name && (hasMacros || !INGREDIENT_DB[name])) {
+                                         INGREDIENT_DB[name] = ing;
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+                const dl = document.getElementById('ingredient-datalist');
+                if(dl) {
+                    dl.innerHTML = Object.keys(INGREDIENT_DB).sort().map(name => `<option value="${name}">`).join('');
+                }
+            }
+
+            function getNormalizedAmount(qty, unit) {
+                const q = parseQuantity(qty);
+                const u = unit ? unit.toLowerCase().trim().replace(/s$/, '') : ''; // singularize
+
+                if (u === 'g' || u === 'gram') return { val: q, type: 'weight' };
+                if (u === 'oz' || u === 'ounce') return { val: q * 28.35, type: 'weight' };
+                if (u === 'lb' || u === 'pound') return { val: q * 453.6, type: 'weight' };
+                if (u === 'kg' || u === 'kilogram') return { val: q * 1000, type: 'weight' };
+
+                if (u === 'tsp' || u === 'teaspoon') return { val: q, type: 'volume' };
+                if (u === 'tbsp' || u === 'tablespoon') return { val: q * 3, type: 'volume' };
+                if (u === 'cup') return { val: q * 48, type: 'volume' };
+                if (u === 'ml' || u === 'milliliter') return { val: q / 5, type: 'volume' };
+                if (u === 'l' || u === 'liter') return { val: (q * 1000) / 5, type: 'volume' };
+                if (u === 'gal' || u === 'gallon') return { val: q * 768, type: 'volume' };
+                if (u === 'pt' || u === 'pint') return { val: q * 96, type: 'volume' };
+                if (u === 'qt' || u === 'quart') return { val: q * 192, type: 'volume' };
+
+                return { val: q, type: 'count' };
+            }
+
+            function autoFillMacros(inputElement) {
+                const row = inputElement.closest('.ing-row');
+                const nameInput = row.querySelector('.ing-name');
+                const qtyInput = row.querySelector('.ing-qty');
+                const unitInput = row.querySelector('.ing-unit');
+
+                const name = nameInput.value.toLowerCase().trim();
+                const ref = INGREDIENT_DB[name];
+
+                if (!ref) return; // No match found in DB
+
+                const currentQtyRaw = qtyInput.value;
+                const currentUnit = unitInput.value;
+
+                if (!currentQtyRaw) return; // Need quantity to calc
+
+                const currentNorm = getNormalizedAmount(currentQtyRaw, currentUnit);
+                const refNorm = getNormalizedAmount(ref.quantity, ref.unit);
+
+                let ratio = 1;
+
+                if (currentNorm.type === refNorm.type) {
+                    if (refNorm.val === 0) ratio = 1;
+                    else ratio = currentNorm.val / refNorm.val;
+                } else {
+                    // Mismatch (e.g. weight vs volume), do not auto-scale macros to avoid errors
+                    return; 
+                }
+
+                if (ref.macros) {
+                    row.querySelector('.macro-cal').value = Math.round((ref.macros.calories || 0) * ratio);
+                    row.querySelector('.macro-pro').value = Math.round((ref.macros.protein || 0) * ratio);
+                    row.querySelector('.macro-carb').value = Math.round((ref.macros.carbs || 0) * ratio);
+                    row.querySelector('.macro-fat').value = Math.round((ref.macros.fat || 0) * ratio);
+                    row.querySelector('.macro-fib').value = Math.round((ref.macros.fiber || 0) * ratio);
+                }
+            }
+
             function parseQuantity(q) {
                 if (!q) return 0;
                 if (typeof q === 'number') return q;
@@ -249,20 +351,6 @@
                 return { qty: newQty, unit: newUnit, display: formatQuantity(newQty) };
             }
 
-            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
-            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
-            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
-            
-            function getAllRecipes() {
-                const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
-                const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
-                const map = new Map();
-                staticRecs.forEach(r => map.set(String(r.id), r));
-                customRecs.forEach(r => map.set(String(r.id), r));
-                return Array.from(map.values());
-            }
-
             function calculateRecipeMacros(recipe) {
                 let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
                 if (recipe.ingredients) { recipe.ingredients.forEach(sec => { if (sec.list) sec.list.forEach(ing => { if (ing.macros) { tm.fat += (ing.macros.fat || 0); tm.carbs += (ing.macros.carbs || 0); tm.fiber += (ing.macros.fiber || 0); tm.protein += (ing.macros.protein || 0); tm.calories += (ing.macros.calories || 0); } }); }); }
@@ -278,7 +366,7 @@
                 const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
                 return `<div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')"><img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex gap-2 text-[10px] text-gray-300 mb-2 font-mono border-t border-b border-gray-700/50 py-1"><span class="text-white font-bold">${ps.calories}</span> Cal | <span class="text-blue-300">${ps.protein}g</span> P | <span class="text-emerald-300">${ps.netCarbs}g</span> NC | <span class="text-yellow-300">${ps.fat}g</span> F</div><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
             }
-
+            
             function renderRecipeGroups() {
                 views.detail.classList.add('hidden');
                 views.list.classList.remove('hidden');
@@ -286,7 +374,6 @@
                 const customCats = getCustomData(state.localStorageKeys.categories);
                 const customTags = getCustomData(state.localStorageKeys.tags);
                 const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
-                const allTags = [...STATIC_TAGS, ...customTags].filter((v, i, a) => a.indexOf(v) === i);
                 containers.groups.innerHTML = '';
 
                 const allTagsSet = new Set([...STATIC_TAGS, ...customTags]);
@@ -314,7 +401,7 @@
                 });
                 if(!containers.groups.innerHTML) containers.groups.innerHTML = '<p class="text-center text-gray-500 mt-10">No recipes found.</p>';
             }
-            
+
             function toggleMenu() { const m = document.getElementById('menu-modal'); if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); } else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); } }
             function hideMenu() { document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
             function filterByTag(tag) { currentFilterTag = tag; renderRecipeGroups(); window.scrollTo(0,0); }
@@ -359,7 +446,7 @@
                 const rows = div.querySelector('.rows-container');
                 const addRow = (ing = null) => {
                     const row = document.createElement('div'); row.className = 'ing-row grid grid-cols-12 gap-2 items-center bg-gray-700/30 p-2 rounded';
-                    row.innerHTML = `<input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}"><input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}"><input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}"><input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}"><button type="button" class="col-span-1 text-red-400 remove-row" onclick="this.parentElement.remove()">X</button><button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros" onclick="this.nextElementSibling.classList.toggle('hidden')">▼ Macros</button><div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded"><div><label class="text-[10px]">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.calories:''}"></div><div><label class="text-[10px]">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.protein:''}"></div><div><label class="text-[10px]">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.carbs:''}"></div><div><label class="text-[10px]">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fat:''}"></div><div><label class="text-[10px]">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fiber:''}"></div></div>`;
+                    row.innerHTML = `<input class="col-span-2 text-sm ing-qty" placeholder="Qty" value="${ing ? ing.quantity : ''}" onchange="autoFillMacros(this)"><input class="col-span-2 text-sm ing-unit" placeholder="Unit" value="${ing ? ing.unit : ''}" onchange="autoFillMacros(this)"><input class="col-span-4 text-sm ing-name" placeholder="Name" value="${ing ? ing.name : ''}" list="ingredient-datalist" onchange="autoFillMacros(this)"><input class="col-span-3 text-sm ing-notes" placeholder="Notes" value="${ing ? ing.notes || '' : ''}"><button type="button" class="col-span-1 text-red-400 remove-row" onclick="this.parentElement.remove()">X</button><button type="button" class="col-span-12 text-xs text-gray-400 text-left toggle-macros" onclick="this.nextElementSibling.classList.toggle('hidden')">▼ Macros</button><div class="col-span-12 grid grid-cols-5 gap-2 mt-1 macro-fields hidden bg-gray-700/50 p-2 rounded"><div><label class="text-[10px]">Calories</label><input type="number" class="macro-cal text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.calories:''}"></div><div><label class="text-[10px]">Protein</label><input type="number" class="macro-pro text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.protein:''}"></div><div><label class="text-[10px]">Carbs</label><input type="number" class="macro-carb text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.carbs:''}"></div><div><label class="text-[10px]">Fat</label><input type="number" class="macro-fat text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fat:''}"></div><div><label class="text-[10px]">Fiber</label><input type="number" class="macro-fib text-xs bg-gray-600 w-full" value="${ing&&ing.macros?ing.macros.fiber:''}"></div></div>`;
                     rows.appendChild(row);
                 };
                 div.querySelector('.add-row-btn').onclick = () => addRow();
@@ -391,27 +478,9 @@
                     source: { description: document.getElementById('form-source-desc').value, url: document.getElementById('form-source-url').value },
                     tags: document.getElementById('form-tags').value.split(',').map(t => t.trim()).filter(t => t), ingredients: [], instructions: []
                 };
-                document.querySelectorAll('.ing-section').forEach(sec => {
-                    const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] };
-                    sec.querySelectorAll('.ing-row').forEach(row => {
-                        section.list.push({
-                            name: row.querySelector('.ing-name').value, quantity: row.querySelector('.ing-qty').value, unit: row.querySelector('.ing-unit').value, notes: row.querySelector('.ing-notes').value,
-                            macros: { calories: parseFloat(row.querySelector('.macro-cal').value)||0, protein: parseFloat(row.querySelector('.macro-pro').value)||0, carbs: parseFloat(row.querySelector('.macro-carb').value)||0, fat: parseFloat(row.querySelector('.macro-fat').value)||0, fiber: parseFloat(row.querySelector('.macro-fib').value)||0 }
-                        });
-                    });
-                    newRecipe.ingredients.push(section);
-                });
-                document.querySelectorAll('.inst-section').forEach(sec => {
-                    const section = { sectionTitle: sec.querySelector('.section-title').value, steps: [] };
-                    sec.querySelectorAll('.step-text').forEach(txt => section.steps.push(txt.value));
-                    newRecipe.instructions.push(section);
-                });
-                let customRecipes = getCustomData(state.localStorageKeys.recipes);
-                const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id));
-                if (idx >= 0) customRecipes[idx] = newRecipe; else customRecipes.push(newRecipe);
-                saveCustomData(state.localStorageKeys.recipes, customRecipes);
-                modals.recipe.classList.add('hidden');
-                if (currentEditingId) window.showDetailView(newRecipe.id); else window.renderRecipeGroups();
+                document.querySelectorAll('.ing-section').forEach(sec => { const section = { sectionTitle: sec.querySelector('.section-title').value, list: [] }; sec.querySelectorAll('.ing-row').forEach(row => { section.list.push({ name: row.querySelector('.ing-name').value, quantity: row.querySelector('.ing-qty').value, unit: row.querySelector('.ing-unit').value, notes: row.querySelector('.ing-notes').value, macros: { calories: parseFloat(row.querySelector('.macro-cal').value)||0, protein: parseFloat(row.querySelector('.macro-pro').value)||0, carbs: parseFloat(row.querySelector('.macro-carb').value)||0, fat: parseFloat(row.querySelector('.macro-fat').value)||0, fiber: parseFloat(row.querySelector('.macro-fib').value)||0 } }); }); newRecipe.ingredients.push(section); }); document.querySelectorAll('.inst-section').forEach(sec => { const section = { sectionTitle: sec.querySelector('.section-title').value, steps: [] }; sec.querySelectorAll('.step-text').forEach(txt => section.steps.push(txt.value)); newRecipe.instructions.push(section); }); let customRecipes = getCustomData(state.localStorageKeys.recipes); const idx = customRecipes.findIndex(r => String(r.id) === String(newRecipe.id)); if (idx >= 0) customRecipes[idx] = newRecipe; else customRecipes.push(newRecipe); saveCustomData(state.localStorageKeys.recipes, customRecipes); modals.recipe.classList.add('hidden');
+                buildIngredientDB();
+                if (currentEditingId) showDetailView(newRecipe.id); else renderRecipeGroups();
             }
 
             function openRecipeModal(recipe = null) {
@@ -422,15 +491,7 @@
                 ingContainer.innerHTML = ''; instContainer.innerHTML = '';
                 const cats = [...STATIC_CATEGORIES, ...getCustomData(state.localStorageKeys.categories)].filter((v,i,a)=>a.indexOf(v)===i);
                 document.getElementById('form-category').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
-
-                if (recipe) {
-                    document.getElementById('form-title').value = recipe.title; document.getElementById('form-desc').value = recipe.description; document.getElementById('form-category').value = recipe.category; document.getElementById('form-servings').value = recipe.servings; document.getElementById('form-prep').value = recipe.prepTime; document.getElementById('form-cook').value = recipe.cookTime; document.getElementById('form-image').value = recipe.image;
-                    if(recipe.source) { document.getElementById('form-source-desc').value = recipe.source.description; document.getElementById('form-source-url').value = recipe.source.url; }
-                    document.getElementById('form-tags').value = (recipe.tags || []).join(', ');
-                    if(recipe.ingredients) recipe.ingredients.forEach(sec => window.addIngredientSection(sec));
-                    if(recipe.instructions) recipe.instructions.forEach(sec => window.addInstructionSection(sec));
-                } else { window.addIngredientSection(); window.addInstructionSection(); }
-                modals.recipe.classList.remove('hidden'); window.switchTab('tab-general'); hideMenu();
+                if (recipe) { document.getElementById('form-title').value = recipe.title; document.getElementById('form-desc').value = recipe.description; document.getElementById('form-category').value = recipe.category; document.getElementById('form-servings').value = recipe.servings; document.getElementById('form-prep').value = recipe.prepTime; document.getElementById('form-cook').value = recipe.cookTime; document.getElementById('form-image').value = recipe.image; if(recipe.source) { document.getElementById('form-source-desc').value = recipe.source.description; document.getElementById('form-source-url').value = recipe.source.url; } document.getElementById('form-tags').value = (recipe.tags || []).join(', '); if(recipe.ingredients) recipe.ingredients.forEach(sec => addIngredientSection(sec)); if(recipe.instructions) recipe.instructions.forEach(sec => addInstructionSection(sec)); } else { addIngredientSection(); addInstructionSection(); } modals.recipe.classList.remove('hidden'); switchTab('tab-general'); hideMenu();
             }
 
             function showDetailView(recipeId) {
@@ -440,49 +501,16 @@
                 currentRecipeBase = recipe;
                 views.list.classList.add('hidden'); views.detail.classList.remove('hidden'); window.scrollTo(0,0);
                 const ps = calculateRecipeMacros(recipe);
-                containers.detail.innerHTML = `
-                    <div class="flex flex-col md:flex-row gap-6 mb-8">
-                        <img src="${recipe.image}" class="w-full md:w-1/2 rounded-xl object-cover h-96 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'">
-                        <div class="flex-1 flex flex-col justify-center">
-                            <h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>
-                            ${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}
-                            <p class="text-gray-400 italic mb-6 text-lg">${recipe.description || ''}</p>
-                            <div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><div class="bg-gray-700 px-3 py-1 rounded flex items-center space-x-2 select-none"><span>Serves:</span><button onclick="window.updateServings(-1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">−</button><strong id="current-servings">${recipe.servings}</strong><button onclick="window.updateServings(1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">+</button></div></div>
-                            <div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Calories</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Protein</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carbs</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div>
-                        </div>
-                    </div>
-                    <div class="grid md:grid-cols-2 gap-8">
-                        <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { 
-                            const baseQty = parseQuantity(ing.quantity);
-                            const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty);
-                            return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>`
-                        }).join('')}</ul></div>`).join('')}</div>
-                        <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${prettifyFractions(step)}</li>`).join('')}</ol></div>`).join('')}</div>
-                    </div>`;
-                // Add Tags
-                const tagsContainer = document.createElement('div');
-                tagsContainer.className = 'flex flex-wrap gap-1 mb-4';
-                if(recipe.tags) {
-                     recipe.tags.forEach(tag => {
-                         const btn = document.createElement('button');
-                         btn.className = 'px-2 py-1 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition';
-                         btn.textContent = tag;
-                         btn.onclick = (e) => { e.stopPropagation(); window.filterByTag(tag); };
-                         tagsContainer.appendChild(btn);
-                     });
-                }
-                const titleEl = containers.detail.querySelector('h1');
-                titleEl.after(tagsContainer);
-
-                document.getElementById('edit-recipe-btn').onclick = () => window.openRecipeModal(recipe);
-                document.getElementById('delete-recipe-btn').onclick = () => window.deleteRecipe(recipe.id);
+                containers.detail.innerHTML = `<div class="flex flex-col md:flex-row gap-6 mb-8"><img src="${recipe.image}" class="w-full md:w-1/2 rounded-xl object-cover h-96 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'"><div class="flex-1 flex flex-col justify-center"><h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}<p class="text-gray-400 italic mb-6 text-lg">${recipe.description || ''}</p><div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><div class="bg-gray-700 px-3 py-1 rounded flex items-center space-x-2 select-none"><span>Serves:</span><button onclick="window.updateServings(-1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">−</button><strong id="current-servings">${recipe.servings}</strong><button onclick="window.updateServings(1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">+</button></div></div><div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Calories</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Protein</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carbs</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div></div></div><div class="grid md:grid-cols-2 gap-8"><div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { const baseQty = parseQuantity(ing.quantity); const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty); return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>` }).join('')}</ul></div>`).join('')}</div><div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${prettifyFractions(step)}</li>`).join('')}</ol></div>`).join('')}</div></div>`;
+                const tagsContainer = document.createElement('div'); tagsContainer.className = 'flex flex-wrap gap-1 mb-4'; if(recipe.tags) { recipe.tags.forEach(tag => { const btn = document.createElement('button'); btn.className = 'px-2 py-1 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition'; btn.textContent = tag; btn.onclick = (e) => { e.stopPropagation(); filterByTag(tag); }; tagsContainer.appendChild(btn); }); } containers.detail.querySelector('h1').after(tagsContainer);
+                document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe); document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
             }
 
             function downloadDataFile() { hideMenu(); const customRecipes = getCustomData(state.localStorageKeys.recipes); const cleanStatic = STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')})); const exportMap = new Map(); cleanStatic.forEach(r => exportMap.set(String(r.id), r)); customRecipes.forEach(r => exportMap.set(String(r.id), r)); const data = { recipes: Array.from(exportMap.values()), categories: [...STATIC_CATEGORIES, ...getCustomData(state.localStorageKeys.categories)].filter((v,i,a)=>a.indexOf(v)===i), availableTags: [...STATIC_TAGS, ...getCustomData(state.localStorageKeys.tags)].filter((v,i,a)=>a.indexOf(v)===i) }; const blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `recipes-data-${new Date().toISOString().slice(0,10)}.json`; a.click(); }
             function clearDraftData() { localStorage.removeItem(state.localStorageKeys.recipes); localStorage.removeItem(state.localStorageKeys.categories); localStorage.removeItem(state.localStorageKeys.tags); hideMenu(); initRecipeDashboard(); }
 
             // --- 4. GLOBAL EXPOSURE & BINDINGS ---
-            window.toggleMenu = toggleMenu; window.hideMenu = hideMenu; window.filterByTag = filterByTag; window.clearTagFilter = clearTagFilter; window.deleteRecipe = deleteRecipe; window.saveCategory = saveCategory; window.updateServings = updateServings; window.switchTab = switchTab; window.saveRecipe = saveRecipe; window.openRecipeModal = openRecipeModal; window.showDetailView = showDetailView; window.downloadDataFile = downloadDataFile; window.clearDraftData = clearDraftData; window.addIngredientSection = addIngredientSection; window.addInstructionSection = addInstructionSection; window.renderRecipeGroups = renderRecipeGroups;
+            window.toggleMenu = toggleMenu; window.hideMenu = hideMenu; window.filterByTag = filterByTag; window.clearTagFilter = clearTagFilter; window.deleteRecipe = deleteRecipe; window.saveCategory = saveCategory; window.updateServings = updateServings; window.switchTab = switchTab; window.saveRecipe = saveRecipe; window.openRecipeModal = openRecipeModal; window.showDetailView = showDetailView; window.downloadDataFile = downloadDataFile; window.clearDraftData = clearDraftData; window.addIngredientSection = addIngredientSection; window.addInstructionSection = addInstructionSection; window.renderRecipeGroups = renderRecipeGroups; window.autoFillMacros = autoFillMacros;
 
             document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
             document.getElementById('close-menu-button').onclick = hideMenu;
@@ -502,7 +530,14 @@
             document.getElementById('clear-draft-button').onclick = clearDraftData;
 
             // --- INIT ---
-            async function initRecipeDashboard() { let data = EMBEDDED_RECIPES; try { const res = await fetch('/recipes_data.json'); if(res.ok) data = await res.json(); } catch(e) {} STATIC_RECIPES = data.recipes || []; STATIC_CATEGORIES = data.categories || []; STATIC_TAGS = data.availableTags || []; renderRecipeGroups(); }
+            async function initRecipeDashboard() {
+                initDOM(); // Initialize DOM references first!
+                let data = EMBEDDED_RECIPES;
+                try { const res = await fetch('/recipes_data.json'); if(res.ok) data = await res.json(); } catch(e) {}
+                STATIC_RECIPES = data.recipes || []; STATIC_CATEGORIES = data.categories || []; STATIC_TAGS = data.availableTags || [];
+                buildIngredientDB(); // Build DB on Init
+                renderRecipeGroups();
+            }
             async function updateWeather() { try { const res = await fetch('https://api.openweathermap.org/data/2.5/weather?zip=75482,us&units=imperial&appid=87256fe2710631542ff491e4c5d73306'); if(res.ok) { const d = await res.json(); document.getElementById('weather-current-temp').textContent = Math.round(d.main.temp)+'°'; document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(d.main.temp)}`; document.getElementById('weather-low').textContent = Math.round(d.main.temp_min)+'°'; document.getElementById('weather-low').className = `low-temp-offset mr-1 text-xs ${getTempColor(d.main.temp_min)}`; document.getElementById('weather-high').textContent = Math.round(d.main.temp_max)+'°'; document.getElementById('weather-high').className = `high-temp-offset text-xs ${getTempColor(data.main.temp_max)}`; document.getElementById('weather-icon').innerHTML = getForecastEmoji(d.weather[0].icon); } } catch(e) {} }
             function updateClock() { const now = new Date(); document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; }
 
