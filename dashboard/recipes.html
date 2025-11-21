@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.6.24</title>
+    <title>Stephens' Recipes V0.6.28</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -69,14 +69,13 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.24</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.6.28</p>
         </div>
     </div>
 
     <!-- LIST VIEW Container -->
     <main id="recipes-content" class="px-4 sm:px-8 pt-16 pb-8">
         <div id="recipe-groups-container" class="flex flex-col space-y-8 min-h-[200px]"></div>
-        
         <!-- Tag Cloud Section -->
         <div id="tag-cloud-wrapper" class="mt-16 pt-8 border-t border-gray-700">
             <div id="tag-cloud-container" class="flex flex-wrap gap-x-4 gap-y-2 justify-center items-baseline p-4"></div>
@@ -186,7 +185,6 @@
             
             let STATIC_RECIPES = [], STATIC_CATEGORIES = [], STATIC_TAGS = [];
             let currentFilterTag = null, currentEditingId = null, isTagMode = false;
-            // State for scaling
             let currentRecipeBase = null; 
             
             const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
@@ -206,20 +204,7 @@
               "availableTags": []
             };
 
-            // --- 2. HELPER FUNCTIONS ---
-            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
-            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
-            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
-            function getAllRecipes() {
-                const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
-                const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
-                const map = new Map();
-                staticRecs.forEach(r => map.set(String(r.id), r));
-                customRecs.forEach(r => map.set(String(r.id), r));
-                return Array.from(map.values());
-            }
-            
+            // --- 2. HELPER FUNCTIONS (Defined) ---
             function parseQuantity(q) {
                 if (!q) return 0;
                 if (typeof q === 'number') return q;
@@ -263,7 +248,21 @@
                 if (newUnit === 'tsp' && newQty < 0.12) { return { qty: 0, display: "Pinch", unit: "" }; }
                 return { qty: newQty, unit: newUnit, display: formatQuantity(newQty) };
             }
+
+            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
+            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
             
+            function getAllRecipes() {
+                const staticRecs = STATIC_RECIPES.map(r => ({...r, source_type: 'static'}));
+                const customRecs = getCustomData(state.localStorageKeys.recipes).map(r => ({...r, source_type: 'custom'}));
+                const map = new Map();
+                staticRecs.forEach(r => map.set(String(r.id), r));
+                customRecs.forEach(r => map.set(String(r.id), r));
+                return Array.from(map.values());
+            }
+
             function calculateRecipeMacros(recipe) {
                 let tm = { fat: 0, carbs: 0, fiber: 0, protein: 0, calories: 0 };
                 if (recipe.ingredients) { recipe.ingredients.forEach(sec => { if (sec.list) sec.list.forEach(ing => { if (ing.macros) { tm.fat += (ing.macros.fat || 0); tm.carbs += (ing.macros.carbs || 0); tm.fiber += (ing.macros.fiber || 0); tm.protein += (ing.macros.protein || 0); tm.calories += (ing.macros.calories || 0); } }); }); }
@@ -272,15 +271,14 @@
                 ps.netCarbs = Math.max(0, ps.carbs - ps.fiber);
                 return ps;
             }
-
-            // --- 3. UI FUNCTIONS (Defined first) ---
+            
             function createRecipeCard(r) {
                 const ps = calculateRecipeMacros(r);
                 const letter = r.title.charAt(0).toUpperCase();
                 const tags = (r.tags||[]).map(t => `<span class="px-2 py-0.5 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition" onclick="event.stopPropagation(); filterByTag('${t}')">${t}</span>`).join('');
                 return `<div class="recipe-card bg-gray-800 border border-gray-700 rounded-xl shadow-lg overflow-hidden hover:bg-gray-700 transition duration-200" onclick="showDetailView('${r.id}')"><img src="${r.image}" class="w-full h-32 object-cover" onerror="this.src='https://placehold.co/400?text=${r.title[0]}'"><div class="p-3"><h3 class="text-lg font-bold text-white truncate">${r.title.replace(' (test)','')}</h3><p class="text-xs text-gray-400 mt-1 mb-2">${r.prepTime} | ${r.cookTime}</p><div class="flex gap-2 text-[10px] text-gray-300 mb-2 font-mono border-t border-b border-gray-700/50 py-1"><span class="text-white font-bold">${ps.calories}</span> Cal | <span class="text-blue-300">${ps.protein}g</span> P | <span class="text-emerald-300">${ps.netCarbs}g</span> NC | <span class="text-yellow-300">${ps.fat}g</span> F</div><div class="flex flex-wrap gap-1">${tags}</div></div></div>`;
             }
-            
+
             function renderRecipeGroups() {
                 views.detail.classList.add('hidden');
                 views.list.classList.remove('hidden');
@@ -339,9 +337,7 @@
                         const newQty = baseQty * ratio;
                         const unit = line.dataset.unit || "";
                         let result;
-                        if (unit === 'g' || unit === 'ml') { result = { display: Math.round(newQty).toString(), unit: unit }; } 
-                        else if (['cup', 'cups', 'tbsp', 'tsp', 'tablespoon', 'teaspoon'].some(u => unit.toLowerCase().startsWith(u))) { result = convertUnits(newQty, unit); } 
-                        else { result = { display: formatQuantity(newQty), unit: unit }; }
+                        if (unit === 'g' || unit === 'ml' || unit === 'oz' || unit === 'lb' || unit === 'pounds') { result = { display: (Math.round(newQty * 10) / 10).toString(), unit: unit }; if (unit === 'g' || unit === 'ml') result.display = Math.round(newQty).toString(); if (unit === 'lb' || unit === 'pounds' || unit === 'oz') result.display = formatQuantity(newQty); } else { result = convertUnits(newQty, unit); }
                         line.querySelector('.qty-display').textContent = result.display;
                         line.querySelector('.unit-display').textContent = result.unit;
                     }
@@ -385,7 +381,7 @@
                 if(data && data.steps) data.steps.forEach(s => addStep(s)); else addStep();
                 instContainer.appendChild(div);
             }
-            
+
             function saveRecipe() {
                 const title = document.getElementById('form-title').value;
                 if(!title) return alert("Title is required");
@@ -415,7 +411,7 @@
                 if (idx >= 0) customRecipes[idx] = newRecipe; else customRecipes.push(newRecipe);
                 saveCustomData(state.localStorageKeys.recipes, customRecipes);
                 modals.recipe.classList.add('hidden');
-                if (currentEditingId) window.showDetailView(newRecipe.id); else renderRecipeGroups();
+                if (currentEditingId) window.showDetailView(newRecipe.id); else window.renderRecipeGroups();
             }
 
             function openRecipeModal(recipe = null) {
@@ -426,6 +422,7 @@
                 ingContainer.innerHTML = ''; instContainer.innerHTML = '';
                 const cats = [...STATIC_CATEGORIES, ...getCustomData(state.localStorageKeys.categories)].filter((v,i,a)=>a.indexOf(v)===i);
                 document.getElementById('form-category').innerHTML = cats.map(c => `<option>${c}</option>`).join('');
+
                 if (recipe) {
                     document.getElementById('form-title').value = recipe.title; document.getElementById('form-desc').value = recipe.description; document.getElementById('form-category').value = recipe.category; document.getElementById('form-servings').value = recipe.servings; document.getElementById('form-prep').value = recipe.prepTime; document.getElementById('form-cook').value = recipe.cookTime; document.getElementById('form-image').value = recipe.image;
                     if(recipe.source) { document.getElementById('form-source-desc').value = recipe.source.description; document.getElementById('form-source-url').value = recipe.source.url; }
@@ -435,7 +432,7 @@
                 } else { window.addIngredientSection(); window.addInstructionSection(); }
                 modals.recipe.classList.remove('hidden'); window.switchTab('tab-general'); hideMenu();
             }
-            
+
             function showDetailView(recipeId) {
                 currentEditingId = String(recipeId);
                 const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
@@ -455,9 +452,28 @@
                         </div>
                     </div>
                     <div class="grid md:grid-cols-2 gap-8">
-                        <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { const baseQty = parseQuantity(ing.quantity); const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty); return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>` }).join('')}</ul></div>`).join('')}</div>
+                        <div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { 
+                            const baseQty = parseQuantity(ing.quantity);
+                            const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty);
+                            return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>`
+                        }).join('')}</ul></div>`).join('')}</div>
                         <div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${prettifyFractions(step)}</li>`).join('')}</ol></div>`).join('')}</div>
                     </div>`;
+                // Add Tags
+                const tagsContainer = document.createElement('div');
+                tagsContainer.className = 'flex flex-wrap gap-1 mb-4';
+                if(recipe.tags) {
+                     recipe.tags.forEach(tag => {
+                         const btn = document.createElement('button');
+                         btn.className = 'px-2 py-1 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition';
+                         btn.textContent = tag;
+                         btn.onclick = (e) => { e.stopPropagation(); window.filterByTag(tag); };
+                         tagsContainer.appendChild(btn);
+                     });
+                }
+                const titleEl = containers.detail.querySelector('h1');
+                titleEl.after(tagsContainer);
+
                 document.getElementById('edit-recipe-btn').onclick = () => window.openRecipeModal(recipe);
                 document.getElementById('delete-recipe-btn').onclick = () => window.deleteRecipe(recipe.id);
             }
@@ -465,8 +481,8 @@
             function downloadDataFile() { hideMenu(); const customRecipes = getCustomData(state.localStorageKeys.recipes); const cleanStatic = STATIC_RECIPES.map(r => ({...r, title: r.title.replace(' (test)', '')})); const exportMap = new Map(); cleanStatic.forEach(r => exportMap.set(String(r.id), r)); customRecipes.forEach(r => exportMap.set(String(r.id), r)); const data = { recipes: Array.from(exportMap.values()), categories: [...STATIC_CATEGORIES, ...getCustomData(state.localStorageKeys.categories)].filter((v,i,a)=>a.indexOf(v)===i), availableTags: [...STATIC_TAGS, ...getCustomData(state.localStorageKeys.tags)].filter((v,i,a)=>a.indexOf(v)===i) }; const blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'}); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `recipes-data-${new Date().toISOString().slice(0,10)}.json`; a.click(); }
             function clearDraftData() { localStorage.removeItem(state.localStorageKeys.recipes); localStorage.removeItem(state.localStorageKeys.categories); localStorage.removeItem(state.localStorageKeys.tags); hideMenu(); initRecipeDashboard(); }
 
-            // --- 4. GLOBAL EXPOSURES & BINDING ---
-            window.toggleMenu = toggleMenu; window.hideMenu = hideMenu; window.filterByTag = filterByTag; window.clearTagFilter = clearTagFilter; window.deleteRecipe = deleteRecipe; window.saveCategory = saveCategory; window.updateServings = updateServings; window.switchTab = switchTab; window.saveRecipe = saveRecipe; window.openRecipeModal = openRecipeModal; window.showDetailView = showDetailView; window.downloadDataFile = downloadDataFile; window.clearDraftData = clearDraftData; window.addIngredientSection = addIngredientSection; window.addInstructionSection = addInstructionSection;
+            // --- 4. GLOBAL EXPOSURE & BINDINGS ---
+            window.toggleMenu = toggleMenu; window.hideMenu = hideMenu; window.filterByTag = filterByTag; window.clearTagFilter = clearTagFilter; window.deleteRecipe = deleteRecipe; window.saveCategory = saveCategory; window.updateServings = updateServings; window.switchTab = switchTab; window.saveRecipe = saveRecipe; window.openRecipeModal = openRecipeModal; window.showDetailView = showDetailView; window.downloadDataFile = downloadDataFile; window.clearDraftData = clearDraftData; window.addIngredientSection = addIngredientSection; window.addInstructionSection = addInstructionSection; window.renderRecipeGroups = renderRecipeGroups;
 
             document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
             document.getElementById('close-menu-button').onclick = hideMenu;
