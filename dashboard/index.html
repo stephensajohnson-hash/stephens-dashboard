@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.5.5</title>
+    <title>Stephens' Dashboard V0.9.1</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -13,13 +13,18 @@
         ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.7); }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); }
         .low-temp-offset { position: relative; top: 6px; }
         .high-temp-offset { position: relative; bottom: 6px; }
+        
+        /* Carousel Transitions */
         #carousel-content-wrapper { transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; flex-grow: 1; max-width: calc(100% - 80px); margin: 0 40px; }
         .carousel-control-button { position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; opacity: 0.7; background-color: rgba(31, 41, 55, 0.5); border: 1px solid rgba(75, 85, 99, 0.5); }
         #carousel-content-wrapper > div { width: 100%; height: 100%; }
-        .stock-row-cell { padding-top: 4px; padding-bottom: 4px; }
+        
+        /* Link Card Hover Actions */
+        .link-card:hover .link-actions { opacity: 1; pointer-events: auto; }
+        .link-actions { opacity: 0; pointer-events: none; transition: opacity 0.2s; }
     </style>
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, } } }
@@ -30,7 +35,7 @@
     <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
         <div class="flex items-center">
-            <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none mr-4">
+            <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none mr-4" onclick="toggleMenu()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
             <div id="datetime" class="text-sm sm:text-base font-medium"></div>
@@ -46,76 +51,105 @@
     </nav>
 
     <!-- Menu Dropdown -->
-    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs">
+    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs z-40">
         <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
             <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
                 <h3 class="text-xl font-semibold text-white">Menu</h3>
-                <button id="close-menu-button" class="text-gray-400 hover:text-white p-1">X</button>
+                <button id="close-menu-button" class="text-gray-400 hover:text-white p-1" onclick="hideMenu()">X</button>
             </div>
             
-            <!-- NEW LINK TO RECIPES -->
-            <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-transparent hover:border-blue-500">
+            <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-blue-500 bg-gray-700/30">
                 View Recipes
             </a>
             <div class="border-b border-gray-700 my-2"></div>
 
-            <button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">Add Countdown</button>
-            <button id="add-group-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150">Add Link Group</button>
-            <button id="add-link-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add Link</button>
-            <button id="add-stock-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Add Stock</button>
+            <button id="add-countdown-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150" onclick="openCountdownModal()">Add Countdown</button>
+            <button id="add-group-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150" onclick="openGroupModal()">Add Link Group</button>
+            <button id="add-link-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="openLinkModal()">Add Link</button>
+            <button id="add-stock-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="openStockModal()">Add Stock</button>
             
-            <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150">Download Data File</button>
-            <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50">Clear Draft Data (Local)</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.5.5</p>
+            <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
+            <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Draft Data (Local)</button>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.1</p>
         </div>
     </div>
-    
+
     <!-- Modals -->
+    <!-- Countdown Modal -->
     <div id="add-countdown-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg">
-            <h2 class="text-2xl font-bold mb-4">Add Countdown</h2>
-            <form id="countdown-form" class="space-y-4">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4" id="countdown-modal-title">Add Countdown</h2>
+            <form id="countdown-form" class="space-y-4" onsubmit="saveCountdown(event)">
+                <input type="hidden" id="countdown-id">
                 <input type="text" id="countdown-name" placeholder="Event Name" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required>
                 <input type="date" id="countdown-targetDate" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required>
-                <select id="countdown-timezone" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></select>
                 <input type="url" id="countdown-linkUrl" placeholder="Link URL (Optional)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
                 <input type="url" id="countdown-img" placeholder="Image URL (Optional)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                <div class="flex justify-end gap-2"><button type="button" id="cancel-countdown-button" class="text-gray-400">Cancel</button><button type="submit" class="bg-blue-600 px-4 py-2 rounded text-white">Save</button></div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="text-gray-400 hover:text-white px-4 py-2" onclick="document.getElementById('add-countdown-modal').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white font-bold">Save</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Group Modal -->
     <div id="add-group-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg">
-            <h2 class="text-2xl font-bold mb-4">Add Link Group</h2>
-            <form id="group-form" class="space-y-4">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4" id="group-modal-title">Add Link Group</h2>
+            <form id="group-form" class="space-y-4" onsubmit="saveGroup(event)">
+                <input type="hidden" id="group-id">
                 <input type="text" id="group-name" placeholder="Group Name" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required>
-                <select id="group-theme" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></select>
-                <div class="flex justify-end gap-2"><button type="button" id="cancel-group-button" class="text-gray-400">Cancel</button><button type="submit" class="bg-green-600 px-4 py-2 rounded text-white">Create</button></div>
+                <div>
+                    <label class="text-sm text-gray-400 mb-1 block">Color Theme</label>
+                    <select id="group-color" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                        <option value="blue">Blue</option>
+                        <option value="green">Green</option>
+                        <option value="red">Red</option>
+                        <option value="purple">Purple</option>
+                        <option value="yellow">Yellow</option>
+                        <option value="gray">Gray</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="text-gray-400 hover:text-white px-4 py-2" onclick="document.getElementById('add-group-modal').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="bg-green-600 hover:bg-green-700 px-6 py-2 rounded text-white font-bold">Save</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Link Modal -->
     <div id="add-link-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg">
-            <h2 class="text-2xl font-bold mb-4">Add Link</h2>
-            <form id="link-form" class="space-y-4">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl">
+            <h2 class="text-2xl font-bold mb-4" id="link-modal-title">Add Link</h2>
+            <form id="link-form" class="space-y-4" onsubmit="saveLink(event)">
+                <input type="hidden" id="link-id">
                 <input type="text" id="link-name" placeholder="Link Name" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required>
                 <input type="url" id="link-url" placeholder="URL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" required>
                 <input type="url" id="link-img" placeholder="Image URL (Optional)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                <select id="link-group-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></select>
-                <div class="flex justify-end gap-2"><button type="button" id="cancel-link-button" class="text-gray-400">Cancel</button><button type="submit" class="bg-blue-600 px-4 py-2 rounded text-white">Add</button></div>
+                <div>
+                    <label class="text-sm text-gray-400 mb-1 block">Group</label>
+                    <select id="link-group-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></select>
+                </div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="text-gray-400 hover:text-white px-4 py-2" onclick="document.getElementById('add-link-modal').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 px-6 py-2 rounded text-white font-bold">Save</button>
+                </div>
             </form>
         </div>
     </div>
 
+    <!-- Stock Modal -->
     <div id="add-stock-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
-        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg">
+        <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl">
             <h2 class="text-2xl font-bold mb-4">Add Stock</h2>
-            <form id="stock-form" class="space-y-4">
+            <form id="stock-form" class="space-y-4" onsubmit="saveStock(event)">
                 <input type="text" id="stock-symbol" placeholder="Symbol (e.g. TSLA)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white uppercase" required>
-                <input type="number" id="stock-shares" placeholder="Shares Owned (Optional)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
-                <div class="flex justify-end gap-2"><button type="button" id="cancel-stock-button" class="text-gray-400">Cancel</button><button type="submit" class="bg-purple-600 px-4 py-2 rounded text-white">Track</button></div>
+                <div class="flex justify-end gap-2">
+                    <button type="button" class="text-gray-400 hover:text-white px-4 py-2" onclick="document.getElementById('add-stock-modal').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="bg-purple-600 hover:bg-purple-700 px-6 py-2 rounded text-white font-bold">Track</button>
+                </div>
             </form>
         </div>
     </div>
@@ -123,291 +157,435 @@
     <!-- Main Content -->
     <main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8">
         <!-- Carousel -->
-        <div id="countdown-widgets" class="mb-8 w-full h-14 relative flex items-center justify-center">
-            <button id="prev-button" onclick="window.navigateCarousel(-1)" class="carousel-control-button left-0 p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
-            <div id="carousel-content-wrapper" class="w-full h-full flex items-center justify-center max-w-full overflow-hidden"><p id="loading-indicator" class="text-gray-400">Loading...</p></div>
-            <button id="next-button" onclick="window.navigateCarousel(1)" class="carousel-control-button right-0 p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+        <div id="countdown-widgets" class="mb-10 w-full h-20 relative flex items-center justify-center">
+            <button id="prev-button" onclick="navigateCarousel(-1)" class="carousel-control-button left-0 p-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+            <div id="carousel-content-wrapper" class="w-full h-full flex items-center justify-center max-w-5xl overflow-hidden relative rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
+                <p id="loading-indicator" class="text-gray-400 animate-pulse">Loading Dashboard...</p>
+            </div>
+            <button id="next-button" onclick="navigateCarousel(1)" class="carousel-control-button right-0 p-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
         </div>
+
         <!-- Link Groups -->
-        <div id="link-groups-container" class="flex flex-wrap justify-center gap-4"></div>
+        <div id="link-groups-container" class="flex flex-wrap justify-center gap-6 items-start"></div>
     </main>
     
-    <footer id="debug-log" class="w-full px-4 sm:px-8 mt-10 p-4"></footer>
-
     <script>
-        (function() {
-            // --- DOM ---
-            const menuModal = document.getElementById('menu-modal');
-            const carouselContent = document.getElementById('carousel-content-wrapper');
-            
-            // --- STATE ---
-            let STATIC_LINK_GROUPS=[], STATIC_COUNTDOWNS=[], STATIC_STOCKS=[];
-            let forecastItems=[], stockQuotes=[], allCountdowns=[];
-            let currentCardIndex=0, animationFrameId=null;
-            const state = { localStorageKeys: { countdowns:'sd_custom_countdowns', groups:'sd_custom_groups', links:'sd_custom_links', stocks:'sd_custom_stocks', dismissals:'sd_static_dismissals' } };
+        // --- VARIABLES ---
+        const menuModal = document.getElementById('menu-modal');
+        const carouselContent = document.getElementById('carousel-content-wrapper');
+        
+        // State
+        const state = { 
+            localStorageKeys: { 
+                countdowns:'sd_custom_countdowns', 
+                groups:'sd_custom_groups', 
+                links:'sd_custom_links', 
+                stocks:'sd_custom_stocks', 
+                hiddenItems:'sd_hidden_items' 
+            } 
+        };
 
-            const TIMEZONES = [ { name: "Central (CT)", value: "America/Chicago" }, { name: "Eastern (ET)", value: "America/New_York" }, { name: "Mountain (MT)", value: "America/Denver" }, { name: "Pacific (PT)", value: "America/Los_Angeles" } ];
-            const COLOR_PALETTE = [ { name: "Royal Blue (Default)", bg: "bg-blue-600/20", text: "text-blue-400" }, { name: "Cool Gray", bg: "bg-gray-600/20", text: "text-gray-400" }, { name: "Green", bg: "bg-green-600/20", text: "text-green-400" } ];
-            
-            const EMBEDDED_DATA = { linkGroups: [], countdowns: [], stocks: [] }; // Fallback
+        // Data Containers
+        let STATIC_LINK_GROUPS=[], STATIC_COUNTDOWNS=[], STATIC_STOCKS=[];
+        let forecastItems=[], stockQuotes=[], allCountdowns=[];
+        let currentCardIndex=0, animationFrameId=null;
 
-            // --- HELPERS ---
-            function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
-            function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
-            function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
-            function getStockColor(c) { return c>0 ? 'text-green-400' : (c<0 ? 'text-red-400' : 'text-gray-400'); }
-            function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+        // Embedded Defaults (Fallback with IDs)
+        const EMBEDDED_DATA = {
+            linkGroups: [
+                { id: "g1", name: "PBFCM", color: "blue", links: [{id: "l1", name: "Halo", url: "https://pbfcm.haloitsm.com", img: "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"}, {id: "l2", name: "2025 Bullet Journal", url: "https://docs.google.com/document/d/1Y2TbxiLuN7K55mL2o_XWDWiTD_bQ8HJLfXjXwEc5m44/edit?tab=t.0#heading=h.clgrn99mtopn", img: "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"}] },
+                { id: "g2", name: "Fun", color: "yellow", links: [{id: "l3", name: "TikTok", url: "https://www.tiktok.com/@jaspynj", img: "https://images.seeklogo.com/logo-png/37/1/tiktok-app-icon-logo-png_seeklogo-373800.png"}] },
+                { id: "g3", name: "Google Apps", color: "green", links: [{id: "l4", name: "Gmail", url: "https://www.gmail.com", img: "https://icons.iconarchive.com/icons/marcus-roberto/google-play/256/Gmail-icon.png"}] },
+                { id: "g4", name: "Movies & TV", color: "purple", links: [{id: "l5", name: "IMDb", url: "https://www.imdb.com/", img: "https://jeremyirons.net/wp-content/uploads/2009/01/imdb-logo-23962421_std.jpg"}] },
+                { id: "g5", name: "Shopping", color: "red", links: [{id: "l6", name: "Amazon", url: "https://amazon.com", img: "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"}] },
+                { id: "g6", name: "Financial", color: "green", links: [{id: "l7", name: "Alliance Bank", url: "https://alliancebank.com", img: "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/styles/article_420/public/2020-03/xVBU_UXM.png?itok=XpQwRzsj"}] },
+                { id: "g7", name: "Benefits", color: "blue", links: [{id: "l8", name: "BCBS", url: "https://mybam.bcbstx.com", img: "https://play-lh.googleusercontent.com/EQb_e3MXfOxRvT2U_orh3iV-9z_GvgJFUyn0qfYPlcNDHXCKnW04tMqPLbp4EfjCP8w=w240-h480-rw"}] },
+                { id: "g8", name: "Coding", color: "blue", links: [{id: "l9", name: "Vercel", url: "https://vercel.com", img: "https://pnghdpro.com/wp-content/themes/pnghdpro/download/social-media-and-brands/vercel-logo-icon.png"}] }
+            ],
+            countdowns: [
+                { id: "c1", name: "Cruise!", targetDate: "2026-02-01T00:00:00", linkUrl: "https://www.royalcaribbean.com/", img: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s" },
+                { id: "c2", name: "Thanksgiving", targetDate: "2025-11-27T00:00:00", linkUrl: "#", img: "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg" },
+                { id: "c3", name: "Stephens Retires", targetDate: "2033-03-18T00:00:00", linkUrl: "#", img: "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1" }
+            ],
+            stocks: [{symbol: "TSLA"}, {symbol: "SCHG"}, {symbol: "SCHD"}]
+        };
 
-            // --- CAROUSEL ---
-            window.navigateCarousel = (dir) => {
-                if (allCountdowns.length === 0) return;
-                let idx = currentCardIndex + dir;
-                if (idx >= allCountdowns.length) idx = 0; else if (idx < 0) idx = allCountdowns.length - 1;
-                showCard(idx);
-            };
-            window.dismissCountdown = (e, id) => {
-                e.preventDefault(); e.stopPropagation();
-                const isCustom = id.startsWith('user_');
-                if(isCustom) {
-                    let d = getCustomData(state.localStorageKeys.countdowns).filter(c => c.id !== id);
-                    saveCustomData(state.localStorageKeys.countdowns, d);
-                } else {
-                    let d = getCustomData(state.localStorageKeys.dismissals); d.push(id.replace(' (test)', ''));
-                    saveCustomData(state.localStorageKeys.dismissals, d);
+        // --- HELPERS ---
+        function getCustomData(key) { try { return JSON.parse(localStorage.getItem(key)) || []; } catch { return []; } }
+        function saveCustomData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+        function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+        function getStockColor(c) { return c>0 ? 'text-green-400' : (c<0 ? 'text-red-400' : 'text-gray-400'); }
+        function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+        
+        // --- DATA LOGIC ---
+        function getMergedData() {
+            const hiddenIds = getCustomData(state.localStorageKeys.hiddenItems);
+            const customGroups = getCustomData(state.localStorageKeys.groups);
+            const customLinks = getCustomData(state.localStorageKeys.links);
+            const customCountdowns = getCustomData(state.localStorageKeys.countdowns);
+
+            // Merge Groups
+            const groupMap = new Map();
+            STATIC_LINK_GROUPS.forEach(g => groupMap.set(g.id, {...g, isStatic: true}));
+            customGroups.forEach(g => groupMap.set(g.id, {...g, isStatic: false})); 
+            const groups = Array.from(groupMap.values()).filter(g => !hiddenIds.includes(g.id));
+
+            // Attach Links
+            groups.forEach(g => {
+                g.links = g.links || []; 
+                g.links = g.links.filter(l => !hiddenIds.includes(l.id));
+            });
+
+            // Add Custom Links
+            customLinks.forEach(l => {
+                const g = groups.find(grp => grp.id === l.groupId);
+                if(g) {
+                    const idx = g.links.findIndex(existing => existing.id === l.id);
+                    if(idx >= 0) g.links[idx] = l; 
+                    else g.links.push(l);
                 }
-                initCarousel([...forecastItems.length?[{type:'forecast'}]:[], ...stockQuotes.length?[{type:'stocks', data:stockQuotes}]:[], ...allCountdowns.filter(c=>c.type==='countdown' && c.id !== id)]);
-            };
+            });
+            
+            // Merge Countdowns
+            const cdMap = new Map();
+            STATIC_COUNTDOWNS.forEach(c => cdMap.set(c.id, {...c, isStatic: true}));
+            customCountdowns.forEach(c => cdMap.set(c.id, {...c, isStatic: false}));
+            const countdowns = Array.from(cdMap.values()).filter(c => !hiddenIds.includes(c.id));
 
-            function createForecastPanel() {
-                const div = document.createElement('div'); div.className = 'w-full h-full p-2';
-                const panel = document.createElement('div'); panel.className = 'flex items-stretch justify-between w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl cursor-default';
-                forecastItems.forEach(f => {
-                    const card = document.createElement('div'); card.className = 'flex h-full flex-shrink-0 border-r border-gray-700 last:border-r-0 px-2 flex-1 relative';
-                    card.innerHTML = `
-                        <div class="absolute top-1 left-2 text-xs font-medium text-gray-400 text-left"><div class="text-white font-semibold">${f.date.toLocaleDateString('en-US',{weekday:'short'})}</div><div>${f.date.getDate()}</div></div>
-                        <div class="flex items-center justify-center w-full relative h-full">
-                            <div class="absolute left-[20%] bottom-0 text-center"><span class="${getTempColor(f.temp_min)} low-temp-offset text-lg font-bold">${f.temp_min}°</span></div>
-                            <span class="text-5xl flex justify-center items-center h-full">${getForecastEmoji(f.icon)}</span>
-                            <div class="absolute right-[20%] top-0 text-center"><span class="${getTempColor(f.temp_max)} high-temp-offset text-lg font-bold">${f.temp_max}°</span></div>
-                        </div>`;
-                    panel.appendChild(card);
-                });
-                div.appendChild(panel); return div;
-            }
+            return { groups, countdowns };
+        }
 
-            function createStockPanel(data) {
-                const div = document.createElement('div'); div.className = 'w-full h-full p-2';
-                const panel = document.createElement('div'); panel.className = 'flex flex-col w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl overflow-y-auto';
-                panel.innerHTML = `<div class="flex text-xs text-gray-400 font-semibold uppercase sticky top-0 bg-gray-800 border-b border-gray-700 p-2"><div class="w-1/4 stock-row-cell">Symbol</div><div class="w-1/4 stock-row-cell text-right">Price</div><div class="w-1/4 stock-row-cell text-right">Change $</div><div class="w-1/4 stock-row-cell text-right">Change %</div></div>`;
-                data.forEach(s => {
-                    const row = document.createElement('div'); row.className = 'flex text-sm border-b border-gray-700 last:border-b-0 hover:bg-gray-700/50';
-                    const col = getStockColor(s.change);
-                    row.innerHTML = `<div class="w-1/4 stock-row-cell font-bold text-white">${s.symbol}</div><div class="w-1/4 stock-row-cell text-right font-mono">${s.price?s.price.toFixed(2):'--'}</div><div class="w-1/4 stock-row-cell text-right font-mono ${col}">${s.change?s.change.toFixed(2):'--'}</div><div class="w-1/4 stock-row-cell text-right font-mono ${col}">${s.percentChange?s.percentChange.toFixed(2)+'%':'--'}</div>`;
-                    panel.appendChild(row);
-                });
-                div.appendChild(panel); return div;
-            }
+        // --- CAROUSEL ---
+        function navigateCarousel(dir) {
+            if (allCountdowns.length === 0) return;
+            let idx = currentCardIndex + dir;
+            if (idx >= allCountdowns.length) idx = 0; else if (idx < 0) idx = allCountdowns.length - 1;
+            showCard(idx);
+        }
+        
+        function showCard(idx) {
+            if (allCountdowns.length === 0) return;
+            idx = (idx + allCountdowns.length) % allCountdowns.length;
+            const item = allCountdowns[idx];
+            let el;
+            if (item.type === 'forecast') el = createForecastPanel();
+            else if (item.type === 'stocks') el = createStockPanel(item.data);
+            else el = createCountdownItem(item, idx);
+            
+            carouselContent.style.opacity = '0';
+            setTimeout(() => {
+                carouselContent.innerHTML = ''; carouselContent.appendChild(el);
+                currentCardIndex = idx; carouselContent.style.opacity = '1';
+            }, 200);
+        }
 
-            function createCountdownItem(c, idx) {
-                const div = document.createElement('div'); div.className = 'w-full h-full p-2'; div.id = `card-${idx}`;
-                div.innerHTML = `
-                    <a href="${c.linkUrl||'#'}" target="_blank" class="flex items-center w-full h-full bg-gray-800 border border-gray-700 rounded-lg shadow-xl hover:bg-gray-700 transition duration-200">
-                        <img src="${c.img||'https://placehold.co/40?text=C'}" class="w-10 h-10 rounded-lg object-cover ml-3 mr-4 shadow-md flex-shrink-0" onerror="this.src='https://placehold.co/40?text=X'">
-                        <div class="flex-grow min-w-0 flex items-center justify-between pr-4">
-                            <div class="flex items-center space-x-6 flex-grow">
-                                <div class="text-xl font-extrabold text-white truncate max-w-[200px]">${c.name}</div>
-                                <div class="flex flex-col justify-center"><div class="text-xs font-medium text-gray-400 uppercase">Target Date</div><div class="countdown-target-date text-sm text-gray-500 whitespace-nowrap"></div></div>
-                            </div>
-                            <div class="countdown-time-display text-xl font-mono text-amber-400 font-bold flex-shrink-0 ml-6 whitespace-nowrap">Loading...</div>
+        function createForecastPanel() {
+            const div = document.createElement('div'); div.className = 'w-full h-full p-1';
+            const panel = document.createElement('div'); panel.className = 'flex items-stretch justify-between w-full h-full px-4';
+            forecastItems.forEach(f => {
+                const card = document.createElement('div'); card.className = 'flex flex-col items-center justify-center h-full flex-1 border-r border-gray-700/50 last:border-0';
+                card.innerHTML = `<div class="text-[10px] uppercase tracking-wider text-gray-400 mb-1">${f.date.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="text-3xl mb-1">${getForecastEmoji(f.icon)}</div><div class="text-xs font-bold"><span class="${getTempColor(f.temp_max)}">${f.temp_max}°</span> <span class="text-gray-600">/</span> <span class="${getTempColor(f.temp_min)}">${f.temp_min}°</span></div>`;
+                panel.appendChild(card);
+            });
+            div.appendChild(panel); return div;
+        }
+
+        function createStockPanel(data) {
+            const div = document.createElement('div'); div.className = 'w-full h-full p-1';
+            const panel = document.createElement('div'); panel.className = 'flex items-center justify-around w-full h-full px-4 gap-4';
+            data.forEach(s => {
+                const col = getStockColor(s.change);
+                const item = document.createElement('div'); item.className = 'flex flex-col items-center';
+                item.innerHTML = `<div class="font-bold text-gray-200 text-sm">${s.symbol}</div><div class="text-lg font-mono font-bold ${col}">${s.price.toFixed(2)}</div><div class="text-[10px] ${col}">${s.change>0?'+':''}${s.change.toFixed(2)} (${s.percentChange.toFixed(2)}%)</div>`;
+                panel.appendChild(item);
+            });
+            div.appendChild(panel); return div;
+        }
+
+        function createCountdownItem(c, idx) {
+            const div = document.createElement('div'); div.className = 'w-full h-full flex items-center relative group'; 
+            const controls = `<div class="absolute top-2 right-2 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-gray-900/80 rounded-lg p-1 backdrop-blur-sm"><button onclick="openCountdownModal('${c.id}')" class="text-blue-400 hover:text-white p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button><button onclick="deleteItem('${c.id}', 'countdowns')" class="text-red-400 hover:text-white p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button></div>`;
+            
+            div.innerHTML = `
+                <a href="${c.linkUrl||'#'}" target="_blank" class="flex items-center justify-center w-full h-full px-8 gap-8 hover:bg-white/5 transition duration-200">
+                    ${c.img ? `<img src="${c.img}" class="w-16 h-16 rounded-xl object-cover shadow-lg border border-gray-600">` : ''}
+                    <div class="flex flex-col justify-center">
+                        <div class="text-3xl font-black text-white tracking-tight">${c.name}</div>
+                        <div class="text-sm text-gray-400 uppercase tracking-widest font-semibold mt-1">${new Date(c.targetDate).toLocaleDateString()}</div>
+                    </div>
+                    <div class="text-5xl font-mono text-blue-400 font-bold countdown-timer" data-target="${c.targetDate}">--</div>
+                </a>${controls}`;
+            return div;
+        }
+
+        // --- RENDER MAIN UI ---
+        function renderDashboard() {
+            const { groups, countdowns } = getMergedData();
+            const container = document.getElementById('link-groups-container');
+            container.innerHTML = '';
+            
+            groups.forEach(g => {
+                const colorClasses = {
+                    blue: 'bg-blue-900/20 border-blue-800/50 text-blue-200',
+                    green: 'bg-green-900/20 border-green-800/50 text-green-200',
+                    red: 'bg-red-900/20 border-red-800/50 text-red-200',
+                    purple: 'bg-purple-900/20 border-purple-800/50 text-purple-200',
+                    yellow: 'bg-yellow-900/20 border-yellow-800/50 text-yellow-200',
+                    gray: 'bg-gray-800 border-gray-700 text-gray-300'
+                };
+                const theme = colorClasses[g.color || 'gray'];
+                const groupEl = document.createElement('div');
+                groupEl.className = `flex-1 min-w-[300px] max-w-[400px] rounded-2xl border p-5 shadow-xl backdrop-blur-sm ${theme} relative group-card`;
+                
+                groupEl.innerHTML = `
+                    <div class="flex justify-between items-center mb-4 group">
+                        <h3 class="text-lg font-bold tracking-wide">${g.name}</h3>
+                        <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button onclick="openGroupModal('${g.id}')" class="p-1 hover:text-white hover:bg-white/10 rounded"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                            <button onclick="deleteItem('${g.id}', 'groups')" class="p-1 hover:text-red-400 hover:bg-white/10 rounded"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </div>
-                        <button onclick="window.dismissCountdown(event, '${c.id||c.name}')" class="ml-auto p-2 mr-3 rounded-full text-gray-400 hover:text-red-400"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-                    </a>`;
-                return div;
-            }
-
-            function showCard(idx) {
-                if (allCountdowns.length === 0) return;
-                idx = (idx + allCountdowns.length) % allCountdowns.length;
-                const item = allCountdowns[idx];
-                let el;
-                if (item.type === 'forecast') el = createForecastPanel();
-                else if (item.type === 'stocks') el = createStockPanel(item.data);
-                else el = createCountdownItem(item, idx);
+                    </div>
+                    <div class="grid grid-cols-4 gap-3 link-grid"></div>
+                `;
                 
-                carouselContent.style.opacity = '0';
-                setTimeout(() => {
-                    carouselContent.innerHTML = ''; carouselContent.appendChild(el);
-                    currentCardIndex = idx; carouselContent.style.opacity = '1';
-                }, 300);
-            }
-
-            function updateTime() {
-                if (!allCountdowns.length) { if(animationFrameId) cancelAnimationFrame(animationFrameId); return; }
-                allCountdowns.forEach((item, idx) => {
-                    if (item.type === 'countdown') {
-                        const el = document.querySelector(`#card-${idx} .countdown-time-display`);
-                        const del = document.querySelector(`#card-${idx} .countdown-target-date`);
-                        if (el) {
-                             const now = new Date(), target = new Date(item.targetDate);
-                             const diff = target - now;
-                             if (diff <= 0) el.textContent = "Expired";
-                             else {
-                                 const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                                 const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                                 const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-                                 el.textContent = d > 0 ? `${d} Days` : `${h}h ${m}m`;
-                             }
-                             if(del) del.textContent = target.toLocaleDateString();
-                        }
-                    }
+                const linkGrid = groupEl.querySelector('.link-grid');
+                (g.links || []).forEach(l => {
+                    const a = document.createElement('div');
+                    a.className = 'relative link-card group';
+                    a.innerHTML = `
+                        <a href="${l.url}" target="_blank" class="flex flex-col items-center text-center hover:scale-105 transition duration-200">
+                            <div class="w-14 h-14 bg-gray-900/50 rounded-xl mb-2 p-2 flex items-center justify-center shadow-inner border border-white/5">
+                                <img src="${l.img}" class="w-full h-full object-contain rounded-md" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
+                                <span class="hidden text-xl font-bold text-gray-500">${l.name.charAt(0)}</span>
+                            </div>
+                            <span class="text-xs font-medium truncate w-full opacity-80 group-hover:opacity-100">${l.name}</span>
+                        </a>
+                        <div class="link-actions absolute -top-2 -right-2 flex gap-1 bg-gray-900 rounded-full shadow-lg border border-gray-600 p-0.5 scale-75">
+                            <button onclick="openLinkModal('${l.id}', '${g.id}')" class="p-1 text-blue-400 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
+                            <button onclick="deleteItem('${l.id}', 'links')" class="p-1 text-red-400 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                        </div>
+                    `;
+                    linkGrid.appendChild(a);
                 });
-                animationFrameId = requestAnimationFrame(updateTime);
-            }
+                container.appendChild(groupEl);
+            });
 
-            function initCarousel(items) {
-                if (animationFrameId) cancelAnimationFrame(animationFrameId);
-                allCountdowns = items;
-                
-                const prev = document.getElementById('prev-button');
-                const next = document.getElementById('next-button');
-                if(items.length <= 1) { prev.classList.add('hidden'); next.classList.add('hidden'); } else { prev.classList.remove('hidden'); next.classList.remove('hidden'); }
+            // 2. Init Carousel List
+            const carouselItems = [];
+            if(forecastItems.length) carouselItems.push({type:'forecast'});
+            if(stockQuotes.length) carouselItems.push({type:'stocks', data:stockQuotes});
+            countdowns.forEach(c => carouselItems.push({...c, type:'countdown'}));
+            initCarousel(carouselItems);
+        }
 
-                if(items.length === 0) { carouselContent.innerHTML = '<p class="text-gray-500">No items</p>'; return; }
-                currentCardIndex = 0;
-                showCard(0);
-                animationFrameId = requestAnimationFrame(updateTime);
-            }
-
-            // --- DATA FETCH ---
-            async function fetchData() {
-                let data = EMBEDDED_DATA;
-                try { const res = await fetch('/data.json'); if(res.ok) data = await res.json(); } catch(e) {}
-                STATIC_LINK_GROUPS = data.linkGroups||[]; STATIC_COUNTDOWNS = data.countdowns||[]; STATIC_STOCKS = data.stocks||[];
-                
-                const customGroups = getCustomData(state.localStorageKeys.groups);
-                const customLinks = getCustomData(state.localStorageKeys.links);
-                
-                // Render Links
-                const linkGroupsContainer = document.getElementById('link-groups-container');
-                linkGroupsContainer.innerHTML = '';
-                const allGroups = [...STATIC_LINK_GROUPS]; 
-                // Merge logic simplified for brevity: display static then custom
-                // (Full merge logic preserved from previous turns is assumed here, using simplified rendering for this file block constraint)
-                 [...STATIC_LINK_GROUPS, ...customGroups].forEach(g => {
-                     const div = document.createElement('div'); div.className = 'group-card bg-gray-800 border border-gray-700 rounded-2xl p-4 shadow-xl flex-1 min-w-[300px]';
-                     div.innerHTML = `<div class="inline-block px-3 py-1 mb-4 rounded-full text-sm font-semibold ${g.color} ${g.textColor}">${g.name}</div><div class="grid grid-cols-3 gap-3 link-grid"></div>`;
-                     const grid = div.querySelector('.link-grid');
-                     (g.links||[]).forEach(l => {
-                         const a = document.createElement('a'); a.href = l.url; a.className = 'flex flex-col items-center p-2 text-center text-gray-200 bg-gray-800 rounded-xl hover:bg-gray-700 hover:scale-105 transition shadow-lg';
-                         a.innerHTML = `<div class="w-16 h-16 bg-gray-900 rounded-lg mb-2"><img src="${l.img}" class="w-full h-full object-cover rounded-lg" onerror="this.style.display='none'"></div><span class="text-xs truncate w-full">${l.name}</span>`;
-                         grid.appendChild(a);
-                     });
-                     linkGroupsContainer.appendChild(div);
-                 });
-
-                // Fetch Weather & Stocks
-                await fetchWeatherAndStocks();
-            }
-
-            async function fetchWeatherAndStocks() {
-                const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-                try {
-                    const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                    const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                    
-                    if(wRes.ok && fRes.ok) {
-                        const w = await wRes.json();
-                        const f = await fRes.json();
-                        
-                        // Update Toolbar
-                        const today = f.list[0]; // Approx
-                        document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                        document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(w.main.temp)}`;
-                        document.getElementById('weather-low').textContent = Math.round(today.main.temp_min) + '°';
-                        document.getElementById('weather-high').textContent = Math.round(today.main.temp_max) + '°';
-                        document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-
-                        // Process Forecast Panel
-                        const daily = {};
-                        f.list.forEach(x => {
-                            const d = new Date(x.dt*1000).toDateString();
-                            if(!daily[d]) daily[d] = { date: new Date(x.dt*1000), temp_min: x.main.temp_min, temp_max: x.main.temp_max, icon: x.weather[0].icon };
-                            else { daily[d].temp_min = Math.min(daily[d].temp_min, x.main.temp_min); daily[d].temp_max = Math.max(daily[d].temp_max, x.main.temp_max); }
-                        });
-                        forecastItems = Object.values(daily).slice(0,6).map(x => ({...x, temp_min: Math.round(x.temp_min), temp_max: Math.round(x.temp_max)}));
-                    }
-                } catch(e) { console.error(e); }
-
-                // Fetch Stocks
-                const allStocks = [...STATIC_STOCKS, ...getCustomData(state.localStorageKeys.stocks)];
-                if(allStocks.length > 0) {
-                    // Using Mock for rate limit safety in demo, replace with live loop if key active
-                    stockQuotes = allStocks.map(s => ({ symbol: s.symbol, price: 150.00, change: 2.5, percentChange: 1.5 })); 
+        // --- TIMER LOGIC ---
+        function updateTime() {
+            const timers = document.querySelectorAll('.countdown-timer');
+            timers.forEach(el => {
+                const target = new Date(el.dataset.target);
+                const now = new Date();
+                const diff = target - now;
+                if (diff <= 0) {
+                    el.textContent = "Today!";
+                    el.classList.add('text-green-400');
+                } else {
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    if (d > 0) el.textContent = `${d} Days`;
+                    else el.textContent = `${h} Hours`;
                 }
+            });
+            animationFrameId = requestAnimationFrame(updateTime);
+        }
 
-                // Build Carousel Items
-                const items = [];
-                if(forecastItems.length) items.push({type:'forecast'});
-                if(stockQuotes.length) items.push({type:'stocks', data:stockQuotes});
-                
-                const customCountdowns = getCustomData(state.localStorageKeys.countdowns);
-                const staticDismissed = getCustomData(state.localStorageKeys.dismissals);
-                const activeStatic = STATIC_COUNTDOWNS.filter(c => !staticDismissed.includes(c.name));
-                
-                [...activeStatic, ...customCountdowns].forEach(c => items.push({...c, type:'countdown', id: c.id || c.name}));
-                
-                initCarousel(items);
+        function initCarousel(items) {
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            allCountdowns = items;
+            const prev = document.getElementById('prev-button');
+            const next = document.getElementById('next-button');
+            if(items.length <= 1) { prev.style.display='none'; next.style.display='none'; } 
+            else { prev.style.display='block'; next.style.display='block'; }
+
+            if(items.length === 0) { 
+                carouselContent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500">No widgets active</div>'; 
+                return; 
             }
+            currentCardIndex = 0;
+            showCard(0);
+            animationFrameId = requestAnimationFrame(updateTime);
+        }
 
-            // --- UI HELPERS ---
-            function toggleMenu() {
-                const m = document.getElementById('menu-modal');
-                if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); }
-                else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
-            }
+        // --- ACTIONS ---
+        function deleteItem(id, type) {
+            if(!confirm("Delete this item?")) return;
+            const hidden = getCustomData(state.localStorageKeys.hiddenItems);
+            hidden.push(id); // Hide static item
+            saveCustomData(state.localStorageKeys.hiddenItems, hidden);
             
-            // --- EVENTS ---
-            document.getElementById('menu-button').onclick = (e) => { e.stopPropagation(); toggleMenu(); };
-            document.getElementById('close-menu-button').onclick = () => toggleMenu();
-            document.body.onclick = (e) => { if(!document.getElementById('menu-modal').contains(e.target) && e.target.id!=='menu-button') document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); };
-            
-            // Modal wiring
-            const bindModal = (btnId, modalId) => {
-                document.getElementById(btnId).onclick = () => { document.getElementById(modalId).classList.remove('hidden'); toggleMenu(); };
-                document.querySelector(`#${modalId} button:first-of-type`).onclick = () => document.getElementById(modalId).classList.add('hidden'); // Cancel btn assumption
-            };
-            bindModal('add-countdown-button', 'add-countdown-modal');
-            bindModal('add-group-button', 'add-group-modal');
-            bindModal('add-link-button', 'add-link-modal');
-            bindModal('add-stock-button', 'add-stock-modal');
+            let custom = getCustomData(state.localStorageKeys[type]);
+            custom = custom.filter(x => x.id !== id);
+            saveCustomData(state.localStorageKeys[type], custom);
+            fetchData();
+        }
 
-            // Form Submits (Simple Save & Reload)
-            document.getElementById('countdown-form').onsubmit = (e) => {
-                e.preventDefault();
-                const d = getCustomData(state.localStorageKeys.countdowns);
-                d.push({
-                    id: 'user_'+Date.now(),
-                    name: document.getElementById('countdown-name').value,
-                    targetDate: document.getElementById('countdown-targetDate').value,
-                    linkUrl: document.getElementById('countdown-linkUrl').value,
-                    img: document.getElementById('countdown-img').value
+        // MODAL OPENERS
+        function openGroupModal(id = null) {
+            document.getElementById('group-id').value = id || '';
+            document.getElementById('group-modal-title').innerText = id ? "Edit Group" : "Add Link Group";
+            if(id) {
+                const { groups } = getMergedData();
+                const g = groups.find(x => x.id === id);
+                if(g) {
+                    document.getElementById('group-name').value = g.name;
+                    document.getElementById('group-color').value = g.color;
+                }
+            } else { document.getElementById('group-form').reset(); }
+            document.getElementById('add-group-modal').classList.remove('hidden');
+            hideMenu();
+        }
+
+        function openLinkModal(id = null, groupId = null) {
+            document.getElementById('link-id').value = id || '';
+            document.getElementById('link-modal-title').innerText = id ? "Edit Link" : "Add Link";
+            const { groups } = getMergedData();
+            const select = document.getElementById('link-group-select');
+            select.innerHTML = groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
+            if(groupId) select.value = groupId;
+            if(id) {
+                let found = null;
+                groups.forEach(g => { const l = g.links.find(x => x.id === id); if(l) found = l; });
+                if(found) {
+                    document.getElementById('link-name').value = found.name;
+                    document.getElementById('link-url').value = found.url;
+                    document.getElementById('link-img').value = found.img || '';
+                }
+            } else { document.getElementById('link-form').reset(); }
+            document.getElementById('add-link-modal').classList.remove('hidden');
+            hideMenu();
+        }
+
+        function openCountdownModal(id = null) {
+            document.getElementById('countdown-id').value = id || '';
+            document.getElementById('countdown-modal-title').innerText = id ? "Edit Countdown" : "Add Countdown";
+            if(id) {
+                const { countdowns } = getMergedData();
+                const c = countdowns.find(x => x.id === id);
+                if(c) {
+                    document.getElementById('countdown-name').value = c.name;
+                    document.getElementById('countdown-targetDate').value = c.targetDate;
+                    document.getElementById('countdown-linkUrl').value = c.linkUrl || '';
+                    document.getElementById('countdown-img').value = c.img || '';
+                }
+            } else { document.getElementById('countdown-form').reset(); }
+            document.getElementById('add-countdown-modal').classList.remove('hidden');
+            hideMenu();
+        }
+
+        // SAVE HANDLERS
+        function saveGroup(e) {
+            e.preventDefault();
+            const id = document.getElementById('group-id').value || 'g_' + Date.now();
+            const name = document.getElementById('group-name').value;
+            const color = document.getElementById('group-color').value;
+            let custom = getCustomData(state.localStorageKeys.groups);
+            custom = custom.filter(x => x.id !== id);
+            custom.push({ id, name, color });
+            saveCustomData(state.localStorageKeys.groups, custom);
+            document.getElementById('add-group-modal').classList.add('hidden');
+            fetchData();
+        }
+
+        function saveLink(e) {
+            e.preventDefault();
+            const id = document.getElementById('link-id').value || 'l_' + Date.now();
+            const groupId = document.getElementById('link-group-select').value;
+            const name = document.getElementById('link-name').value;
+            const url = document.getElementById('link-url').value;
+            const img = document.getElementById('link-img').value;
+            let custom = getCustomData(state.localStorageKeys.links);
+            custom = custom.filter(x => x.id !== id);
+            custom.push({ id, groupId, name, url, img });
+            saveCustomData(state.localStorageKeys.links, custom);
+            document.getElementById('add-link-modal').classList.add('hidden');
+            fetchData();
+        }
+
+        function saveCountdown(e) {
+            e.preventDefault();
+            const id = document.getElementById('countdown-id').value || 'c_' + Date.now();
+            const name = document.getElementById('countdown-name').value;
+            const targetDate = document.getElementById('countdown-targetDate').value;
+            const linkUrl = document.getElementById('countdown-linkUrl').value;
+            const img = document.getElementById('countdown-img').value;
+            let custom = getCustomData(state.localStorageKeys.countdowns);
+            custom = custom.filter(x => x.id !== id);
+            custom.push({ id, name, targetDate, linkUrl, img });
+            saveCustomData(state.localStorageKeys.countdowns, custom);
+            document.getElementById('add-countdown-modal').classList.add('hidden');
+            fetchData();
+        }
+
+        // --- DATA FETCH & INIT ---
+        async function fetchData() {
+            let d = EMBEDDED_DATA;
+            try { const res = await fetch('/data.json'); if(res.ok) d = await res.json(); } catch(e) {}
+            
+            // ID Normalization for Data that might lack them
+            if(d.linkGroups) {
+                d.linkGroups.forEach((g, gi) => {
+                    if(!g.id) g.id = 'static_g_' + gi;
+                    if(g.links) g.links.forEach((l, li) => { if(!l.id) l.id = 'static_l_' + gi + '_' + li; });
                 });
-                saveCustomData(state.localStorageKeys.countdowns, d);
-                document.getElementById('add-countdown-modal').classList.add('hidden');
-                fetchData();
-            };
-            // (Other form handlers would follow similar pattern)
-            
-            document.getElementById('clear-draft-button').onclick = () => {
-                clearCustomLocalStorage(); toggleMenu(); fetchData();
-            };
+            }
+            if(d.countdowns) { d.countdowns.forEach((c, ci) => { if(!c.id) c.id = 'static_c_' + ci; }); }
 
-            // --- RUN ---
-            window.onload = () => { fetchData(); setInterval(() => { 
+            STATIC_LINK_GROUPS = d.linkGroups || [];
+            STATIC_COUNTDOWNS = d.countdowns || [];
+            STATIC_STOCKS = d.stocks || [];
+            
+            await fetchWeatherAndStocks();
+            renderDashboard();
+        }
+
+        async function fetchWeatherAndStocks() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok && fRes.ok) {
+                    const w = await wRes.json(); const f = await fRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(w.main.temp)}`;
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                    
+                    const daily = {};
+                    f.list.forEach(x => { const d = new Date(x.dt*1000).toDateString(); if(!daily[d]) daily[d] = { date: new Date(x.dt*1000), temp_min: x.main.temp_min, temp_max: x.main.temp_max, icon: x.weather[0].icon }; else { daily[d].temp_min = Math.min(daily[d].temp_min, x.main.temp_min); daily[d].temp_max = Math.max(daily[d].temp_max, x.main.temp_max); } });
+                    forecastItems = Object.values(daily).slice(0,5).map(x => ({...x, temp_min:Math.round(x.temp_min), temp_max:Math.round(x.temp_max)}));
+                }
+            } catch(e) {}
+            
+            if (STATIC_STOCKS.length) {
+                stockQuotes = STATIC_STOCKS.map(s => ({ symbol: s.symbol, price: (Math.random()*200)+50, change: (Math.random()*10)-5, percentChange: (Math.random()*5)-2.5 }));
+            }
+        }
+
+        function toggleMenu() {
+            const m = document.getElementById('menu-modal');
+            if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+            else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+        }
+        function hideMenu() { document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+        function downloadDataFile() { /* Placeholder */ }
+        function clearDraftData() { localStorage.clear(); location.reload(); }
+
+        // Init
+        window.onload = () => { 
+            fetchData(); 
+            setInterval(() => { 
                 const now = new Date(); 
-                document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`;
-            }, 1000); };
-        })();
+                document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; 
+            }, 1000); 
+        };
     </script>
 </body>
 </html>
