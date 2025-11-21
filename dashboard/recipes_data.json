@@ -887,7 +887,8 @@
       },
       "tags": [
         "Thanksgiving",
-        "Gluten Free"
+        "Gluten Free",
+        "Keto"
       ],
       "ingredients": [
         {
@@ -1516,7 +1517,8 @@
         "url": "https://www.wholesomeyum.com/mayonnaise-recipe/"
       },
       "tags": [
-        "Keto"
+        "Keto",
+        "Gluten Free"
       ],
       "ingredients": [
         {
@@ -1598,6 +1600,311 @@
             "Add the 1 Tsp Dijon mustard, 2 Tsp apple cider vinegar, and 1 Tsp salt on top of the eggs, trying not to disturb the eggs. Do not whisk or stir.",
             "Pour the oil on top. Again, do not whisk or stir.",
             "Carefully submerge an immersion blender into the bottom of the jar, so that it's right where the egg is. Blend on low power for about 20 seconds without moving, until you see most of the jar has turned white. Then, slowly start to move the blender upward, without lifting the blender out into the air. Once you reach the top of the oil, slowly move back down to the bottom. Go up and down like this a few times, until mayonnaise forms."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763736204878",
+      "title": "Grain Free Dressing",
+      "description": "Tempie's cornbread dressing adapted to be grain free.",
+      "category": "Southern Food",
+      "servings": 8,
+      "prepTime": "15 minutes",
+      "cookTime": "21 minutes",
+      "image": "https://deliciouslyorganic.net/wp-content/uploads/2011/11/grain-free-stuffing-recipe-683x1024.jpg",
+      "source": {
+        "description": "Cayce",
+        "url": ""
+      },
+      "tags": [
+        "Gluten Free",
+        "Thanksgiving"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Dry Ingredients",
+          "list": [
+            {
+              "name": "Butter",
+              "quantity": "8",
+              "unit": "tbsp",
+              "notes": "1 stick",
+              "macros": {
+                "calories": 800,
+                "protein": 1,
+                "carbs": 0,
+                "fat": 92,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "chopped",
+              "macros": {
+                "calories": 64,
+                "protein": 1.5,
+                "carbs": 16,
+                "fat": 0.1,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Celery",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "chopped",
+              "macros": {
+                "calories": 14,
+                "protein": 0.7,
+                "carbs": 3,
+                "fat": 0.2,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Almond Flour",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 600,
+                "protein": 14,
+                "carbs": 24,
+                "fat": 44,
+                "fiber": 12
+              }
+            },
+            {
+              "name": "Cassava Flour",
+              "quantity": "1/4",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 110,
+                "protein": 1,
+                "carbs": 26,
+                "fat": 0,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "Tiger Nut Flour",
+              "quantity": "3/4",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 390,
+                "protein": 3,
+                "carbs": 42,
+                "fat": 21,
+                "fiber": 9
+              }
+            },
+            {
+              "name": "Arrowroot Starch",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 57,
+                "protein": 0,
+                "carbs": 14,
+                "fat": 0,
+                "fiber": 1
+              }
+            },
+            {
+              "name": "Ground Chia Seeds",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 138,
+                "protein": 4.7,
+                "carbs": 12,
+                "fat": 8.7,
+                "fiber": 9.8
+              }
+            },
+            {
+              "name": "Ground Phyllium Husks",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 60,
+                "protein": 0,
+                "carbs": 15,
+                "fat": 0,
+                "fiber": 14
+              }
+            },
+            {
+              "name": "Poppy Seeds",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 46,
+                "protein": 1.6,
+                "carbs": 2.5,
+                "fat": 3.7,
+                "fiber": 1.7
+              }
+            },
+            {
+              "name": "Poultry Seasoning",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "Anything on Wings Poultry Rub",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ground Sage",
+              "quantity": "1 1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Baking Powder",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 5,
+                "protein": 0,
+                "carbs": 3,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Baking Soda",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "lower to 1/2 tsp if broth is salted",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Wet Ingredients",
+          "list": [
+            {
+              "name": "Large Eggs",
+              "quantity": "3",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 215,
+                "protein": 18,
+                "carbs": 1,
+                "fat": 15,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Kefir",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "or buttermilk",
+              "macros": {
+                "calories": 104,
+                "protein": 9,
+                "carbs": 11,
+                "fat": 2.5,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chicken Broth",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "unsalted",
+              "macros": {
+                "calories": 8,
+                "protein": 1,
+                "carbs": 1,
+                "fat": 1,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Preheat to 400° convection ",
+            "Add butter to cast iron skillet and melt on stovetop on low (so butter doesn’t burn)",
+            "Add onions, celery, salt and pepper, and sauté until soft",
+            "Combine dry ingredients in large bowl. Whisk until lumps are crushed.",
+            "Stir wet ingredients into dry mixture until well combined.",
+            "Add butter and veggies to mixture and stir.",
+            "Pour into hot skillet.",
+            "Bake for 21 minutes or until golden."
           ]
         }
       ]
