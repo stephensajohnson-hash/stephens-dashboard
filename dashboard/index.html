@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.9.4</title>
+    <title>Stephens' Dashboard V0.9.6</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -70,7 +70,7 @@
             
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Draft Data (Local)</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.4</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.6</p>
         </div>
     </div>
 
@@ -157,7 +157,7 @@
     <!-- Main Content -->
     <main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8">
         <!-- Carousel -->
-        <div id="countdown-widgets" class="mb-10 w-full h-32 relative flex items-center justify-center">
+        <div id="countdown-widgets" class="mb-10 w-full h-40 relative flex items-center justify-center">
             <button id="prev-button" onclick="navigateCarousel(-1)" class="carousel-control-button left-0 p-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
             <div id="carousel-content-wrapper" class="w-full h-full flex items-center justify-center max-w-5xl overflow-hidden relative rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
                 <p id="loading-indicator" class="text-gray-400 animate-pulse">Loading Dashboard...</p>
@@ -217,7 +217,7 @@
         function getStockColor(c) { return c>0 ? 'text-green-400' : (c<0 ? 'text-red-400' : 'text-gray-400'); }
         function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
         
-        // --- DATA LOGIC (Merge Static + Custom) ---
+        // --- DATA LOGIC ---
         function getMergedData() {
             const hiddenIds = getCustomData(state.localStorageKeys.hiddenItems);
             const customGroups = getCustomData(state.localStorageKeys.groups);
@@ -284,7 +284,7 @@
             const panel = document.createElement('div'); panel.className = 'flex items-stretch justify-between w-full h-full px-4';
             forecastItems.forEach(f => {
                 const card = document.createElement('div'); card.className = 'flex flex-col items-center justify-center h-full flex-1 border-r border-gray-700/50 last:border-0';
-                card.innerHTML = `<div class="text-[10px] uppercase tracking-wider text-gray-400 mb-1">${f.date.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="text-3xl mb-1">${getForecastEmoji(f.icon)}</div><div class="text-xs font-bold"><span class="${getTempColor(f.temp_max)}">${f.temp_max}°</span> <span class="text-gray-600">/</span> <span class="${getTempColor(f.temp_min)}">${f.temp_min}°</span></div>`;
+                card.innerHTML = `<div class="text-sm font-bold uppercase tracking-wider text-gray-400 mb-2">${f.date.toLocaleDateString('en-US',{weekday:'short'})}</div><div class="text-5xl mb-3">${getForecastEmoji(f.icon)}</div><div class="text-lg font-bold"><span class="${getTempColor(f.temp_max)}">${f.temp_max}°</span> <span class="text-gray-600">/</span> <span class="${getTempColor(f.temp_min)}">${f.temp_min}°</span></div>`;
                 panel.appendChild(card);
             });
             div.appendChild(panel); return div;
@@ -475,6 +475,7 @@
             fetchData();
         }
 
+        // MODAL OPENERS
         function openGroupModal(id = null) {
             document.getElementById('group-id').value = id || '';
             document.getElementById('group-modal-title').innerText = id ? "Edit Group" : "Add Link Group";
@@ -524,9 +525,12 @@
                 const c = countdowns.find(x => x.id === id);
                 if(c) {
                     document.getElementById('countdown-name').value = c.name;
+                    
+                    // FIX: Format ISO string "YYYY-MM-DDT..." to "YYYY-MM-DD" for input
                     let dateVal = c.targetDate;
                     if (dateVal.includes('T')) dateVal = dateVal.split('T')[0];
                     document.getElementById('countdown-targetDate').value = dateVal;
+                    
                     document.getElementById('countdown-linkUrl').value = c.linkUrl || '';
                     document.getElementById('countdown-img').value = c.img || '';
                 }
@@ -537,6 +541,7 @@
             hideMenu();
         }
 
+        // SAVE HANDLERS
         function saveGroup(e) {
             e.preventDefault();
             const id = document.getElementById('group-id').value || 'g_' + Date.now();
@@ -642,6 +647,8 @@
 
         async function fetchWeatherAndStocks() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            const FINNHUB_KEY = 'd4geo7pr01qm5b359cugd4geo7pr01qm5b359cv0';
+
             try {
                 const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
                 const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${ZIP}&units=imperial&appid=${KEY}`);
@@ -657,14 +664,26 @@
                 }
             } catch(e) {}
             
-            // Merge Static + Custom Stocks for Display
+            // Merge Static + Custom Stocks
             const customStocks = getCustomData(state.localStorageKeys.stocks);
             const allStockSymbols = [...STATIC_STOCKS.map(s => s.symbol), ...customStocks.map(s => s.symbol)];
-            // Dedup
             const uniqueSymbols = [...new Set(allStockSymbols)];
             
             if (uniqueSymbols.length) {
-                stockQuotes = uniqueSymbols.map(sym => ({ symbol: sym, price: (Math.random()*200)+50, change: (Math.random()*10)-5, percentChange: (Math.random()*5)-2.5 }));
+                try {
+                    // Fetch real data from Finnhub
+                    const promises = uniqueSymbols.map(async sym => {
+                        const res = await fetch(`https://finnhub.io/api/v1/quote?symbol=${sym}&token=${FINNHUB_KEY}`);
+                        if (!res.ok) return null;
+                        const d = await res.json();
+                        if(d.c === 0 && d.d === null) return null; // invalid symbol
+                        return { symbol: sym, price: d.c, change: d.d, percentChange: d.dp };
+                    });
+                    const results = await Promise.all(promises);
+                    stockQuotes = results.filter(s => s !== null);
+                } catch(e) {
+                    console.error("Stock fetch failed", e);
+                }
             }
         }
 
