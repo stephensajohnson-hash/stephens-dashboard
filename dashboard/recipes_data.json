@@ -18,7 +18,8 @@
         "Gluten Free",
         "Beef",
         "Texas",
-        "Cayce Diet"
+        "Cayce Diet",
+        "Party"
       ],
       "ingredients": [
         {
@@ -2507,7 +2508,8 @@
         "url": "https://www.fifteenspatulas.com/quick-stovetop-candied-pecans/"
       },
       "tags": [
-        "Christmas"
+        "Christmas",
+        "Party"
       ],
       "ingredients": [
         {
@@ -2877,7 +2879,8 @@
         "url": ""
       },
       "tags": [
-        "Thanksgiving"
+        "Thanksgiving",
+        "Party"
       ],
       "ingredients": [
         {
@@ -3150,7 +3153,8 @@
         "url": ""
       },
       "tags": [
-        "Thanksgiving"
+        "Thanksgiving",
+        "Party"
       ],
       "ingredients": [
         {
@@ -3303,7 +3307,8 @@
       },
       "tags": [
         "New Year's Eve",
-        "Texas"
+        "Texas",
+        "Party"
       ],
       "ingredients": [
         {
@@ -3447,6 +3452,472 @@
           "sectionTitle": "",
           "steps": [
             "Combine all ingredients into large bowl and stir.  Cover bowl and refrigerate overnight.  "
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763760012822",
+      "title": "Keto Ranch Dressing",
+      "description": "You’re just 5 minutes away from this simple, creamy, herbaceous keto ranch dressing recipe!",
+      "category": "Salad",
+      "servings": 144,
+      "prepTime": "10 minutes",
+      "cookTime": "30 minutes chilling time",
+      "image": "https://i2.wp.com/thelittlepine.com/wp-content/uploads/2020/03/Homemade-Ranch-Dressing-5-680x450.jpg",
+      "source": {
+        "description": "Little Pine Kitchen",
+        "url": "https://www.thelittlepine.com/homemade-ranch-dressing/"
+      },
+      "tags": [
+        "Keto"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Mayonnaise",
+              "quantity": "3",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 4488,
+                "protein": 6.3,
+                "carbs": 3.9,
+                "fat": 495,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Heavy Cream",
+              "quantity": "3",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 2463,
+                "protein": 15,
+                "carbs": 20,
+                "fat": 264,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sour Cream",
+              "quantity": "3",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 2880,
+                "protein": 48,
+                "carbs": 48,
+                "fat": 240,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Lemon Juice",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 3,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Dried Chives",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0.62,
+                "protein": 0.04,
+                "carbs": 0.13,
+                "fat": 0.01,
+                "fiber": 0.05
+              }
+            },
+            {
+              "name": "Dried Parsley",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 5,
+                "protein": 0.3,
+                "carbs": 0.2,
+                "fat": 0.1,
+                "fiber": 0.1
+              }
+            },
+            {
+              "name": "Dried Dill Weed",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 8,
+                "protein": 1,
+                "carbs": 2,
+                "fat": 0.1,
+                "fiber": 0.4
+              }
+            },
+            {
+              "name": "Garlic Powder",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "1 1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 12,
+                "protein": 0.36,
+                "carbs": 2.9,
+                "fat": 0.04,
+                "fiber": 0.21
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "In a large bowl, whisk together the mayonnaise, sour cream, chives, parsley, dill, garlic powder, onion powder, salt and pepper. Cover and refrigerate for 30 minutes before serving.",
+            "Tastes better if the ingredients have time to marinade (1-2 hours)"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763760684385",
+      "title": "Bean Dip",
+      "description": "If you are a fan of bean dip this CopyCat Fritos Bean Dip Recipe is sure to save you a bundle.",
+      "category": "Dips",
+      "servings": 4,
+      "prepTime": "5 minutes",
+      "cookTime": "1 hour chill time",
+      "image": "https://cincyshopper.com/wp-content/uploads/2015/01/1.jpg",
+      "source": {
+        "description": "Cincy Shopper",
+        "url": "https://cincyshopper.com/copycat-frito-bean-dip-recipe/#wprm-recipe-container-70775"
+      },
+      "tags": [
+        "Party"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Pinto Beans",
+              "quantity": "2",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 490,
+                "protein": 31,
+                "carbs": 90,
+                "fat": 2,
+                "fiber": 30
+              }
+            },
+            {
+              "name": "Jalapenos",
+              "quantity": "1/2",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 2,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Apple Cider Vinegar",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Sugar",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 2,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Smoked Paprika",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic Powder",
+              "quantity": "1/8",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cayenne Pepper",
+              "quantity": "1/8",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/8",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Process all ingredients in a mini-chopper."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763761352448",
+      "title": "Spinach Dip",
+      "description": "Sometimes simple is better. Case in point: this creamy, luscious dip you can throw together in a flash for any party or last minute guests.",
+      "category": "Dips",
+      "servings": 4,
+      "prepTime": "5 minutes",
+      "cookTime": "15 minutes",
+      "image": "https://assets.epicurious.com/photos/56ab8867bfa0fcbd3e434dec/1:1/w_1920,c_limit/EP_01192015_dip_simplespinachdip_nohand.jpg",
+      "source": {
+        "description": "Epicurious",
+        "url": "https://www.epicurious.com/recipes/food/views/simple-spinach-dip"
+      },
+      "tags": [
+        "Keto",
+        "Party"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Spinach",
+              "quantity": "10",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 65,
+                "protein": 8.12,
+                "carbs": 10.31,
+                "fat": 1.11,
+                "fiber": 6.25
+              }
+            },
+            {
+              "name": "Butter",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "unsalted",
+              "macros": {
+                "calories": 200,
+                "protein": 1,
+                "carbs": 0,
+                "fat": 15,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Green Onions",
+              "quantity": "4",
+              "unit": "",
+              "notes": "chopped",
+              "macros": {
+                "calories": 32,
+                "protein": 2,
+                "carbs": 7,
+                "fat": 0.2,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Paprika",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 3,
+                "protein": 0.15,
+                "carbs": 0.6,
+                "fat": 0.15,
+                "fiber": 0.4
+              }
+            },
+            {
+              "name": "Cream Cheese",
+              "quantity": "8",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 700,
+                "protein": 16,
+                "carbs": 16,
+                "fat": 70,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Heavy Cream",
+              "quantity": "3/4",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 616,
+                "protein": 4,
+                "carbs": 5,
+                "fat": 66,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Melt 2 tbsp butter in a medium pan over medium-high heat. ",
+            "Sauté onions until soft, 3–5 minutes. ",
+            "Stir in ½ tsp paprika and cook until fragrant, about 30 seconds. ",
+            "Add 10 ounces spinach, 8 ounces cream cheese, ¾ cup cream, ½ tsp salt, and ¼ tsp pepper and cook, stirring, until warmed through and slightly reduced, 8–10 minutes",
+            "Add more cream if needed to reach desired consistency."
           ]
         }
       ]
