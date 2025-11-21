@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Dashboard V0.9.1</title>
+    <title>Stephens' Dashboard V0.9.4</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -70,7 +70,7 @@
             
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Draft Data (Local)</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.1</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Stephens' Dashboard V0.9.4</p>
         </div>
     </div>
 
@@ -143,7 +143,7 @@
     <!-- Stock Modal -->
     <div id="add-stock-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-lg shadow-2xl">
-            <h2 class="text-2xl font-bold mb-4">Add Stock</h2>
+            <h2 class="text-2xl font-bold mb-4" id="stock-modal-title">Add Stock</h2>
             <form id="stock-form" class="space-y-4" onsubmit="saveStock(event)">
                 <input type="text" id="stock-symbol" placeholder="Symbol (e.g. TSLA)" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white uppercase" required>
                 <div class="flex justify-end gap-2">
@@ -157,7 +157,7 @@
     <!-- Main Content -->
     <main id="dashboard-content" class="px-4 sm:px-8 pt-16 pb-8">
         <!-- Carousel -->
-        <div id="countdown-widgets" class="mb-10 w-full h-20 relative flex items-center justify-center">
+        <div id="countdown-widgets" class="mb-10 w-full h-32 relative flex items-center justify-center">
             <button id="prev-button" onclick="navigateCarousel(-1)" class="carousel-control-button left-0 p-3 text-gray-400 hover:text-white hover:bg-gray-700 rounded-full transition"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
             <div id="carousel-content-wrapper" class="w-full h-full flex items-center justify-center max-w-5xl overflow-hidden relative rounded-xl border border-gray-700/50 bg-gray-800/50 backdrop-blur-sm">
                 <p id="loading-indicator" class="text-gray-400 animate-pulse">Loading Dashboard...</p>
@@ -217,7 +217,7 @@
         function getStockColor(c) { return c>0 ? 'text-green-400' : (c<0 ? 'text-red-400' : 'text-gray-400'); }
         function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
         
-        // --- DATA LOGIC ---
+        // --- DATA LOGIC (Merge Static + Custom) ---
         function getMergedData() {
             const hiddenIds = getCustomData(state.localStorageKeys.hiddenItems);
             const customGroups = getCustomData(state.localStorageKeys.groups);
@@ -313,7 +313,10 @@
                         <div class="text-3xl font-black text-white tracking-tight">${c.name}</div>
                         <div class="text-sm text-gray-400 uppercase tracking-widest font-semibold mt-1">${new Date(c.targetDate).toLocaleDateString()}</div>
                     </div>
-                    <div class="text-5xl font-mono text-blue-400 font-bold countdown-timer" data-target="${c.targetDate}">--</div>
+                    <div class="text-right pl-8">
+                         <div class="text-5xl font-mono text-blue-400 font-bold countdown-timer-main" data-target="${c.targetDate}">--</div>
+                         <div class="text-sm font-mono text-gray-400 mt-1 countdown-timer-total" data-target="${c.targetDate}"></div>
+                    </div>
                 </a>${controls}`;
             return div;
         }
@@ -345,7 +348,7 @@
                             <button onclick="deleteItem('${g.id}', 'groups')" class="p-1 hover:text-red-400 hover:bg-white/10 rounded"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-4 gap-3 link-grid"></div>
+                    <div class="grid grid-cols-3 gap-4 link-grid"></div>
                 `;
                 
                 const linkGrid = groupEl.querySelector('.link-grid');
@@ -354,11 +357,11 @@
                     a.className = 'relative link-card group';
                     a.innerHTML = `
                         <a href="${l.url}" target="_blank" class="flex flex-col items-center text-center hover:scale-105 transition duration-200">
-                            <div class="w-14 h-14 bg-gray-900/50 rounded-xl mb-2 p-2 flex items-center justify-center shadow-inner border border-white/5">
+                            <div class="w-24 h-24 bg-gray-900/50 rounded-xl mb-2 p-3 flex items-center justify-center shadow-inner border border-white/5">
                                 <img src="${l.img}" class="w-full h-full object-contain rounded-md" onerror="this.style.display='none';this.nextElementSibling.style.display='block'">
-                                <span class="hidden text-xl font-bold text-gray-500">${l.name.charAt(0)}</span>
+                                <span class="hidden text-3xl font-bold text-gray-500">${l.name.charAt(0)}</span>
                             </div>
-                            <span class="text-xs font-medium truncate w-full opacity-80 group-hover:opacity-100">${l.name}</span>
+                            <span class="text-sm font-medium truncate w-full opacity-80 group-hover:opacity-100">${l.name}</span>
                         </a>
                         <div class="link-actions absolute -top-2 -right-2 flex gap-1 bg-gray-900 rounded-full shadow-lg border border-gray-600 p-0.5 scale-75">
                             <button onclick="openLinkModal('${l.id}', '${g.id}')" class="p-1 text-blue-400 hover:text-white"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path></svg></button>
@@ -380,27 +383,69 @@
 
         // --- TIMER LOGIC ---
         function updateTime() {
-            const timers = document.querySelectorAll('.countdown-timer');
-            timers.forEach(el => {
-                const target = new Date(el.dataset.target);
-                const now = new Date();
-                const diff = target - now;
-                if (diff <= 0) {
+            const timersMain = document.querySelectorAll('.countdown-timer-main');
+            const timersTotal = document.querySelectorAll('.countdown-timer-total');
+            
+            timersMain.forEach(el => {
+                const targetStr = el.dataset.target;
+                const targetDate = new Date(targetStr);
+                const today = new Date();
+                
+                // Reset time to midnight for accurate "Day" diff
+                const tMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+                const nMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                const diffTime = tMidnight - nMidnight;
+                
+                if (diffTime <= 0) {
                     el.textContent = "Today!";
                     el.classList.add('text-green-400');
+                    if(el.nextElementSibling) el.nextElementSibling.textContent = "";
                 } else {
-                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
-                    const h = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    if (d > 0) el.textContent = `${d} Days`;
-                    else el.textContent = `${h} Hours`;
+                    let y = tMidnight.getFullYear() - nMidnight.getFullYear();
+                    let m = tMidnight.getMonth() - nMidnight.getMonth();
+                    let d = tMidnight.getDate() - nMidnight.getDate();
+
+                    if (d < 0) {
+                        m -= 1;
+                        const prevMonth = new Date(tMidnight.getFullYear(), tMidnight.getMonth(), 0);
+                        d += prevMonth.getDate();
+                    }
+                    if (m < 0) {
+                        y -= 1;
+                        m += 12;
+                    }
+
+                    const parts = [];
+                    if(y > 0) parts.push(`${y} Years`);
+                    if(m > 0) parts.push(`${m} Months`);
+                    if(d > 0) parts.push(`${d} Days`);
+                    
+                    el.textContent = parts.join(' ') || "0 Days";
                 }
             });
+            
+            timersTotal.forEach(el => {
+                const targetStr = el.dataset.target;
+                const targetDate = new Date(targetStr);
+                const today = new Date();
+                const tMidnight = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
+                const nMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                
+                const diffTime = tMidnight - nMidnight;
+                if (diffTime > 0) {
+                     const totalDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                     el.textContent = `[Total: ${totalDays} Days]`;
+                }
+            });
+
             animationFrameId = requestAnimationFrame(updateTime);
         }
 
         function initCarousel(items) {
             if (animationFrameId) cancelAnimationFrame(animationFrameId);
             allCountdowns = items;
+            
             const prev = document.getElementById('prev-button');
             const next = document.getElementById('next-button');
             if(items.length <= 1) { prev.style.display='none'; next.style.display='none'; } 
@@ -410,6 +455,7 @@
                 carouselContent.innerHTML = '<div class="w-full h-full flex items-center justify-center text-gray-500">No widgets active</div>'; 
                 return; 
             }
+            
             currentCardIndex = 0;
             showCard(0);
             animationFrameId = requestAnimationFrame(updateTime);
@@ -419,16 +465,16 @@
         function deleteItem(id, type) {
             if(!confirm("Delete this item?")) return;
             const hidden = getCustomData(state.localStorageKeys.hiddenItems);
-            hidden.push(id); // Hide static item
+            hidden.push(id); 
             saveCustomData(state.localStorageKeys.hiddenItems, hidden);
             
             let custom = getCustomData(state.localStorageKeys[type]);
             custom = custom.filter(x => x.id !== id);
             saveCustomData(state.localStorageKeys[type], custom);
+            
             fetchData();
         }
 
-        // MODAL OPENERS
         function openGroupModal(id = null) {
             document.getElementById('group-id').value = id || '';
             document.getElementById('group-modal-title').innerText = id ? "Edit Group" : "Add Link Group";
@@ -439,7 +485,9 @@
                     document.getElementById('group-name').value = g.name;
                     document.getElementById('group-color').value = g.color;
                 }
-            } else { document.getElementById('group-form').reset(); }
+            } else {
+                document.getElementById('group-form').reset();
+            }
             document.getElementById('add-group-modal').classList.remove('hidden');
             hideMenu();
         }
@@ -447,10 +495,12 @@
         function openLinkModal(id = null, groupId = null) {
             document.getElementById('link-id').value = id || '';
             document.getElementById('link-modal-title').innerText = id ? "Edit Link" : "Add Link";
+            
             const { groups } = getMergedData();
             const select = document.getElementById('link-group-select');
             select.innerHTML = groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('');
             if(groupId) select.value = groupId;
+
             if(id) {
                 let found = null;
                 groups.forEach(g => { const l = g.links.find(x => x.id === id); if(l) found = l; });
@@ -459,7 +509,9 @@
                     document.getElementById('link-url').value = found.url;
                     document.getElementById('link-img').value = found.img || '';
                 }
-            } else { document.getElementById('link-form').reset(); }
+            } else {
+                document.getElementById('link-form').reset();
+            }
             document.getElementById('add-link-modal').classList.remove('hidden');
             hideMenu();
         }
@@ -472,16 +524,19 @@
                 const c = countdowns.find(x => x.id === id);
                 if(c) {
                     document.getElementById('countdown-name').value = c.name;
-                    document.getElementById('countdown-targetDate').value = c.targetDate;
+                    let dateVal = c.targetDate;
+                    if (dateVal.includes('T')) dateVal = dateVal.split('T')[0];
+                    document.getElementById('countdown-targetDate').value = dateVal;
                     document.getElementById('countdown-linkUrl').value = c.linkUrl || '';
                     document.getElementById('countdown-img').value = c.img || '';
                 }
-            } else { document.getElementById('countdown-form').reset(); }
+            } else {
+                document.getElementById('countdown-form').reset();
+            }
             document.getElementById('add-countdown-modal').classList.remove('hidden');
             hideMenu();
         }
 
-        // SAVE HANDLERS
         function saveGroup(e) {
             e.preventDefault();
             const id = document.getElementById('group-id').value || 'g_' + Date.now();
@@ -524,13 +579,51 @@
             document.getElementById('add-countdown-modal').classList.add('hidden');
             fetchData();
         }
+        
+        function saveStock(e) {
+            e.preventDefault();
+            const symbol = document.getElementById('stock-symbol').value.toUpperCase();
+            let custom = getCustomData(state.localStorageKeys.stocks);
+            if(!custom.some(s => s.symbol === symbol)) {
+                custom.push({ symbol });
+                saveCustomData(state.localStorageKeys.stocks, custom);
+            }
+            document.getElementById('add-stock-modal').classList.add('hidden');
+            fetchData();
+        }
+        
+        function downloadDataFile() {
+            hideMenu();
+            const { groups, countdowns } = getMergedData();
+            // Merge stocks correctly for export
+            const customStocks = getCustomData(state.localStorageKeys.stocks);
+            const stockSymbols = new Set(STATIC_STOCKS.map(s => s.symbol));
+            const mergedStocks = [...STATIC_STOCKS];
+            customStocks.forEach(s => { if (!stockSymbols.has(s.symbol)) { mergedStocks.push(s); stockSymbols.add(s.symbol); } });
+
+            const data = {
+                linkGroups: groups,
+                countdowns: countdowns,
+                stocks: mergedStocks
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], {type : 'application/json'});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `dashboard-data-${new Date().toISOString().slice(0,10)}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+
+        function clearDraftData() { localStorage.clear(); location.reload(); }
+        function toggleMenu() { const m = document.getElementById('menu-modal'); if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); } else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); } }
+        function hideMenu() { document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
+        function openStockModal() { document.getElementById('add-stock-modal').classList.remove('hidden'); hideMenu(); }
 
         // --- DATA FETCH & INIT ---
         async function fetchData() {
             let d = EMBEDDED_DATA;
             try { const res = await fetch('/data.json'); if(res.ok) d = await res.json(); } catch(e) {}
             
-            // ID Normalization for Data that might lack them
+            // ID Normalization
             if(d.linkGroups) {
                 d.linkGroups.forEach((g, gi) => {
                     if(!g.id) g.id = 'static_g_' + gi;
@@ -564,19 +657,16 @@
                 }
             } catch(e) {}
             
-            if (STATIC_STOCKS.length) {
-                stockQuotes = STATIC_STOCKS.map(s => ({ symbol: s.symbol, price: (Math.random()*200)+50, change: (Math.random()*10)-5, percentChange: (Math.random()*5)-2.5 }));
+            // Merge Static + Custom Stocks for Display
+            const customStocks = getCustomData(state.localStorageKeys.stocks);
+            const allStockSymbols = [...STATIC_STOCKS.map(s => s.symbol), ...customStocks.map(s => s.symbol)];
+            // Dedup
+            const uniqueSymbols = [...new Set(allStockSymbols)];
+            
+            if (uniqueSymbols.length) {
+                stockQuotes = uniqueSymbols.map(sym => ({ symbol: sym, price: (Math.random()*200)+50, change: (Math.random()*10)-5, percentChange: (Math.random()*5)-2.5 }));
             }
         }
-
-        function toggleMenu() {
-            const m = document.getElementById('menu-modal');
-            if(m.classList.contains('opacity-0')) { m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); }
-            else { m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
-        }
-        function hideMenu() { document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); }
-        function downloadDataFile() { /* Placeholder */ }
-        function clearDraftData() { localStorage.clear(); location.reload(); }
 
         // Init
         window.onload = () => { 
