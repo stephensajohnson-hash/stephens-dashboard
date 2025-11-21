@@ -3,7 +3,7 @@
     {
       "name": "PBFCM",
       "color": "bg-blue-600/20",
-      "textColor": "text-blue-400",
+      "textColor": "text-blue-400", 
       "links": [
         {
           "name": "Halo",
