@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bullet Calendar</title>
+    <link rel="icon" href="/images/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+        html { font-family: 'Inter', sans-serif; }
+        .modal-backdrop { background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); }
+        .low-temp-offset { position: relative; top: 6px; }
+        .high-temp-offset { position: relative; bottom: 6px; }
+    </style>
+    <script>
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, } } }
+    </script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <!-- Hamburger Button -->
+            <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none" onclick="toggleMenu()">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+            </button>
+
+            <!-- Home Button -->
+            <a href="index.html" class="p-2 rounded-full bg-blue-600 hover:bg-blue-500 focus:outline-none transition-colors shadow-lg shadow-blue-900/50" title="Return to Dashboard">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+            </a>
+
+            <!-- Clock -->
+            <div id="datetime" class="text-sm sm:text-base font-medium ml-2"></div>
+        </div>
+
+        <!-- Weather Widget -->
+        <div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
+            <span class="flex items-center" id="weather-content">
+                <span id="weather-current-temp" class="text-lg font-bold mr-3">--°</span>
+                <span id="weather-low" class="low-temp-offset mr-1 text-xs">--°</span>
+                <span class="mr-1 text-xl" id="weather-icon">...</span>
+                <span id="weather-high" class="high-temp-offset text-xs">--°</span>
+            </span>
+        </div>
+    </nav>
+
+    <!-- Menu Dropdown -->
+    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs z-40">
+        <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
+            <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
+                <h3 class="text-xl font-semibold text-white">Menu</h3>
+                <button id="close-menu-button" class="text-gray-400 hover:text-white p-1" onclick="hideMenu()">X</button>
+            </div>
+            
+            <a href="index.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-gray-500 bg-gray-700/30">
+                Dashboard
+            </a>
+            <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-blue-500 bg-gray-700/30">
+                View Recipes
+            </a>
+            <!-- Current Page Indicator -->
+            <div class="block w-full text-left py-2 px-3 rounded-lg text-white bg-purple-600/20 mb-2 border-l-4 border-purple-500">
+                Bullet Calendar
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content Placeholder -->
+    <main class="px-4 sm:px-8 pt-24 pb-8 max-w-7xl mx-auto">
+        <div class="bg-gray-800 rounded-2xl p-8 border border-gray-700 shadow-2xl min-h-[600px]">
+            <h1 class="text-3xl font-bold mb-4 text-purple-400">Bullet Calendar</h1>
+            <p class="text-gray-400">Calendar grid and bullet journal interface coming soon...</p>
+            
+            <!-- Placeholder Grid -->
+            <div class="grid grid-cols-7 gap-4 mt-8 opacity-50">
+                <!-- Days Header -->
+                <div class="text-center font-bold text-gray-500">SUN</div>
+                <div class="text-center font-bold text-gray-500">MON</div>
+                <div class="text-center font-bold text-gray-500">TUE</div>
+                <div class="text-center font-bold text-gray-500">WED</div>
+                <div class="text-center font-bold text-gray-500">THU</div>
+                <div class="text-center font-bold text-gray-500">FRI</div>
+                <div class="text-center font-bold text-gray-500">SAT</div>
+                
+                <!-- Placeholder Cells -->
+                <script>
+                    for(let i=0; i<35; i++) {
+                        document.write(`<div class="aspect-square border border-gray-700 rounded-lg bg-gray-900/50"></div>`);
+                    }
+                </script>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- HELPERS ---
+        function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
+        function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+
+        // --- CLOCK ---
+        function updateClock() { 
+            const now = new Date(); 
+            document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; 
+        }
+
+        // --- WEATHER ---
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok && fRes.ok) {
+                    const w = await wRes.json(); const f = await fRes.json();
+                    
+                    // Current Temp
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(w.main.temp)}`;
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                    
+                    // High / Low for today
+                    // Find min/max for the rest of the day from forecast
+                    const todayStr = new Date().toDateString();
+                    const todayPoints = f.list.filter(x => new Date(x.dt*1000).toDateString() === todayStr);
+                    
+                    let min = w.main.temp_min, max = w.main.temp_max;
+                    if(todayPoints.length > 0) {
+                        todayPoints.forEach(p => {
+                            if(p.main.temp_min < min) min = p.main.temp_min;
+                            if(p.main.temp_max > max) max = p.main.temp_max;
+                        });
+                    }
+                    
+                    document.getElementById('weather-low').textContent = Math.round(min) + '°';
+                    document.getElementById('weather-high').textContent = Math.round(max) + '°';
+                }
+            } catch(e) {
+                console.error("Weather load failed", e);
+            }
+        }
+
+        // --- MENU LOGIC ---
+        function toggleMenu() { 
+            const m = document.getElementById('menu-modal'); 
+            if(m.classList.contains('opacity-0')) { 
+                m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); 
+            } else { 
+                m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
+            } 
+        }
+        function hideMenu() { 
+            document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
+        }
+
+        // --- INIT ---
+        window.onload = () => {
+            updateClock();
+            setInterval(updateClock, 1000);
+            fetchWeather();
+        };
+    </script>
+</body>
+</html>
