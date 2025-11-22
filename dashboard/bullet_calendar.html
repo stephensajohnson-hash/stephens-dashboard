@@ -113,6 +113,46 @@
         </main>
     </div>
 
+    <!-- Nutrition Editor Modal -->
+    <div id="nutrition-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl border border-gray-700">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-health">Log Nutrition</h3>
+                <button onclick="closeNutritionModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            
+            <div class="flex-1 overflow-y-auto p-6 space-y-6">
+                <!-- Daily Stats -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
+                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
+                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
+                </div>
+
+                <!-- Meals -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
+                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Item</button>
+                    </div>
+                    <div id="meal-inputs-container" class="space-y-2">
+                        <!-- Meal rows injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
+                <button onclick="closeNutritionModal()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+                <button onclick="saveNutrition()" class="px-6 py-2 bg-health hover:bg-orange-600 text-white font-bold rounded-lg shadow-lg">Save Log</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- DATA STORE ---
         // Default/Sample Data (Injected from the JSON design)
@@ -174,7 +214,6 @@
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
-            // Close sidebar if on mobile
             if(window.innerWidth < 1024) {
                 const sb = document.getElementById('bullet-sidebar');
                 if(sb.classList.contains('sidebar-open')) toggleSidebar();
@@ -205,22 +244,20 @@
 
         function jumpToMonth(monthIndex) {
             appState.currentDate.setMonth(monthIndex);
-            appState.currentDate.setDate(1); // Go to first of month
+            appState.currentDate.setDate(1);
             appState.view = 'month';
             updateUI();
-            toggleSidebar(); // Close sidebar on mobile
+            toggleSidebar();
         }
 
         // --- UI UPDATES ---
         function updateUI() {
-            // Update View Buttons
             ['day', 'week', 'month'].forEach(v => {
                 const btn = document.getElementById(`btn-view-${v}`);
                 if(v === appState.view) btn.className = "px-3 py-1 text-sm rounded-md bg-blue-600 text-white shadow";
                 else btn.className = "px-3 py-1 text-sm rounded-md hover:bg-gray-600 text-gray-300";
             });
 
-            // Render Specific View
             const container = document.getElementById('view-container');
             const label = document.getElementById('current-view-label');
             container.innerHTML = '';
@@ -241,7 +278,6 @@
 
         // --- RENDERERS ---
         
-        // 1. SIDEBAR
         function renderSidebar() {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const list = document.getElementById('month-list');
@@ -252,7 +288,6 @@
             `).join('');
         }
 
-        // 2. DAY VIEW
         function renderDayView(container) {
             const ymd = toLocalYMD(appState.currentDate);
             const items = appState.data.items.filter(i => i.date === ymd);
@@ -261,47 +296,45 @@
                 container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50">
                     <div class="text-6xl mb-4">📭</div>
                     <div class="text-xl">No entries for this day</div>
-                    <button class="mt-4 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Item</button>
+                    <button onclick="openNutritionModal()" class="mt-4 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Log Nutrition</button>
                 </div>`;
                 return;
             }
 
-            // Separate by Categories for layout
             const health = items.find(i => i.type === 'health');
             const work = items.filter(i => i.category === 'work');
             const personal = items.filter(i => i.category !== 'work' && i.type !== 'health');
 
             let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
 
-            // COL 1: Timeline / Work
+            // COL 1
             html += `<div class="space-y-6">`;
             html += `<h3 class="text-xl font-bold text-work border-b border-gray-700 pb-2">Work & Tasks</h3>`;
             if(work.length === 0) html += `<p class="text-gray-500 italic">No work items recorded.</p>`;
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
-            // COL 2: Personal / Media / Habits
+            // COL 2
             html += `<div class="space-y-6">`;
             html += `<h3 class="text-xl font-bold text-personal border-b border-gray-700 pb-2">Life & Media</h3>`;
             if(personal.length === 0) html += `<p class="text-gray-500 italic">No personal items recorded.</p>`;
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
-            // COL 3: Health Widget (Sticky)
+            // COL 3
             html += `<div class="space-y-6">`;
             html += `<h3 class="text-xl font-bold text-health border-b border-gray-700 pb-2 flex justify-between items-center">
                 Health & Nutrition
-                <button class="text-sm bg-gray-800 hover:bg-gray-700 p-1 rounded text-gray-400" title="Edit Meals">✏️</button>
+                <button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 p-1 rounded text-gray-400 hover:text-white transition" title="Edit Meals">✏️</button>
             </h3>`;
             if(health) html += renderHealthCard(health);
-            else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500">No health logs for today.</div>`;
+            else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500 cursor-pointer hover:bg-gray-800/50 transition" onclick="openNutritionModal()">Click to log nutrition</div>`;
             html += `</div>`;
 
             html += `</div>`;
             container.innerHTML = html;
         }
 
-        // 3. WEEK VIEW
         function renderWeekView(container) {
             const start = getStartOfWeek(appState.currentDate);
             let html = `<div class="grid grid-cols-7 gap-2 min-h-[600px]">`;
@@ -333,7 +366,6 @@
             container.innerHTML = html;
         }
 
-        // 4. MONTH VIEW
         function renderMonthView(container) {
             const year = appState.currentDate.getFullYear();
             const month = appState.currentDate.getMonth();
@@ -341,16 +373,12 @@
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             
-            // Calculate startDayIndex based on Monday start
-            // JS getDay() returns 0 for Sunday, 1 for Monday...
-            // We want 0 for Monday, 1 for Tuesday... 6 for Sunday
             const startDayIndex = (firstDay.getDay() + 6) % 7;
-            
             const daysInMonth = lastDay.getDate();
 
             let html = `<div class="glass-panel rounded-2xl p-4">`;
             
-            // Header - MONDAY START
+            // Header
             html += `<div class="grid grid-cols-7 mb-2 text-center">`;
             ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => html += `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`);
             html += `</div>`;
@@ -383,7 +411,7 @@
             container.innerHTML = html;
         }
 
-        // --- CARD COMPONENT RENDERERS ---
+        // --- CARD RENDERERS ---
 
         function renderCard(item) {
             const borderClass = getTypeColor(item.type);
@@ -434,34 +462,28 @@
         }
 
         function renderHealthCard(item) {
-            // Goals
             const g = item.goals || { tdee: 2500, calorieGoal: 2000, protein: 150, fat: 80, netCarbs: 100 };
             
-            // Calculate Macros
             let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
             (item.meals || []).forEach(m => {
-                totalCal += m.calories || 0;
-                totalPro += m.protein || 0;
-                totalCarb += m.carbs || 0;
-                totalFat += m.fat || 0;
-                totalFiber += m.fiber || 0;
+                totalCal += Number(m.calories || 0);
+                totalPro += Number(m.protein || 0);
+                totalCarb += Number(m.carbs || 0);
+                totalFat += Number(m.fat || 0);
+                totalFiber += Number(m.fiber || 0);
             });
             const netCarbs = totalCarb - totalFiber;
             const calRemaining = g.calorieGoal - totalCal;
-            const tdeeDiff = totalCal - g.tdee; // Current deficit relative to TDEE (usually negative)
-            const plannedDeficit = totalCal - g.tdee;
-
-            // Percentages
+            const tdeeDiff = totalCal - g.tdee;
+            
             const pctCal = Math.min((totalCal / g.calorieGoal) * 100, 100);
             const pctPro = Math.min((totalPro / g.protein) * 100, 100);
             const pctFat = Math.min((totalFat / g.fat) * 100, 100);
             const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
 
-            // Calculate Weekly Deficit (Resets on Monday)
             const weeklyData = getWeeklyDeficit();
             const runningDeficit = weeklyData.deficit;
 
-            // Meal List
             const mealsHtml = (item.meals || []).map(m => `
                 <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
                     <div class="overflow-hidden">
@@ -479,7 +501,6 @@
                         <span class="text-xl font-bold text-white">${item.weightLbs} lbs</span>
                     </div>
                     
-                    <!-- Main Calorie Stats -->
                     <div class="bg-gray-800/50 rounded-lg p-3 mb-4">
                         <div class="flex justify-between text-sm mb-1">
                             <span class="text-gray-400">Calories</span>
@@ -496,7 +517,6 @@
                         </div>
                     </div>
 
-                    <!-- Macro Grid -->
                     <div class="grid grid-cols-3 gap-3 mb-4">
                          <div class="bg-gray-800/30 p-2 rounded">
                             <div class="flex justify-between text-xs text-gray-400 mb-1">
@@ -524,7 +544,6 @@
                         </div>
                     </div>
 
-                    <!-- Deficit Stats -->
                     <div class="border-t border-gray-700 pt-3 mb-4">
                         <div class="flex justify-between items-center mb-1">
                             <span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span>
@@ -541,7 +560,6 @@
                         <div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div>
                     </div>
 
-                    <!-- Meals List -->
                     <div class="space-y-1">
                         <div class="text-xs font-bold text-gray-500 uppercase mb-1">Today's Meals</div>
                         ${mealsHtml}
@@ -550,34 +568,132 @@
             `;
         }
 
+        // --- MODAL LOGIC ---
+        function openNutritionModal() {
+            const ymd = toLocalYMD(appState.currentDate);
+            let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+            
+            if (!item) {
+                // Default template
+                item = { 
+                    weightLbs: 0, 
+                    goals: { calorieGoal: 2220 }, 
+                    meals: [] 
+                };
+            }
+
+            document.getElementById('edit-weight').value = item.weightLbs || '';
+            document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
+            
+            const container = document.getElementById('meal-inputs-container');
+            container.innerHTML = '';
+            
+            if (item.meals && item.meals.length > 0) {
+                item.meals.forEach(m => addMealInput(m));
+            } else {
+                addMealInput(); // Add one empty row
+            }
+
+            document.getElementById('nutrition-modal').classList.remove('hidden');
+        }
+
+        function closeNutritionModal() {
+            document.getElementById('nutrition-modal').classList.add('hidden');
+        }
+
+        function addMealInput(data = {}) {
+            const container = document.getElementById('meal-inputs-container');
+            const div = document.createElement('div');
+            div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 meal-row";
+            div.innerHTML = `
+                <div class="flex gap-2 mb-2">
+                    <select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health">
+                        <option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option>
+                        <option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option>
+                        <option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option>
+                        <option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option>
+                    </select>
+                    <input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health">
+                    <button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button>
+                </div>
+                <div class="grid grid-cols-5 gap-2">
+                    <div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
+                    <div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
+                    <div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
+                    <div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
+                    <div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
+                </div>
+            `;
+            container.appendChild(div);
+        }
+
+        function saveNutrition() {
+            const ymd = toLocalYMD(appState.currentDate);
+            
+            // Gather Data
+            const weight = parseFloat(document.getElementById('edit-weight').value) || 0;
+            const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
+            
+            const mealRows = document.querySelectorAll('.meal-row');
+            const meals = Array.from(mealRows).map(row => ({
+                mealType: row.querySelector('.meal-type').value,
+                name: row.querySelector('.meal-name').value,
+                calories: parseFloat(row.querySelector('.meal-cal').value) || 0,
+                protein: parseFloat(row.querySelector('.meal-pro').value) || 0,
+                carbs: parseFloat(row.querySelector('.meal-carb').value) || 0,
+                fat: parseFloat(row.querySelector('.meal-fat').value) || 0,
+                fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0
+            })).filter(m => m.name.trim() !== ""); // Filter empty names
+
+            // Find or Create Item
+            let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
+            
+            const newItem = {
+                id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`,
+                date: ymd,
+                type: 'health',
+                category: 'personal',
+                weightLbs: weight,
+                goals: {
+                    tdee: 2816, // Hardcoded base TDEE for now
+                    calorieGoal: calGoal,
+                    protein: 167,
+                    fat: 150,
+                    netCarbs: 100
+                },
+                meals: meals
+            };
+
+            if (itemIndex >= 0) {
+                appState.data.items[itemIndex] = newItem;
+            } else {
+                appState.data.items.push(newItem);
+            }
+
+            closeNutritionModal();
+            updateUI();
+        }
+
+        // --- LOGIC ---
         function getWeeklyDeficit() {
-            // Logic: Sum up (Calories Consumed - TDEE) for all entries in the current week up to today
-            // Starts on MONDAY
             const start = getStartOfWeek(appState.currentDate);
-            const end = new Date(appState.currentDate); // Up to selected day
+            const end = new Date(appState.currentDate); 
             
             let totalDeficit = 0;
             let daysCounted = 0;
 
-            // Iterate from Start of Week -> Current Selected Date
             const loopDate = new Date(start);
             while(loopDate <= end) {
                 const ymd = toLocalYMD(loopDate);
                 const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
                 
-                if (item && item.goals) {
+                if (item) {
                     let dailyCal = 0;
-                    (item.meals || []).forEach(m => dailyCal += m.calories);
-                    totalDeficit += (dailyCal - item.goals.tdee);
-                    daysCounted++;
-                } else if (item) {
-                    // Fallback if goals are missing but item exists
-                     let dailyCal = 0;
-                    (item.meals || []).forEach(m => dailyCal += m.calories);
-                    totalDeficit += (dailyCal - 2816); // Fallback TDEE
+                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0));
+                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816;
+                    totalDeficit += (dailyCal - tdee);
                     daysCounted++;
                 }
-                
                 loopDate.setDate(loopDate.getDate() + 1);
             }
             return { deficit: totalDeficit, days: daysCounted };
@@ -590,14 +706,9 @@
             return adjusted.toISOString().split('T')[0];
         }
 
-        // MODIFIED FOR MONDAY START
         function getStartOfWeek(d) {
             const date = new Date(d);
-            const day = date.getDay(); // 0 (Sun) to 6 (Sat)
-            // To make Monday the start (index 0), we calculate how far back we need to go.
-            // If day is 1 (Mon), we subtract 0 days.
-            // If day is 2 (Tue), we subtract 1 day.
-            // If day is 0 (Sun), we subtract 6 days.
+            const day = date.getDay(); 
             const diff = date.getDate() - (day === 0 ? 6 : day - 1);
             return new Date(date.setDate(diff));
         }
@@ -641,7 +752,6 @@
             }
         }
 
-        // Weather API (Reused from previous file)
         async function fetchWeather() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
             try {
