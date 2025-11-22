@@ -7,163 +7,528 @@
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * { transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; }
+        * { transition: all 0.2s ease-in-out; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #111827; }
         ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
-        .modal-backdrop { background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(4px); }
-        .low-temp-offset { position: relative; top: 6px; }
-        .high-temp-offset { position: relative; bottom: 6px; }
+        .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Sidebar Animation */
+        #bullet-sidebar { transition: transform 0.3s ease-in-out; }
+        .sidebar-open { transform: translateX(0); }
+        .sidebar-closed { transform: translateX(-100%); }
+        
+        /* Macro bars */
+        .macro-bar-bg { background-color: rgba(255,255,255,0.1); border-radius: 2px; height: 4px; width: 100%; overflow: hidden; }
+        .macro-bar-fill { height: 100%; border-radius: 2px; }
     </style>
     <script>
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, } } }
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b' } } } }
     </script>
 </head>
-<body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
+<body class="bg-gray-900 text-white min-h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
-    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-40 p-2 flex items-center justify-between h-16">
         <div class="flex items-center gap-3">
-            <!-- Hamburger Button -->
-            <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none" onclick="toggleMenu()">
+            <!-- Hamburger Button (Controls Sidebar) -->
+            <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none" onclick="toggleSidebar()">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
             </button>
 
             <!-- Home Button -->
-            <a href="index.html" class="p-2 rounded-full bg-blue-600 hover:bg-blue-500 focus:outline-none transition-colors shadow-lg shadow-blue-900/50" title="Return to Dashboard">
+            <a href="index.html" class="text-gray-400 hover:text-white p-2 transition-colors" title="Return to Dashboard">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
             </a>
+            
+            <!-- Navigation Controls -->
+            <div class="flex items-center bg-gray-700 rounded-lg p-1 ml-4">
+                <button onclick="navigate(-1)" class="p-1 hover:text-blue-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg></button>
+                <button onclick="jumpToToday()" class="px-3 text-sm font-bold hover:text-blue-400">Today</button>
+                <button onclick="navigate(1)" class="p-1 hover:text-blue-400"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></button>
+            </div>
 
-            <!-- Clock -->
-            <div id="datetime" class="text-sm sm:text-base font-medium ml-2"></div>
+            <!-- Current Date Display -->
+            <div id="current-view-label" class="text-lg font-bold ml-4 text-blue-200"></div>
         </div>
 
-        <!-- Weather Widget -->
-        <div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
-            <span class="flex items-center" id="weather-content">
-                <span id="weather-current-temp" class="text-lg font-bold mr-3">--°</span>
-                <span id="weather-low" class="low-temp-offset mr-1 text-xs">--°</span>
-                <span class="mr-1 text-xl" id="weather-icon">...</span>
-                <span id="weather-high" class="high-temp-offset text-xs">--°</span>
-            </span>
+        <div class="flex items-center gap-4">
+             <!-- View Switcher -->
+             <div class="hidden md:flex bg-gray-700 rounded-lg p-1">
+                <button onclick="switchView('day')" id="btn-view-day" class="px-3 py-1 text-sm rounded-md bg-blue-600">Day</button>
+                <button onclick="switchView('week')" id="btn-view-week" class="px-3 py-1 text-sm rounded-md hover:bg-gray-600">Week</button>
+                <button onclick="switchView('month')" id="btn-view-month" class="px-3 py-1 text-sm rounded-md hover:bg-gray-600">Month</button>
+            </div>
+
+            <!-- Weather Widget -->
+            <div id="weather-display" class="text-sm flex items-center bg-gray-700 px-3 py-1 rounded-full border border-gray-600">
+                <span class="flex items-center" id="weather-content">
+                    <span id="weather-current-temp" class="text-lg font-bold mr-3">--°</span>
+                    <span class="mr-1 text-xl" id="weather-icon">...</span>
+                </span>
+            </div>
         </div>
     </nav>
 
-    <!-- Menu Dropdown -->
-    <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs z-40">
-        <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
-            <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
-                <h3 class="text-xl font-semibold text-white">Menu</h3>
-                <button id="close-menu-button" class="text-gray-400 hover:text-white p-1" onclick="hideMenu()">X</button>
+    <!-- Layout Container -->
+    <div class="flex flex-1 pt-16 relative overflow-hidden">
+        
+        <!-- Sidebar Overlay (Mobile) -->
+        <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
+
+        <!-- Sidebar Outline -->
+        <aside id="bullet-sidebar" class="absolute lg:relative z-50 w-64 h-full bg-gray-800 border-r border-gray-700 flex flex-col sidebar-closed lg:sidebar-open shadow-2xl">
+            <div class="p-4 border-b border-gray-700">
+                <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
+                <p class="text-xs text-gray-500">Year 2025</p>
             </div>
             
-            <a href="index.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-gray-500 bg-gray-700/30">
-                Dashboard
-            </a>
-            <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-2 transition duration-150 border-l-4 border-blue-500 bg-gray-700/30">
-                View Recipes
-            </a>
-            <!-- Current Page Indicator -->
-            <div class="block w-full text-left py-2 px-3 rounded-lg text-white bg-purple-600/20 mb-2 border-l-4 border-purple-500">
-                Bullet Calendar
+            <div class="flex-1 overflow-y-auto p-2 space-y-1">
+                <button onclick="jumpToToday(); toggleSidebar()" class="w-full text-left px-4 py-2 rounded hover:bg-gray-700 text-blue-300 font-bold">
+                    <i class="mr-2">📅</i> Today
+                </button>
+                <div class="border-b border-gray-700 my-2"></div>
+                <!-- Months generated by JS -->
+                <div id="month-list" class="space-y-1"></div>
             </div>
-        </div>
+
+            <div class="p-4 border-t border-gray-700">
+                 <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">
+                    View Recipes
+                </a>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard V1.0</p>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
+            <div id="view-container" class="max-w-7xl mx-auto min-h-full">
+                <!-- Content injected via JS -->
+            </div>
+        </main>
     </div>
 
-    <!-- Main Content Placeholder -->
-    <main class="px-4 sm:px-8 pt-24 pb-8 max-w-7xl mx-auto">
-        <div class="bg-gray-800 rounded-2xl p-8 border border-gray-700 shadow-2xl min-h-[600px]">
-            <h1 class="text-3xl font-bold mb-4 text-purple-400">Bullet Calendar</h1>
-            <p class="text-gray-400">Calendar grid and bullet journal interface coming soon...</p>
-            
-            <!-- Placeholder Grid -->
-            <div class="grid grid-cols-7 gap-4 mt-8 opacity-50">
-                <!-- Days Header -->
-                <div class="text-center font-bold text-gray-500">SUN</div>
-                <div class="text-center font-bold text-gray-500">MON</div>
-                <div class="text-center font-bold text-gray-500">TUE</div>
-                <div class="text-center font-bold text-gray-500">WED</div>
-                <div class="text-center font-bold text-gray-500">THU</div>
-                <div class="text-center font-bold text-gray-500">FRI</div>
-                <div class="text-center font-bold text-gray-500">SAT</div>
-                
-                <!-- Placeholder Cells -->
-                <script>
-                    for(let i=0; i<35; i++) {
-                        document.write(`<div class="aspect-square border border-gray-700 rounded-lg bg-gray-900/50"></div>`);
-                    }
-                </script>
-            </div>
-        </div>
-    </main>
-
     <script>
-        // --- HELPERS ---
-        function getTempColor(t) { t=parseInt(t); if(t>=80)return'text-red-500'; if(t>70)return'text-green-400'; if(t>=60)return'text-green-400/80'; if(t<50)return'text-sky-300'; return'text-white'; }
-        function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
+        // --- DATA STORE ---
+        // Default/Sample Data (Injected from the JSON design)
+        const DEFAULT_DATA = {
+            "meta": { "year": 2025, "version": "1.2", "owner": "Stephens" },
+            "items": [
+                {
+                "id": "evt_1732190000", "date": "2025-11-21", "type": "meeting", "category": "work", "title": "Sync with Dev Team", "description": "Discussing the Q4 API migration roadmap.", "startTime": "10:00", "durationMinutes": 60, "timeSpentMinutes": 65, "status": "completed", "tags": ["internal", "planning"], "linkUrl": "https://zoom.us/j/123456789", "imgUrl": null
+                },
+                {
+                "id": "task_1732194500", "date": "2025-11-21", "type": "task", "category": "work", "title": "Fix login bug on staging", "ticketNumber": "JIRA-4291", "description": "Investigate the auth token expiration issue.", "timeSpentMinutes": 120, "status": "in-progress", "tags": ["bugfix", "urgent"], "linkUrl": "https://jira.company.com/browse/JIRA-4291", "imgUrl": null
+                },
+                {
+                "id": "habit_1732210000", "date": "2025-11-21", "type": "habit", "category": "personal", "title": "Learn Spanish", "streakCount": 1494, "status": "completed", "notes": "Completed Duolingo lesson on Subjunctive verbs.", "linkUrl": "https://www.duolingo.com"
+                },
+                {
+                "id": "mov_1732230000", "date": "2025-11-21", "type": "media", "category": "entertainment", "title": "Blade Runner 2049", "rating": 9, "mediaType": "movie", "notes": "Still holds up visually. Deakins is a genius.", "timeSpentMinutes": 164, "linkUrl": "https://www.imdb.com/title/tt1856101/", "imgUrl": "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_FMjpg_UX1000_.jpg"
+                },
+                {
+                "id": "health_1732180000", "date": "2025-11-21", "type": "health", "category": "personal", "weightLbs": 185.5, "notes": "Felt energetic today.", "meals": [
+                    { "name": "Oatmeal & Whey", "mealType": "breakfast", "calories": 450, "protein": 30, "carbs": 55, "fiber": 8, "fat": 6 },
+                    { "name": "Chicken Salad", "mealType": "lunch", "calories": 600, "protein": 45, "carbs": 12, "fiber": 4, "fat": 22 },
+                    { "name": "Steak & Asparagus", "mealType": "dinner", "calories": 850, "protein": 60, "carbs": 8, "fiber": 3, "fat": 45 }
+                ]
+                },
+                {
+                "id": "task_1732240000", "date": "2025-11-21", "type": "task", "category": "personal", "title": "Water the plants", "status": "pending", "tags": ["chores"]
+                }
+            ]
+        };
 
-        // --- CLOCK ---
-        function updateClock() { 
-            const now = new Date(); 
-            document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; 
+        // --- STATE ---
+        let appState = {
+            currentDate: new Date("2025-11-21T12:00:00"), // Defaulting to sample data date for demo
+            view: 'day', // 'day', 'week', 'month'
+            data: DEFAULT_DATA
+        };
+
+        // --- INITIALIZATION ---
+        window.onload = () => {
+            renderSidebar();
+            fetchWeather();
+            updateUI();
+        };
+
+        // --- NAVIGATION & STATE MGMT ---
+        function navigate(dir) {
+            const d = new Date(appState.currentDate);
+            if (appState.view === 'day') d.setDate(d.getDate() + dir);
+            else if (appState.view === 'week') d.setDate(d.getDate() + (dir * 7));
+            else if (appState.view === 'month') d.setMonth(d.getMonth() + dir);
+            
+            appState.currentDate = d;
+            updateUI();
         }
 
-        // --- WEATHER ---
+        function jumpToToday() {
+            appState.currentDate = new Date();
+            appState.view = 'day';
+            updateUI();
+        }
+
+        function switchView(v) {
+            appState.view = v;
+            updateUI();
+        }
+
+        function jumpToMonth(monthIndex) {
+            appState.currentDate.setMonth(monthIndex);
+            appState.currentDate.setDate(1); // Go to first of month
+            appState.view = 'month';
+            updateUI();
+            toggleSidebar(); // Close sidebar on mobile
+        }
+
+        // --- UI UPDATES ---
+        function updateUI() {
+            // Update View Buttons
+            ['day', 'week', 'month'].forEach(v => {
+                const btn = document.getElementById(`btn-view-${v}`);
+                if(v === appState.view) btn.className = "px-3 py-1 text-sm rounded-md bg-blue-600 text-white shadow";
+                else btn.className = "px-3 py-1 text-sm rounded-md hover:bg-gray-600 text-gray-300";
+            });
+
+            // Render Specific View
+            const container = document.getElementById('view-container');
+            const label = document.getElementById('current-view-label');
+            container.innerHTML = '';
+
+            if (appState.view === 'day') {
+                label.innerText = appState.currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+                renderDayView(container);
+            } else if (appState.view === 'week') {
+                const start = getStartOfWeek(appState.currentDate);
+                const end = new Date(start); end.setDate(end.getDate() + 6);
+                label.innerText = `${start.toLocaleDateString()} - ${end.toLocaleDateString()}`;
+                renderWeekView(container);
+            } else if (appState.view === 'month') {
+                label.innerText = appState.currentDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                renderMonthView(container);
+            }
+        }
+
+        // --- RENDERERS ---
+        
+        // 1. SIDEBAR
+        function renderSidebar() {
+            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            const list = document.getElementById('month-list');
+            list.innerHTML = months.map((m, i) => `
+                <button onclick="jumpToMonth(${i})" class="w-full text-left px-4 py-2 rounded hover:bg-gray-700 text-gray-300 text-sm transition">
+                    ${m}
+                </button>
+            `).join('');
+        }
+
+        // 2. DAY VIEW
+        function renderDayView(container) {
+            const ymd = toLocalYMD(appState.currentDate);
+            const items = appState.data.items.filter(i => i.date === ymd);
+
+            if (items.length === 0) {
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50">
+                    <div class="text-6xl mb-4">📭</div>
+                    <div class="text-xl">No entries for this day</div>
+                    <button class="mt-4 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Item</button>
+                </div>`;
+                return;
+            }
+
+            // Separate by Categories for layout
+            const health = items.find(i => i.type === 'health');
+            const work = items.filter(i => i.category === 'work');
+            const personal = items.filter(i => i.category !== 'work' && i.type !== 'health');
+
+            let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
+
+            // COL 1: Timeline / Work
+            html += `<div class="space-y-6">`;
+            html += `<h3 class="text-xl font-bold text-work border-b border-gray-700 pb-2">Work & Tasks</h3>`;
+            if(work.length === 0) html += `<p class="text-gray-500 italic">No work items recorded.</p>`;
+            work.forEach(item => { html += renderCard(item); });
+            html += `</div>`;
+
+            // COL 2: Personal / Media / Habits
+            html += `<div class="space-y-6">`;
+            html += `<h3 class="text-xl font-bold text-personal border-b border-gray-700 pb-2">Life & Media</h3>`;
+            if(personal.length === 0) html += `<p class="text-gray-500 italic">No personal items recorded.</p>`;
+            personal.forEach(item => { html += renderCard(item); });
+            html += `</div>`;
+
+            // COL 3: Health Widget (Sticky)
+            html += `<div class="space-y-6">`;
+            html += `<h3 class="text-xl font-bold text-health border-b border-gray-700 pb-2">Health & Nutrition</h3>`;
+            if(health) html += renderHealthCard(health);
+            else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500">No health logs for today.</div>`;
+            html += `</div>`;
+
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 3. WEEK VIEW
+        function renderWeekView(container) {
+            const start = getStartOfWeek(appState.currentDate);
+            let html = `<div class="grid grid-cols-7 gap-2 min-h-[600px]">`;
+            
+            for(let i=0; i<7; i++) {
+                const d = new Date(start);
+                d.setDate(d.getDate() + i);
+                const ymd = toLocalYMD(d);
+                const isToday = ymd === toLocalYMD(new Date());
+                const items = appState.data.items.filter(item => item.date === ymd);
+
+                html += `
+                    <div class="glass-panel rounded-lg flex flex-col h-full ${isToday ? 'border-blue-500 bg-blue-900/10' : ''}">
+                        <div class="p-2 text-center border-b border-gray-700/50 ${isToday ? 'bg-blue-600 text-white' : 'bg-gray-800'}">
+                            <div class="text-xs uppercase text-gray-400 font-bold">${d.toLocaleDateString('en-US', {weekday:'short'})}</div>
+                            <div class="text-lg font-bold">${d.getDate()}</div>
+                        </div>
+                        <div class="p-1 flex-1 overflow-y-auto space-y-1">
+                            ${items.map(item => `
+                                <div class="text-[10px] p-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 mb-1 truncate cursor-pointer hover:brightness-110" title="${item.title}">
+                                    ${item.title}
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            html += `</div>`;
+            container.innerHTML = html;
+        }
+
+        // 4. MONTH VIEW
+        function renderMonthView(container) {
+            const year = appState.currentDate.getFullYear();
+            const month = appState.currentDate.getMonth();
+            
+            const firstDay = new Date(year, month, 1);
+            const lastDay = new Date(year, month + 1, 0);
+            
+            const startDayIndex = firstDay.getDay(); // 0 = Sun
+            const daysInMonth = lastDay.getDate();
+
+            let html = `<div class="glass-panel rounded-2xl p-4">`;
+            
+            // Header
+            html += `<div class="grid grid-cols-7 mb-2 text-center">`;
+            ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`);
+            html += `</div>`;
+
+            // Grid
+            html += `<div class="grid grid-cols-7 gap-2 auto-rows-fr">`; // auto-rows-fr keeps height consistent
+
+            // Empty cells
+            for(let i=0; i<startDayIndex; i++) {
+                html += `<div class="h-24 bg-gray-800/30 rounded-lg"></div>`;
+            }
+
+            // Days
+            for(let d=1; d<=daysInMonth; d++) {
+                const currentDayStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+                const items = appState.data.items.filter(i => i.date === currentDayStr);
+                const isToday = currentDayStr === toLocalYMD(new Date());
+
+                html += `
+                    <div class="h-24 bg-gray-800 rounded-lg border ${isToday ? 'border-blue-500' : 'border-gray-700'} p-1 flex flex-col hover:bg-gray-700 transition cursor-pointer" onclick="goToDay('${currentDayStr}')">
+                        <div class="text-right text-sm font-bold text-gray-400 mb-1">${d}</div>
+                        <div class="flex flex-wrap gap-1 content-start">
+                             ${items.map(i => `<div class="w-2 h-2 rounded-full ${getTypeDotColor(i.type)}" title="${i.title}"></div>`).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            html += `</div></div>`;
+            container.innerHTML = html;
+        }
+
+        // --- CARD COMPONENT RENDERERS ---
+
+        function renderCard(item) {
+            const borderClass = getTypeColor(item.type);
+            
+            let content = '';
+            let meta = '';
+
+            // Polymorphic Content
+            if(item.type === 'meeting') {
+                meta = `<span class="text-xs text-gray-400"><i class="mr-1">⏰</i> ${item.startTime} (${item.durationMinutes}m)</span>`;
+                if(item.linkUrl) content += `<a href="${item.linkUrl}" target="_blank" class="text-xs bg-blue-600 px-2 py-1 rounded hover:bg-blue-500 inline-block mt-2">Join Meeting</a>`;
+            }
+            else if(item.type === 'task') {
+                meta = `<span class="text-xs text-gray-400">${item.ticketNumber || 'No Ticket'}</span>`;
+                content += `<div class="mt-2 flex gap-2">
+                    <span class="text-[10px] px-2 py-0.5 rounded-full border border-gray-600 uppercase">${item.status}</span>
+                    ${item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="text-[10px] text-blue-400 hover:underline flex items-center">View Ticket ↗</a>` : ''}
+                </div>`;
+            }
+            else if(item.type === 'media') {
+                meta = `<div class="flex text-yellow-400 text-xs">${'★'.repeat(item.rating)}${'☆'.repeat(10-item.rating)}</div>`;
+                if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-48 object-cover rounded-lg mt-2 mb-2 shadow-lg">`;
+                content += `<p class="text-xs text-gray-400 italic">"${item.notes}"</p>`;
+            }
+            else if(item.type === 'habit') {
+                 content += `<div class="mt-2 flex items-center gap-2">
+                    <div class="text-2xl">🔥</div>
+                    <div>
+                        <div class="text-xl font-bold">${item.streakCount}</div>
+                        <div class="text-[10px] uppercase text-gray-500">Day Streak</div>
+                    </div>
+                 </div>`;
+            }
+
+            return `
+                <div class="glass-panel p-4 rounded-xl border-l-4 ${borderClass} hover:translate-x-1 transition-transform relative group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-lg">${item.title}</h4>
+                            ${meta}
+                        </div>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button class="text-gray-400 hover:text-white">✎</button>
+                        </div>
+                    </div>
+                    ${item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : ''}
+                    ${content}
+                </div>
+            `;
+        }
+
+        function renderHealthCard(item) {
+            // Calculate Macros
+            let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
+            (item.meals || []).forEach(m => {
+                totalCal += m.calories || 0;
+                totalPro += m.protein || 0;
+                totalCarb += m.carbs || 0;
+                totalFat += m.fat || 0;
+                totalFiber += m.fiber || 0;
+            });
+            const netCarbs = totalCarb - totalFiber;
+
+            // Meal List
+            const mealsHtml = (item.meals || []).map(m => `
+                <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
+                    <div>
+                        <span class="text-xs text-gray-500 uppercase w-16 inline-block">${m.mealType || 'meal'}</span>
+                        <span class="font-medium">${m.name}</span>
+                    </div>
+                    <span class="text-gray-400">${m.calories} kcal</span>
+                </div>
+            `).join('');
+
+            return `
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-health">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-lg">Daily Nutrition</h3>
+                        <span class="text-xl font-bold text-health">${item.weightLbs} lbs</span>
+                    </div>
+                    
+                    <!-- Summary Bars -->
+                    <div class="grid grid-cols-4 gap-2 text-center mb-6">
+                        <div>
+                            <div class="text-xs text-gray-500">Cal</div>
+                            <div class="font-bold text-white">${totalCal}</div>
+                        </div>
+                         <div>
+                            <div class="text-xs text-gray-500">Pro</div>
+                            <div class="font-bold text-blue-400">${totalPro}g</div>
+                            <div class="macro-bar-bg mt-1"><div class="macro-bar-fill bg-blue-500" style="width: 100%"></div></div>
+                        </div>
+                         <div>
+                            <div class="text-xs text-gray-500">Net Carb</div>
+                            <div class="font-bold text-green-400">${netCarbs}g</div>
+                            <div class="macro-bar-bg mt-1"><div class="macro-bar-fill bg-green-500" style="width: 100%"></div></div>
+                        </div>
+                         <div>
+                            <div class="text-xs text-gray-500">Fat</div>
+                            <div class="font-bold text-yellow-400">${totalFat}g</div>
+                            <div class="macro-bar-bg mt-1"><div class="macro-bar-fill bg-yellow-500" style="width: 100%"></div></div>
+                        </div>
+                    </div>
+
+                    <div class="space-y-1 bg-gray-800/50 p-3 rounded-lg">
+                        ${mealsHtml}
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- HELPERS ---
+        function toLocalYMD(date) {
+            const offset = date.getTimezoneOffset();
+            const adjusted = new Date(date.getTime() - (offset*60*1000));
+            return adjusted.toISOString().split('T')[0];
+        }
+
+        function getStartOfWeek(d) {
+            const date = new Date(d);
+            const day = date.getDay();
+            const diff = date.getDate() - day;
+            return new Date(date.setDate(diff));
+        }
+        
+        function goToDay(dateStr) {
+            appState.currentDate = new Date(dateStr + "T12:00:00");
+            switchView('day');
+        }
+
+        function getTypeColor(type) {
+            const map = {
+                'meeting': 'border-work bg-work/10',
+                'task': 'border-work bg-work/5',
+                'habit': 'border-personal bg-personal/10',
+                'media': 'border-media bg-media/10',
+                'health': 'border-health bg-health/10'
+            };
+            return map[type] || 'border-gray-500';
+        }
+
+        function getTypeDotColor(type) {
+            const map = {
+                'meeting': 'bg-blue-500',
+                'task': 'bg-blue-400',
+                'habit': 'bg-green-500',
+                'media': 'bg-purple-500',
+                'health': 'bg-orange-500'
+            };
+            return map[type] || 'bg-gray-500';
+        }
+
+        function toggleSidebar() {
+            const sb = document.getElementById('bullet-sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            if(sb.classList.contains('sidebar-closed')) {
+                sb.classList.replace('sidebar-closed', 'sidebar-open');
+                ov.classList.remove('hidden');
+            } else {
+                sb.classList.replace('sidebar-open', 'sidebar-closed');
+                ov.classList.add('hidden');
+            }
+        }
+
+        // Weather API (Reused from previous file)
         async function fetchWeather() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
             try {
                 const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                const fRes = await fetch(`https://api.openweathermap.org/data/2.5/forecast?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok && fRes.ok) {
-                    const w = await wRes.json(); const f = await fRes.json();
-                    
-                    // Current Temp
+                if(wRes.ok) {
+                    const w = await wRes.json();
                     document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(w.main.temp)}`;
                     document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-                    
-                    // High / Low for today
-                    // Find min/max for the rest of the day from forecast
-                    const todayStr = new Date().toDateString();
-                    const todayPoints = f.list.filter(x => new Date(x.dt*1000).toDateString() === todayStr);
-                    
-                    let min = w.main.temp_min, max = w.main.temp_max;
-                    if(todayPoints.length > 0) {
-                        todayPoints.forEach(p => {
-                            if(p.main.temp_min < min) min = p.main.temp_min;
-                            if(p.main.temp_max > max) max = p.main.temp_max;
-                        });
-                    }
-                    
-                    document.getElementById('weather-low').textContent = Math.round(min) + '°';
-                    document.getElementById('weather-high').textContent = Math.round(max) + '°';
                 }
-            } catch(e) {
-                console.error("Weather load failed", e);
-            }
+            } catch(e) {}
         }
+        function getForecastEmoji(c) { if(c.includes('01'))return'☀️'; if(c.includes('02'))return'🌤️'; if(c.includes('03'))return'🌥️'; if(c.includes('09')||c.includes('10'))return'🌧️'; if(c.includes('13'))return'❄️'; return'☁️'; }
 
-        // --- MENU LOGIC ---
-        function toggleMenu() { 
-            const m = document.getElementById('menu-modal'); 
-            if(m.classList.contains('opacity-0')) { 
-                m.classList.remove('opacity-0', 'pointer-events-none', '-translate-y-4'); 
-            } else { 
-                m.classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
-            } 
-        }
-        function hideMenu() { 
-            document.getElementById('menu-modal').classList.add('opacity-0', 'pointer-events-none', '-translate-y-4'); 
-        }
-
-        // --- INIT ---
-        window.onload = () => {
-            updateClock();
-            setInterval(updateClock, 1000);
-            fetchWeather();
-        };
     </script>
 </body>
 </html>
