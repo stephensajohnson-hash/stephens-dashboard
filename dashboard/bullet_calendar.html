@@ -166,6 +166,7 @@
             
             <div class="p-6 space-y-4">
                 <input type="hidden" id="item-category">
+                <input type="hidden" id="item-id">
                 
                 <!-- Type Selector -->
                 <div>
@@ -237,12 +238,9 @@
         // --- DATA STORE ---
         const STORAGE_KEY = 'bullet_cal_data';
         
-        // Embedded Fallback Data
         const DEFAULT_DATA = {
             "meta": { "year": 2025, "version": "1.3", "owner": "Stephens" },
-            "items": [
-                { "id": "evt_1", "date": "2025-11-21", "type": "meeting", "category": "work", "title": "Sync with Dev Team", "description": "Discussing the Q4 API migration roadmap.", "startTime": "10:00", "durationMinutes": 60, "status": "completed", "linkUrl": "#" }
-            ]
+            "items": []
         };
 
         // --- STATE ---
@@ -261,17 +259,14 @@
 
         // --- DATA LOADING & MERGING ---
         async function loadData() {
-            let mergedItems = [];
             const idMap = new Map();
 
-            // 1. Load LocalStorage first (User edits take precedence)
+            // 1. Load LocalStorage first
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
                     const localData = JSON.parse(localStr);
-                    if(localData.items) {
-                        localData.items.forEach(item => idMap.set(item.id, item));
-                    }
+                    if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
                 }
             } catch (e) { console.warn("Error reading local storage", e); }
 
@@ -280,26 +275,17 @@
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
-                    // Add JSON items ONLY if they don't exist in local (preserve local edits)
                     if(jsonData.items) {
                         jsonData.items.forEach(item => {
-                            if (!idMap.has(item.id)) {
-                                idMap.set(item.id, item);
-                            }
+                            if (!idMap.has(item.id)) idMap.set(item.id, item);
                         });
                     }
-                    // Update meta from JSON as truth
                     appState.data.meta = jsonData.meta || appState.data.meta;
                 } else {
                     console.warn("Bullet Calendar JSON not found.");
-                    // If no JSON and no Local, use default sample for first run
-                    if (idMap.size === 0) {
-                        DEFAULT_DATA.items.forEach(item => idMap.set(item.id, item));
-                    }
                 }
             } catch (error) {
                 console.warn("Error fetching JSON", error);
-                if (idMap.size === 0) DEFAULT_DATA.items.forEach(item => idMap.set(item.id, item));
             }
 
             appState.data.items = Array.from(idMap.values());
@@ -315,7 +301,6 @@
         function resetData() {
             if(confirm("Are you sure? This will wipe all local edits and reload from the JSON file.")) {
                 localStorage.removeItem(STORAGE_KEY);
-                // Force reload from source
                 appState.data.items = [];
                 loadData();
             }
@@ -340,13 +325,11 @@
             }
         }
 
-        // --- NAVIGATION ---
         function navigate(dir) {
             const d = new Date(appState.currentDate);
             if (appState.view === 'day') d.setDate(d.getDate() + dir);
             else if (appState.view === 'week') d.setDate(d.getDate() + (dir * 7));
             else if (appState.view === 'month') d.setMonth(d.getMonth() + dir);
-            
             appState.currentDate = d;
             updateUI();
         }
@@ -411,7 +394,6 @@
             const ymd = toLocalYMD(appState.currentDate);
             const items = appState.data.items.filter(i => i.date === ymd);
 
-            // Empty State Handling
             if (items.length === 0) {
                 container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50">
                     <div class="text-6xl mb-4">📭</div>
@@ -453,7 +435,7 @@
             html += `<div class="space-y-6">`;
             html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <h3 class="text-xl font-bold text-health">Health & Nutrition</h3>
-                        <button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Edit Meals">✏️</button>
+                        <button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Meals">＋</button>
                      </div>`;
             if(health) html += renderHealthCard(health);
             else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500 cursor-pointer hover:bg-gray-800/50 transition" onclick="openNutritionModal()">Click to log nutrition</div>`;
@@ -557,8 +539,9 @@
                 <div class="glass-panel p-4 rounded-xl border-l-4 ${borderClass} hover:translate-x-1 transition-transform relative group">
                     <div class="flex justify-between items-start">
                         <div>${titleHtml}${meta}</div>
-                        <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="text-gray-400 hover:text-white" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button>
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                            <button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}')">✎</button>
+                            <button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button>
                         </div>
                     </div>
                     ${descriptionHtml}
@@ -594,7 +577,11 @@
             `).join('');
 
             return `
-                <div class="glass-panel p-5 rounded-xl border-l-4 border-health">
+                <div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group">
+                    <div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                        <button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button>
+                        <button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button>
+                    </div>
                     <div class="flex justify-between items-center mb-4">
                         <div class="text-sm text-gray-400">Weight</div>
                         <span class="text-xl font-bold text-white">${item.weightLbs} lbs</span>
@@ -619,108 +606,61 @@
             `;
         }
 
-        // --- MODAL LOGIC ---
-        function openNutritionModal() {
-            const ymd = toLocalYMD(appState.currentDate);
-            let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-            if (!item) item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
-            document.getElementById('edit-weight').value = item.weightLbs || '';
-            document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
-            const container = document.getElementById('meal-inputs-container');
-            container.innerHTML = '';
-            if (item.meals && item.meals.length > 0) item.meals.forEach(m => addMealInput(m));
-            else addMealInput(); 
-            document.getElementById('nutrition-modal').classList.remove('hidden');
-        }
-
-        function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
-
-        function addMealInput(data = {}) {
-            const container = document.getElementById('meal-inputs-container');
-            const div = document.createElement('div');
-            div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 meal-row";
-            div.innerHTML = `
-                <div class="flex gap-2 mb-2">
-                    <select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health">
-                        <option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option>
-                        <option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option>
-                        <option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option>
-                        <option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option>
-                    </select>
-                    <input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health">
-                    <button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button>
-                </div>
-                <div class="grid grid-cols-5 gap-2">
-                    <div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
-                    <div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
-                    <div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
-                    <div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
-                    <div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div>
-                </div>
-            `;
-            container.appendChild(div);
-        }
-
-        function saveNutrition() {
-            const ymd = toLocalYMD(appState.currentDate);
-            const weight = parseFloat(document.getElementById('edit-weight').value) || 0;
-            const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
-            const mealRows = document.querySelectorAll('.meal-row');
-            const meals = Array.from(mealRows).map(row => ({
-                mealType: row.querySelector('.meal-type').value,
-                name: row.querySelector('.meal-name').value,
-                calories: parseFloat(row.querySelector('.meal-cal').value) || 0,
-                protein: parseFloat(row.querySelector('.meal-pro').value) || 0,
-                carbs: parseFloat(row.querySelector('.meal-carb').value) || 0,
-                fat: parseFloat(row.querySelector('.meal-fat').value) || 0,
-                fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0
-            })).filter(m => m.name.trim() !== ""); 
-
-            let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
-            const newItem = {
-                id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`,
-                date: ymd,
-                type: 'health',
-                category: 'personal',
-                weightLbs: weight,
-                goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 },
-                meals: meals
-            };
-
-            if (itemIndex >= 0) appState.data.items[itemIndex] = newItem;
-            else appState.data.items.push(newItem);
-
-            saveData();
-            closeNutritionModal();
-            updateUI();
-        }
-
         // --- ITEM MODAL LOGIC ---
-        function openItemModal(category) {
-            // Check if nutrition already exists for today
+        function openItemModal(category, itemId = null) {
+            // Check if nutrition already exists
             const ymd = toLocalYMD(appState.currentDate);
             const hasHealth = appState.data.items.some(i => i.date === ymd && i.type === 'health');
             const nutritionOpt = document.getElementById('opt-nutrition');
-            
             if (hasHealth) nutritionOpt.style.display = 'none';
             else nutritionOpt.style.display = 'block';
 
-            document.getElementById('item-category').value = category || 'work';
-            const typeSelect = document.getElementById('item-type');
-            
-            if(category === 'work') typeSelect.value = 'task';
-            else if(category === 'personal') typeSelect.value = 'habit';
-            else typeSelect.value = 'task'; // default fallback
-            
-            updateModalFields();
-            
+            // Reset Fields
+            document.getElementById('item-id').value = '';
             document.getElementById('item-title').value = '';
             document.getElementById('item-desc').value = '';
             document.getElementById('item-link').value = '';
             document.getElementById('item-img').value = '';
             document.getElementById('item-ticket').value = '';
             document.getElementById('item-rating').value = '5';
+            document.getElementById('item-duration').value = '60';
+            document.getElementById('item-startTime').value = '';
+
+            // Editing Mode?
+            if (itemId) {
+                document.getElementById('item-modal-title').innerText = "Edit Item";
+                document.getElementById('item-id').value = itemId;
+                const item = appState.data.items.find(i => i.id === itemId);
+                if (item) {
+                    document.getElementById('item-category').value = item.category;
+                    document.getElementById('item-type').value = item.type;
+                    document.getElementById('item-title').value = item.title;
+                    document.getElementById('item-desc').value = item.description || '';
+                    document.getElementById('item-link').value = item.linkUrl || '';
+                    document.getElementById('item-img').value = item.imgUrl || '';
+                    
+                    if(item.type === 'meeting') {
+                        document.getElementById('item-startTime').value = item.startTime || '';
+                        document.getElementById('item-duration').value = item.durationMinutes || 60;
+                    }
+                    if(item.type === 'task') {
+                        document.getElementById('item-ticket').value = item.ticketNumber || '';
+                    }
+                    if(item.type === 'media') {
+                        document.getElementById('item-rating').value = item.rating || 5;
+                    }
+                }
+            } else {
+                // Add Mode
+                document.getElementById('item-modal-title').innerText = "Add Item";
+                document.getElementById('item-category').value = category || 'work';
+                const typeSelect = document.getElementById('item-type');
+                if(category === 'work') typeSelect.value = 'task';
+                else if(category === 'personal') typeSelect.value = 'habit';
+                else typeSelect.value = 'task'; 
+            }
             
+            updateModalFields();
             document.getElementById('item-modal').classList.remove('hidden');
         }
 
@@ -728,13 +668,11 @@
 
         function updateModalFields() {
             const type = document.getElementById('item-type').value;
-            
             if (type === 'health') {
                 closeItemModal();
                 openNutritionModal();
                 return;
             }
-
             document.getElementById('field-meeting').classList.add('hidden');
             document.getElementById('field-task').classList.add('hidden');
             document.getElementById('field-media').classList.add('hidden');
@@ -748,10 +686,12 @@
             const category = document.getElementById('item-category').value;
             const type = document.getElementById('item-type').value;
             const title = document.getElementById('item-title').value;
+            const editId = document.getElementById('item-id').value;
+
             if(!title) return alert("Title required");
 
             const newItem = {
-                id: `${type}_${new Date().getTime()}`,
+                id: editId || `${type}_${new Date().getTime()}`,
                 date: toLocalYMD(appState.currentDate),
                 type: type,
                 category: category,
@@ -773,10 +713,17 @@
                 newItem.rating = parseInt(document.getElementById('item-rating').value) || 5;
             }
             if(type === 'habit') {
-                newItem.streakCount = 1; 
+                const existing = appState.data.items.find(i => i.id === editId);
+                newItem.streakCount = existing ? existing.streakCount : 1; 
             }
 
-            appState.data.items.push(newItem);
+            if (editId) {
+                const idx = appState.data.items.findIndex(i => i.id === editId);
+                if (idx >= 0) appState.data.items[idx] = newItem;
+            } else {
+                appState.data.items.push(newItem);
+            }
+
             saveData();
             closeItemModal();
             updateUI();
