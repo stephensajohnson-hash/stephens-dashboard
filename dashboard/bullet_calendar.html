@@ -98,6 +98,9 @@
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">
                     View Recipes
                 </a>
+                <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">
+                    Download Data
+                </button>
                 <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard V1.0</p>
             </div>
         </aside>
@@ -157,6 +160,26 @@
             fetchWeather();
             updateUI();
         };
+
+        // --- ACTIONS ---
+        function downloadData() {
+            const dataStr = JSON.stringify(appState.data, null, 2);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `bullet_cal_data_${appState.data.meta.year}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Close sidebar if on mobile
+            if(window.innerWidth < 1024) {
+                const sb = document.getElementById('bullet-sidebar');
+                if(sb.classList.contains('sidebar-open')) toggleSidebar();
+            }
+        }
 
         // --- NAVIGATION & STATE MGMT ---
         function navigate(dir) {
