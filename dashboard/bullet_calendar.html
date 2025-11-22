@@ -198,8 +198,26 @@
         window.onload = () => {
             renderSidebar();
             fetchWeather();
-            updateUI();
+            loadData(); // Initial load attempt
         };
+
+        // --- DATA LOADING ---
+        async function loadData() {
+            try {
+                const response = await fetch('bullet_cal_data_2025.json');
+                if (response.ok) {
+                    const jsonData = await response.json();
+                    appState.data = jsonData;
+                    console.log("Successfully loaded Bullet Calendar data from JSON.");
+                } else {
+                    console.warn("Bullet Calendar JSON not found, using embedded default data.");
+                }
+            } catch (error) {
+                console.warn("Error loading Bullet Calendar JSON, using embedded default data.", error);
+            }
+            // Render UI regardless of source (Json or Default)
+            updateUI();
+        }
 
         // --- ACTIONS ---
         function downloadData() {
