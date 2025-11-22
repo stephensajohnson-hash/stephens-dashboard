@@ -153,6 +153,81 @@
         </div>
     </div>
 
+    <!-- General Item Editor Modal -->
+    <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white" id="item-modal-title">Add Item</h3>
+                <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            
+            <div class="p-6 space-y-4">
+                <input type="hidden" id="item-category">
+                
+                <!-- Type Selector -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
+                    <select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()">
+                        <option value="task">Task</option>
+                        <option value="meeting">Meeting</option>
+                        <option value="habit">Habit</option>
+                        <option value="media">Media (Movie/Show)</option>
+                    </select>
+                </div>
+
+                <!-- Common Fields -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
+                </div>
+                
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
+                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
+                </div>
+
+                <!-- Conditional Fields -->
+                <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Duration (min)</label>
+                        <input type="number" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="60">
+                    </div>
+                </div>
+
+                <div id="field-task" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
+                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
+                </div>
+
+                <div id="field-media" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10)</label>
+                    <input type="number" id="item-rating" min="1" max="10" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="5">
+                </div>
+
+                <!-- URL/Image -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
+                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
+                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
+                <button onclick="closeItemModal()" class="px-4 py-2 text-gray-400 hover:text-white">Cancel</button>
+                <button onclick="saveItem()" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-lg shadow-lg">Save Item</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         // --- DATA STORE ---
         // Default/Sample Data (Injected from the JSON design)
@@ -314,7 +389,10 @@
                 container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50">
                     <div class="text-6xl mb-4">📭</div>
                     <div class="text-xl">No entries for this day</div>
-                    <button onclick="openNutritionModal()" class="mt-4 px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Log Nutrition</button>
+                    <div class="flex gap-2 mt-4">
+                        <button onclick="openItemModal('work')" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Work</button>
+                        <button onclick="openItemModal('personal')" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Personal</button>
+                    </div>
                 </div>`;
                 return;
             }
@@ -327,24 +405,30 @@
 
             // COL 1
             html += `<div class="space-y-6">`;
-            html += `<h3 class="text-xl font-bold text-work border-b border-gray-700 pb-2">Work & Tasks</h3>`;
-            if(work.length === 0) html += `<p class="text-gray-500 italic">No work items recorded.</p>`;
+            html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <h3 class="text-xl font-bold text-work">Work & Tasks</h3>
+                        <button onclick="openItemModal('work')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button>
+                     </div>`;
+            if(work.length === 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
             // COL 2
             html += `<div class="space-y-6">`;
-            html += `<h3 class="text-xl font-bold text-personal border-b border-gray-700 pb-2">Life & Media</h3>`;
-            if(personal.length === 0) html += `<p class="text-gray-500 italic">No personal items recorded.</p>`;
+            html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <h3 class="text-xl font-bold text-personal">Life & Media</h3>
+                        <button onclick="openItemModal('personal')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button>
+                     </div>`;
+            if(personal.length === 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
             // COL 3
             html += `<div class="space-y-6">`;
-            html += `<h3 class="text-xl font-bold text-health border-b border-gray-700 pb-2 flex justify-between items-center">
-                Health & Nutrition
-                <button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 p-1 rounded text-gray-400 hover:text-white transition" title="Edit Meals">✏️</button>
-            </h3>`;
+            html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
+                        <h3 class="text-xl font-bold text-health">Health & Nutrition</h3>
+                        <button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Edit Meals">✏️</button>
+                     </div>`;
             if(health) html += renderHealthCard(health);
             else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500 cursor-pointer hover:bg-gray-800/50 transition" onclick="openNutritionModal()">Click to log nutrition</div>`;
             html += `</div>`;
@@ -443,7 +527,6 @@
             if(item.type === 'meeting') {
                 meta = `<span class="text-xs text-gray-400"><i class="mr-1">⏰</i> ${item.startTime} (${item.durationMinutes}m)</span>`;
                 
-                // 1. Link Title if URL exists
                 if(item.linkUrl) {
                     titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2">
                         <a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a>
@@ -451,7 +534,6 @@
                     </h4>`;
                 }
 
-                // 2. Image + Description Layout
                 if (item.imgUrl) {
                     descriptionHtml = `
                         <div class="flex gap-3 mt-2">
@@ -612,12 +694,7 @@
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
             
             if (!item) {
-                // Default template
-                item = { 
-                    weightLbs: 0, 
-                    goals: { calorieGoal: 2220 }, 
-                    meals: [] 
-                };
+                item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
             }
 
             document.getElementById('edit-weight').value = item.weightLbs || '';
@@ -629,7 +706,7 @@
             if (item.meals && item.meals.length > 0) {
                 item.meals.forEach(m => addMealInput(m));
             } else {
-                addMealInput(); // Add one empty row
+                addMealInput(); 
             }
 
             document.getElementById('nutrition-modal').classList.remove('hidden');
@@ -667,8 +744,6 @@
 
         function saveNutrition() {
             const ymd = toLocalYMD(appState.currentDate);
-            
-            // Gather Data
             const weight = parseFloat(document.getElementById('edit-weight').value) || 0;
             const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
             
@@ -681,9 +756,8 @@
                 carbs: parseFloat(row.querySelector('.meal-carb').value) || 0,
                 fat: parseFloat(row.querySelector('.meal-fat').value) || 0,
                 fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0
-            })).filter(m => m.name.trim() !== ""); // Filter empty names
+            })).filter(m => m.name.trim() !== ""); 
 
-            // Find or Create Item
             let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
             
             const newItem = {
@@ -692,23 +766,89 @@
                 type: 'health',
                 category: 'personal',
                 weightLbs: weight,
-                goals: {
-                    tdee: 2816, // Hardcoded base TDEE for now
-                    calorieGoal: calGoal,
-                    protein: 167,
-                    fat: 150,
-                    netCarbs: 100
-                },
+                goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 },
                 meals: meals
             };
 
-            if (itemIndex >= 0) {
-                appState.data.items[itemIndex] = newItem;
-            } else {
-                appState.data.items.push(newItem);
-            }
+            if (itemIndex >= 0) appState.data.items[itemIndex] = newItem;
+            else appState.data.items.push(newItem);
 
             closeNutritionModal();
+            updateUI();
+        }
+
+        // --- ITEM MODAL LOGIC ---
+        function openItemModal(category) {
+            document.getElementById('item-category').value = category;
+            const typeSelect = document.getElementById('item-type');
+            
+            // Smart Defaults
+            if(category === 'work') typeSelect.value = 'task';
+            else if(category === 'personal') typeSelect.value = 'habit';
+            
+            updateModalFields();
+            
+            // Reset fields
+            document.getElementById('item-title').value = '';
+            document.getElementById('item-desc').value = '';
+            document.getElementById('item-link').value = '';
+            document.getElementById('item-img').value = '';
+            document.getElementById('item-ticket').value = '';
+            document.getElementById('item-rating').value = '5';
+            
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function closeItemModal() {
+            document.getElementById('item-modal').classList.add('hidden');
+        }
+
+        function updateModalFields() {
+            const type = document.getElementById('item-type').value;
+            document.getElementById('field-meeting').classList.add('hidden');
+            document.getElementById('field-task').classList.add('hidden');
+            document.getElementById('field-media').classList.add('hidden');
+
+            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
+            if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
+            if(type === 'media') document.getElementById('field-media').classList.remove('hidden');
+        }
+
+        function saveItem() {
+            const category = document.getElementById('item-category').value;
+            const type = document.getElementById('item-type').value;
+            const title = document.getElementById('item-title').value;
+            if(!title) return alert("Title required");
+
+            const newItem = {
+                id: `${type}_${new Date().getTime()}`,
+                date: toLocalYMD(appState.currentDate),
+                type: type,
+                category: category,
+                title: title,
+                description: document.getElementById('item-desc').value,
+                linkUrl: document.getElementById('item-link').value,
+                imgUrl: document.getElementById('item-img').value
+            };
+
+            // Specific Fields
+            if(type === 'meeting') {
+                newItem.startTime = document.getElementById('item-startTime').value || "09:00";
+                newItem.durationMinutes = parseInt(document.getElementById('item-duration').value) || 60;
+            }
+            if(type === 'task') {
+                newItem.ticketNumber = document.getElementById('item-ticket').value;
+                newItem.status = 'pending'; // Default
+            }
+            if(type === 'media') {
+                newItem.rating = parseInt(document.getElementById('item-rating').value) || 5;
+            }
+            if(type === 'habit') {
+                newItem.streakCount = 1; // Default start
+            }
+
+            appState.data.items.push(newItem);
+            closeItemModal();
             updateUI();
         }
 
