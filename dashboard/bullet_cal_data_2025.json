@@ -1,0 +1,111 @@
+{
+  "meta": {
+    "year": 2025,
+    "version": "1.2",
+    "owner": "Stephens"
+  },
+  "items": [
+    {
+      "id": "evt_1732190000",
+      "date": "2025-11-21",
+      "type": "meeting",
+      "category": "work",
+      "title": "Sync with Dev Team",
+      "description": "Discussing the Q4 API migration roadmap.",
+      "startTime": "10:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 65,
+      "status": "completed",
+      "tags": ["internal", "planning"],
+      "linkUrl": "https://zoom.us/j/123456789",
+      "imgUrl": null
+    },
+    {
+      "id": "task_1732194500",
+      "date": "2025-11-21",
+      "type": "task",
+      "category": "work",
+      "title": "Fix login bug on staging",
+      "ticketNumber": "JIRA-4291",
+      "description": "Investigate the auth token expiration issue.",
+      "timeSpentMinutes": 120,
+      "status": "in-progress",
+      "tags": ["bugfix", "urgent"],
+      "linkUrl": "https://jira.company.com/browse/JIRA-4291",
+      "imgUrl": "https://placehold.co/600x400/png?text=Error+Screenshot"
+    },
+    {
+      "id": "habit_1732210000",
+      "date": "2025-11-21",
+      "type": "habit",
+      "category": "personal",
+      "title": "Learn Spanish",
+      "streakCount": 1494,
+      "status": "completed",
+      "notes": "Completed Duolingo lesson on Subjunctive verbs.",
+      "linkUrl": "https://www.duolingo.com"
+    },
+    {
+      "id": "mov_1732230000",
+      "date": "2025-11-21",
+      "type": "media",
+      "category": "entertainment",
+      "title": "Blade Runner 2049",
+      "rating": 9,
+      "mediaType": "movie",
+      "notes": "Still holds up visually. Deakins is a genius.",
+      "timeSpentMinutes": 164,
+      "linkUrl": "https://www.imdb.com/title/tt1856101/",
+      "imgUrl": "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_FMjpg_UX1000_.jpg"
+    },
+    {
+      "id": "health_1732180000",
+      "date": "2025-11-21",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 185.5,
+      "notes": "Felt energetic today.",
+      "meals": [
+        { 
+          "name": "Oatmeal & Whey",
+          "mealType": "breakfast", 
+          "calories": 450, 
+          "protein": 30, 
+          "carbs": 55, 
+          "fiber": 8, 
+          "fat": 6,
+          "imgUrl": null 
+        },
+        { 
+          "name": "Chicken Salad",
+          "mealType": "lunch",
+          "calories": 600,
+          "protein": 45, 
+          "carbs": 12, 
+          "fiber": 4, 
+          "fat": 22,
+          "imgUrl": "https://placehold.co/600x400/png?text=Salad+Pic"
+        },
+        { 
+          "name": "Steak & Asparagus",
+          "mealType": "dinner",
+          "calories": 850,
+          "protein": 60, 
+          "carbs": 8, 
+          "fiber": 3, 
+          "fat": 45
+        }
+      ]
+    },
+    {
+      "id": "task_1732240000",
+      "date": "2025-11-21",
+      "type": "task",
+      "category": "personal",
+      "title": "Water the plants",
+      "status": "pending",
+      "tags": ["chores"],
+      "imgUrl": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=100&q=80"
+    }
+  ]
+}
