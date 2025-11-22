@@ -329,6 +329,21 @@
         }
       ],
       "isStatic": true
+    },
+    {
+      "id": "g_1763789013710",
+      "name": "Gifts",
+      "color": "red",
+      "isStatic": false,
+      "links": [
+        {
+          "id": "l_1763789064922",
+          "groupId": "g_1763789013710",
+          "name": "Luggage",
+          "url": "https://www.walmart.com/ip/Hanke-26-Inch-Checked-Luggage-PC-Hard-Shell-Suitcases-for-Travel-Front-Opening-Aluminum-Frame-Tsa-Luggage-Rolling-Suitcase-with-Wheels-Jet-Black/5536204266?sid=33f440f0-f05d-4cc7-a67e-02bd89df675b",
+          "img": "https://i5.walmartimages.com/seo/Hanke-26-Inch-Checked-Luggage-PC-Hard-Shell-Suitcases-for-Travel-Front-Opening-Aluminum-Frame-Tsa-Luggage-Rolling-Suitcase-with-Wheels-Jet-Black_b564ecec-1968-44e4-bed1-816900d4e14a.80ccf9570825a5cce1757f1577b17346.jpeg?odnHeight=573&odnWidth=573&odnBg=FFFFFF"
+        }
+      ]
     }
   ],
   "countdowns": [
