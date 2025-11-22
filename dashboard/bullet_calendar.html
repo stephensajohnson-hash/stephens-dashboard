@@ -101,6 +101,9 @@
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">
                     Download Data
                 </button>
+                <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">
+                    Reset to JSON
+                </button>
                 <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard V1.0</p>
             </div>
         </aside>
@@ -172,6 +175,8 @@
                         <option value="meeting">Meeting</option>
                         <option value="habit">Habit</option>
                         <option value="media">Media (Movie/Show)</option>
+                        <!-- Nutrition injected dynamically if not present -->
+                        <option value="health" id="opt-nutrition" class="text-health font-bold">Nutrition Log</option>
                     </select>
                 </div>
 
@@ -230,68 +235,90 @@
 
     <script>
         // --- DATA STORE ---
-        // Default/Sample Data (Injected from the JSON design)
+        const STORAGE_KEY = 'bullet_cal_data';
+        
+        // Embedded Fallback Data
         const DEFAULT_DATA = {
             "meta": { "year": 2025, "version": "1.3", "owner": "Stephens" },
             "items": [
-                {
-                "id": "evt_1732190000", "date": "2025-11-21", "type": "meeting", "category": "work", "title": "Sync with Dev Team", "description": "Discussing the Q4 API migration roadmap.", "startTime": "10:00", "durationMinutes": 60, "timeSpentMinutes": 65, "status": "completed", "tags": ["internal", "planning"], "linkUrl": "https://zoom.us/j/123456789", "imgUrl": null
-                },
-                {
-                "id": "task_1732194500", "date": "2025-11-21", "type": "task", "category": "work", "title": "Fix login bug on staging", "ticketNumber": "JIRA-4291", "description": "Investigate the auth token expiration issue.", "timeSpentMinutes": 120, "status": "in-progress", "tags": ["bugfix", "urgent"], "linkUrl": "https://jira.company.com/browse/JIRA-4291", "imgUrl": null
-                },
-                {
-                "id": "habit_1732210000", "date": "2025-11-21", "type": "habit", "category": "personal", "title": "Learn Spanish", "streakCount": 1494, "status": "completed", "notes": "Completed Duolingo lesson on Subjunctive verbs.", "linkUrl": "https://www.duolingo.com"
-                },
-                {
-                "id": "mov_1732230000", "date": "2025-11-21", "type": "media", "category": "entertainment", "title": "Blade Runner 2049", "rating": 9, "mediaType": "movie", "notes": "Still holds up visually. Deakins is a genius.", "timeSpentMinutes": 164, "linkUrl": "https://www.imdb.com/title/tt1856101/", "imgUrl": "https://m.media-amazon.com/images/M/MV5BNzA1Njg4NzYxOV5BMl5BanBnXkFtZTgwODk5NjU3MzI@._V1_FMjpg_UX1000_.jpg"
-                },
-                {
-                "id": "health_1732180000", "date": "2025-11-21", "type": "health", "category": "personal", "weightLbs": 270.0, "notes": "Good energy levels. Hit protein goal.", 
-                "goals": { "tdee": 2816, "calorieGoal": 2220, "protein": 167, "fat": 150, "netCarbs": 100 },
-                "meals": [
-                    { "name": "Eggs (4), Bacon (2)", "mealType": "breakfast", "calories": 446, "protein": 28, "carbs": 2, "fiber": 0, "fat": 35 },
-                    { "name": "2 Homemade Wraps + Avocado", "mealType": "lunch", "calories": 498, "protein": 35, "carbs": 45, "fiber": 12, "fat": 20 },
-                    { "name": "Hamburger w/Sourdough", "mealType": "dinner", "calories": 570, "protein": 32, "carbs": 48, "fiber": 3, "fat": 28 },
-                    { "name": "Poppers w/Ranch", "mealType": "snack", "calories": 570, "protein": 6.5, "carbs": 15, "fiber": 1, "fat": 52.5 }
-                ]
-                },
-                {
-                "id": "task_1732240000", "date": "2025-11-21", "type": "task", "category": "personal", "title": "Water the plants", "status": "pending", "tags": ["chores"]
-                }
+                { "id": "evt_1", "date": "2025-11-21", "type": "meeting", "category": "work", "title": "Sync with Dev Team", "description": "Discussing the Q4 API migration roadmap.", "startTime": "10:00", "durationMinutes": 60, "status": "completed", "linkUrl": "#" }
             ]
         };
 
         // --- STATE ---
         let appState = {
-            currentDate: new Date("2025-11-21T12:00:00"), // Defaulting to sample data date for demo
-            view: 'day', // 'day', 'week', 'month'
-            data: DEFAULT_DATA
+            currentDate: new Date("2025-11-21T12:00:00"),
+            view: 'day',
+            data: { meta: DEFAULT_DATA.meta, items: [] }
         };
 
         // --- INITIALIZATION ---
         window.onload = () => {
             renderSidebar();
             fetchWeather();
-            loadData(); // Initial load attempt
+            loadData(); 
         };
 
-        // --- DATA LOADING ---
+        // --- DATA LOADING & MERGING ---
         async function loadData() {
+            let mergedItems = [];
+            const idMap = new Map();
+
+            // 1. Load LocalStorage first (User edits take precedence)
+            try {
+                const localStr = localStorage.getItem(STORAGE_KEY);
+                if (localStr) {
+                    const localData = JSON.parse(localStr);
+                    if(localData.items) {
+                        localData.items.forEach(item => idMap.set(item.id, item));
+                    }
+                }
+            } catch (e) { console.warn("Error reading local storage", e); }
+
+            // 2. Fetch JSON
             try {
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
-                    appState.data = jsonData;
-                    console.log("Successfully loaded Bullet Calendar data from JSON.");
+                    // Add JSON items ONLY if they don't exist in local (preserve local edits)
+                    if(jsonData.items) {
+                        jsonData.items.forEach(item => {
+                            if (!idMap.has(item.id)) {
+                                idMap.set(item.id, item);
+                            }
+                        });
+                    }
+                    // Update meta from JSON as truth
+                    appState.data.meta = jsonData.meta || appState.data.meta;
                 } else {
-                    console.warn("Bullet Calendar JSON not found, using embedded default data.");
+                    console.warn("Bullet Calendar JSON not found.");
+                    // If no JSON and no Local, use default sample for first run
+                    if (idMap.size === 0) {
+                        DEFAULT_DATA.items.forEach(item => idMap.set(item.id, item));
+                    }
                 }
             } catch (error) {
-                console.warn("Error loading Bullet Calendar JSON, using embedded default data.", error);
+                console.warn("Error fetching JSON", error);
+                if (idMap.size === 0) DEFAULT_DATA.items.forEach(item => idMap.set(item.id, item));
             }
-            // Render UI regardless of source (Json or Default)
+
+            appState.data.items = Array.from(idMap.values());
             updateUI();
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data));
+            } catch (e) { console.error("Save failed", e); }
+        }
+
+        function resetData() {
+            if(confirm("Are you sure? This will wipe all local edits and reload from the JSON file.")) {
+                localStorage.removeItem(STORAGE_KEY);
+                // Force reload from source
+                appState.data.items = [];
+                loadData();
+            }
         }
 
         // --- ACTIONS ---
@@ -313,7 +340,7 @@
             }
         }
 
-        // --- NAVIGATION & STATE MGMT ---
+        // --- NAVIGATION ---
         function navigate(dir) {
             const d = new Date(appState.currentDate);
             if (appState.view === 'day') d.setDate(d.getDate() + dir);
@@ -370,7 +397,6 @@
         }
 
         // --- RENDERERS ---
-        
         function renderSidebar() {
             const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
             const list = document.getElementById('month-list');
@@ -385,13 +411,13 @@
             const ymd = toLocalYMD(appState.currentDate);
             const items = appState.data.items.filter(i => i.date === ymd);
 
+            // Empty State Handling
             if (items.length === 0) {
                 container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50">
                     <div class="text-6xl mb-4">📭</div>
                     <div class="text-xl">No entries for this day</div>
                     <div class="flex gap-2 mt-4">
-                        <button onclick="openItemModal('work')" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Work</button>
-                        <button onclick="openItemModal('personal')" class="px-4 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Personal</button>
+                        <button onclick="openItemModal('general')" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg transition transform hover:scale-105">Add Entry</button>
                     </div>
                 </div>`;
                 return;
@@ -403,7 +429,7 @@
 
             let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
 
-            // COL 1
+            // COL 1: Work
             html += `<div class="space-y-6">`;
             html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <h3 class="text-xl font-bold text-work">Work & Tasks</h3>
@@ -413,7 +439,7 @@
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
-            // COL 2
+            // COL 2: Personal
             html += `<div class="space-y-6">`;
             html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <h3 class="text-xl font-bold text-personal">Life & Media</h3>
@@ -423,7 +449,7 @@
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
 
-            // COL 3
+            // COL 3: Health
             html += `<div class="space-y-6">`;
             html += `<div class="flex justify-between items-center border-b border-gray-700 pb-2">
                         <h3 class="text-xl font-bold text-health">Health & Nutrition</h3>
@@ -440,14 +466,12 @@
         function renderWeekView(container) {
             const start = getStartOfWeek(appState.currentDate);
             let html = `<div class="grid grid-cols-7 gap-2 min-h-[600px]">`;
-            
             for(let i=0; i<7; i++) {
                 const d = new Date(start);
                 d.setDate(d.getDate() + i);
                 const ymd = toLocalYMD(d);
                 const isToday = ymd === toLocalYMD(new Date());
                 const items = appState.data.items.filter(item => item.date === ymd);
-
                 html += `
                     <div class="glass-panel rounded-lg flex flex-col h-full ${isToday ? 'border-blue-500 bg-blue-900/10' : ''}">
                         <div class="p-2 text-center border-b border-gray-700/50 ${isToday ? 'bg-blue-600 text-white' : 'bg-gray-800'}">
@@ -471,34 +495,21 @@
         function renderMonthView(container) {
             const year = appState.currentDate.getFullYear();
             const month = appState.currentDate.getMonth();
-            
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
-            
             const startDayIndex = (firstDay.getDay() + 6) % 7;
             const daysInMonth = lastDay.getDate();
 
             let html = `<div class="glass-panel rounded-2xl p-4">`;
-            
-            // Header
             html += `<div class="grid grid-cols-7 mb-2 text-center">`;
             ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => html += `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`);
             html += `</div>`;
-
-            // Grid
             html += `<div class="grid grid-cols-7 gap-2 auto-rows-fr">`;
-
-            // Empty cells
-            for(let i=0; i<startDayIndex; i++) {
-                html += `<div class="h-24 bg-gray-800/30 rounded-lg"></div>`;
-            }
-
-            // Days
+            for(let i=0; i<startDayIndex; i++) { html += `<div class="h-24 bg-gray-800/30 rounded-lg"></div>`; }
             for(let d=1; d<=daysInMonth; d++) {
                 const currentDayStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
                 const items = appState.data.items.filter(i => i.date === currentDayStr);
                 const isToday = currentDayStr === toLocalYMD(new Date());
-
                 html += `
                     <div class="h-24 bg-gray-800 rounded-lg border ${isToday ? 'border-blue-500' : 'border-gray-700'} p-1 flex flex-col hover:bg-gray-700 transition cursor-pointer" onclick="goToDay('${currentDayStr}')">
                         <div class="text-right text-sm font-bold text-gray-400 mb-1">${d}</div>
@@ -508,46 +519,30 @@
                     </div>
                 `;
             }
-            
             html += `</div></div>`;
             container.innerHTML = html;
         }
 
         // --- CARD RENDERERS ---
-
         function renderCard(item) {
             const borderClass = getTypeColor(item.type);
             let content = '';
             let meta = '';
-            
-            // Default Title & Description Rendering (can be overridden by specific types)
             let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
             let descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '';
 
             if(item.type === 'meeting') {
                 meta = `<span class="text-xs text-gray-400"><i class="mr-1">⏰</i> ${item.startTime} (${item.durationMinutes}m)</span>`;
-                
                 if(item.linkUrl) {
-                    titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2">
-                        <a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a>
-                        <span class="text-[10px] text-blue-500 bg-blue-500/10 px-1 rounded">↗</span>
-                    </h4>`;
+                    titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2"><a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a><span class="text-[10px] text-blue-500 bg-blue-500/10 px-1 rounded">↗</span></h4>`;
                 }
-
                 if (item.imgUrl) {
-                    descriptionHtml = `
-                        <div class="flex gap-3 mt-2">
-                            <img src="${item.imgUrl}" class="w-12 h-12 object-cover rounded flex-shrink-0" alt="Meeting Icon">
-                            <p class="text-sm text-gray-300 self-center">${item.description || ''}</p>
-                        </div>`;
+                    descriptionHtml = `<div class="flex gap-3 mt-2"><img src="${item.imgUrl}" class="w-12 h-12 object-cover rounded flex-shrink-0" alt="Meeting Icon"><p class="text-sm text-gray-300 self-center">${item.description || ''}</p></div>`;
                 }
             }
             else if(item.type === 'task') {
                 meta = `<span class="text-xs text-gray-400">${item.ticketNumber || 'No Ticket'}</span>`;
-                content += `<div class="mt-2 flex gap-2">
-                    <span class="text-[10px] px-2 py-0.5 rounded-full border border-gray-600 uppercase">${item.status}</span>
-                    ${item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="text-[10px] text-blue-400 hover:underline flex items-center">View Ticket ↗</a>` : ''}
-                </div>`;
+                content += `<div class="mt-2 flex gap-2"><span class="text-[10px] px-2 py-0.5 rounded-full border border-gray-600 uppercase">${item.status}</span>${item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="text-[10px] text-blue-400 hover:underline flex items-center">View Ticket ↗</a>` : ''}</div>`;
             }
             else if(item.type === 'media') {
                 meta = `<div class="flex text-yellow-400 text-xs">${'★'.repeat(item.rating)}${'☆'.repeat(10-item.rating)}</div>`;
@@ -555,24 +550,15 @@
                 content += `<p class="text-xs text-gray-400 italic">"${item.notes}"</p>`;
             }
             else if(item.type === 'habit') {
-                 content += `<div class="mt-2 flex items-center gap-2">
-                    <div class="text-2xl">🔥</div>
-                    <div>
-                        <div class="text-xl font-bold">${item.streakCount}</div>
-                        <div class="text-[10px] uppercase text-gray-500">Day Streak</div>
-                    </div>
-                 </div>`;
+                 content += `<div class="mt-2 flex items-center gap-2"><div class="text-2xl">🔥</div><div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div></div>`;
             }
 
             return `
                 <div class="glass-panel p-4 rounded-xl border-l-4 ${borderClass} hover:translate-x-1 transition-transform relative group">
                     <div class="flex justify-between items-start">
-                        <div>
-                            ${titleHtml}
-                            ${meta}
-                        </div>
+                        <div>${titleHtml}${meta}</div>
                         <div class="opacity-0 group-hover:opacity-100 transition-opacity">
-                            <button class="text-gray-400 hover:text-white">✎</button>
+                            <button class="text-gray-400 hover:text-white" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button>
                         </div>
                     </div>
                     ${descriptionHtml}
@@ -583,7 +569,6 @@
 
         function renderHealthCard(item) {
             const g = item.goals || { tdee: 2500, calorieGoal: 2000, protein: 150, fat: 80, netCarbs: 100 };
-            
             let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
             (item.meals || []).forEach(m => {
                 totalCal += Number(m.calories || 0);
@@ -595,21 +580,15 @@
             const netCarbs = totalCarb - totalFiber;
             const calRemaining = g.calorieGoal - totalCal;
             const tdeeDiff = totalCal - g.tdee;
-            
             const pctCal = Math.min((totalCal / g.calorieGoal) * 100, 100);
             const pctPro = Math.min((totalPro / g.protein) * 100, 100);
             const pctFat = Math.min((totalFat / g.fat) * 100, 100);
             const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
-
             const weeklyData = getWeeklyDeficit();
             const runningDeficit = weeklyData.deficit;
-
             const mealsHtml = (item.meals || []).map(m => `
                 <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
-                    <div class="overflow-hidden">
-                        <span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType || 'meal'}</span>
-                        <span class="font-medium text-gray-300 truncate">${m.name}</span>
-                    </div>
+                    <div class="overflow-hidden"><span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType || 'meal'}</span><span class="font-medium text-gray-300 truncate">${m.name}</span></div>
                     <span class="text-gray-400 whitespace-nowrap ml-2">${m.calories} Cal</span>
                 </div>
             `).join('');
@@ -620,70 +599,22 @@
                         <div class="text-sm text-gray-400">Weight</div>
                         <span class="text-xl font-bold text-white">${item.weightLbs} lbs</span>
                     </div>
-                    
                     <div class="bg-gray-800/50 rounded-lg p-3 mb-4">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span class="text-gray-400">Calories</span>
-                            <span class="font-bold ${totalCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">
-                                ${totalCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}
-                            </span>
-                        </div>
+                        <div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Calories</span><span class="font-bold ${totalCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${totalCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div>
                         <div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div>
-                        <div class="flex justify-between text-xs">
-                            <span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">
-                                ${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}
-                            </span>
-                            <span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span>
-                        </div>
+                        <div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div>
                     </div>
-
                     <div class="grid grid-cols-3 gap-3 mb-4">
-                         <div class="bg-gray-800/30 p-2 rounded">
-                            <div class="flex justify-between text-xs text-gray-400 mb-1">
-                                <span>Pro</span>
-                                <span>${totalPro}/${g.protein}g</span>
-                            </div>
-                            <div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div>
-                            <div class="text-[10px] text-right mt-1 text-blue-300">${pctPro.toFixed(0)}%</div>
-                        </div>
-                         <div class="bg-gray-800/30 p-2 rounded">
-                            <div class="flex justify-between text-xs text-gray-400 mb-1">
-                                <span>Fat</span>
-                                <span>${totalFat}/${g.fat}g</span>
-                            </div>
-                            <div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div>
-                            <div class="text-[10px] text-right mt-1 text-yellow-300">${pctFat.toFixed(0)}%</div>
-                        </div>
-                         <div class="bg-gray-800/30 p-2 rounded">
-                            <div class="flex justify-between text-xs text-gray-400 mb-1">
-                                <span>Carb</span>
-                                <span>${netCarbs}/${g.netCarbs}g</span>
-                            </div>
-                            <div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div>
-                            <div class="text-[10px] text-right mt-1 text-green-300">${pctCarb.toFixed(0)}%</div>
-                        </div>
+                         <div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}/${g.protein}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div><div class="text-[10px] text-right mt-1 text-blue-300">${pctPro.toFixed(0)}%</div></div>
+                         <div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}/${g.fat}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div><div class="text-[10px] text-right mt-1 text-yellow-300">${pctFat.toFixed(0)}%</div></div>
+                         <div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}/${g.netCarbs}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div><div class="text-[10px] text-right mt-1 text-green-300">${pctCarb.toFixed(0)}%</div></div>
                     </div>
-
                     <div class="border-t border-gray-700 pt-3 mb-4">
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span>
-                            <span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">
-                                ${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal
-                            </span>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <span class="text-xs text-gray-400">Weekly Running Deficit</span>
-                            <span class="text-sm font-bold ${runningDeficit < 0 ? 'text-green-400' : 'text-gray-400'}">
-                                ${runningDeficit.toLocaleString()} Cal
-                            </span>
-                        </div>
+                        <div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div>
+                        <div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${runningDeficit < 0 ? 'text-green-400' : 'text-gray-400'}">${runningDeficit.toLocaleString()} Cal</span></div>
                         <div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div>
                     </div>
-
-                    <div class="space-y-1">
-                        <div class="text-xs font-bold text-gray-500 uppercase mb-1">Today's Meals</div>
-                        ${mealsHtml}
-                    </div>
+                    <div class="space-y-1"><div class="text-xs font-bold text-gray-500 uppercase mb-1">Today's Meals</div>${mealsHtml}</div>
                 </div>
             `;
         }
@@ -692,29 +623,17 @@
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-            
-            if (!item) {
-                item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
-            }
-
+            if (!item) item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
             document.getElementById('edit-weight').value = item.weightLbs || '';
             document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
-            
             const container = document.getElementById('meal-inputs-container');
             container.innerHTML = '';
-            
-            if (item.meals && item.meals.length > 0) {
-                item.meals.forEach(m => addMealInput(m));
-            } else {
-                addMealInput(); 
-            }
-
+            if (item.meals && item.meals.length > 0) item.meals.forEach(m => addMealInput(m));
+            else addMealInput(); 
             document.getElementById('nutrition-modal').classList.remove('hidden');
         }
 
-        function closeNutritionModal() {
-            document.getElementById('nutrition-modal').classList.add('hidden');
-        }
+        function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
 
         function addMealInput(data = {}) {
             const container = document.getElementById('meal-inputs-container');
@@ -746,7 +665,6 @@
             const ymd = toLocalYMD(appState.currentDate);
             const weight = parseFloat(document.getElementById('edit-weight').value) || 0;
             const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
-            
             const mealRows = document.querySelectorAll('.meal-row');
             const meals = Array.from(mealRows).map(row => ({
                 mealType: row.querySelector('.meal-type').value,
@@ -759,7 +677,6 @@
             })).filter(m => m.name.trim() !== ""); 
 
             let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
-            
             const newItem = {
                 id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`,
                 date: ymd,
@@ -773,22 +690,30 @@
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem;
             else appState.data.items.push(newItem);
 
+            saveData();
             closeNutritionModal();
             updateUI();
         }
 
         // --- ITEM MODAL LOGIC ---
         function openItemModal(category) {
-            document.getElementById('item-category').value = category;
+            // Check if nutrition already exists for today
+            const ymd = toLocalYMD(appState.currentDate);
+            const hasHealth = appState.data.items.some(i => i.date === ymd && i.type === 'health');
+            const nutritionOpt = document.getElementById('opt-nutrition');
+            
+            if (hasHealth) nutritionOpt.style.display = 'none';
+            else nutritionOpt.style.display = 'block';
+
+            document.getElementById('item-category').value = category || 'work';
             const typeSelect = document.getElementById('item-type');
             
-            // Smart Defaults
             if(category === 'work') typeSelect.value = 'task';
             else if(category === 'personal') typeSelect.value = 'habit';
+            else typeSelect.value = 'task'; // default fallback
             
             updateModalFields();
             
-            // Reset fields
             document.getElementById('item-title').value = '';
             document.getElementById('item-desc').value = '';
             document.getElementById('item-link').value = '';
@@ -799,12 +724,17 @@
             document.getElementById('item-modal').classList.remove('hidden');
         }
 
-        function closeItemModal() {
-            document.getElementById('item-modal').classList.add('hidden');
-        }
+        function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
 
         function updateModalFields() {
             const type = document.getElementById('item-type').value;
+            
+            if (type === 'health') {
+                closeItemModal();
+                openNutritionModal();
+                return;
+            }
+
             document.getElementById('field-meeting').classList.add('hidden');
             document.getElementById('field-task').classList.add('hidden');
             document.getElementById('field-media').classList.add('hidden');
@@ -831,23 +761,23 @@
                 imgUrl: document.getElementById('item-img').value
             };
 
-            // Specific Fields
             if(type === 'meeting') {
                 newItem.startTime = document.getElementById('item-startTime').value || "09:00";
                 newItem.durationMinutes = parseInt(document.getElementById('item-duration').value) || 60;
             }
             if(type === 'task') {
                 newItem.ticketNumber = document.getElementById('item-ticket').value;
-                newItem.status = 'pending'; // Default
+                newItem.status = 'pending'; 
             }
             if(type === 'media') {
                 newItem.rating = parseInt(document.getElementById('item-rating').value) || 5;
             }
             if(type === 'habit') {
-                newItem.streakCount = 1; // Default start
+                newItem.streakCount = 1; 
             }
 
             appState.data.items.push(newItem);
+            saveData();
             closeItemModal();
             updateUI();
         }
@@ -856,15 +786,12 @@
         function getWeeklyDeficit() {
             const start = getStartOfWeek(appState.currentDate);
             const end = new Date(appState.currentDate); 
-            
             let totalDeficit = 0;
             let daysCounted = 0;
-
             const loopDate = new Date(start);
             while(loopDate <= end) {
                 const ymd = toLocalYMD(loopDate);
                 const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                
                 if (item) {
                     let dailyCal = 0;
                     (item.meals || []).forEach(m => dailyCal += (m.calories || 0));
@@ -897,24 +824,12 @@
         }
 
         function getTypeColor(type) {
-            const map = {
-                'meeting': 'border-work bg-work/10',
-                'task': 'border-work bg-work/5',
-                'habit': 'border-personal bg-personal/10',
-                'media': 'border-media bg-media/10',
-                'health': 'border-health bg-health/10'
-            };
+            const map = { 'meeting': 'border-work bg-work/10', 'task': 'border-work bg-work/5', 'habit': 'border-personal bg-personal/10', 'media': 'border-media bg-media/10', 'health': 'border-health bg-health/10' };
             return map[type] || 'border-gray-500';
         }
 
         function getTypeDotColor(type) {
-            const map = {
-                'meeting': 'bg-blue-500',
-                'task': 'bg-blue-400',
-                'habit': 'bg-green-500',
-                'media': 'bg-purple-500',
-                'health': 'bg-orange-500'
-            };
+            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500' };
             return map[type] || 'bg-gray-500';
         }
 
