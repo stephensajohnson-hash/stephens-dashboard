@@ -435,10 +435,30 @@
             const borderClass = getTypeColor(item.type);
             let content = '';
             let meta = '';
+            
+            // Default Title & Description Rendering (can be overridden by specific types)
+            let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
+            let descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '';
 
             if(item.type === 'meeting') {
                 meta = `<span class="text-xs text-gray-400"><i class="mr-1">⏰</i> ${item.startTime} (${item.durationMinutes}m)</span>`;
-                if(item.linkUrl) content += `<a href="${item.linkUrl}" target="_blank" class="text-xs bg-blue-600 px-2 py-1 rounded hover:bg-blue-500 inline-block mt-2">Join Meeting</a>`;
+                
+                // 1. Link Title if URL exists
+                if(item.linkUrl) {
+                    titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2">
+                        <a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a>
+                        <span class="text-[10px] text-blue-500 bg-blue-500/10 px-1 rounded">↗</span>
+                    </h4>`;
+                }
+
+                // 2. Image + Description Layout
+                if (item.imgUrl) {
+                    descriptionHtml = `
+                        <div class="flex gap-3 mt-2">
+                            <img src="${item.imgUrl}" class="w-12 h-12 object-cover rounded flex-shrink-0" alt="Meeting Icon">
+                            <p class="text-sm text-gray-300 self-center">${item.description || ''}</p>
+                        </div>`;
+                }
             }
             else if(item.type === 'task') {
                 meta = `<span class="text-xs text-gray-400">${item.ticketNumber || 'No Ticket'}</span>`;
@@ -466,14 +486,14 @@
                 <div class="glass-panel p-4 rounded-xl border-l-4 ${borderClass} hover:translate-x-1 transition-transform relative group">
                     <div class="flex justify-between items-start">
                         <div>
-                            <h4 class="font-bold text-lg">${item.title}</h4>
+                            ${titleHtml}
                             ${meta}
                         </div>
                         <div class="opacity-0 group-hover:opacity-100 transition-opacity">
                             <button class="text-gray-400 hover:text-white">✎</button>
                         </div>
                     </div>
-                    ${item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : ''}
+                    ${descriptionHtml}
                     ${content}
                 </div>
             `;
