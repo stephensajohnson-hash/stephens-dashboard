@@ -341,18 +341,22 @@
             const firstDay = new Date(year, month, 1);
             const lastDay = new Date(year, month + 1, 0);
             
-            const startDayIndex = firstDay.getDay(); // 0 = Sun
+            // Calculate startDayIndex based on Monday start
+            // JS getDay() returns 0 for Sunday, 1 for Monday...
+            // We want 0 for Monday, 1 for Tuesday... 6 for Sunday
+            const startDayIndex = (firstDay.getDay() + 6) % 7;
+            
             const daysInMonth = lastDay.getDate();
 
             let html = `<div class="glass-panel rounded-2xl p-4">`;
             
-            // Header
+            // Header - MONDAY START
             html += `<div class="grid grid-cols-7 mb-2 text-center">`;
-            ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(d => html += `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`);
+            ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(d => html += `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`);
             html += `</div>`;
 
             // Grid
-            html += `<div class="grid grid-cols-7 gap-2 auto-rows-fr">`; // auto-rows-fr keeps height consistent
+            html += `<div class="grid grid-cols-7 gap-2 auto-rows-fr">`;
 
             // Empty cells
             for(let i=0; i<startDayIndex; i++) {
@@ -453,7 +457,7 @@
             const pctFat = Math.min((totalFat / g.fat) * 100, 100);
             const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
 
-            // Calculate Weekly Deficit
+            // Calculate Weekly Deficit (Resets on Monday)
             const weeklyData = getWeeklyDeficit();
             const runningDeficit = weeklyData.deficit;
 
@@ -548,6 +552,7 @@
 
         function getWeeklyDeficit() {
             // Logic: Sum up (Calories Consumed - TDEE) for all entries in the current week up to today
+            // Starts on MONDAY
             const start = getStartOfWeek(appState.currentDate);
             const end = new Date(appState.currentDate); // Up to selected day
             
@@ -585,10 +590,15 @@
             return adjusted.toISOString().split('T')[0];
         }
 
+        // MODIFIED FOR MONDAY START
         function getStartOfWeek(d) {
             const date = new Date(d);
-            const day = date.getDay();
-            const diff = date.getDate() - day;
+            const day = date.getDay(); // 0 (Sun) to 6 (Sat)
+            // To make Monday the start (index 0), we calculate how far back we need to go.
+            // If day is 1 (Mon), we subtract 0 days.
+            // If day is 2 (Tue), we subtract 1 day.
+            // If day is 0 (Sun), we subtract 6 days.
+            const diff = date.getDate() - (day === 0 ? 6 : day - 1);
             return new Date(date.setDate(diff));
         }
         
