@@ -1,7 +1,7 @@
 {
   "meta": {
     "year": 2025,
-    "version": "1.2",
+    "version": "1.3",
     "owner": "Stephens"
   },
   "items": [
@@ -10,15 +10,18 @@
       "date": "2025-11-21",
       "type": "meeting",
       "category": "work",
-      "title": "Sync with Dev Team",
-      "description": "Discussing the Q4 API migration roadmap.",
-      "startTime": "10:00",
+      "title": "Dev Update",
+      "description": "Discuss new ticketing app - Halo.",
+      "startTime": "9:00",
       "durationMinutes": 60,
-      "timeSpentMinutes": 65,
+      "timeSpentMinutes": 60,
       "status": "completed",
-      "tags": ["internal", "planning"],
-      "linkUrl": "https://zoom.us/j/123456789",
-      "imgUrl": null
+      "tags": [
+        "internal",
+        "planning"
+      ],
+      "linkUrl": "https://pbfcm.haloitsm.com/auth/Account/Login?ReturnUrl=%2Fauth%2Fauthorize%3Fclient_id%3D24fe0a24-85d5-46d4-b9c6-721e23f25843%26response_type%3Dcode%26scope%3Dall%26redirect_uri%3Dhttps%253a%252f%252fpbfcm.haloitsm.com%252fauth%26act_as%3Dnull%26code_challenge%3DhQYOkBk5D_MjsMF_U-ta_7v86asVlv1HMrkMMHugpso%26code_challenge_method%3DS256%26state%3DiYXULfy449y68SVtiR5DZszO_ATThHLFBOvMDouGaCY%26nonce%3DnOulh-JJxyD1UIjwagLy5tNRX7poBQY6rA2YuRV0Mc4",
+      "imgUrl": "https://images.g2crowd.com/uploads/product/image/large_detail/large_detail_7dce5599088218a5aa1848e2d98956d0/haloitsm.png"
     },
     {
       "id": "task_1732194500",
@@ -30,9 +33,12 @@
       "description": "Investigate the auth token expiration issue.",
       "timeSpentMinutes": 120,
       "status": "in-progress",
-      "tags": ["bugfix", "urgent"],
+      "tags": [
+        "bugfix",
+        "urgent"
+      ],
       "linkUrl": "https://jira.company.com/browse/JIRA-4291",
-      "imgUrl": "https://placehold.co/600x400/png?text=Error+Screenshot"
+      "imgUrl": null
     },
     {
       "id": "habit_1732210000",
@@ -63,37 +69,51 @@
       "date": "2025-11-21",
       "type": "health",
       "category": "personal",
-      "weightLbs": 185.5,
-      "notes": "Felt energetic today.",
+      "weightLbs": 270,
+      "notes": "Good energy levels. Hit protein goal.",
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
       "meals": [
-        { 
-          "name": "Oatmeal & Whey",
-          "mealType": "breakfast", 
-          "calories": 450, 
-          "protein": 30, 
-          "carbs": 55, 
-          "fiber": 8, 
-          "fat": 6,
-          "imgUrl": null 
+        {
+          "name": "Eggs (4), Bacon (2)",
+          "mealType": "breakfast",
+          "calories": 446,
+          "protein": 28,
+          "carbs": 2,
+          "fiber": 0,
+          "fat": 35
         },
-        { 
-          "name": "Chicken Salad",
+        {
+          "name": "2 Homemade Wraps + Avocado",
           "mealType": "lunch",
-          "calories": 600,
-          "protein": 45, 
-          "carbs": 12, 
-          "fiber": 4, 
-          "fat": 22,
-          "imgUrl": "https://placehold.co/600x400/png?text=Salad+Pic"
+          "calories": 498,
+          "protein": 35,
+          "carbs": 45,
+          "fiber": 12,
+          "fat": 20
         },
-        { 
-          "name": "Steak & Asparagus",
+        {
+          "name": "Hamburger w/Sourdough",
           "mealType": "dinner",
-          "calories": 850,
-          "protein": 60, 
-          "carbs": 8, 
-          "fiber": 3, 
-          "fat": 45
+          "calories": 570,
+          "protein": 32,
+          "carbs": 48,
+          "fiber": 3,
+          "fat": 28
+        },
+        {
+          "name": "Poppers w/Ranch",
+          "mealType": "snack",
+          "calories": 570,
+          "protein": 6.5,
+          "carbs": 15,
+          "fiber": 1,
+          "fat": 52.5
         }
       ]
     },
@@ -104,8 +124,9 @@
       "category": "personal",
       "title": "Water the plants",
       "status": "pending",
-      "tags": ["chores"],
-      "imgUrl": "https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=100&q=80"
+      "tags": [
+        "chores"
+      ]
     }
   ]
 }
