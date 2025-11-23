@@ -14,6 +14,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        .solid-panel { background: #1f2937; border: 1px solid #4b5563; }
         
         /* Sidebar Animation */
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
@@ -207,9 +208,58 @@
     </div>
 
     <script>
+        // --- HELPERS ---
+        // Defined at top to avoid reference errors
+        function toLocalYMD(date) { 
+            const offset = date.getTimezoneOffset(); 
+            const adjusted = new Date(date.getTime() - (offset*60*1000)); 
+            return adjusted.toISOString().split('T')[0]; 
+        }
+        function getStartOfWeek(d) { 
+            const date = new Date(d); 
+            const day = date.getDay(); 
+            const diff = date.getDate() - (day === 0 ? 6 : day - 1); 
+            return new Date(date.setDate(diff)); 
+        }
+        function getTypeColor(type) { 
+            const map = { 'meeting': 'border-work bg-work/10', 'task': 'border-work bg-work/5', 'habit': 'border-personal bg-personal/10', 'media': 'border-media bg-media/10', 'health': 'border-health bg-health/10' }; 
+            return map[type] || 'border-gray-500'; 
+        }
+        function getTypeDotColor(type) { 
+            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500' }; 
+            return map[type] || 'bg-gray-500'; 
+        }
+        function formatTime(timeStr) {
+            if (!timeStr) return '';
+            const [h, m] = timeStr.split(':');
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${m} ${ampm}`;
+        }
+        function formatDuration(mins) {
+            if(!mins) return '0m';
+            const h = Math.floor(mins / 60);
+            const m = mins % 60;
+            if(h > 0 && m > 0) return `${h}h ${m}m`;
+            if(h > 0) return `${h}h`;
+            return `${m}m`;
+        }
+        function parseDuration(str) {
+            if(!str) return 0;
+            if(!isNaN(str)) return parseInt(str);
+            const h = str.match(/(\d+)\s*h/i);
+            const m = str.match(/(\d+)\s*m/i);
+            let mins = 0;
+            if(h) mins += parseInt(h[1]) * 60;
+            if(m) mins += parseInt(m[1]);
+            return mins;
+        }
+        
         const STORAGE_KEY = 'bullet_cal_data';
         const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3", "owner": "Stephens" }, "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, items: [] } };
+        let hoverTimeout;
 
         window.onload = () => { renderSidebar(); fetchWeather(); loadData(); };
 
@@ -272,6 +322,7 @@
         function jumpToToday() { appState.currentDate = new Date(); appState.view = 'day'; updateUI(); }
         function switchView(v) { appState.view = v; updateUI(); }
         function jumpToMonth(m) { appState.currentDate.setMonth(m); appState.currentDate.setDate(1); appState.view = 'month'; updateUI(); toggleSidebar(); }
+        function goToDay(dateStr) { appState.currentDate = new Date(dateStr + "T12:00:00"); switchView('day'); }
 
         function updateUI() {
             ['day', 'week', 'month'].forEach(v => {
@@ -339,8 +390,9 @@
                         </div>
                         <div class="p-1 flex-1 overflow-y-auto space-y-1">
                             ${items.map(item => {
-                                const title = item.type === 'health' ? 'Nutrition Log' : item.title;
-                                return `<div class="text-[10px] p-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 mb-1 truncate cursor-pointer hover:brightness-110" onmouseenter="showHoverCard(event, '${item.id}')" onmouseleave="hideHoverCard()">${title}</div>`;
+                                let title = item.type === 'health' ? 'Nutrition Log' : item.title;
+                                const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '';
+                                return `<div class="text-[10px] p-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 mb-1 truncate cursor-pointer hover:brightness-110" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">${timeStr}${title}</div>`;
                             }).join('')}
                         </div>
                     </div>
@@ -363,8 +415,9 @@
                         <div class="text-right text-sm font-bold text-gray-400 mb-1">${d}</div>
                         <div class="space-y-1">
                              ${items.map(item => {
-                                 const title = item.type === 'health' ? 'Nutrition Log' : item.title;
-                                 return `<div class="text-[9px] p-0.5 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-700/50 truncate" onmouseenter="showHoverCard(event, '${item.id}')" onmouseleave="hideHoverCard()">${title}</div>`;
+                                 let title = item.type === 'health' ? 'Nutrition Log' : item.title;
+                                 const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '';
+                                 return `<div class="text-[9px] p-0.5 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-700/50 truncate" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">${timeStr}${title}</div>`;
                              }).join('')}
                         </div>
                     </div>
@@ -373,27 +426,36 @@
             html += `</div></div>`; container.innerHTML = html;
         }
 
-        // --- HOVER TOOLTIP LOGIC ---
+        function delayedShowHover(e, id) {
+            clearTimeout(hoverTimeout);
+            hoverTimeout = setTimeout(() => showHoverCard(e, id), 500);
+        }
+        
+        function cancelHover() {
+            clearTimeout(hoverTimeout);
+            hideHoverCard();
+        }
+
         function showHoverCard(e, itemId) {
-            e.stopPropagation(); // Prevent firing click on parent
+            e.stopPropagation(); 
             const item = appState.data.items.find(i => i.id === itemId);
             if(!item) return;
 
             const tooltip = document.getElementById('hover-card-container');
-            const html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
+            // USE SOLID PANEL style logic here by overriding class
+            let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
+            // Replace glass-panel class with solid-panel for opacity
+            html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
             tooltip.classList.remove('hidden', 'opacity-0');
             
-            // Calculate Position logic
             const rect = e.target.getBoundingClientRect();
             const tooltipRect = tooltip.getBoundingClientRect();
             
-            // Default: to the right of the element
             let top = rect.top + window.scrollY;
             let left = rect.right + 10 + window.scrollX;
 
-            // Flip if close to edge
             if (left + tooltipRect.width > window.innerWidth) {
                 left = rect.left - tooltipRect.width - 10 + window.scrollX;
             }
@@ -408,37 +470,7 @@
         function hideHoverCard() {
             const tooltip = document.getElementById('hover-card-container');
             tooltip.classList.add('opacity-0');
-            setTimeout(() => tooltip.classList.add('hidden'), 200); // Wait for fade out
-        }
-
-        function formatTime(timeStr) {
-            if (!timeStr) return '';
-            const [h, m] = timeStr.split(':');
-            const hour = parseInt(h);
-            const ampm = hour >= 12 ? 'PM' : 'AM';
-            const hour12 = hour % 12 || 12;
-            return `${hour12}:${m} ${ampm}`;
-        }
-
-        // Time Parsing Helpers
-        function parseDuration(str) {
-            if(!str) return 0;
-            if(!isNaN(str)) return parseInt(str); // handle numeric input
-            const h = str.match(/(\d+)\s*h/i);
-            const m = str.match(/(\d+)\s*m/i);
-            let mins = 0;
-            if(h) mins += parseInt(h[1]) * 60;
-            if(m) mins += parseInt(m[1]);
-            return mins;
-        }
-
-        function formatDuration(mins) {
-            if(!mins) return '0m';
-            const h = Math.floor(mins / 60);
-            const m = mins % 60;
-            if(h > 0 && m > 0) return `${h}h ${m}m`;
-            if(h > 0) return `${h}h`;
-            return `${m}m`;
+            setTimeout(() => tooltip.classList.add('hidden'), 200);
         }
 
         function renderCard(item) {
@@ -461,10 +493,9 @@
             } else if(item.type === 'media') {
                 meta = `<div class="flex text-yellow-400 text-xs">${'★'.repeat(item.rating)}${'☆'.repeat(10-item.rating)}</div>`;
                 if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
-                // Use notes for media if available
                 const notesText = item.notes || item.description;
                 if(notesText) content += `<p class="text-xs text-gray-400 italic">"${notesText}"</p>`;
-                descriptionHtml = ''; // Prevent double display
+                descriptionHtml = ''; 
             } else if(item.type === 'habit') {
                  content += `<div class="mt-2 flex items-center gap-2"><div class="text-2xl">🔥</div><div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div></div>`;
             }
@@ -606,8 +637,6 @@
             saveData(); closeItemModal(); updateUI();
         }
 
-        // ... rest of functions (openNutritionModal, saveNutrition, etc.) remain identical ...
-        // Re-including necessary unchanged functions to ensure file completeness
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -633,59 +662,7 @@
             saveData(); closeNutritionModal(); updateUI();
         }
         
-        function getWeeklyDeficit() {
-            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); 
-            let totalDeficit = 0; let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += (dailyCal - tdee); daysCounted++; }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
-        }
-
-        // --- HELPER FUNCTIONS RESTORED ---
-        function toLocalYMD(date) { 
-            const offset = date.getTimezoneOffset(); 
-            const adjusted = new Date(date.getTime() - (offset*60*1000)); 
-            return adjusted.toISOString().split('T')[0]; 
-        }
-        
-        function getStartOfWeek(d) { 
-            const date = new Date(d); 
-            const day = date.getDay(); 
-            const diff = date.getDate() - (day === 0 ? 6 : day - 1); 
-            return new Date(date.setDate(diff)); 
-        }
-        
-        function goToDay(dateStr) { 
-            appState.currentDate = new Date(dateStr + "T12:00:00"); 
-            switchView('day'); 
-        }
-        
-        function getTypeColor(type) { 
-            const map = { 'meeting': 'border-work bg-work/10', 'task': 'border-work bg-work/5', 'habit': 'border-personal bg-personal/10', 'media': 'border-media bg-media/10', 'health': 'border-health bg-health/10' }; 
-            return map[type] || 'border-gray-500'; 
-        }
-        
-        function getTypeDotColor(type) { 
-            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500' }; 
-            return map[type] || 'bg-gray-500'; 
-        }
-        
-        function toggleSidebar() { 
-            const sb = document.getElementById('bullet-sidebar'); 
-            const ov = document.getElementById('sidebar-overlay'); 
-            if(sb.classList.contains('sidebar-closed')) { 
-                sb.classList.replace('sidebar-closed', 'sidebar-open'); 
-                ov.classList.remove('hidden'); 
-            } else { 
-                sb.classList.replace('sidebar-open', 'sidebar-closed'); 
-                ov.classList.add('hidden'); 
-            } 
-        }
-
+        // Weather API & Emoji Functions (Added back as they were missing in the context provided for reference, causing the error)
         async function fetchWeather() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
             try {
