@@ -23,12 +23,15 @@
         /* Macro bars */
         .macro-bar-bg { background-color: rgba(255,255,255,0.1); border-radius: 2px; height: 6px; width: 100%; overflow: hidden; }
         .macro-bar-fill { height: 100%; border-radius: 2px; }
+
+        /* Star Rating Interactive */
+        .star-btn:hover, .star-btn.active { color: #fbbf24; } /* yellow-400 */
+        .star-btn { color: #4b5563; transition: color 0.1s; } /* gray-600 */
     </style>
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b' } } } }
     </script>
 </head>
-<!-- Changed min-h-screen to h-screen to fix scrolling overflow -->
 <body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
 
     <!-- Navbar -->
@@ -211,8 +214,12 @@
                 </div>
 
                 <div id="field-media" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10)</label>
-                    <input type="number" id="item-rating" min="1" max="10" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="5">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
+                    <!-- Star Rating Input -->
+                    <input type="hidden" id="item-rating" value="5">
+                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer">
+                        <!-- Stars injected by JS -->
+                    </div>
                 </div>
 
                 <!-- URL/Image -->
@@ -246,7 +253,7 @@
 
         // --- STATE ---
         let appState = {
-            currentDate: new Date("2025-11-21T12:00:00"),
+            currentDate: new Date(), // Defaults to actual Today
             view: 'day',
             data: { meta: DEFAULT_DATA.meta, items: [] }
         };
@@ -520,7 +527,7 @@
                     titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2"><a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a><span class="text-[10px] text-blue-500 bg-blue-500/10 px-1 rounded">↗</span></h4>`;
                 }
                 if (item.imgUrl) {
-                    descriptionHtml = `<div class="flex gap-3 mt-2"><img src="${item.imgUrl}" class="h-[30px] w-auto rounded flex-shrink-0" alt="Meeting Icon"><p class="text-sm text-gray-300 self-center">${item.description || ''}</p></div>`;
+                    descriptionHtml = `<div class="flex gap-3 mt-2"><img src="${item.imgUrl}" class="h-[16px] w-auto rounded flex-shrink-0" alt="Meeting Icon"><p class="text-sm text-gray-300 self-center">${item.description || ''}</p></div>`;
                 }
             }
             else if(item.type === 'task') {
@@ -607,16 +614,30 @@
             `;
         }
 
+        // --- STAR RATING LOGIC ---
+        function renderStarInput(rating) {
+            const container = document.getElementById('star-rating-container');
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const star = document.createElement('span');
+                star.className = `star-btn ${i <= rating ? 'active' : ''}`;
+                star.innerText = '★';
+                star.onclick = () => {
+                    document.getElementById('item-rating').value = i;
+                    renderStarInput(i);
+                };
+                container.appendChild(star);
+            }
+        }
+
         // --- ITEM MODAL LOGIC ---
         function openItemModal(category, itemId = null) {
-            // Check if nutrition already exists
             const ymd = toLocalYMD(appState.currentDate);
             const hasHealth = appState.data.items.some(i => i.date === ymd && i.type === 'health');
             const nutritionOpt = document.getElementById('opt-nutrition');
             if (hasHealth) nutritionOpt.style.display = 'none';
             else nutritionOpt.style.display = 'block';
 
-            // Reset Fields
             document.getElementById('item-id').value = '';
             document.getElementById('item-title').value = '';
             document.getElementById('item-desc').value = '';
@@ -624,10 +645,10 @@
             document.getElementById('item-img').value = '';
             document.getElementById('item-ticket').value = '';
             document.getElementById('item-rating').value = '5';
+            renderStarInput(5); // Default stars
             document.getElementById('item-duration').value = '60';
             document.getElementById('item-startTime').value = '';
 
-            // Editing Mode?
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
                 document.getElementById('item-id').value = itemId;
@@ -648,11 +669,12 @@
                         document.getElementById('item-ticket').value = item.ticketNumber || '';
                     }
                     if(item.type === 'media') {
-                        document.getElementById('item-rating').value = item.rating || 5;
+                        const r = item.rating || 5;
+                        document.getElementById('item-rating').value = r;
+                        renderStarInput(r);
                     }
                 }
             } else {
-                // Add Mode
                 document.getElementById('item-modal-title').innerText = "Add Item";
                 document.getElementById('item-category').value = category || 'work';
                 const typeSelect = document.getElementById('item-type');
@@ -680,7 +702,11 @@
 
             if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
             if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
-            if(type === 'media') document.getElementById('field-media').classList.remove('hidden');
+            if(type === 'media') {
+                document.getElementById('field-media').classList.remove('hidden');
+                // Refresh star rendering in case it wasn't visible
+                renderStarInput(parseInt(document.getElementById('item-rating').value) || 5);
+            }
         }
 
         function saveItem() {
