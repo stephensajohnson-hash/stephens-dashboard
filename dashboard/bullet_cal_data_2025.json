@@ -196,7 +196,7 @@
       "linkUrl": "http:\\\\www.google.com",
       "imgUrl": "\\images\\favicon.png",
       "ticketNumber": "",
-      "status": "pending"
+      "status": "completed"
     },
     {
       "id": "meeting_1763876254816",
@@ -219,7 +219,18 @@
       "description": "",
       "linkUrl": "https://www.duolingo.com/learn",
       "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
-      "streakCount": 1
+      "streakCount": 1495
+    },
+    {
+      "id": "media_1763877120128",
+      "date": "2025-11-22",
+      "type": "media",
+      "category": "personal",
+      "title": "The Count of Monte Cristo",
+      "description": "Great Revenge Movie!",
+      "linkUrl": "https://m.media-amazon.com/images/I/51BA+X-VDCL._AC_.jpg",
+      "imgUrl": "https://m.media-amazon.com/images/I/51BA+X-VDCL._AC_.jpg",
+      "rating": 10
     }
   ]
 }
