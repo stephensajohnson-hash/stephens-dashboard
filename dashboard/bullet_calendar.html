@@ -14,7 +14,14 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .solid-panel { background: #1f2937; border: 1px solid #4b5563; }
+        
+        /* Solid Panel for Hover Cards - Opaque & Readable */
+        .solid-panel { 
+            background-color: #111827; /* Gray 900 - Fully Opaque */
+            border: 1px solid #4b5563; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            z-index: 100;
+        }
         
         /* Sidebar Animation */
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
@@ -208,8 +215,7 @@
     </div>
 
     <script>
-        // --- HELPERS ---
-        // Defined at top to avoid reference errors
+        // --- HELPER FUNCTIONS (HOISTED TO TOP TO FIX REFERENCE ERRORS) ---
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
             const adjusted = new Date(date.getTime() - (offset*60*1000)); 
@@ -255,7 +261,27 @@
             if(m) mins += parseInt(m[1]);
             return mins;
         }
-        
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok) {
+                    const w = await wRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                }
+            } catch(e) { console.error("Weather fetch failed", e); }
+        }
+        function getForecastEmoji(c) {
+            if(c.includes('01')) return '☀️';
+            if(c.includes('02')) return '🌤️';
+            if(c.includes('03')) return '🌥️';
+            if(c.includes('09')||c.includes('10')) return '🌧️';
+            if(c.includes('13')) return '❄️';
+            return '☁️';
+        }
+
+        // --- MAIN APP LOGIC ---
         const STORAGE_KEY = 'bullet_cal_data';
         const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3", "owner": "Stephens" }, "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, items: [] } };
@@ -426,6 +452,7 @@
             html += `</div></div>`; container.innerHTML = html;
         }
 
+        // --- HOVER TOOLTIP LOGIC ---
         function delayedShowHover(e, id) {
             clearTimeout(hoverTimeout);
             hoverTimeout = setTimeout(() => showHoverCard(e, id), 500);
@@ -442,9 +469,9 @@
             if(!item) return;
 
             const tooltip = document.getElementById('hover-card-container');
-            // USE SOLID PANEL style logic here by overriding class
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
-            // Replace glass-panel class with solid-panel for opacity
+            
+            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -662,28 +689,16 @@
             saveData(); closeNutritionModal(); updateUI();
         }
         
-        // Weather API & Emoji Functions (Added back as they were missing in the context provided for reference, causing the error)
-        async function fetchWeather() {
-            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-            try {
-                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok) {
-                    const w = await wRes.json();
-                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-                }
-            } catch(e) {
-                console.error("Weather fetch failed", e);
+        function getWeeklyDeficit() {
+            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += (dailyCal - tdee); daysCounted++; }
+                loopDate.setDate(loopDate.getDate() + 1);
             }
-        }
-        
-        function getForecastEmoji(c) {
-            if(c.includes('01')) return '☀️';
-            if(c.includes('02')) return '🌤️';
-            if(c.includes('03')) return '🌥️';
-            if(c.includes('09')||c.includes('10')) return '🌧️';
-            if(c.includes('13')) return '❄️';
-            return '☁️';
+            return { deficit: totalDeficit, days: daysCounted };
         }
     </script>
 </body>
