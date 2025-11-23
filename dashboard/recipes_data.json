@@ -229,19 +229,44 @@
                 "fiber": 27
               }
             },
-            {
-              "name": "Amaranth Flour",
-              "quantity": "150",
+                        {
+              "name": "Coconut Flour",
+              "quantity": "30",
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 555,
-                "protein": 22,
-                "carbs": 100,
+                "calories": 120,
+                "protein": 6,
+                "carbs": 19,
                 "fat": 4,
                 "fiber": 10
               }
             },
+            {
+              "name": "Amaranth Flour",
+              "quantity": "30",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 111,
+                "protein": 4,
+                "carbs": 20,
+                "fat": 1,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Tiger Nut Flour",
+              "quantity": "90",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 414,
+                "protein": 3.6,
+                "carbs": 54,
+                "fat": 21.6,
+                "fiber": 29.7
+              },
             {
               "name": "Mixed Nuts",
               "quantity": "150",
@@ -280,6 +305,7 @@
                 "fat": 0,
                 "fiber": 0
               }
+            }
             }
           ]
         },
@@ -327,6 +353,13 @@
             "Bake for 60 minutes at 375 or 335 with convection. ",
             "Remove from the tin and bake for a further 15 minutes. ",
             "Remove from the oven and allow to cool completely before slicing. (this takes a long time)"
+          ]
+        },
+        {
+          "sectionTitle": "Notes",
+          "steps": [
+            "Used 150 g of Amaranth Flour on first attempt.",
+            "Used 30g Amaranth Flour - 30g Coconut Flour - 90g Tiger Nut Flour on second attempt - 11-22-2025"
           ]
         }
       ]
@@ -2857,9 +2890,9 @@
         {
           "sectionTitle": "Gravy",
           "steps": [
-            "Add 3/4 cup beef broth to pan, turn heat to medium.  Scrape bottom with spatula.",
-            "Add 1/8 tsp garlic powder.",
-            "Once broth has reduced down to about half, add 1/3 cup heavy cream",
+            "Add 1 1/2 cup beef broth to pan, turn heat to medium.  Scrape bottom with spatula.",
+            "Add 1/4 tsp garlic powder.",
+            "Once broth has reduced down to about half, add 5/8 cup heavy cream",
             "Reduce again until you can pull the gravy across the pan and it is think enough not to fill in the gaps you just made immediately."
           ]
         }
@@ -3306,7 +3339,7 @@
         "url": ""
       },
       "tags": [
-        "New Year's Eve",
+        "New Years Eve",
         "Texas",
         "Party"
       ],
@@ -3918,6 +3951,238 @@
             "Stir in ½ tsp paprika and cook until fragrant, about 30 seconds. ",
             "Add 10 ounces spinach, 8 ounces cream cheese, ¾ cup cream, ½ tsp salt, and ¼ tsp pepper and cook, stirring, until warmed through and slightly reduced, 8–10 minutes",
             "Add more cream if needed to reach desired consistency."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1763793643312",
+      "title": "Soaked Teff Scones",
+      "description": "",
+      "category": "Bread",
+      "servings": 6,
+      "prepTime": "15 minutes",
+      "cookTime": "40 minutes",
+      "image": "https://ik.thedoctorskitchen.com/tr:n-medium/24-hour-soaked-teff-scones_YlpP6A1TK",
+      "source": {
+        "description": "The Doctor's Kitchen",
+        "url": "https://www.thedoctorskitchen.com/recipes/teff-scones"
+      },
+      "tags": [
+        "Cayce Diet",
+        "Gluten Free",
+        "High Fiber"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Day 1 - Soak",
+          "list": [
+            {
+              "name": "Teff Flour",
+              "quantity": "130",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 476,
+                "protein": 14.8,
+                "carbs": 91.9,
+                "fat": 3.7,
+                "fiber": 7.4
+              }
+            },
+            {
+              "name": "Amaranth Flour",
+              "quantity": "50",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 185,
+                "protein": 7,
+                "carbs": 33,
+                "fat": 1,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Teff Grain",
+              "quantity": "50",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 183,
+                "protein": 7,
+                "carbs": 37,
+                "fat": 1,
+                "fiber": 4
+              }
+            },
+            {
+              "name": "Ground Flaxseed",
+              "quantity": "100",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 536,
+                "protein": 24,
+                "carbs": 28,
+                "fat": 40,
+                "fiber": 24
+              }
+            },
+            {
+              "name": "Cinnamon",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 12,
+                "protein": 0,
+                "carbs": 4,
+                "fat": 0,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Maple Syrup",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 35,
+                "protein": 0,
+                "carbs": 9,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Extra Virgin Olive Oil",
+              "quantity": "75",
+              "unit": "ml",
+              "notes": "",
+              "macros": {
+                "calories": 600,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 70,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Water",
+              "quantity": "175",
+              "unit": "ml",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Day 2 - Bake",
+          "list": [
+            {
+              "name": "Sea Salt",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Baking Soda",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Lemon Juice",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 1,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Teff Grain",
+              "quantity": "40",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 147,
+                "protein": 5.3,
+                "carbs": 29.3,
+                "fat": 0.95,
+                "fiber": 3.2
+              }
+            },
+            {
+              "name": "Ground Flaxseed",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Water",
+              "quantity": "6",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Day 1 - Soak",
+          "steps": [
+            "Gather and prepare your ingredients.",
+            "Place the teff flour, amaranth flour, teff grain, ground flax and cinnamon into a bowl and whisk to combine. Pour over the maple syrup, olive oil and water and mix to combine. Cover with a wet tea towel and set aside to soak until the following day.  Note: Do not overmix the dough. Don’t compact the ball too much as it’s best for some air to flow through the high oil content. It can soak for up to 48 hours, but leave it in the fridge if this is the case."
+          ]
+        },
+        {
+          "sectionTitle": "Day 2 - Bake",
+          "steps": [
+            "Mix flaxseed and water and allow to sit for 30 minutes.",
+            "Preheat the oven to 410°F/ 375°F convection. When you are ready to bake your dough, drop the salt and baking soda onto the top of the dough. Pour the lemon juice over the baking soda and allow it to fizz. Add flaxseed mixture and stir vigorously.",
+            "Sprinkle the remaining teff grain onto a clean work surface. Turn the dough out onto the grain and lightly roll it around using your hands to shape it into a ball. You want the inner mixture to stay wet and soft and want a good coating of teff grain on the outside. There is no need to knead the dough. Using your hands, lightly press the ball down into a circle 3 inches high. Cut the circle into 6 triangles.",
+            "Transfer the scones onto a tray covered in baking paper. Bake in the preheated oven for 40 minutes.",
+            "Take out of the oven and leave on the tray for 5 minutes. After, you can transfer the scones to a wire rack to cool."
           ]
         }
       ]
