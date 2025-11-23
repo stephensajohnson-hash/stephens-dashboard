@@ -298,7 +298,7 @@
             const ymd = toLocalYMD(appState.currentDate);
             const items = appState.data.items.filter(i => i.date === ymd);
             if (items.length === 0) {
-                container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50"><div class="text-6xl mb-4">📭</div><div class="text-xl">No entries for this day</div><div class="flex gap-2 mt-4"><button onclick="openItemModal('work', null, ['task','meeting'])" class="px-6 py-2 bg-gray-800 rounded-lg border border-gray-700 hover:bg-gray-700">Add Work</button></div></div>`;
+                container.innerHTML = `<div class="flex flex-col items-center justify-center h-96 opacity-50"><div class="text-6xl mb-4">📭</div><div class="text-xl">No entries for this day</div><div class="flex gap-2 mt-4"><button onclick="openItemModal('general')" class="px-6 py-2 bg-blue-600 hover:bg-blue-500 rounded-lg text-white font-bold shadow-lg transition transform hover:scale-105">Add Entry</button></div></div>`;
                 return;
             }
             const health = items.find(i => i.type === 'health');
@@ -540,8 +540,6 @@
             saveData(); closeItemModal(); updateUI();
         }
 
-        // ... rest of functions (openNutritionModal, saveNutrition, etc.) remain identical ...
-        // Re-including necessary unchanged functions to ensure file completeness
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -565,6 +563,82 @@
             const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals };
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
+        }
+        
+        function getWeeklyDeficit() {
+            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += (dailyCal - tdee); daysCounted++; }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
+        }
+
+        // --- HELPER FUNCTIONS RESTORED ---
+        function toLocalYMD(date) { 
+            const offset = date.getTimezoneOffset(); 
+            const adjusted = new Date(date.getTime() - (offset*60*1000)); 
+            return adjusted.toISOString().split('T')[0]; 
+        }
+        
+        function getStartOfWeek(d) { 
+            const date = new Date(d); 
+            const day = date.getDay(); 
+            const diff = date.getDate() - (day === 0 ? 6 : day - 1); 
+            return new Date(date.setDate(diff)); 
+        }
+        
+        function goToDay(dateStr) { 
+            appState.currentDate = new Date(dateStr + "T12:00:00"); 
+            switchView('day'); 
+        }
+        
+        function getTypeColor(type) { 
+            const map = { 'meeting': 'border-work bg-work/10', 'task': 'border-work bg-work/5', 'habit': 'border-personal bg-personal/10', 'media': 'border-media bg-media/10', 'health': 'border-health bg-health/10' }; 
+            return map[type] || 'border-gray-500'; 
+        }
+        
+        function getTypeDotColor(type) { 
+            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500' }; 
+            return map[type] || 'bg-gray-500'; 
+        }
+        
+        function toggleSidebar() { 
+            const sb = document.getElementById('bullet-sidebar'); 
+            const ov = document.getElementById('sidebar-overlay'); 
+            if(sb.classList.contains('sidebar-closed')) { 
+                sb.classList.replace('sidebar-closed', 'sidebar-open'); 
+                ov.classList.remove('hidden'); 
+            } else { 
+                sb.classList.replace('sidebar-open', 'sidebar-closed'); 
+                ov.classList.add('hidden'); 
+            } 
+        }
+
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok) {
+                    const w = await wRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                }
+            } catch(e) {
+                console.error("Weather fetch failed", e);
+            }
+        }
+        
+        function getForecastEmoji(c) {
+            if(c.includes('01')) return '☀️';
+            if(c.includes('02')) return '🌤️';
+            if(c.includes('03')) return '🌥️';
+            if(c.includes('09')||c.includes('10')) return '🌧️';
+            if(c.includes('13')) return '❄️';
+            return '☁️';
         }
     </script>
 </body>
