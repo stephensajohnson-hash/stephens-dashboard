@@ -150,6 +150,8 @@
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
                     <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
                 </div>
+                
+                <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
@@ -160,15 +162,27 @@
                         <input type="number" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="60">
                     </div>
                 </div>
+                
+                <!-- Task Fields -->
                 <div id="field-task" class="hidden">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
                     <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
                 </div>
+                
+                <!-- Media Fields -->
                 <div id="field-media" class="hidden">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
                     <input type="hidden" id="item-rating" value="5">
                     <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
                 </div>
+
+                <!-- Habit Fields (NEW) -->
+                <div id="field-habit" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                    <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                </div>
+
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
@@ -232,6 +246,15 @@
             appState.data.items = appState.data.items.filter(i => i.id !== id);
             saveData();
             updateUI();
+        }
+
+        function toggleTaskStatus(id) {
+            const item = appState.data.items.find(i => i.id === id);
+            if (item) {
+                item.status = item.status === 'completed' ? 'pending' : 'completed';
+                saveData();
+                updateUI();
+            }
         }
 
         function navigate(dir) {
@@ -339,8 +362,11 @@
                 if(item.linkUrl) titleHtml = `<h4 class="font-bold text-lg flex items-center gap-2"><a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline">${item.title}</a><span class="text-[10px] text-blue-500 bg-blue-500/10 px-1 rounded">↗</span></h4>`;
                 if (item.imgUrl) descriptionHtml = `<div class="flex gap-3 mt-2"><img src="${item.imgUrl}" class="h-[16px] w-auto rounded flex-shrink-0" alt="Meeting Icon"><p class="text-sm text-gray-300 self-center">${item.description || ''}</p></div>`;
             } else if(item.type === 'task') {
-                meta = `<span class="text-xs text-gray-400">${item.ticketNumber || 'No Ticket'}</span>`;
-                content += `<div class="mt-2 flex gap-2"><span class="text-[10px] px-2 py-0.5 rounded-full border border-gray-600 uppercase">${item.status}</span>${item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="text-[10px] text-blue-400 hover:underline flex items-center">View Ticket ↗</a>` : ''}</div>`;
+                const isChecked = item.status === 'completed';
+                meta = `<span class="text-xs text-gray-400">${item.ticketNumber || ''}</span>`;
+                // Replaces standard title with checkbox title
+                titleHtml = `<div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-blue-600 bg-gray-700 focus:ring-blue-500 focus:ring-offset-gray-800" ${isChecked ? 'checked' : ''} onchange="toggleTaskStatus('${item.id}')"><h4 class="font-bold text-lg ${isChecked ? 'line-through text-gray-500' : ''}">${item.title}</h4></div>`;
+                content += `<div class="mt-2 flex gap-2">${item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="text-[10px] text-blue-400 hover:underline flex items-center">View Ticket ↗</a>` : ''}</div>`;
             } else if(item.type === 'media') {
                 meta = `<div class="flex text-yellow-400 text-xs">${'★'.repeat(item.rating)}${'☆'.repeat(10-item.rating)}</div>`;
                 if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
@@ -383,6 +409,7 @@
             if (hasHealth) nutritionOpt.style.display = 'none'; else nutritionOpt.style.display = 'block';
 
             document.getElementById('item-id').value = ''; document.getElementById('item-title').value = ''; document.getElementById('item-desc').value = ''; document.getElementById('item-link').value = ''; document.getElementById('item-img').value = ''; document.getElementById('item-ticket').value = ''; document.getElementById('item-rating').value = '5'; renderStarInput(5); document.getElementById('item-duration').value = '60'; document.getElementById('item-startTime').value = '';
+            document.getElementById('item-streak').value = '0';
 
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
@@ -393,6 +420,7 @@
                     if(item.type === 'meeting') { document.getElementById('item-startTime').value = item.startTime || ''; document.getElementById('item-duration').value = item.durationMinutes || 60; }
                     if(item.type === 'task') { document.getElementById('item-ticket').value = item.ticketNumber || ''; }
                     if(item.type === 'media') { const r = item.rating || 5; document.getElementById('item-rating').value = r; renderStarInput(r); }
+                    if(item.type === 'habit') { document.getElementById('item-streak').value = item.streakCount || 0; }
                 }
             } else {
                 document.getElementById('item-modal-title').innerText = "Add Item";
@@ -407,10 +435,11 @@
         function updateModalFields() {
             const type = document.getElementById('item-type').value;
             if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
-            document.getElementById('field-meeting').classList.add('hidden'); document.getElementById('field-task').classList.add('hidden'); document.getElementById('field-media').classList.add('hidden');
+            document.getElementById('field-meeting').classList.add('hidden'); document.getElementById('field-task').classList.add('hidden'); document.getElementById('field-media').classList.add('hidden'); document.getElementById('field-habit').classList.add('hidden');
             if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
             if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
             if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
+            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
         }
         function saveItem() {
             const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; const title = document.getElementById('item-title').value; const editId = document.getElementById('item-id').value;
@@ -419,7 +448,12 @@
             if(type === 'meeting') { newItem.startTime = document.getElementById('item-startTime').value || "09:00"; newItem.durationMinutes = parseInt(document.getElementById('item-duration').value) || 60; }
             if(type === 'task') { newItem.ticketNumber = document.getElementById('item-ticket').value; newItem.status = 'pending'; }
             if(type === 'media') { newItem.rating = parseInt(document.getElementById('item-rating').value) || 5; }
-            if(type === 'habit') { const existing = appState.data.items.find(i => i.id === editId); newItem.streakCount = existing ? existing.streakCount : 1; }
+            if(type === 'habit') { 
+                const existing = appState.data.items.find(i => i.id === editId);
+                const editedStreak = parseInt(document.getElementById('item-streak').value);
+                // Use edited streak if in edit mode, otherwise default to 1 or existing if available (though usually adding new is 1)
+                newItem.streakCount = (editId && !isNaN(editedStreak)) ? editedStreak : (existing ? existing.streakCount : 1); 
+            }
             if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = newItem; } else { appState.data.items.push(newItem); }
             saveData(); closeItemModal(); updateUI();
         }
