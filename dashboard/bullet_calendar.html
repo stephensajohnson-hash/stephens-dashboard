@@ -422,7 +422,8 @@
         
         function setNextBusinessDay() {
             const dateInput = document.getElementById('item-date');
-            if (!dateInput.value) return;
+            // Default to current view date if empty
+            if (!dateInput.value) dateInput.value = toLocalYMD(appState.currentDate);
             
             const current = new Date(dateInput.value + "T12:00:00");
             const day = current.getDay(); // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
@@ -1270,11 +1271,17 @@
             // Default Season
             document.getElementById('sports-season').value = '2025/2026';
 
+            // DATE LOADING FIX: Use the currently viewed calendar date by default
+            document.getElementById('item-date').value = toLocalYMD(appState.currentDate);
+
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
                 document.getElementById('item-id').value = itemId;
                 const item = appState.data.items.find(i => i.id === itemId);
                 if (item) {
+                    // EDIT MODE: Pre-populate date from the item
+                    if(item.date) document.getElementById('item-date').value = item.date;
+
                     // Ensure editing doesn't break if type isn't in filtered list (edge case)
                     if(!typesList.includes(item.type)) {
                         const opt = document.createElement('option'); opt.value = item.type; opt.innerText = typeMap[item.type]; typeSelect.appendChild(opt);
@@ -1406,7 +1413,10 @@
         function saveItem() {
             const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; 
             const editId = document.getElementById('item-id').value;
-            const dateYMD = toLocalYMD(appState.currentDate);
+            
+            // SAVE FIX: Get date from INPUT FIELD, fallback to current view date only if empty
+            const inputDateVal = document.getElementById('item-date').value;
+            const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
             
             let title = document.getElementById('item-title').value;
             
