@@ -15,7 +15,12 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .solid-panel { background: #1f2937; border: 1px solid #4b5563; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); z-index: 100; }
+        .solid-panel { 
+            background-color: #111827; 
+            border: 1px solid #4b5563; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+            z-index: 100;
+        }
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
         .sidebar-open { transform: translateX(0); }
         .sidebar-closed { transform: translateX(-100%); }
@@ -453,9 +458,7 @@
                 if (response.ok) {
                     const jsonData = await response.json();
                     if(jsonData.items) {
-                        // Temporary Migration: Add Season if missing
                         jsonData.items.forEach(item => { 
-                            if (item.type === 'sports' && !item.season) item.season = '2025/2026';
                             if (!idMap.has(item.id)) idMap.set(item.id, item); 
                         });
                     }
@@ -571,7 +574,9 @@
                 const idx = appState.data.leagues.indexOf(oldName);
                 if (idx !== -1) {
                     appState.data.leagues[idx] = newName;
+                    // Cascade update teams
                     appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
+                    // Cascade update items
                     appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
                     saveData();
                     renderLeaguesList();
@@ -589,16 +594,30 @@
         function renderTeamFilter() {
             const sel = document.getElementById('filter-league-select');
             const currentVal = sel.value;
-            sel.innerHTML = `<option value="all">All Leagues</option>` + appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
-            sel.value = currentVal || 'all';
+            const leagues = [...appState.data.leagues].sort();
+
+            // Removed "All Leagues" option per request
+            sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
             
+            // Default to first available league if current value isn't valid
+            if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) {
+                sel.value = leagues.length > 0 ? leagues[0] : '';
+            } else {
+                sel.value = currentVal;
+            }
+            
+            // Populate the Add/Edit Form league select as well
             const addSel = document.getElementById('team-league-select');
-            addSel.innerHTML = appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
         }
         
         function renderTeamsList() {
             const filter = document.getElementById('filter-league-select').value;
-            const teams = appState.data.teams.filter(t => filter === 'all' || t.league === filter);
+            
+            // Filter teams by selected league and sort by name
+            const teams = appState.data.teams
+                .filter(t => t.league === filter)
+                .sort((a, b) => a.name.localeCompare(b.name));
             
             const container = document.getElementById('teams-list');
             container.innerHTML = teams.map(t => `
@@ -660,6 +679,7 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
+                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -784,7 +804,8 @@
             html += `</div>`;
             // COL 3: Health
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-health">Health & Nutrition</h3><button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Meals">＋</button></div>`;
-            if(health) html += renderHealthCard(health); else html += `<div class="glass-panel p-6 rounded-xl text-center text-gray-500 cursor-pointer hover:bg-gray-800/50 transition" onclick="openNutritionModal()">Click to log nutrition</div>`;
+            if(health) html += renderHealthCard(health); 
+            // Removed the "Click to log nutrition" button here
             html += `</div></div>`;
             container.innerHTML = html;
         }
@@ -858,8 +879,6 @@
 
             const tooltip = document.getElementById('hover-card-container');
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
-            
-            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -1139,6 +1158,10 @@
         function populateTeamSelects() {
             const league = document.getElementById('sports-league').value;
             const teams = (appState.data.teams || []).filter(t => t.league === league);
+            
+            // SORT BY NAME
+            teams.sort((a, b) => a.name.localeCompare(b.name));
+
             const mySelect = document.getElementById('sports-myteam');
             const oppSelect = document.getElementById('sports-opponent');
             
