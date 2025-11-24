@@ -240,8 +240,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "",
+      "imgUrl": "",
       "notes": "",
       "description": "",
       "streakCount": 1496,
@@ -253,8 +253,8 @@
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "",
+      "imgUrl": "",
       "notes": "",
       "description": "",
       "streakCount": 1497,
@@ -264,8 +264,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764050400000_v5al3",
@@ -276,8 +276,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764136800000_5xz6o",
@@ -288,8 +288,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764223200000_39ope",
@@ -300,8 +300,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764309600000_fq7xb",
@@ -312,8 +312,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764396000000_jhppa",
@@ -324,8 +324,8 @@
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
+      "linkUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
+      "imgUrl": "https://gemini.google.com/app/992c1d42fe1d21e8",
       "notes": "",
       "description": "",
       "id": "habit_1764482400000_r08yh",
@@ -343,6 +343,65 @@
       "status": "completed",
       "id": "task_1763996153218",
       "date": "2025-11-24"
+    },
+    {
+      "id": "health_1763997447224",
+      "date": "2025-11-23",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "2 Slices Bacon",
+          "calories": 86,
+          "protein": 5,
+          "carbs": 7,
+          "fat": 0,
+          "fiber": 0
+        },
+        {
+          "mealType": "dinner",
+          "name": "Juan Pablos - Beef Fajita Quasadillas - no rice no beans - crispy beef taco",
+          "calories": 1280,
+          "protein": 71,
+          "carbs": 79,
+          "fat": 82,
+          "fiber": 0
+        }
+      ]
+    },
+    {
+      "id": "health_1763997678227",
+      "date": "2025-11-24",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 eggs, 2 bacon, 1/2 cup salso",
+          "calories": 400,
+          "protein": 31,
+          "carbs": 6,
+          "fat": 28.3,
+          "fiber": 0
+        }
+      ]
     }
   ]
 }
