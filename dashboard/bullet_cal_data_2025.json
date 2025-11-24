@@ -266,8 +266,22 @@
       "logo": "https://static.www.nfl.com/image/private/f_auto/league/gzcojbzcyjgubgyb6xf2",
       "isFavorite": false
     },
-    { "id": "t_wrexham", "league": "EFL Championship", "name": "Wrexham", "abbrev": "WRE", "isFavorite": true, "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Wrexham_AFC_Badge.svg/1200px-Wrexham_AFC_Badge.svg.png" },
-    { "id": "t_southampton", "league": "EFL Championship", "name": "Southampton", "abbrev": "SOU", "isFavorite": false, "logo": "https://placehold.co/100x100/png?text=SOU" },
+    { 
+      "id": "t_wrexham", 
+      "league": "EFL Championship", 
+      "name": "Wrexham", 
+      "abbrev": "WRE", 
+      "isFavorite": true, 
+      "logo": "https://upload.wikimedia.org/wikipedia/en/thumb/e/e0/Wrexham_AFC_Badge.svg/1200px-Wrexham_AFC_Badge.svg.png" 
+    },
+    { 
+      "id": "t_southampton", 
+      "league": "EFL Championship", 
+      "name": "Southampton", 
+      "abbrev": "SOU", 
+      "isFavorite": false, 
+      "logo": "https://placehold.co/100x100/png?text=SOU" 
+    },
     { "id": "t_westbrom", "league": "EFL Championship", "name": "West Bromwich Albion", "abbrev": "WBA", "isFavorite": false, "logo": "https://placehold.co/100x100/png?text=WBA" },
     { "id": "t_sheffield_wed", "league": "EFL Championship", "name": "Sheffield Wednesday", "abbrev": "SHW", "isFavorite": false, "logo": "https://placehold.co/100x100/png?text=SHW" },
     { "id": "t_millwall", "league": "EFL Championship", "name": "Millwall", "abbrev": "MIL", "isFavorite": false, "logo": "https://placehold.co/100x100/png?text=MIL" },
