@@ -15,6 +15,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
+        /* Solid Panel for Hover Cards - Opaque & Readable */
         .solid-panel { 
             background-color: #111827; 
             border: 1px solid #4b5563; 
@@ -1004,6 +1005,8 @@
             let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
             let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
             
+            let resultHtml = '';
+
             if(item.type === 'meeting') {
                 meta = `<div class="text-xs text-gray-400 flex flex-col gap-1 mt-1">
                     <span><i class="mr-1">⏰</i> ${formatTime(item.startTime)}</span>
@@ -1041,7 +1044,6 @@
                 const myTeam = home.isFavorite ? home : (away.isFavorite ? away : null);
                 
                 let scoreDisplay = `<span class="text-gray-400 text-sm tracking-widest font-mono">${item.startTime ? formatTime(item.startTime) : 'TBD'}</span>`;
-                let resultHtml = '';
 
                 if(item.status === 'completed') {
                     scoreDisplay = `<div class="text-xl font-bold tracking-widest">${item.awayScore} - ${item.homeScore}</div>`;
@@ -1056,19 +1058,19 @@
                         
                         if (myScore > oppScore) { 
                             resultText = "WIN"; 
-                            resultColor = "text-green-400 border-green-500";
+                            resultColor = "text-green-500 border-green-500";
                         } else if (myScore < oppScore) { 
                             resultText = "LOSS"; 
-                            resultColor = "text-red-400 border-red-500";
+                            resultColor = "text-red-500 border-red-500";
                         }
                         
-                        resultHtml = `<div class="absolute top-2 right-2 border-2 ${resultColor} px-2 py-0.5 rounded text-[10px] font-black tracking-widest opacity-80 rotate-[-5deg]">${resultText}</div>`;
+                        // Moved to Card Container Level
+                        resultHtml = `<div class="absolute top-2 right-10 border-4 ${resultColor} px-2 py-1 rounded-lg text-sm font-black tracking-widest opacity-70 rotate-[-10deg] pointer-events-none z-0 select-none" style="font-family: 'Courier New', monospace;">${resultText}</div>`;
                     }
                 }
 
                 content += `
                     <div class="flex justify-between items-center mt-3 mb-2 relative">
-                        ${resultHtml}
                         <div class="flex flex-col items-center w-1/3">
                             <img src="${away.logo}" class="${away.isFavorite ? 'w-12 h-12' : 'w-8 h-8'} object-contain mb-1">
                             <span class="text-[10px] uppercase font-bold text-gray-400 text-center leading-tight">${away.abbrev || away.name}</span>
@@ -1088,7 +1090,20 @@
                     content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record (${seasonLabel}): <span class="text-white font-bold">${getTeamRecord(myTeam.id, seasonLabel)}</span></div>`;
                 }
             }
-            return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group"><div class="flex justify-between items-start"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : ''}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
+            
+            // Added resultHtml to top of card container, and added z-10 to header
+            return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group">
+                        ${resultHtml}
+                        <div class="flex justify-between items-start relative z-10">
+                            <div>${titleHtml}${meta}</div>
+                            <div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2">
+                                <button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : ''}')">✎</button>
+                                <button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button>
+                            </div>
+                        </div>
+                        ${descriptionHtml}
+                        ${content}
+                    </div>`;
         }
 
         function renderHealthCard(item) {
