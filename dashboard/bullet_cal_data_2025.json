@@ -1430,7 +1430,8 @@
       "description": "",
       "streakCount": 1497,
       "id": "habit_1763995051110",
-      "date": "2025-11-24"
+      "date": "2025-11-24",
+      "status": "completed"
     },
     {
       "type": "task",
@@ -1465,6 +1466,15 @@
           "protein": 31,
           "carbs": 6,
           "fat": 28.3,
+          "fiber": 0
+        },
+        {
+          "mealType": "lunch",
+          "name": "3 stuffed jalapeños, 1 firecracker corn, 1 chicken leg",
+          "calories": 790,
+          "protein": 50,
+          "carbs": 18,
+          "fat": 57,
           "fiber": 0
         }
       ]
