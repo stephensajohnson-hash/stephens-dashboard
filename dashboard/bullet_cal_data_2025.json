@@ -472,7 +472,8 @@
       "homeScore": 2,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     },
     {
       "id": "gm_02",
@@ -486,7 +487,8 @@
       "homeScore": 2,
       "awayScore": 3,
       "status": "completed",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     },
     {
       "id": "gm_03",
@@ -500,7 +502,8 @@
       "homeScore": 2,
       "awayScore": 2,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_04",
@@ -514,7 +517,8 @@
       "homeScore": 0,
       "awayScore": 2,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -531,7 +535,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764003170445",
-      "date": "2025-09-04"
+      "date": "2025-09-04",
+      "season": "2025/2026"
     },
     {
       "id": "gm_05",
@@ -545,7 +550,8 @@
       "homeScore": 1,
       "awayScore": 3,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -562,7 +568,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764003598692",
-      "date": "2025-09-14"
+      "date": "2025-09-14",
+      "season": "2025/2026"
     },
     {
       "id": "gm_06",
@@ -576,7 +583,8 @@
       "homeScore": 2,
       "awayScore": 3,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -593,7 +601,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004008011",
-      "date": "2025-09-21"
+      "date": "2025-09-21",
+      "season": "2025/2026"
     },
     {
       "id": "gm_07",
@@ -607,7 +616,8 @@
       "homeScore": 1,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -624,7 +634,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004136094",
-      "date": "2025-09-28"
+      "date": "2025-09-28",
+      "season": "2025/2026"
     },
     {
       "id": "gm_08",
@@ -638,7 +649,8 @@
       "homeScore": 1,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "id": "gm_09",
@@ -652,7 +664,8 @@
       "homeScore": 1,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -669,7 +682,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004197390",
-      "date": "2025-10-05"
+      "date": "2025-10-05",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -686,7 +700,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004256599",
-      "date": "2025-10-12"
+      "date": "2025-10-12",
+      "season": "2025/2026"
     },
     {
       "id": "gm_10",
@@ -700,7 +715,8 @@
       "homeScore": 1,
       "awayScore": 0,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -717,7 +733,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004290698",
-      "date": "2025-10-19"
+      "date": "2025-10-19",
+      "season": "2025/2026"
     },
     {
       "id": "gm_11",
@@ -731,7 +748,8 @@
       "homeScore": 0,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "id": "gm_12",
@@ -745,7 +763,8 @@
       "homeScore": 1,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -762,7 +781,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004342335",
-      "date": "2025-10-26"
+      "date": "2025-10-26",
+      "season": "2025/2026"
     },
     {
       "id": "gm_13",
@@ -776,7 +796,8 @@
       "homeScore": 2,
       "awayScore": 3,
       "status": "completed",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -793,7 +814,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004387929",
-      "date": "2025-11-03"
+      "date": "2025-11-03",
+      "season": "2025/2026"
     },
     {
       "id": "gm_14",
@@ -807,7 +829,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "completed",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "id": "media_1763879284316",
@@ -857,7 +880,8 @@
       "homeScore": 0,
       "awayScore": 1,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "media_1763880683145",
@@ -898,7 +922,8 @@
       "startTime": "",
       "status": "completed",
       "id": "sports_1764004459477",
-      "date": "2025-11-17"
+      "date": "2025-11-17",
+      "season": "2025/2026"
     },
     {
       "id": "habit_1732210000",
@@ -992,7 +1017,8 @@
       "startTime": "15:30",
       "status": "completed",
       "id": "game_1732220000",
-      "date": "2025-11-21"
+      "date": "2025-11-21",
+      "season": "2025/2026"
     },
     {
       "id": "health_1763875853692",
@@ -1086,7 +1112,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "completed",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "habit_1763995021433",
@@ -1150,7 +1177,8 @@
       "startTime": "15:30",
       "status": "completed",
       "id": "sports_1764002505033",
-      "date": "2025-11-23"
+      "date": "2025-11-23",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1250,7 +1278,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1279,7 +1308,8 @@
       "startTime": "15:30",
       "status": "scheduled",
       "id": "sports_1764004686169",
-      "date": "2025-11-27"
+      "date": "2025-11-27",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1317,7 +1347,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1394,7 +1425,8 @@
       "startTime": "19:15",
       "status": "scheduled",
       "id": "sports_1764004732063",
-      "date": "2025-12-04"
+      "date": "2025-12-04",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1432,7 +1464,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1494,7 +1527,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1544,7 +1578,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1573,7 +1608,8 @@
       "startTime": "19:20",
       "status": "scheduled",
       "id": "sports_1764004782772",
-      "date": "2025-12-14"
+      "date": "2025-12-14",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1647,7 +1683,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1688,7 +1725,8 @@
       "startTime": "12:00",
       "status": "scheduled",
       "id": "sports_1764004839303",
-      "date": "2025-12-21"
+      "date": "2025-12-21",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1753,7 +1791,8 @@
       "startTime": "12:00",
       "status": "scheduled",
       "id": "sports_1764004894299",
-      "date": "2025-12-25"
+      "date": "2025-12-25",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1779,7 +1818,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "17:30"
+      "startTime": "17:30",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1829,7 +1869,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "type": "habit",
@@ -1867,7 +1908,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     },
     {
       "type": "sports",
@@ -1884,7 +1926,8 @@
       "startTime": "12:00",
       "status": "scheduled",
       "id": "sports_1764004951905",
-      "date": "2026-01-04"
+      "date": "2026-01-04",
+      "season": "2025/2026"
     },
     {
       "id": "gm_26",
@@ -1898,7 +1941,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_27",
@@ -1912,7 +1956,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_28",
@@ -1926,7 +1971,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_29",
@@ -1940,7 +1986,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_30",
@@ -1954,7 +2001,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     },
     {
       "id": "gm_31",
@@ -1968,7 +2016,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_32",
@@ -1982,7 +2031,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "20:00"
+      "startTime": "20:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_33",
@@ -1996,7 +2046,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_34",
@@ -2010,7 +2061,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "id": "gm_35",
@@ -2024,7 +2076,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_36",
@@ -2038,7 +2091,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_37",
@@ -2052,7 +2106,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "id": "gm_38",
@@ -2066,7 +2121,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_39",
@@ -2080,7 +2136,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_40",
@@ -2094,7 +2151,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_41",
@@ -2108,7 +2166,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_42",
@@ -2122,7 +2181,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_43",
@@ -2136,7 +2196,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_44",
@@ -2150,7 +2211,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "19:45"
+      "startTime": "19:45",
+      "season": "2025/2026"
     },
     {
       "id": "gm_45",
@@ -2164,7 +2226,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "15:00"
+      "startTime": "15:00",
+      "season": "2025/2026"
     },
     {
       "id": "gm_46",
@@ -2178,7 +2241,8 @@
       "homeScore": 0,
       "awayScore": 0,
       "status": "scheduled",
-      "startTime": "12:30"
+      "startTime": "12:30",
+      "season": "2025/2026"
     }
   ]
 }
