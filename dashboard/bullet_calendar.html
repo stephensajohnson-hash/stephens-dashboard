@@ -561,7 +561,7 @@
                  
                  // Add Image logic
                  if(item.imgUrl) {
-                     let imgHtml = `<img src="${item.imgUrl}" class="w-full h-32 object-cover rounded-lg mt-2 mb-2 shadow-md">`;
+                     let imgHtml = `<img src="${item.imgUrl}" class="max-h-[25px] w-auto max-w-full object-contain rounded mt-2 mb-2 shadow-sm">`;
                      if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
                      content += imgHtml;
                  }
