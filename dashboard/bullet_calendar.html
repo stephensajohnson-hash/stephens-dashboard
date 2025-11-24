@@ -6,7 +6,6 @@
     <title>Bullet Calendar</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Canvas Confetti -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { transition: all 0.2s ease-in-out; }
@@ -16,13 +15,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        /* Solid Panel for Hover Cards - Opaque & Readable */
-        .solid-panel { 
-            background-color: #111827; 
-            border: 1px solid #4b5563; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
-            z-index: 100;
-        }
+        .solid-panel { background: #1f2937; border: 1px solid #4b5563; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); z-index: 100; }
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
         .sidebar-open { transform: translateX(0); }
         .sidebar-closed { transform: translateX(-100%); }
@@ -86,6 +79,7 @@
             </div>
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
+                <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
                 <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard V1.0</p>
@@ -94,6 +88,80 @@
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
             <div id="view-container" class="max-w-7xl mx-auto min-h-full"></div>
         </main>
+    </div>
+
+    <!-- Sports Manager Modal -->
+    <div id="sports-manager-modal" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-3xl h-[80vh] flex flex-col shadow-2xl border border-gray-700">
+            <div class="p-6 border-b border-gray-700 flex justify-between items-center">
+                <h3 class="text-xl font-bold text-white">Manage Sports Data</h3>
+                <button onclick="closeSportsManager()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="flex border-b border-gray-700 px-6 pt-2">
+                <button onclick="switchSportsTab('leagues')" id="tab-leagues" class="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">Leagues</button>
+                <button onclick="switchSportsTab('teams')" id="tab-teams" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Teams</button>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-6">
+                
+                <!-- LEAGUES TAB -->
+                <div id="view-leagues" class="block">
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
+                        <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
+                    </div>
+                    <div id="leagues-list" class="space-y-2">
+                        <!-- League Items -->
+                    </div>
+                </div>
+
+                <!-- TEAMS TAB -->
+                <div id="view-teams" class="hidden">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                        <!-- Add Team Form -->
+                        <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit">
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase">Add Team</h4>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="text-xs text-gray-500">League</label>
+                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Team Name</label>
+                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Abbreviation</label>
+                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Logo URL</label>
+                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
+                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
+                                </div>
+                                <button onclick="addTeam()" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
+                            </div>
+                        </div>
+
+                        <!-- Team List -->
+                        <div class="md:col-span-2 overflow-y-auto">
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
+                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
+                            </div>
+                            <div id="teams-list" class="space-y-2">
+                                <!-- Teams injected here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Nutrition Editor Modal -->
@@ -357,7 +425,6 @@
                 if (localStr) {
                     const localData = JSON.parse(localStr);
                     if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    // Merge teams and leagues
                     appState.data.leagues = localData.leagues || [];
                     appState.data.teams = localData.teams || [];
                 }
@@ -370,7 +437,6 @@
                         jsonData.items.forEach(item => { if (!idMap.has(item.id)) idMap.set(item.id, item); });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
-                    // JSON source is source of truth for Teams structure if not edited
                     if (appState.data.teams.length === 0) appState.data.teams = jsonData.teams || [];
                     if (appState.data.leagues.length === 0) appState.data.leagues = jsonData.leagues || [];
                 }
@@ -394,6 +460,123 @@
             appState.data.items = appState.data.items.filter(i => i.id !== id);
             saveData();
             updateUI();
+        }
+
+        // --- SPORTS MANAGER LOGIC ---
+        function openSportsManager() {
+            document.getElementById('sports-manager-modal').classList.remove('hidden');
+            switchSportsTab('leagues');
+        }
+        
+        function closeSportsManager() {
+            document.getElementById('sports-manager-modal').classList.add('hidden');
+        }
+        
+        function switchSportsTab(tab) {
+            document.getElementById('tab-leagues').className = tab === 'leagues' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
+            document.getElementById('tab-teams').className = tab === 'teams' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
+            
+            document.getElementById('view-leagues').classList.toggle('hidden', tab !== 'leagues');
+            document.getElementById('view-teams').classList.toggle('hidden', tab !== 'teams');
+            
+            if(tab === 'leagues') renderLeaguesList();
+            if(tab === 'teams') { renderTeamFilter(); renderTeamsList(); }
+        }
+        
+        function renderLeaguesList() {
+            const container = document.getElementById('leagues-list');
+            container.innerHTML = appState.data.leagues.map(l => `
+                <div class="flex justify-between items-center bg-gray-700 p-2 rounded">
+                    <span>${l}</span>
+                    <button onclick="deleteLeague('${l}')" class="text-red-400 hover:text-red-200">&times;</button>
+                </div>
+            `).join('');
+        }
+        
+        function addLeague() {
+            const val = document.getElementById('new-league-input').value.trim();
+            if(val && !appState.data.leagues.includes(val)) {
+                appState.data.leagues.push(val);
+                document.getElementById('new-league-input').value = '';
+                saveData();
+                renderLeaguesList();
+            }
+        }
+        
+        function deleteLeague(name) {
+            if(!confirm(`Delete league ${name}?`)) return;
+            appState.data.leagues = appState.data.leagues.filter(l => l !== name);
+            saveData();
+            renderLeaguesList();
+        }
+        
+        function renderTeamFilter() {
+            const sel = document.getElementById('filter-league-select');
+            sel.innerHTML = `<option value="all">All Leagues</option>` + appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            
+            const addSel = document.getElementById('team-league-select');
+            addSel.innerHTML = appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+        }
+        
+        function renderTeamsList() {
+            const filter = document.getElementById('filter-league-select').value;
+            const teams = appState.data.teams.filter(t => filter === 'all' || t.league === filter);
+            
+            const container = document.getElementById('teams-list');
+            container.innerHTML = teams.map(t => `
+                <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-2 rounded">
+                    <div class="flex items-center gap-3">
+                        <img src="${t.logo}" class="w-8 h-8 object-contain bg-white/10 rounded">
+                        <div>
+                            <div class="text-sm font-bold">${t.name}</div>
+                            <div class="text-[10px] text-gray-500">${t.league} • ${t.abbrev}</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                         <button onclick="toggleTeamFav('${t.id}')" class="${t.isFavorite ? 'text-yellow-400' : 'text-gray-600'} hover:text-yellow-200">★</button>
+                         <button onclick="deleteTeam('${t.id}')" class="text-red-400 hover:text-red-200">&times;</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function addTeam() {
+            const league = document.getElementById('team-league-select').value;
+            const name = document.getElementById('team-name-input').value;
+            const abbrev = document.getElementById('team-abbrev-input').value;
+            const logo = document.getElementById('team-logo-input').value;
+            const fav = document.getElementById('team-fav-input').checked;
+            
+            if(!league || !name || !abbrev) return alert("Fill required fields");
+            
+            appState.data.teams.push({
+                id: `t_${Date.now()}`,
+                league, name, abbrev, logo, isFavorite: fav
+            });
+            
+            // Clear inputs
+            document.getElementById('team-name-input').value = '';
+            document.getElementById('team-abbrev-input').value = '';
+            document.getElementById('team-logo-input').value = '';
+            
+            saveData();
+            renderTeamsList();
+        }
+        
+        function deleteTeam(id) {
+            if(!confirm("Delete this team?")) return;
+            appState.data.teams = appState.data.teams.filter(t => t.id !== id);
+            saveData();
+            renderTeamsList();
+        }
+        
+        function toggleTeamFav(id) {
+            const t = appState.data.teams.find(x => x.id === id);
+            if(t) {
+                t.isFavorite = !t.isFavorite;
+                saveData();
+                renderTeamsList();
+            }
         }
 
         function toggleTaskStatus(id) {
@@ -472,15 +655,18 @@
             const work = items.filter(i => i.category === 'work');
             const personal = items.filter(i => i.category !== 'work' && i.type !== 'health');
             
-            let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
+            // Empty State
+            const emptyState = items.length === 0 ? `<div class="flex flex-col items-center justify-center h-48 opacity-50 mb-8"><div class="text-6xl mb-4">📭</div><div class="text-xl">No entries for this day</div></div>` : '';
+
+            let html = emptyState + `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
             // COL 1: Work
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-work">Work & Tasks</h3><button onclick="openItemModal('work', null, 'task,meeting')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
-            if(work.length === 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
+            if(work.length === 0 && items.length > 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
             // COL 2: Personal (Includes Sports)
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-personal">Life & Media</h3><button onclick="openItemModal('personal', null, 'habit,media,sports')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
-            if(personal.length === 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
+            if(personal.length === 0 && items.length > 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
             // COL 3: Health
