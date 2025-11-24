@@ -82,11 +82,12 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
-            <div class="flex-1 overflow-y-auto p-2 space-y-1">
-                <button onclick="jumpToToday(); toggleSidebar()" class="w-full text-left px-4 py-2 rounded hover:bg-gray-700 text-blue-300 font-bold"><i class="mr-2">📅</i> Today</button>
-                <div class="border-b border-gray-700 my-2"></div>
-                <div id="month-list" class="space-y-1"></div>
+            
+            <!-- New Rolling Month Grid Sidebar -->
+            <div class="flex-1 overflow-y-auto p-3" id="month-list">
+                <!-- Injected via JS -->
             </div>
+
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
@@ -375,6 +376,8 @@
         }
         function formatTime(timeStr) {
             if (!timeStr) return '';
+            // Basic 12-hour formatter. If AM/PM already present, return as-is.
+            if (timeStr.match(/am|pm/i)) return timeStr;
             const [h, m] = timeStr.split(':');
             const hour = parseInt(h);
             const ampm = hour >= 12 ? 'PM' : 'AM';
@@ -440,19 +443,16 @@
 
         async function loadData() {
             const idMap = new Map();
-            const teamMap = new Map(); 
-            const leagueSet = new Set();
-
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
                     const localData = JSON.parse(localStr);
                     if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
-                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
+                    // Merge teams and leagues
+                    appState.data.leagues = localData.leagues || [];
+                    appState.data.teams = localData.teams || [];
                 }
             } catch (e) { console.warn("Error reading local storage", e); }
-            
             try {
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
@@ -463,22 +463,12 @@
                         });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
-                    
-                    if (jsonData.teams) {
-                        jsonData.teams.forEach(t => {
-                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
-                        });
-                    }
-                    
-                    if (jsonData.leagues) {
-                        jsonData.leagues.forEach(l => leagueSet.add(l));
-                    }
+                    // Merge Teams/Leagues if missing
+                    if (appState.data.teams.length === 0) appState.data.teams = jsonData.teams || [];
+                    if (appState.data.leagues.length === 0) appState.data.leagues = jsonData.leagues || [];
                 }
             } catch (error) { console.warn("Error fetching JSON", error); }
-
             appState.data.items = Array.from(idMap.values());
-            appState.data.teams = Array.from(teamMap.values());
-            appState.data.leagues = Array.from(leagueSet);
             
             // AUTO-SORT ITEMS BY DATE
             appState.data.items.sort((a, b) => {
@@ -596,17 +586,15 @@
             const currentVal = sel.value;
             const leagues = [...appState.data.leagues].sort();
 
-            // Removed "All Leagues" option per request
+            // Removed "All Leagues" option per request - default to first league
             sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
             
-            // Default to first available league if current value isn't valid
             if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) {
                 sel.value = leagues.length > 0 ? leagues[0] : '';
             } else {
                 sel.value = currentVal;
             }
             
-            // Populate the Add/Edit Form league select as well
             const addSel = document.getElementById('team-league-select');
             addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
         }
@@ -614,7 +602,6 @@
         function renderTeamsList() {
             const filter = document.getElementById('filter-league-select').value;
             
-            // Filter teams by selected league and sort by name
             const teams = appState.data.teams
                 .filter(t => t.league === filter)
                 .sort((a, b) => a.name.localeCompare(b.name));
@@ -679,7 +666,6 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
-                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -754,7 +740,7 @@
         }
         function jumpToToday() { appState.currentDate = new Date(); appState.view = 'day'; updateUI(); }
         function switchView(v) { appState.view = v; updateUI(); }
-        function jumpToMonth(m) { appState.currentDate.setMonth(m); appState.currentDate.setDate(1); appState.view = 'month'; updateUI(); toggleSidebar(); }
+        function jumpToMonth(y, m) { appState.currentDate.setFullYear(y); appState.currentDate.setMonth(m); appState.currentDate.setDate(1); appState.view = 'month'; updateUI(); toggleSidebar(); }
         function goToDay(dateStr) { appState.currentDate = new Date(dateStr + "T12:00:00"); switchView('day'); }
 
         function updateUI() {
@@ -779,8 +765,62 @@
         }
 
         function renderSidebar() {
-            const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-            document.getElementById('month-list').innerHTML = months.map((m, i) => `<button onclick="jumpToMonth(${i})" class="w-full text-left px-4 py-2 rounded hover:bg-gray-700 text-gray-300 text-sm transition">${m}</button>`).join('');
+            const list = document.getElementById('month-list');
+            list.innerHTML = '';
+            list.className = "space-y-4"; 
+
+            const now = new Date(); 
+            const currentYear = now.getFullYear();
+            const currentMonth = now.getMonth();
+            
+            const start = new Date(now.getFullYear(), now.getMonth() - 12, 1);
+            const end = new Date(now.getFullYear(), now.getMonth() + 12, 1);
+            
+            let iter = new Date(start);
+            let currentRenderYear = -1;
+            let yearContainer = null;
+
+            while (iter <= end) {
+                const y = iter.getFullYear();
+                const m = iter.getMonth();
+                const mName = iter.toLocaleDateString('en-US', { month: 'short' });
+                
+                if (y !== currentRenderYear) {
+                    currentRenderYear = y;
+                    const yearLabel = document.createElement('div');
+                    yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
+                    yearLabel.innerText = y;
+                    
+                    const grid = document.createElement('div');
+                    grid.className = "grid grid-cols-4 gap-2";
+                    yearContainer = grid;
+                    
+                    const wrapper = document.createElement('div');
+                    wrapper.appendChild(yearLabel);
+                    wrapper.appendChild(grid);
+                    list.appendChild(wrapper);
+                }
+
+                const btn = document.createElement('button');
+                const isActualCurrentMonth = (y === currentYear && m === currentMonth);
+                const isViewedMonth = (y === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                
+                let baseClass = "text-xs py-2 rounded text-center transition ";
+                if (isActualCurrentMonth) {
+                    baseClass += "bg-purple-600 text-white font-bold shadow-lg ring-1 ring-purple-400";
+                } else if (isViewedMonth) {
+                    baseClass += "bg-gray-600 text-white border border-gray-500";
+                } else {
+                    baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
+                }
+
+                btn.className = baseClass;
+                btn.innerText = mName;
+                btn.onclick = ((year, month) => () => jumpToMonth(year, month))(y, m);
+                
+                yearContainer.appendChild(btn);
+                iter.setMonth(iter.getMonth() + 1);
+            }
         }
 
         function renderDayView(container) {
@@ -805,7 +845,6 @@
             // COL 3: Health
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-health">Health & Nutrition</h3><button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Meals">＋</button></div>`;
             if(health) html += renderHealthCard(health); 
-            // Removed the "Click to log nutrition" button here
             html += `</div></div>`;
             container.innerHTML = html;
         }
@@ -826,7 +865,7 @@
                         <div class="p-1 flex-1 overflow-y-auto space-y-1">
                             ${items.map(item => {
                                 let title = item.type === 'health' ? 'Nutrition Log' : item.title;
-                                const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '';
+                                const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : (item.type === 'sports' && item.startTime ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '');
                                 return `<div class="text-[10px] p-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 mb-1 truncate cursor-pointer hover:brightness-110" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">${timeStr}${title}</div>`;
                             }).join('')}
                         </div>
@@ -851,7 +890,7 @@
                         <div class="space-y-1">
                              ${items.map(item => {
                                  let title = item.type === 'health' ? 'Nutrition Log' : item.title;
-                                 const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '';
+                                 const timeStr = (item.type === 'meeting' && item.startTime) ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : (item.type === 'sports' && item.startTime ? `<span class="text-[8px] text-gray-400 mr-1">${formatTime(item.startTime)}</span>` : '');
                                  return `<div class="text-[9px] p-0.5 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-700/50 truncate" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">${timeStr}${title}</div>`;
                              }).join('')}
                         </div>
@@ -975,7 +1014,7 @@
                 
                 const myTeam = home.isFavorite ? home : (away.isFavorite ? away : null);
                 
-                let scoreDisplay = `<span class="text-gray-400 text-sm">${item.startTime || 'TBD'}</span>`;
+                let scoreDisplay = `<span class="text-gray-400 text-sm">${item.startTime ? formatTime(item.startTime) : 'TBD'}</span>`;
                 if(item.status === 'completed') {
                     scoreDisplay = `<div class="text-xl font-bold tracking-widest">${item.awayScore} - ${item.homeScore}</div>`;
                 }
