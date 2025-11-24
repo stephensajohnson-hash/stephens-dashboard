@@ -229,7 +229,7 @@
                 "fiber": 27
               }
             },
-                        {
+            {
               "name": "Coconut Flour",
               "quantity": "30",
               "unit": "g",
@@ -306,7 +306,7 @@
                 "fat": 0,
                 "fiber": 0
               }
-            }            
+            }
           ]
         },
         {
@@ -3151,8 +3151,8 @@
         {
           "sectionTitle": "Blueberry Pie Filling Layer",
           "steps": [
-            "In a saucepan over medium heat, combine ¾ cup sugar, 4 ½ tbsp cornstarch, 1 ½ tsp tapioca starch, \n1 ½ tsp arrowroot starch, ¼ tsp salt and ⅜ cup water until smooth. \n",
-            "Add 4 cups blueberries. ",
+            "In a saucepan over medium heat, combine ¾ cup sugar, 4 ½ tbsp cornstarch, ¼ tsp salt and 1/3 cup water until smooth. \n",
+            "Add 6 cups blueberries. ",
             "Bring to a boil",
             "Cook and stir for 2 minutes or until thickened and bubbly",
             "Remove from the heat. ",
@@ -3991,16 +3991,16 @@
               }
             },
             {
-              "name": "Amaranth Flour",
+              "name": "Tiger Nut Flour",
               "quantity": "50",
               "unit": "g",
               "notes": "",
               "macros": {
-                "calories": 185,
-                "protein": 7,
-                "carbs": 33,
-                "fat": 1,
-                "fiber": 3
+                "calories": 230,
+                "protein": 2,
+                "carbs": 30,
+                "fat": 12,
+                "fiber": 17
               }
             },
             {
@@ -4172,7 +4172,7 @@
           "sectionTitle": "Day 1 - Soak",
           "steps": [
             "Gather and prepare your ingredients.",
-            "Place the teff flour, amaranth flour, teff grain, ground flax and cinnamon into a bowl and whisk to combine. Pour over the maple syrup, olive oil and water and mix to combine. Cover with a wet tea towel and set aside to soak until the following day.  Note: Do not overmix the dough. Don’t compact the ball too much as it’s best for some air to flow through the high oil content. It can soak for up to 48 hours, but leave it in the fridge if this is the case."
+            "Place the teff flour, tiger nut flour, teff grain, ground flax and cinnamon into a bowl and whisk to combine. Pour over the maple syrup, olive oil and water and mix to combine. Cover with a wet tea towel and set aside to soak until the following day.  Note: Do not overmix the dough. Don’t compact the ball too much as it’s best for some air to flow through the high oil content. It can soak for up to 48 hours, but leave it in the fridge if this is the case."
           ]
         },
         {
