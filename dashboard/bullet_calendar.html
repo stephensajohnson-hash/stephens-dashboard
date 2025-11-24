@@ -6,6 +6,8 @@
     <title>Bullet Calendar</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti for Fireworks -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { transition: all 0.2s ease-in-out; }
         ::-webkit-scrollbar { width: 8px; }
@@ -17,7 +19,7 @@
         
         /* Solid Panel for Hover Cards - Opaque & Readable */
         .solid-panel { 
-            background-color: #111827; /* Gray 900 - Fully Opaque */
+            background-color: #111827; 
             border: 1px solid #4b5563; 
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             z-index: 100;
@@ -191,8 +193,18 @@
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
-                    <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="1">
+                        </div>
+                        <div class="flex items-center">
+                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
+                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                                <span>Fill rest of month?</span>
+                             </label>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- URL/Image -->
@@ -215,7 +227,7 @@
     </div>
 
     <script>
-        // --- HELPER FUNCTIONS (HOISTED TO TOP TO FIX REFERENCE ERRORS) ---
+        // --- HELPER FUNCTIONS ---
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
             const adjusted = new Date(date.getTime() - (offset*60*1000)); 
@@ -260,6 +272,17 @@
             if(h) mins += parseInt(h[1]) * 60;
             if(m) mins += parseInt(m[1]);
             return mins;
+        }
+        function toggleSidebar() {
+            const sb = document.getElementById('bullet-sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            if(sb.classList.contains('sidebar-closed')) {
+                sb.classList.replace('sidebar-closed', 'sidebar-open');
+                ov.classList.remove('hidden');
+            } else {
+                sb.classList.replace('sidebar-open', 'sidebar-closed');
+                ov.classList.add('hidden');
+            }
         }
         async function fetchWeather() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
@@ -333,6 +356,31 @@
             const item = appState.data.items.find(i => i.id === id);
             if (item) {
                 item.status = item.status === 'completed' ? 'pending' : 'completed';
+                saveData();
+                updateUI();
+            }
+        }
+
+        // Fireworks Trigger
+        function fireConfetti(x, y) {
+             confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { x: x / window.innerWidth, y: y / window.innerHeight },
+                colors: ['#10b981', '#34d399', '#6ee7b7'], // Green shades
+                disableForReducedMotion: true
+            });
+        }
+
+        function toggleHabitStatus(id, event) {
+            const item = appState.data.items.find(i => i.id === id);
+            if (item) {
+                const wasCompleted = item.status === 'completed';
+                item.status = wasCompleted ? 'pending' : 'completed';
+                
+                if (!wasCompleted && event) {
+                    fireConfetti(event.clientX, event.clientY);
+                }
                 saveData();
                 updateUI();
             }
@@ -524,7 +572,14 @@
                 if(notesText) content += `<p class="text-xs text-gray-400 italic">"${notesText}"</p>`;
                 descriptionHtml = ''; 
             } else if(item.type === 'habit') {
-                 content += `<div class="mt-2 flex items-center gap-2"><div class="text-2xl">🔥</div><div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div></div>`;
+                 const isChecked = item.status === 'completed';
+                 content += `<div class="mt-2 flex items-center justify-between gap-2">
+                    <div class="flex items-center gap-2">
+                        <div class="text-2xl">🔥</div>
+                        <div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div>
+                    </div>
+                    <input type="checkbox" class="w-6 h-6 rounded border-green-600 text-green-600 bg-gray-700 focus:ring-green-500" ${isChecked ? 'checked' : ''} onchange="toggleHabitStatus('${item.id}', event)">
+                 </div>`;
             }
             return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group"><div class="flex justify-between items-start"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
         }
@@ -585,6 +640,7 @@
             document.getElementById('item-actualDuration').value = '';
             document.getElementById('item-startTime').value = '';
             document.getElementById('item-streak').value = '0';
+            document.getElementById('item-fill-month').checked = false;
 
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
@@ -637,33 +693,88 @@
         function saveItem() {
             const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; const title = document.getElementById('item-title').value; const editId = document.getElementById('item-id').value;
             if(!title) return alert("Title required");
-            const newItem = { id: editId || `${type}_${new Date().getTime()}`, date: toLocalYMD(appState.currentDate), type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
             
-            // Map description/notes based on type logic
+            // Base Item Logic
+            const dateYMD = toLocalYMD(appState.currentDate);
+            const newItemBase = {
+                type: type,
+                category: category,
+                title: title,
+                linkUrl: document.getElementById('item-link').value,
+                imgUrl: document.getElementById('item-img').value
+            };
+            
+            // Map description/notes
             const rawDesc = document.getElementById('item-desc').value;
-            if(type === 'media' || type === 'habit') {
-                newItem.notes = rawDesc;
-                newItem.description = rawDesc; // backup
-            } else {
-                newItem.description = rawDesc;
-            }
+            if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } 
+            else { newItemBase.description = rawDesc; }
 
             if(type === 'meeting') { 
-                newItem.startTime = document.getElementById('item-startTime').value || "09:00"; 
-                newItem.durationMinutes = parseDuration(document.getElementById('item-duration').value); 
-                newItem.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value);
+                newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; 
+                newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); 
+                newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value);
             }
-            if(type === 'task') { newItem.ticketNumber = document.getElementById('item-ticket').value; newItem.status = 'pending'; }
-            if(type === 'media') { newItem.rating = parseInt(document.getElementById('item-rating').value) || 5; }
-            if(type === 'habit') { 
-                const existing = appState.data.items.find(i => i.id === editId);
-                const editedStreak = parseInt(document.getElementById('item-streak').value);
-                newItem.streakCount = (editId && !isNaN(editedStreak)) ? editedStreak : (existing ? existing.streakCount : 1); 
+            if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
+            if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
+            
+            // Habit Streak & Fill Month Logic
+            if(type === 'habit') {
+                const inputStreak = parseInt(document.getElementById('item-streak').value);
+                const initialStreak = !isNaN(inputStreak) ? inputStreak : 1;
+                const fillMonth = document.getElementById('item-fill-month').checked;
+                
+                if (fillMonth && !editId) {
+                    // Bulk Create Mode
+                    const current = new Date(appState.currentDate);
+                    const year = current.getFullYear();
+                    const month = current.getMonth();
+                    const lastDay = new Date(year, month + 1, 0).getDate();
+                    const startDay = current.getDate();
+                    
+                    let streakCounter = initialStreak;
+                    
+                    for(let d = startDay; d <= lastDay; d++) {
+                        const loopDate = new Date(year, month, d);
+                        const loopYMD = toLocalYMD(loopDate);
+                        
+                        const bulkItem = {
+                            ...newItemBase,
+                            id: `${type}_${loopDate.getTime()}_${Math.random().toString(36).substr(2,5)}`,
+                            date: loopYMD,
+                            streakCount: streakCounter
+                        };
+                        appState.data.items.push(bulkItem);
+                        streakCounter++;
+                    }
+                    saveData(); closeItemModal(); updateUI();
+                    return; // Exit early as we handled the save
+                } else {
+                     // Normal Single Create/Edit
+                    const existing = appState.data.items.find(i => i.id === editId);
+                    // Use input if provided/edited, else fallback to existing or 1
+                    newItemBase.streakCount = (editId || !isNaN(inputStreak)) ? initialStreak : (existing ? existing.streakCount : 1);
+                }
             }
-            if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = newItem; } else { appState.data.items.push(newItem); }
+
+            // Finalize Single Item
+            const finalItem = {
+                ...newItemBase,
+                id: editId || `${type}_${new Date().getTime()}`,
+                date: dateYMD
+            };
+
+            if (editId) { 
+                const idx = appState.data.items.findIndex(i => i.id === editId); 
+                if (idx >= 0) appState.data.items[idx] = finalItem; 
+            } else { 
+                appState.data.items.push(finalItem); 
+            }
+            
             saveData(); closeItemModal(); updateUI();
         }
 
+        // ... rest of functions (openNutritionModal, saveNutrition, etc.) remain identical ...
+        // Re-including necessary unchanged functions to ensure file completeness
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -687,30 +798,6 @@
             const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals };
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
-        }
-        
-        function getWeeklyDeficit() {
-            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); 
-            let totalDeficit = 0; let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += (dailyCal - tdee); daysCounted++; }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
-        }
-
-        function toggleSidebar() {
-            const sb = document.getElementById('bullet-sidebar');
-            const ov = document.getElementById('sidebar-overlay');
-            if(sb.classList.contains('sidebar-closed')) {
-                sb.classList.replace('sidebar-closed', 'sidebar-open');
-                ov.classList.remove('hidden');
-            } else {
-                sb.classList.replace('sidebar-open', 'sidebar-closed');
-                ov.classList.add('hidden');
-            }
         }
     </script>
 </body>
