@@ -15,13 +15,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        /* Solid Panel for Hover Cards - Opaque & Readable */
-        .solid-panel { 
-            background-color: #111827; 
-            border: 1px solid #4b5563; 
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
-            z-index: 100;
-        }
+        .solid-panel { background: #1f2937; border: 1px solid #4b5563; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); z-index: 100; }
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
         .sidebar-open { transform: translateX(0); }
         .sidebar-closed { transform: translateX(-100%); }
@@ -29,6 +23,11 @@
         .macro-bar-fill { height: 100%; border-radius: 2px; }
         .star-btn:hover, .star-btn.active { color: #fbbf24; } 
         .star-btn { color: #4b5563; transition: color 0.1s; } 
+        .highlight-pulse { animation: pulse-yellow 0.5s 2; }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgba(17, 24, 39, 0.5); }
+            50% { background-color: rgba(234, 179, 8, 0.2); }
+        }
     </style>
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b', sports: '#ef4444' } } } }
@@ -127,7 +126,7 @@
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
                         <!-- Add/Edit Team Form -->
-                        <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit">
+                        <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
                             <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
                                 <span id="team-form-title">Add Team</span>
                                 <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
@@ -641,6 +640,12 @@
                 document.getElementById('team-form-title').innerText = "Edit Team";
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
+                
+                // Visual Feedback
+                const form = document.getElementById('team-form-container');
+                form.scrollIntoView({ behavior: 'smooth' });
+                form.classList.add('highlight-pulse');
+                setTimeout(() => form.classList.remove('highlight-pulse'), 1000);
             }
         }
 
