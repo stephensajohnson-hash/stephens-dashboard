@@ -1252,24 +1252,6 @@
       "durationMinutes": 60
     },
     {
-      "type": "sports",
-      "category": "personal",
-      "title": "NYG @ DAL",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "",
-      "league": "NFL",
-      "homeTeamId": "t_dal",
-      "awayTeamId": "t_nyg",
-      "homeScore": 28,
-      "awayScore": 14,
-      "startTime": "15:30",
-      "status": "completed",
-      "id": "game_1732220000",
-      "date": "2025-11-21",
-      "season": "2025/2026"
-    },
-    {
       "id": "health_1763875853692",
       "date": "2025-11-22",
       "type": "health",
