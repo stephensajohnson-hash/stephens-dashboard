@@ -200,9 +200,16 @@
                 <div>
                     <div class="flex justify-between items-center mb-2">
                         <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
-                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Item</button>
+                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
                     </div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
+                    
+                    <!-- Workouts Section -->
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
+                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
+                    </div>
+                    <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -443,32 +450,48 @@
 
         async function loadData() {
             const idMap = new Map();
+            const teamMap = new Map(); 
+            const leagueSet = new Set();
+
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
                     const localData = JSON.parse(localStr);
                     if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    // Merge teams and leagues
-                    appState.data.leagues = localData.leagues || [];
-                    appState.data.teams = localData.teams || [];
+                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
+                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
                 }
             } catch (e) { console.warn("Error reading local storage", e); }
+            
             try {
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
+                    // Merge Items
                     if(jsonData.items) {
                         jsonData.items.forEach(item => { 
                             if (!idMap.has(item.id)) idMap.set(item.id, item); 
                         });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
-                    // Merge Teams/Leagues if missing
-                    if (appState.data.teams.length === 0) appState.data.teams = jsonData.teams || [];
-                    if (appState.data.leagues.length === 0) appState.data.leagues = jsonData.leagues || [];
+                    
+                    // Merge Teams (JSON adds missing ones)
+                    if (jsonData.teams) {
+                        jsonData.teams.forEach(t => {
+                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
+                        });
+                    }
+                    
+                    // Merge Leagues
+                    if (jsonData.leagues) {
+                        jsonData.leagues.forEach(l => leagueSet.add(l));
+                    }
                 }
             } catch (error) { console.warn("Error fetching JSON", error); }
+
             appState.data.items = Array.from(idMap.values());
+            appState.data.teams = Array.from(teamMap.values());
+            appState.data.leagues = Array.from(leagueSet);
             
             // AUTO-SORT ITEMS BY DATE
             appState.data.items.sort((a, b) => {
@@ -595,6 +618,7 @@
                 sel.value = currentVal;
             }
             
+            // Populate the Add/Edit Form league select as well
             const addSel = document.getElementById('team-league-select');
             addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
         }
@@ -602,6 +626,7 @@
         function renderTeamsList() {
             const filter = document.getElementById('filter-league-select').value;
             
+            // Filter teams by selected league and sort by name
             const teams = appState.data.teams
                 .filter(t => t.league === filter)
                 .sort((a, b) => a.name.localeCompare(b.name));
@@ -666,6 +691,7 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
+                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -1048,15 +1074,49 @@
             const g = item.goals || { tdee: 2500, calorieGoal: 2000, protein: 150, fat: 80, netCarbs: 100 };
             let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
             (item.meals || []).forEach(m => { totalCal += Number(m.calories||0); totalPro += Number(m.protein||0); totalCarb += Number(m.carbs||0); totalFat += Number(m.fat||0); totalFiber += Number(m.fiber||0); });
+            
+            let totalBurned = 0;
+            (item.workouts || []).forEach(w => totalBurned += Number(w.calories || 0));
+            
+            const netCal = totalCal - totalBurned;
             const netCarbs = totalCarb - totalFiber;
-            const calRemaining = g.calorieGoal - totalCal;
-            const tdeeDiff = totalCal - g.tdee;
-            const pctCal = Math.min((totalCal / g.calorieGoal) * 100, 100);
+            
+            // Logic: Goal - (Food - Exercise)
+            // If Goal is 2000, I eat 2200 (Over 200), but burn 500. Net is 1700. Remaining is 300.
+            const calRemaining = g.calorieGoal - netCal; 
+            const tdeeDiff = netCal - g.tdee; // Deficit calculation based on Net
+
+            const pctCal = Math.min((netCal / g.calorieGoal) * 100, 100);
             const pctPro = Math.min((totalPro / g.protein) * 100, 100);
             const pctFat = Math.min((totalFat / g.fat) * 100, 100);
             const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
             const weeklyData = getWeeklyDeficit();
-            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Calories</span><span class="font-bold ${totalCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${totalCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-3 gap-3 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}/${g.protein}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div><div class="text-[10px] text-right mt-1 text-blue-300">${pctPro.toFixed(0)}%</div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}/${g.fat}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div><div class="text-[10px] text-right mt-1 text-yellow-300">${pctFat.toFixed(0)}%</div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}/${g.netCarbs}g</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div><div class="text-[10px] text-right mt-1 text-green-300">${pctCarb.toFixed(0)}%</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1"><div class="text-xs font-bold text-gray-500 uppercase mb-1">Today's Meals</div>${(item.meals||[]).map(m => `<div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0"><div class="overflow-hidden"><span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType||'meal'}</span><span class="font-medium text-gray-300 truncate">${m.name}</span></div><span class="text-gray-400 whitespace-nowrap ml-2">${m.calories} Cal</span></div>`).join('')}</div></div>`;
+            
+            let logHtml = '';
+            
+            // Meals
+            if(item.meals && item.meals.length > 0) {
+                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Meals</div>`;
+                logHtml += item.meals.map(m => `
+                    <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
+                        <div class="overflow-hidden"><span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType||'meal'}</span><span class="font-medium text-gray-300 truncate">${m.name}</span></div>
+                        <span class="text-gray-400 whitespace-nowrap ml-2">${m.calories} Cal</span>
+                    </div>
+                `).join('');
+            }
+            
+            // Workouts
+            if(item.workouts && item.workouts.length > 0) {
+                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Workouts</div>`;
+                logHtml += item.workouts.map(w => `
+                    <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
+                        <div class="overflow-hidden"><span class="text-[10px] text-blue-400 uppercase bg-blue-900/20 px-1 rounded mr-1">BURN</span><span class="font-medium text-gray-300 truncate">${w.description}</span></div>
+                        <span class="text-green-400 whitespace-nowrap ml-2">-${w.calories} Cal</span>
+                    </div>
+                `).join('');
+            }
+
+            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
         }
 
         function renderStarInput(rating) {
@@ -1329,7 +1389,9 @@
             if (!item) item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
             document.getElementById('edit-weight').value = item.weightLbs || ''; document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
             const container = document.getElementById('meal-inputs-container'); container.innerHTML = '';
+            const workoutContainer = document.getElementById('workout-inputs-container'); workoutContainer.innerHTML = '';
             if (item.meals && item.meals.length > 0) item.meals.forEach(m => addMealInput(m)); else addMealInput(); 
+            if (item.workouts && item.workouts.length > 0) item.workouts.forEach(w => addWorkoutInput(w));
             document.getElementById('nutrition-modal').classList.remove('hidden');
         }
         function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
@@ -1338,12 +1400,19 @@
             div.innerHTML = `<div class="flex gap-2 mb-2"><select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health"><option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option><option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option><option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option><option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option></select><input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health"><button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div><div class="grid grid-cols-5 gap-2"><div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div></div>`;
             container.appendChild(div);
         }
+        function addWorkoutInput(data = {}) {
+            const container = document.getElementById('workout-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 workout-row";
+            div.innerHTML = `<div class="flex gap-2 items-center"><input type="text" placeholder="Workout Description" value="${data.description || ''}" class="workout-desc flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><input type="number" placeholder="Cal Burned" value="${data.calories || ''}" class="workout-cal w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><button onclick="this.closest('.workout-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div>`;
+            container.appendChild(div);
+        }
         function saveNutrition() {
             const ymd = toLocalYMD(appState.currentDate); const weight = parseFloat(document.getElementById('edit-weight').value) || 0; const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
             const mealRows = document.querySelectorAll('.meal-row');
             const meals = Array.from(mealRows).map(row => ({ mealType: row.querySelector('.meal-type').value, name: row.querySelector('.meal-name').value, calories: parseFloat(row.querySelector('.meal-cal').value) || 0, protein: parseFloat(row.querySelector('.meal-pro').value) || 0, carbs: parseFloat(row.querySelector('.meal-carb').value) || 0, fat: parseFloat(row.querySelector('.meal-fat').value) || 0, fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0 })).filter(m => m.name.trim() !== ""); 
+            const workoutRows = document.querySelectorAll('.workout-row');
+            const workouts = Array.from(workoutRows).map(row => ({ description: row.querySelector('.workout-desc').value, calories: parseFloat(row.querySelector('.workout-cal').value) || 0 })).filter(w => w.description.trim() !== "");
             let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
-            const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals };
+            const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals, workouts: workouts };
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
         }
@@ -1361,8 +1430,13 @@
                 if (item) { 
                     let dailyCal = 0; 
                     (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
+                    
+                    let dailyBurn = 0;
+                    (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
+                    
                     const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
-                    totalDeficit += (dailyCal - tdee); 
+                    // Deficit = (Food - Burned) - TDEE
+                    totalDeficit += ((dailyCal - dailyBurn) - tdee); 
                     daysCounted++; 
                 }
                 loopDate.setDate(loopDate.getDate() + 1);
