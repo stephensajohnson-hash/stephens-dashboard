@@ -126,10 +126,14 @@
                 <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                        <!-- Add Team Form -->
+                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase">Add Team</h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
+                                <span id="team-form-title">Add Team</span>
+                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
+                            </h4>
                             <div class="space-y-3">
+                                <input type="hidden" id="team-edit-id">
                                 <div>
                                     <label class="text-xs text-gray-500">League</label>
                                     <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
@@ -150,7 +154,7 @@
                                     <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
                                     <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
                                 </div>
-                                <button onclick="addTeam()" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
+                                <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
 
@@ -504,6 +508,7 @@
         
         function closeSportsManager() {
             document.getElementById('sports-manager-modal').classList.add('hidden');
+            resetTeamForm();
         }
         
         function switchSportsTab(tab) {
@@ -522,7 +527,10 @@
             container.innerHTML = appState.data.leagues.map(l => `
                 <div class="flex justify-between items-center bg-gray-700 p-2 rounded">
                     <span>${l}</span>
-                    <button onclick="deleteLeague('${l}')" class="text-red-400 hover:text-red-200">&times;</button>
+                    <div class="flex gap-2">
+                         <button onclick="editLeague('${l}')" class="text-gray-400 hover:text-white">✎</button>
+                         <button onclick="deleteLeague('${l}')" class="text-red-400 hover:text-red-200">&times;</button>
+                    </div>
                 </div>
             `).join('');
         }
@@ -537,6 +545,22 @@
             }
         }
         
+        function editLeague(oldName) {
+            const newName = prompt("Rename league:", oldName);
+            if (newName && newName.trim() !== "" && newName !== oldName) {
+                const idx = appState.data.leagues.indexOf(oldName);
+                if (idx !== -1) {
+                    appState.data.leagues[idx] = newName;
+                    // Cascade update teams
+                    appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
+                    // Cascade update items
+                    appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
+                    saveData();
+                    renderLeaguesList();
+                }
+            }
+        }
+
         function deleteLeague(name) {
             if(!confirm(`Delete league ${name}?`)) return;
             appState.data.leagues = appState.data.leagues.filter(l => l !== name);
@@ -546,7 +570,9 @@
         
         function renderTeamFilter() {
             const sel = document.getElementById('filter-league-select');
+            const currentVal = sel.value;
             sel.innerHTML = `<option value="all">All Leagues</option>` + appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            sel.value = currentVal || 'all';
             
             const addSel = document.getElementById('team-league-select');
             addSel.innerHTML = appState.data.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
@@ -568,33 +594,66 @@
                     </div>
                     <div class="flex items-center gap-2">
                          <button onclick="toggleTeamFav('${t.id}')" class="${t.isFavorite ? 'text-yellow-400' : 'text-gray-600'} hover:text-yellow-200">★</button>
+                         <button onclick="editTeam('${t.id}')" class="text-gray-400 hover:text-white">✎</button>
                          <button onclick="deleteTeam('${t.id}')" class="text-red-400 hover:text-red-200">&times;</button>
                     </div>
                 </div>
             `).join('');
         }
         
-        function addTeam() {
+        function saveTeamForm() {
             const league = document.getElementById('team-league-select').value;
             const name = document.getElementById('team-name-input').value;
             const abbrev = document.getElementById('team-abbrev-input').value;
             const logo = document.getElementById('team-logo-input').value;
             const fav = document.getElementById('team-fav-input').checked;
+            const editId = document.getElementById('team-edit-id').value;
             
             if(!league || !name || !abbrev) return alert("Fill required fields");
             
-            appState.data.teams.push({
-                id: `t_${Date.now()}`,
+            const teamObj = {
+                id: editId || `t_${Date.now()}`,
                 league, name, abbrev, logo, isFavorite: fav
-            });
+            };
+
+            if (editId) {
+                const idx = appState.data.teams.findIndex(t => t.id === editId);
+                if (idx !== -1) appState.data.teams[idx] = teamObj;
+            } else {
+                appState.data.teams.push(teamObj);
+            }
             
-            // Clear inputs
+            saveData();
+            resetTeamForm();
+            renderTeamsList();
+        }
+
+        function editTeam(id) {
+            const team = appState.data.teams.find(t => t.id === id);
+            if (team) {
+                document.getElementById('team-edit-id').value = team.id;
+                document.getElementById('team-league-select').value = team.league;
+                document.getElementById('team-name-input').value = team.name;
+                document.getElementById('team-abbrev-input').value = team.abbrev;
+                document.getElementById('team-logo-input').value = team.logo;
+                document.getElementById('team-fav-input').checked = team.isFavorite;
+                
+                document.getElementById('team-form-title').innerText = "Edit Team";
+                document.getElementById('team-form-btn').innerText = "Update Team";
+                document.getElementById('team-form-cancel').classList.remove('hidden');
+            }
+        }
+
+        function resetTeamForm() {
+            document.getElementById('team-edit-id').value = '';
             document.getElementById('team-name-input').value = '';
             document.getElementById('team-abbrev-input').value = '';
             document.getElementById('team-logo-input').value = '';
+            document.getElementById('team-fav-input').checked = false;
             
-            saveData();
-            renderTeamsList();
+            document.getElementById('team-form-title').innerText = "Add Team";
+            document.getElementById('team-form-btn').innerText = "Save Team";
+            document.getElementById('team-form-cancel').classList.add('hidden');
         }
         
         function deleteTeam(id) {
@@ -779,8 +838,6 @@
 
             const tooltip = document.getElementById('hover-card-container');
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
-            
-            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -812,16 +869,12 @@
         // --- TEAM LOGIC ---
         function getTeamRecord(teamId) {
             let wins = 0, losses = 0, ties = 0;
-            // Get the specific game we are rendering to serve as the "end date" for record calculation
-            // However, this function is called inside renderCard which doesn't pass the current item ID easily in this scope
-            // Simplified: calculate record up to the current viewing day of the calendar appState.currentDate
-            // This ensures "Past" records are static, but "Future" records don't include games that haven't happened yet relative to the view
             const cutoffDate = toLocalYMD(appState.currentDate);
 
             const sportsItems = appState.data.items.filter(i => 
                 i.type === 'sports' && 
                 i.status === 'completed' && 
-                i.date <= cutoffDate // Sort ensures this works, but explict check is safer
+                i.date <= cutoffDate 
             );
             
             sportsItems.forEach(g => {
