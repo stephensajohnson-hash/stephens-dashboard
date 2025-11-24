@@ -977,19 +977,22 @@
       "season": "2025/2026"
     },
     {
-      "id": "gm_11",
-      "date": "2025-10-22",
       "type": "sports",
       "category": "personal",
       "title": "OXF @ WRE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_oxford",
-      "homeScore": 0,
-      "awayScore": 1,
-      "status": "completed",
+      "homeScore": 1,
+      "awayScore": 0,
       "startTime": "19:45",
-      "season": "2025/2026"
+      "status": "completed",
+      "season": "2025/2026",
+      "id": "gm_11",
+      "date": "2025-10-22"
     },
     {
       "id": "gm_12",
@@ -1025,19 +1028,22 @@
       "season": "2025/2026"
     },
     {
-      "id": "gm_13",
-      "date": "2025-10-31",
       "type": "sports",
       "category": "personal",
       "title": "COV @ WRE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_coventry",
-      "homeScore": 2,
-      "awayScore": 3,
-      "status": "completed",
+      "homeScore": 3,
+      "awayScore": 2,
       "startTime": "20:00",
-      "season": "2025/2026"
+      "status": "completed",
+      "season": "2025/2026",
+      "id": "gm_13",
+      "date": "2025-10-31"
     },
     {
       "type": "sports",
@@ -1109,19 +1115,22 @@
       "rating": 7
     },
     {
-      "id": "gm_15",
-      "date": "2025-11-08",
       "type": "sports",
       "category": "personal",
       "title": "CHA @ WRE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_charlton",
-      "homeScore": 0,
-      "awayScore": 1,
+      "homeScore": 1,
+      "awayScore": 0,
+      "startTime": "09:00",
       "status": "completed",
-      "startTime": "15:00",
-      "season": "2025/2026"
+      "season": "2025/2026",
+      "id": "gm_15",
+      "date": "2025-11-08"
     },
     {
       "id": "media_1763880683145",
@@ -1301,6 +1310,12 @@
           "fat": 46,
           "fiber": 0
         }
+      ],
+      "workouts": [
+        {
+          "description": "Walk - 1 Mile",
+          "calories": 295
+        }
       ]
     },
     {
@@ -1325,7 +1340,8 @@
       "imgUrl": "https://d35aaqx5ub95lt.cloudfront.net/vendor/70a4be81077a8037698067f583816ff9.svg",
       "notes": "",
       "description": "",
-      "streakCount": 1495
+      "streakCount": 1495,
+      "status": "completed"
     },
     {
       "id": "meeting_1763876254816",
