@@ -163,14 +163,6 @@
       "isFavorite": false
     },
     {
-      "id": "t_1764002849508",
-      "league": "NFL",
-      "name": "Ney York Giants",
-      "abbrev": "NYG",
-      "logo": "https://static.www.nfl.com/image/private/f_auto/league/grhjkahghjkk17v43hdx",
-      "isFavorite": false
-    },
-    {
       "id": "t_1764002868173",
       "league": "NFL",
       "name": "Los Angeles Chargers",
@@ -249,20 +241,262 @@
       "abbrev": "TEN",
       "logo": "https://static.www.nfl.com/image/private/f_auto/league/pln44vuzugjgipyidsre",
       "isFavorite": false
+    },
+    {
+      "id": "t_1764003675953",
+      "league": "NFL",
+      "name": "New York Giants",
+      "abbrev": "NYG",
+      "logo": "https://static.www.nfl.com/image/private/f_auto/league/t6mhdmgizi6qhndh8b9p",
+      "isFavorite": false
+    },
+    {
+      "id": "t_1764003729037",
+      "league": "NFL",
+      "name": "New Orleans Saints",
+      "abbrev": "NO",
+      "logo": "https://static.www.nfl.com/image/private/f_auto/league/grhjkahghjkk17v43hdx",
+      "isFavorite": false
+    },
+    {
+      "id": "t_1764003843092",
+      "league": "NFL",
+      "name": "Las Vegas Raiders",
+      "abbrev": "LV",
+      "logo": "https://static.www.nfl.com/image/private/f_auto/league/gzcojbzcyjgubgyb6xf2",
+      "isFavorite": false
     }
   ],
   "items": [
     {
-      "id": "evt_1732190000",
-      "date": "2025-11-21",
-      "type": "meeting",
-      "category": "work",
-      "title": "Dev Update",
-      "description": "Discuss new ticketing app - Halo.  What does it look like when you have a really long description or lots and lots of notes.",
-      "linkUrl": "https://pbfcm.haloitsm.com/auth/Account/Login?ReturnUrl=%2Fauth%2Fauthorize%3Fclient_id%3D24fe0a24-85d5-46d4-b9c6-721e23f25843%26response_type%3Dcode%26scope%3Dall%26redirect_uri%3Dhttps%253a%252f%252fpbfcm.haloitsm.com%252fauth%26act_as%3Dnull%26code_challenge%3DhQYOkBk5D_MjsMF_U-ta_7v86asVlv1HMrkMMHugpso%26code_challenge_method%3DS256%26state%3DiYXULfy449y68SVtiR5DZszO_ATThHLFBOvMDouGaCY%26nonce%3DnOulh-JJxyD1UIjwagLy5tNRX7poBQY6rA2YuRV0Mc4",
-      "imgUrl": "https://images.g2crowd.com/uploads/product/image/large_detail/large_detail_7dce5599088218a5aa1848e2d98956d0/haloitsm.png",
-      "startTime": "09:00",
-      "durationMinutes": 60
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ PHI",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002423043",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 24,
+      "awayScore": 20,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764003170445",
+      "date": "2025-09-04"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "NYG @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Win in OT",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764003675953",
+      "homeScore": 40,
+      "awayScore": 37,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764003598692",
+      "date": "2025-09-14"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "CHI @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002630341",
+      "homeScore": 14,
+      "awayScore": 31,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004008011",
+      "date": "2025-09-21"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "GB @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Tied in OT",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002723189",
+      "homeScore": 40,
+      "awayScore": 40,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004136094",
+      "date": "2025-09-28"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ NYJ",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002950260",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 22,
+      "awayScore": 37,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004197390",
+      "date": "2025-10-05"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ CAR",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002596231",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 44,
+      "awayScore": 24,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004256599",
+      "date": "2025-10-12"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ WAS",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764003004361",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 22,
+      "awayScore": 44,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004290698",
+      "date": "2025-10-19"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ DEN",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002666538",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 44,
+      "awayScore": 24,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004342335",
+      "date": "2025-10-26"
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ ARI",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002303095",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 27,
+      "awayScore": 17,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004387929",
+      "date": "2025-11-03"
+    },
+    {
+      "id": "media_1763879284316",
+      "date": "2025-11-07",
+      "type": "media",
+      "category": "general",
+      "title": "A Newport Christmas",
+      "linkUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghsIgNB2pR1QPhM9Hrbv65EJ4wdVdIQr66OJvfcrdXvcgZmulxrUkL473sDAs8xUSpvAwIWslTuzLySjLjM1t65Kx5FjOx2O8HH0dpp7-skevXXc6yUixkrjoWxCzI3sjJCfYPwAuwPq7KtgcLuL-uKK3ySrf9rjl8p347To-EPaYDZ8ZIx1ps/w426-h640/newport%20christmas.jpg",
+      "imgUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghsIgNB2pR1QPhM9Hrbv65EJ4wdVdIQr66OJvfcrdXvcgZmulxrUkL473sDAs8xUSpvAwIWslTuzLySjLjM1t65Kx5FjOx2O8HH0dpp7-skevXXc6yUixkrjoWxCzI3sjJCfYPwAuwPq7KtgcLuL-uKK3ySrf9rjl8p347To-EPaYDZ8ZIx1ps/w426-h640/newport%20christmas.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6
+    },
+    {
+      "id": "media_1763879501069",
+      "date": "2025-11-08",
+      "type": "media",
+      "category": "general",
+      "title": "A Silent Night",
+      "linkUrl": "https://m.media-amazon.com/images/I/81GtLnxLD3L._SY445_.jpg",
+      "imgUrl": "https://m.media-amazon.com/images/I/81GtLnxLD3L._SY445_.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7
+    },
+    {
+      "id": "media_1763880124328",
+      "date": "2025-11-08",
+      "type": "media",
+      "category": "personal",
+      "title": "A Bramble House Christmas",
+      "linkUrl": "https://hallmark.brightspotcdn.com/dims4/default/d118f23/2147483647/strip/true/crop/1440x560+0+0/resize/1440x560!/format/webp/quality/90/?url=http%3A%2F%2Fhallmark-channel-brightspot.s3.amazonaws.com%2F7b%2Fc1%2Ffc1809904d8f50c333cfb96c6280%2Fhp17-slide-abramblehousechristmas-1440x560-gen.jpg",
+      "imgUrl": "https://hallmark.brightspotcdn.com/dims4/default/d118f23/2147483647/strip/true/crop/1440x560+0+0/resize/1440x560!/format/webp/quality/90/?url=http%3A%2F%2Fhallmark-channel-brightspot.s3.amazonaws.com%2F7b%2Fc1%2Ffc1809904d8f50c333cfb96c6280%2Fhp17-slide-abramblehousechristmas-1440x560-gen.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7
+    },
+    {
+      "id": "media_1763880683145",
+      "date": "2025-11-09",
+      "type": "media",
+      "category": "general",
+      "title": "Dr. Suess The Grinch",
+      "linkUrl": "https://m.media-amazon.com/images/I/51EOVpsW1xL._AC_SL1427_.jpg",
+      "imgUrl": "https://m.media-amazon.com/images/I/51EOVpsW1xL._AC_SL1427_.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7
+    },
+    {
+      "id": "media_1763880949443",
+      "date": "2025-11-16",
+      "type": "media",
+      "category": "general",
+      "title": "A Grandpa for Christmas",
+      "linkUrl": "https://raresunrise.com/wp-content/uploads/2025/03/Untitled-design-2.jpg",
+      "imgUrl": "https://raresunrise.com/wp-content/uploads/2025/03/Untitled-design-2.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 5
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ LV",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764003843092",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": 16,
+      "awayScore": 33,
+      "startTime": "",
+      "status": "completed",
+      "id": "sports_1764004459477",
+      "date": "2025-11-17"
     },
     {
       "id": "habit_1732210000",
@@ -330,6 +564,35 @@
       ]
     },
     {
+      "id": "evt_1732190000",
+      "date": "2025-11-21",
+      "type": "meeting",
+      "category": "work",
+      "title": "Dev Update",
+      "description": "Discuss new ticketing app - Halo.  What does it look like when you have a really long description or lots and lots of notes.",
+      "linkUrl": "https://pbfcm.haloitsm.com/auth/Account/Login?ReturnUrl=%2Fauth%2Fauthorize%3Fclient_id%3D24fe0a24-85d5-46d4-b9c6-721e23f25843%26response_type%3Dcode%26scope%3Dall%26redirect_uri%3Dhttps%253a%252f%252fpbfcm.haloitsm.com%252fauth%26act_as%3Dnull%26code_challenge%3DhQYOkBk5D_MjsMF_U-ta_7v86asVlv1HMrkMMHugpso%26code_challenge_method%3DS256%26state%3DiYXULfy449y68SVtiR5DZszO_ATThHLFBOvMDouGaCY%26nonce%3DnOulh-JJxyD1UIjwagLy5tNRX7poBQY6rA2YuRV0Mc4",
+      "imgUrl": "https://images.g2crowd.com/uploads/product/image/large_detail/large_detail_7dce5599088218a5aa1848e2d98956d0/haloitsm.png",
+      "startTime": "09:00",
+      "durationMinutes": 60
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "NYG @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_dal",
+      "awayTeamId": "t_nyg",
+      "homeScore": 28,
+      "awayScore": 14,
+      "startTime": "15:30",
+      "status": "completed",
+      "id": "game_1732220000",
+      "date": "2025-11-21"
+    },
+    {
       "id": "health_1763875853692",
       "date": "2025-11-22",
       "type": "health",
@@ -385,19 +648,6 @@
       "status": "completed"
     },
     {
-      "id": "meeting_1763876254816",
-      "date": "2025-11-22",
-      "type": "meeting",
-      "category": "work",
-      "title": "Meet with Sharleen",
-      "linkUrl": "http:\\\\www.google.com",
-      "imgUrl": "\\images\\favicon.png",
-      "description": "Shar cleaning upstairs closet and bonus room - changing table legs.",
-      "startTime": "10:00",
-      "durationMinutes": 300,
-      "timeSpentMinutes": 440
-    },
-    {
       "id": "habit_1763876467918",
       "date": "2025-11-22",
       "type": "habit",
@@ -410,77 +660,17 @@
       "streakCount": 1495
     },
     {
+      "id": "meeting_1763876254816",
+      "date": "2025-11-22",
       "type": "meeting",
       "category": "work",
-      "title": "Conversion Review",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "Short meeting because multiple people were out on PTO or unavailable - Thanksgiving week!",
-      "startTime": "09:00",
-      "durationMinutes": 60,
-      "timeSpentMinutes": 15,
-      "id": "meeting_1763878668966",
-      "date": "2025-11-24"
-    },
-    {
-      "id": "media_1763879284316",
-      "date": "2025-11-07",
-      "type": "media",
-      "category": "general",
-      "title": "A Newport Christmas",
-      "linkUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghsIgNB2pR1QPhM9Hrbv65EJ4wdVdIQr66OJvfcrdXvcgZmulxrUkL473sDAs8xUSpvAwIWslTuzLySjLjM1t65Kx5FjOx2O8HH0dpp7-skevXXc6yUixkrjoWxCzI3sjJCfYPwAuwPq7KtgcLuL-uKK3ySrf9rjl8p347To-EPaYDZ8ZIx1ps/w426-h640/newport%20christmas.jpg",
-      "imgUrl": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEghsIgNB2pR1QPhM9Hrbv65EJ4wdVdIQr66OJvfcrdXvcgZmulxrUkL473sDAs8xUSpvAwIWslTuzLySjLjM1t65Kx5FjOx2O8HH0dpp7-skevXXc6yUixkrjoWxCzI3sjJCfYPwAuwPq7KtgcLuL-uKK3ySrf9rjl8p347To-EPaYDZ8ZIx1ps/w426-h640/newport%20christmas.jpg",
-      "notes": "",
-      "description": "",
-      "rating": 6
-    },
-    {
-      "id": "media_1763879501069",
-      "date": "2025-11-08",
-      "type": "media",
-      "category": "general",
-      "title": "A Silent Night",
-      "linkUrl": "https://m.media-amazon.com/images/I/81GtLnxLD3L._SY445_.jpg",
-      "imgUrl": "https://m.media-amazon.com/images/I/81GtLnxLD3L._SY445_.jpg",
-      "notes": "",
-      "description": "",
-      "rating": 7
-    },
-    {
-      "id": "media_1763880124328",
-      "date": "2025-11-08",
-      "type": "media",
-      "category": "personal",
-      "title": "A Bramble House Christmas",
-      "linkUrl": "https://hallmark.brightspotcdn.com/dims4/default/d118f23/2147483647/strip/true/crop/1440x560+0+0/resize/1440x560!/format/webp/quality/90/?url=http%3A%2F%2Fhallmark-channel-brightspot.s3.amazonaws.com%2F7b%2Fc1%2Ffc1809904d8f50c333cfb96c6280%2Fhp17-slide-abramblehousechristmas-1440x560-gen.jpg",
-      "imgUrl": "https://hallmark.brightspotcdn.com/dims4/default/d118f23/2147483647/strip/true/crop/1440x560+0+0/resize/1440x560!/format/webp/quality/90/?url=http%3A%2F%2Fhallmark-channel-brightspot.s3.amazonaws.com%2F7b%2Fc1%2Ffc1809904d8f50c333cfb96c6280%2Fhp17-slide-abramblehousechristmas-1440x560-gen.jpg",
-      "notes": "",
-      "description": "",
-      "rating": 7
-    },
-    {
-      "id": "media_1763880683145",
-      "date": "2025-11-09",
-      "type": "media",
-      "category": "general",
-      "title": "Dr. Suess The Grinch",
-      "linkUrl": "https://m.media-amazon.com/images/I/51EOVpsW1xL._AC_SL1427_.jpg",
-      "imgUrl": "https://m.media-amazon.com/images/I/51EOVpsW1xL._AC_SL1427_.jpg",
-      "notes": "",
-      "description": "",
-      "rating": 7
-    },
-    {
-      "id": "media_1763880949443",
-      "date": "2025-11-16",
-      "type": "media",
-      "category": "general",
-      "title": "A Grandpa for Christmas",
-      "linkUrl": "https://raresunrise.com/wp-content/uploads/2025/03/Untitled-design-2.jpg",
-      "imgUrl": "https://raresunrise.com/wp-content/uploads/2025/03/Untitled-design-2.jpg",
-      "notes": "",
-      "description": "",
-      "rating": 5
+      "title": "Meet with Sharleen",
+      "linkUrl": "http:\\\\www.google.com",
+      "imgUrl": "\\images\\favicon.png",
+      "description": "Shar cleaning upstairs closet and bonus room - changing table legs.",
+      "startTime": "10:00",
+      "durationMinutes": 300,
+      "timeSpentMinutes": 440
     },
     {
       "id": "habit_1763995021433",
@@ -496,6 +686,57 @@
       "status": "completed"
     },
     {
+      "id": "health_1763997447224",
+      "date": "2025-11-23",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "2 Slices Bacon",
+          "calories": 86,
+          "protein": 5,
+          "carbs": 7,
+          "fat": 0,
+          "fiber": 0
+        },
+        {
+          "mealType": "dinner",
+          "name": "Juan Pablos - Beef Fajita Quasadillas - no rice no beans - crispy beef taco",
+          "calories": 1280,
+          "protein": 71,
+          "carbs": 79,
+          "fat": 82,
+          "fiber": 0
+        }
+      ]
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "PHI @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Eagles scored first 21 points and then Cowboys came back to score the next 24 - winning with a last second field goal!",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002423043",
+      "homeScore": 24,
+      "awayScore": 21,
+      "startTime": "15:30",
+      "status": "completed",
+      "id": "sports_1764002505033",
+      "date": "2025-11-23"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -505,6 +746,56 @@
       "description": "",
       "streakCount": 1497,
       "id": "habit_1763995051110",
+      "date": "2025-11-24"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Daniel Out Today",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1763996153218",
+      "date": "2025-11-24"
+    },
+    {
+      "id": "health_1763997678227",
+      "date": "2025-11-24",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 eggs, 2 bacon, 1/2 cup salso",
+          "calories": 400,
+          "protein": 31,
+          "carbs": 6,
+          "fat": 28.3,
+          "fiber": 0
+        }
+      ]
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Short meeting because multiple people were out on PTO or unavailable - Thanksgiving week!",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 15,
+      "id": "meeting_1763878668966",
       "date": "2025-11-24"
     },
     {
@@ -544,6 +835,23 @@
       "streakCount": 1500
     },
     {
+      "type": "sports",
+      "category": "personal",
+      "title": "KC @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002826388",
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "15:30",
+      "status": "scheduled",
+      "id": "sports_1764004686169",
+      "date": "2025-11-27"
+    },
+    {
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
@@ -578,77 +886,6 @@
       "id": "habit_1764482400000_r08yh",
       "date": "2025-11-30",
       "streakCount": 1503
-    },
-    {
-      "type": "task",
-      "category": "work",
-      "title": "Daniel Out Today",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "",
-      "ticketNumber": "",
-      "status": "completed",
-      "id": "task_1763996153218",
-      "date": "2025-11-24"
-    },
-    {
-      "id": "health_1763997447224",
-      "date": "2025-11-23",
-      "type": "health",
-      "category": "personal",
-      "weightLbs": 270,
-      "goals": {
-        "tdee": 2816,
-        "calorieGoal": 2220,
-        "protein": 167,
-        "fat": 150,
-        "netCarbs": 100
-      },
-      "meals": [
-        {
-          "mealType": "lunch",
-          "name": "2 Slices Bacon",
-          "calories": 86,
-          "protein": 5,
-          "carbs": 7,
-          "fat": 0,
-          "fiber": 0
-        },
-        {
-          "mealType": "dinner",
-          "name": "Juan Pablos - Beef Fajita Quasadillas - no rice no beans - crispy beef taco",
-          "calories": 1280,
-          "protein": 71,
-          "carbs": 79,
-          "fat": 82,
-          "fiber": 0
-        }
-      ]
-    },
-    {
-      "id": "health_1763997678227",
-      "date": "2025-11-24",
-      "type": "health",
-      "category": "personal",
-      "weightLbs": 270,
-      "goals": {
-        "tdee": 2816,
-        "calorieGoal": 2220,
-        "protein": 167,
-        "fat": 150,
-        "netCarbs": 100
-      },
-      "meals": [
-        {
-          "mealType": "breakfast",
-          "name": "4 eggs, 2 bacon, 1/2 cup salso",
-          "calories": 400,
-          "protein": 31,
-          "carbs": 6,
-          "fat": 28.3,
-          "fiber": 0
-        }
-      ]
     },
     {
       "type": "habit",
@@ -697,6 +934,23 @@
       "id": "habit_1764828000000_x7j0o",
       "date": "2025-12-04",
       "streakCount": 1507
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ DET",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002683497",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "19:15",
+      "status": "scheduled",
+      "id": "sports_1764004732063",
+      "date": "2025-12-04"
     },
     {
       "type": "habit",
@@ -819,6 +1073,23 @@
       "streakCount": 1517
     },
     {
+      "type": "sports",
+      "category": "personal",
+      "title": "MIN @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002805869",
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "19:20",
+      "status": "scheduled",
+      "id": "sports_1764004782772",
+      "date": "2025-12-14"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -903,6 +1174,23 @@
       "streakCount": 1524
     },
     {
+      "type": "sports",
+      "category": "personal",
+      "title": "LAC @ DAL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764002388573",
+      "awayTeamId": "t_1764002868173",
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "12:00",
+      "status": "scheduled",
+      "id": "sports_1764004839303",
+      "date": "2025-12-21"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -949,6 +1237,23 @@
       "id": "habit_1766642400000_truhd",
       "date": "2025-12-25",
       "streakCount": 1528
+    },
+    {
+      "type": "sports",
+      "category": "personal",
+      "title": "DAL @ WAS",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "league": "NFL",
+      "homeTeamId": "t_1764003004361",
+      "awayTeamId": "t_1764002388573",
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "12:00",
+      "status": "scheduled",
+      "id": "sports_1764004894299",
+      "date": "2025-12-25"
     },
     {
       "type": "habit",
@@ -1025,53 +1330,19 @@
     {
       "type": "sports",
       "category": "personal",
-      "title": "NYG @ DAL",
+      "title": "DAL @ NYG",
       "linkUrl": "",
       "imgUrl": "",
       "description": "",
       "league": "NFL",
-      "homeTeamId": "t_dal",
-      "awayTeamId": "t_nyg",
-      "homeScore": 28,
-      "awayScore": 14,
-      "startTime": "15:30",
-      "status": "completed",
-      "id": "game_1732220000",
-      "date": "2025-11-21"
-    },
-    {
-      "type": "sports",
-      "category": "personal",
-      "title": "DAL @ PHI",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "",
-      "league": "NFL",
-      "homeTeamId": "t_1764002423043",
+      "homeTeamId": "t_1764003675953",
       "awayTeamId": "t_1764002388573",
-      "homeScore": 24,
-      "awayScore": 20,
-      "startTime": "",
-      "status": "completed",
-      "id": "sports_1764003170445",
-      "date": "2025-09-04"
-    },
-    {
-      "type": "sports",
-      "category": "personal",
-      "title": "PHI @ DAL",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "Eagles scored first 21 points and then Cowboys came back to score the next 24 - winning with a last second field goal!",
-      "league": "NFL",
-      "homeTeamId": "t_1764002388573",
-      "awayTeamId": "t_1764002423043",
-      "homeScore": 24,
-      "awayScore": 21,
-      "startTime": "15:30",
-      "status": "completed",
-      "id": "sports_1764002505033",
-      "date": "2025-11-23"
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "12:00",
+      "status": "scheduled",
+      "id": "sports_1764004951905",
+      "date": "2026-01-04"
     }
   ]
 }
