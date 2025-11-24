@@ -242,6 +242,12 @@
                              <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
                          </div>
                     </div>
+                    
+                    <!-- SEASON FIELD ADDED HERE -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
+                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
+                    </div>
 
                     <div class="flex items-center gap-2">
                         <div class="flex-1">
@@ -429,37 +435,52 @@
 
         async function loadData() {
             const idMap = new Map();
+            const teamMap = new Map(); 
+            const leagueSet = new Set();
+
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
                     const localData = JSON.parse(localStr);
                     if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    // Merge teams and leagues
-                    appState.data.leagues = localData.leagues || [];
-                    appState.data.teams = localData.teams || [];
+                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
+                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
                 }
             } catch (e) { console.warn("Error reading local storage", e); }
+            
             try {
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
                     if(jsonData.items) {
-                        jsonData.items.forEach(item => { if (!idMap.has(item.id)) idMap.set(item.id, item); });
+                        // Temporary Migration: Add Season if missing
+                        jsonData.items.forEach(item => { 
+                            if (item.type === 'sports' && !item.season) item.season = '2025/2026';
+                            if (!idMap.has(item.id)) idMap.set(item.id, item); 
+                        });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
-                    // JSON source is source of truth for Teams structure if not edited
-                    if (appState.data.teams.length === 0) appState.data.teams = jsonData.teams || [];
-                    if (appState.data.leagues.length === 0) appState.data.leagues = jsonData.leagues || [];
+                    
+                    if (jsonData.teams) {
+                        jsonData.teams.forEach(t => {
+                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
+                        });
+                    }
+                    
+                    if (jsonData.leagues) {
+                        jsonData.leagues.forEach(l => leagueSet.add(l));
+                    }
                 }
             } catch (error) { console.warn("Error fetching JSON", error); }
+
             appState.data.items = Array.from(idMap.values());
+            appState.data.teams = Array.from(teamMap.values());
+            appState.data.leagues = Array.from(leagueSet);
             
-            // AUTO-SORT BY DATE ON LOAD
+            // AUTO-SORT ITEMS BY DATE
             appState.data.items.sort((a, b) => {
-                // Sort by date string (YYYY-MM-DD)
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
-                // If same date, sort by time if available
                 const tA = a.startTime || '00:00';
                 const tB = b.startTime || '00:00';
                 if (tA < tB) return -1;
@@ -550,9 +571,7 @@
                 const idx = appState.data.leagues.indexOf(oldName);
                 if (idx !== -1) {
                     appState.data.leagues[idx] = newName;
-                    // Cascade update teams
                     appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
-                    // Cascade update items
                     appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
                     saveData();
                     renderLeaguesList();
@@ -641,7 +660,6 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
-                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -753,10 +771,7 @@
             const work = items.filter(i => i.category === 'work');
             const personal = items.filter(i => i.category !== 'work' && i.type !== 'health');
             
-            // Empty State
-            const emptyState = items.length === 0 ? `<div class="flex flex-col items-center justify-center h-48 opacity-50 mb-8"><div class="text-6xl mb-4">📭</div><div class="text-xl">No entries for this day</div></div>` : '';
-
-            let html = emptyState + `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
+            let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">`;
             // COL 1: Work
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-work">Work & Tasks</h3><button onclick="openItemModal('work', null, 'task,meeting')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
             if(work.length === 0 && items.length > 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
@@ -843,6 +858,8 @@
 
             const tooltip = document.getElementById('hover-card-container');
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
+            
+            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -872,14 +889,15 @@
         }
 
         // --- TEAM LOGIC ---
-        function getTeamRecord(teamId) {
+        function getTeamRecord(teamId, season) {
             let wins = 0, losses = 0, ties = 0;
             const cutoffDate = toLocalYMD(appState.currentDate);
 
             const sportsItems = appState.data.items.filter(i => 
                 i.type === 'sports' && 
                 i.status === 'completed' && 
-                i.date <= cutoffDate 
+                i.date <= cutoffDate &&
+                (i.season === season || (!i.season && season === '2025/2026')) // Match season logic
             );
             
             sportsItems.forEach(g => {
@@ -960,7 +978,9 @@
                     </div>
                 `;
                 if(myTeam) {
-                    content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record: <span class="text-white font-bold">${getTeamRecord(myTeam.id)}</span></div>`;
+                    // Default to current season logic if missing
+                    const seasonLabel = item.season || "2025/2026";
+                    content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record (${seasonLabel}): <span class="text-white font-bold">${getTeamRecord(myTeam.id, seasonLabel)}</span></div>`;
                 }
             }
             return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group"><div class="flex justify-between items-start"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : ''}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
@@ -1026,6 +1046,9 @@
             document.getElementById('item-startTime').value = '';
             document.getElementById('item-streak').value = '0';
             document.getElementById('item-fill-month').checked = false;
+            
+            // Default Season
+            document.getElementById('sports-season').value = '2025/2026';
 
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
@@ -1062,14 +1085,14 @@
                         populateTeamSelects(); 
                         document.getElementById('sports-time').value = item.startTime || '';
                         document.getElementById('sports-score-my').value = (item.homeTeamId === item.homeTeamId /* logic check */) ? item.homeScore : item.awayScore;
-                        // Actually complex to map back to UI "My" vs "Opp" without knowing who "My" was intended to be. 
-                        // Simplified: Just map raw home/away
+                        
                         const isFavoriteHome = appState.data.teams.find(t=>t.id===item.homeTeamId)?.isFavorite;
                         document.getElementById('sports-myteam').value = isFavoriteHome ? item.homeTeamId : item.awayTeamId;
                         document.getElementById('sports-opponent').value = isFavoriteHome ? item.awayTeamId : item.homeTeamId;
                         document.getElementById('sports-is-home').value = isFavoriteHome ? "true" : "false";
                         document.getElementById('sports-score-my').value = isFavoriteHome ? item.homeScore : item.awayScore;
                         document.getElementById('sports-score-opp').value = isFavoriteHome ? item.awayScore : item.homeScore;
+                        document.getElementById('sports-season').value = item.season || '2025/2026';
                         updateSportsLabel();
                     }
                 }
@@ -1220,6 +1243,9 @@
                 newItemBase.awayScore = isHome ? oppScore : myScore;
                 newItemBase.startTime = document.getElementById('sports-time').value;
                 newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled';
+                
+                // Capture Season Input
+                newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
             }
 
             const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
