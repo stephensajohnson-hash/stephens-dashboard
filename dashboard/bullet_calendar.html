@@ -15,7 +15,13 @@
         ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
         html { font-family: 'Inter', sans-serif; }
         .glass-panel { background: rgba(31, 41, 55, 0.7); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); }
-        .solid-panel { background: #1f2937; border: 1px solid #4b5563; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); z-index: 100; }
+        /* Solid Panel for Hover Cards - Opaque & Readable */
+        .solid-panel { 
+            background-color: #111827; 
+            border: 1px solid #4b5563; 
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.04); 
+            z-index: 100;
+        }
         #bullet-sidebar { transition: transform 0.3s ease-in-out; }
         .sidebar-open { transform: translateX(0); }
         .sidebar-closed { transform: translateX(-100%); }
@@ -425,6 +431,7 @@
                 if (localStr) {
                     const localData = JSON.parse(localStr);
                     if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
+                    // Merge teams and leagues
                     appState.data.leagues = localData.leagues || [];
                     appState.data.teams = localData.teams || [];
                 }
@@ -437,15 +444,42 @@
                         jsonData.items.forEach(item => { if (!idMap.has(item.id)) idMap.set(item.id, item); });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
+                    // JSON source is source of truth for Teams structure if not edited
                     if (appState.data.teams.length === 0) appState.data.teams = jsonData.teams || [];
                     if (appState.data.leagues.length === 0) appState.data.leagues = jsonData.leagues || [];
                 }
             } catch (error) { console.warn("Error fetching JSON", error); }
             appState.data.items = Array.from(idMap.values());
+            
+            // AUTO-SORT BY DATE ON LOAD
+            appState.data.items.sort((a, b) => {
+                // Sort by date string (YYYY-MM-DD)
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                // If same date, sort by time if available
+                const tA = a.startTime || '00:00';
+                const tB = b.startTime || '00:00';
+                if (tA < tB) return -1;
+                if (tA > tB) return 1;
+                return 0;
+            });
+
             updateUI();
         }
 
-        function saveData() { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } }
+        function saveData() { 
+            // Sort before saving
+            appState.data.items.sort((a, b) => {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                const tA = a.startTime || '00:00';
+                const tB = b.startTime || '00:00';
+                if (tA < tB) return -1;
+                if (tA > tB) return 1;
+                return 0;
+            });
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } 
+        }
         function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
         
         function downloadData() {
@@ -745,6 +779,8 @@
 
             const tooltip = document.getElementById('hover-card-container');
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
+            
+            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -776,11 +812,19 @@
         // --- TEAM LOGIC ---
         function getTeamRecord(teamId) {
             let wins = 0, losses = 0, ties = 0;
-            // Filter all sports items that are completed
-            const sportsItems = appState.data.items.filter(i => i.type === 'sports' && i.status === 'completed');
+            // Get the specific game we are rendering to serve as the "end date" for record calculation
+            // However, this function is called inside renderCard which doesn't pass the current item ID easily in this scope
+            // Simplified: calculate record up to the current viewing day of the calendar appState.currentDate
+            // This ensures "Past" records are static, but "Future" records don't include games that haven't happened yet relative to the view
+            const cutoffDate = toLocalYMD(appState.currentDate);
+
+            const sportsItems = appState.data.items.filter(i => 
+                i.type === 'sports' && 
+                i.status === 'completed' && 
+                i.date <= cutoffDate // Sort ensures this works, but explict check is safer
+            );
             
             sportsItems.forEach(g => {
-                // Check if team participated
                 if (g.homeTeamId === teamId || g.awayTeamId === teamId) {
                     const isHome = g.homeTeamId === teamId;
                     const myScore = isHome ? g.homeScore : g.awayScore;
