@@ -1503,6 +1503,18 @@
       "streakCount": 1498
     },
     {
+      "type": "task",
+      "category": "work",
+      "title": "FTP Download",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Attempt to copy files with sftp using fields in the records",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764023034485",
+      "date": "2025-11-25"
+    },
+    {
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
