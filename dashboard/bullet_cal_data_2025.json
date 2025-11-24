@@ -1367,8 +1367,8 @@
       "status": "scheduled",
       "id": "sports_1764004951905",
       "date": "2026-01-04"
-    }.
-       { "id": "gm_01", "date": "2025-08-09", "type": "sports", "category": "personal", "title": "WRE @ SOU", "league": "EFL Championship", "homeTeamId": "t_southampton", "awayTeamId": "t_wrexham", "homeScore": 2, "awayScore": 1, "status": "completed", "startTime": "12:30" },
+    },
+    { "id": "gm_01", "date": "2025-08-09", "type": "sports", "category": "personal", "title": "WRE @ SOU", "league": "EFL Championship", "homeTeamId": "t_southampton", "awayTeamId": "t_wrexham", "homeScore": 2, "awayScore": 1, "status": "completed", "startTime": "12:30" },
     { "id": "gm_02", "date": "2025-08-16", "type": "sports", "category": "personal", "title": "WBA @ WRE", "league": "EFL Championship", "homeTeamId": "t_wrexham", "awayTeamId": "t_westbrom", "homeScore": 2, "awayScore": 3, "status": "completed", "startTime": "12:30" },
     { "id": "gm_03", "date": "2025-08-23", "type": "sports", "category": "personal", "title": "SHW @ WRE", "league": "EFL Championship", "homeTeamId": "t_wrexham", "awayTeamId": "t_sheffield_wed", "homeScore": 2, "awayScore": 2, "status": "completed", "startTime": "15:00" },
     { "id": "gm_04", "date": "2025-08-30", "type": "sports", "category": "personal", "title": "WRE @ MIL", "league": "EFL Championship", "homeTeamId": "t_millwall", "awayTeamId": "t_wrexham", "homeScore": 0, "awayScore": 2, "status": "completed", "startTime": "15:00" },
