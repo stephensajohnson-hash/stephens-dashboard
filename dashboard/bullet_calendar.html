@@ -6,6 +6,7 @@
     <title>Bullet Calendar</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { transition: all 0.2s ease-in-out; }
         ::-webkit-scrollbar { width: 8px; }
@@ -133,7 +134,9 @@
                 <input type="hidden" id="item-id">
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
-                    <select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()"></select>
+                    <select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()">
+                        <!-- Dynamic Options -->
+                    </select>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
@@ -144,33 +147,61 @@
                     <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
                 </div>
                 
+                <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
-                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
+                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
+                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
+                    </div>
                 </div>
                 
+                <!-- Task Fields -->
                 <div id="field-task" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
                     <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
                 </div>
                 
+                <!-- Media Fields -->
                 <div id="field-media" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating</label>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
                     <input type="hidden" id="item-rating" value="5">
                     <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
                 </div>
 
+                <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
-                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                        </div>
+                        <div class="flex items-center">
+                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
+                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                                <span>Fill rest of month?</span>
+                             </label>
+                        </div>
                     </div>
                 </div>
 
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
+                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
+                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -256,27 +287,6 @@
             if(c.includes('09')||c.includes('10')) return '🌧️';
             if(c.includes('13')) return '❄️';
             return '☁️';
-        }
-        function getWeeklyDeficit() {
-            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
-            const start = getStartOfWeek(appState.currentDate); 
-            const end = new Date(appState.currentDate); 
-            let totalDeficit = 0; 
-            let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); 
-                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { 
-                    let dailyCal = 0; 
-                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
-                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
-                    totalDeficit += (dailyCal - tdee); 
-                    daysCounted++; 
-                }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
         }
 
         // --- MAIN APP LOGIC ---
@@ -493,6 +503,8 @@
 
             const tooltip = document.getElementById('hover-card-container');
             let html = item.type === 'health' ? renderHealthCard(item) : renderCard(item);
+            
+            // Replace glass panel classes with solid panel classes for opaque background
             html = html.replace('glass-panel', 'solid-panel shadow-2xl');
             
             tooltip.innerHTML = html;
@@ -546,6 +558,14 @@
                 descriptionHtml = ''; 
             } else if(item.type === 'habit') {
                  const isChecked = item.status === 'completed';
+                 
+                 // Add Image logic
+                 if(item.imgUrl) {
+                     let imgHtml = `<img src="${item.imgUrl}" class="w-full h-32 object-cover rounded-lg mt-2 mb-2 shadow-md">`;
+                     if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
+                     content += imgHtml;
+                 }
+
                  content += `<div class="mt-2 flex items-center justify-between gap-2">
                     <div class="flex items-center gap-2">
                         <div class="text-2xl">🔥</div>
@@ -773,6 +793,28 @@
             const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals };
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
+        }
+        
+        function getWeeklyDeficit() {
+            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
+            const start = getStartOfWeek(appState.currentDate); 
+            const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; 
+            let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); 
+                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { 
+                    let dailyCal = 0; 
+                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
+                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
+                    totalDeficit += (dailyCal - tdee); 
+                    daysCounted++; 
+                }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
         }
     </script>
 </body>
