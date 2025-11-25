@@ -1145,16 +1145,16 @@
       "rating": 7
     },
     {
-      "id": "media_1763880949443",
-      "date": "2025-11-16",
       "type": "media",
       "category": "general",
       "title": "A Grandpa for Christmas",
-      "linkUrl": "https://images.seeklogo.com/logo-png/45/2/duolingo-logo-png_seeklogo-458347.png",
-      "imgUrl": "https://images.seeklogo.com/logo-png/45/2/duolingo-logo-png_seeklogo-458347.png",
+      "linkUrl": "",
+      "imgUrl": "https://m.media-amazon.com/images/M/MV5BYjI5NDNkMDMtZGZmYS00M2IxLThhYmUtNWZmZTBhNWVkOTNlXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
       "notes": "",
       "description": "",
-      "rating": 5
+      "rating": 5,
+      "id": "media_1763880949443",
+      "date": "2025-11-16"
     },
     {
       "type": "sports",
@@ -1808,6 +1808,19 @@
       "streakCount": 1504
     },
     {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106697022",
+      "date": "2025-12-01"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -1874,6 +1887,19 @@
       "streakCount": 1508
     },
     {
+      "type": "meeting",
+      "category": "work",
+      "title": "Development Update",
+      "linkUrl": "",
+      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106791559",
+      "date": "2025-12-05"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -1923,6 +1949,19 @@
       "id": "habit_1765173600000_nxkzf",
       "date": "2025-12-08",
       "streakCount": 1511
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106697022_1",
+      "date": "2025-12-08"
     },
     {
       "type": "habit",
@@ -1986,6 +2025,19 @@
       "id": "habit_1765519200000_c5lav",
       "date": "2025-12-12",
       "streakCount": 1515
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Development Update",
+      "linkUrl": "",
+      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106791559_1",
+      "date": "2025-12-12"
     },
     {
       "type": "habit",
@@ -2057,6 +2109,19 @@
       "streakCount": 1518
     },
     {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106697022_2",
+      "date": "2025-12-15"
+    },
+    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -2103,6 +2168,19 @@
       "id": "habit_1766124000000_hmtql",
       "date": "2025-12-19",
       "streakCount": 1522
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Development Update",
+      "linkUrl": "",
+      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106791559_2",
+      "date": "2025-12-19"
     },
     {
       "id": "gm_22",
@@ -2172,6 +2250,19 @@
       "id": "habit_1766383200000_i64z4",
       "date": "2025-12-22",
       "streakCount": 1525
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106697022_3",
+      "date": "2025-12-22"
     },
     {
       "type": "habit",
@@ -2313,6 +2404,19 @@
       "streakCount": 1532
     },
     {
+      "type": "meeting",
+      "category": "work",
+      "title": "Conversion Review",
+      "linkUrl": "",
+      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106697022_4",
+      "date": "2025-12-29"
+    },
+    {
       "id": "gm_24",
       "date": "2025-12-29",
       "type": "sports",
@@ -2376,6 +2480,19 @@
       "status": "scheduled",
       "startTime": "12:30",
       "season": "2025/2026"
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Development Update",
+      "linkUrl": "",
+      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
+      "description": "",
+      "startTime": "09:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764106791559_4",
+      "date": "2026-01-02"
     },
     {
       "type": "sports",
