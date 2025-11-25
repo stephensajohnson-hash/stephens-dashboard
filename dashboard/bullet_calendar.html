@@ -44,9 +44,7 @@
     <script>
         // REMOVED 'holiday' from colors to allow custom CSS .bg-holiday to work
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b', sports: '#ef4444', birthday: '#ec4899', anniversary: '#d946ef', holiday: '#3b82f6' } } } }
-        // Removed holiday from config to ensure CSS wins, but re-added to keep text color consistent if needed, 
-        // actually better to remove it from config for BG but keep for text? 
-        // Let's stick to the CSS override pattern which worked.
+        // Removed holiday from config to ensure CSS wins
         tailwind.config.theme.extend.colors.holiday = undefined; 
     </script>
 </head>
@@ -106,7 +104,7 @@
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.1</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.2</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -385,7 +383,7 @@
                     </div>
                 </div>
 
-                <!-- URL/Image (General) -->
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
                     <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
@@ -487,18 +485,13 @@
             if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
             
             let count = 0;
-            // Look for items in current year view context or maybe all items? 
-            // Let's check all items. If they are in 2025, make a 2026 copy.
             const currentYear = appState.data.meta.year || 2025;
             const nextYear = currentYear + 1;
-            
             const newItems = [];
             
             appState.data.items.forEach(item => {
                 if((item.type === 'birthday' || item.type === 'anniversary') && item.date.startsWith(currentYear)) {
-                    // Create copy for next year
                     const newDate = item.date.replace(currentYear, nextYear);
-                    // Check if already exists to avoid dupes
                     const exists = appState.data.items.some(i => i.date === newDate && i.title === item.title && i.type === item.type);
                     
                     if(!exists) {
@@ -554,7 +547,7 @@
 
         // --- MAIN APP LOGIC ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.2.1", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.2.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -975,6 +968,9 @@
             let text = item.title;
             let classes = `text-xs p-1 mb-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 hover:brightness-110 flex items-center gap-1 truncate cursor-pointer transition-all hover:shadow-md`; 
 
+            // VERTICAL STACK LAYOUT FOR HOLIDAY/BIRTHDAY/ANNIVERSARY IF IMAGE EXISTS
+            const verticalClasses = `text-xs p-1 mb-1 rounded border-l-2 ${getTypeColor(item.type)} bg-gray-800 hover:brightness-110 flex flex-col gap-1 cursor-pointer transition-all hover:shadow-md`;
+
             if (item.type === 'meeting') {
                 icon = '⏰';
                 if (item.startTime) text = `${formatTime(item.startTime)} ${item.title}`;
@@ -989,17 +985,17 @@
             } else if (item.type === 'media') {
                 icon = '🎬';
                 if(item.imgUrl) {
-                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
-                        <span class="truncate block w-full">${text}</span>
+                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <span class="truncate font-bold w-full">${text}</span>
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md">
                     </div>`;
                 }
             } else if (item.type === 'habit') {
                 icon = '🔥';
                  if(item.imgUrl) {
-                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
-                        <span class="truncate block w-full">${text}</span>
+                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <span class="truncate font-bold w-full">${text}</span>
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-contain">
                     </div>`;
                 }
             } else if (item.type === 'health') {
@@ -1008,25 +1004,25 @@
             } else if (item.type === 'holiday') {
                 icon = '🎉';
                  if(item.imgUrl) {
-                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
-                        <span class="truncate block w-full">${text}</span>
+                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <span class="truncate font-bold w-full">${icon} ${text}</span>
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md">
                     </div>`;
                 }
             } else if (item.type === 'birthday') {
                 icon = '🎂';
                  if(item.imgUrl) {
-                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
-                        <span class="truncate block w-full">${text}</span>
+                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <span class="truncate font-bold w-full">${icon} ${text}</span>
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md">
                     </div>`;
                 }
             } else if (item.type === 'anniversary') {
                 icon = '🥂';
                  if(item.imgUrl) {
-                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
-                        <span class="truncate block w-full">${text}</span>
+                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <span class="truncate font-bold w-full">${icon} ${text}</span>
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md">
                     </div>`;
                 }
             } else if (item.type === 'sports') {
@@ -1231,7 +1227,7 @@
                     <input type="checkbox" class="w-6 h-6 rounded border-green-600 text-green-600 bg-gray-700 focus:ring-green-500" ${isChecked ? 'checked' : ''} onchange="toggleHabitStatus('${item.id}', event)">
                  </div>`;
             } else if(item.type === 'holiday') {
-                // New Holiday Card
+                // New Holiday Card - Confetti Removed
                 titleHtml = `<h4 class="font-bold text-lg text-blue-300 flex items-center gap-2">${item.title}</h4>`;
                 meta = `<span class="text-xs text-gray-400">${item.isWorkHoliday ? 'Official Work Holiday' : 'Observance'}</span>`;
                 
@@ -1668,10 +1664,11 @@
                     const nextDate = new Date(baseDate);
                     nextDate.setDate(baseDate.getDate() + (w * 7));
                     const nextYMD = toLocalYMD(nextDate);
+                    const clone = JSON.parse(JSON.stringify(newItemBase)); // Shallow clone of base
                     
-                    // Manually construct clone with same properties as newItemBase
+                    // We construct the full item here for the clone
                     const finalClone = { 
-                        ...newItemBase, 
+                        ...clone, 
                         id: `${type}_${new Date().getTime()}_${w}`, 
                         date: nextYMD 
                     };
