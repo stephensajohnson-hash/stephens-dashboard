@@ -1531,7 +1531,8 @@
       "description": "",
       "id": "habit_1764050400000_v5al3",
       "date": "2025-11-25",
-      "streakCount": 1498
+      "streakCount": 1498,
+      "status": "completed"
     },
     {
       "type": "task",
@@ -1541,7 +1542,7 @@
       "imgUrl": "",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764025928085",
       "date": "2025-11-25"
     },
@@ -1570,6 +1571,66 @@
         }
       ],
       "workouts": []
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Update Budget/Bills",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764083344304",
+      "date": "2025-11-25"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Cook Aunt Kay's Blueberry Pie",
+      "linkUrl": "https://stephens-dashboard.vercel.app/recipes.html",
+      "imgUrl": "https://www.thegunnysack.com/wp-content/uploads/2013/10/Blueberry-Cheesecake-Dessert-Recipe.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764083457491",
+      "date": "2025-11-25"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Cook Turkey Gravy",
+      "linkUrl": "https://www.thegunnysack.com/wp-content/uploads/2013/10/Blueberry-Cheesecake-Dessert-Recipe.jpg",
+      "imgUrl": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764083499281",
+      "date": "2025-11-25"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Vaccuum Office",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764083516853",
+      "date": "2025-11-25"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Ask Dr. Gulde about Ozempic denial",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764085125243",
+      "date": "2025-11-25"
     },
     {
       "type": "habit",
