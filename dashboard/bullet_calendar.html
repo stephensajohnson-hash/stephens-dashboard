@@ -38,17 +38,12 @@
         /* Weekends: Subtle Slate Tint */
         .bg-weekend { background-color: rgba(30, 41, 59, 0.4); } 
         
-        /* Holidays: Color H/K - HSL(220, 45%, 22.5%) - Darker Deep Blue */
-        /* Border is 30% lighter (52.5%) */
-        .bg-holiday { 
-            background-color: hsl(220, 45%, 22.5%) !important; 
-            border-color: hsl(220, 45%, 52.5%) !important; 
-            border-width: 1px;
-        }
+        /* Holidays: Color H - HSL(220, 45%, 22.5%) - Darker Deep Blue */
+        .bg-holiday { background-color: hsl(220, 45%, 22.5%) !important; border-color: hsl(220, 45%, 52.5%) !important; border-width: 1px; }
     </style>
     <script>
-        // REMOVED 'holiday' from colors to allow custom CSS .bg-holiday to work
-        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b', sports: '#ef4444', holiday: '#3b82f6' } } } }
+        // Removed 'holiday' from colors to allow custom CSS .bg-holiday to work
+        tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, colors: { work: '#3b82f6', personal: '#10b981', media: '#8b5cf6', health: '#f59e0b', sports: '#ef4444', birthday: '#ec4899', anniversary: '#d946ef' } } } }
     </script>
 </head>
 <body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
@@ -104,9 +99,10 @@
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
+                <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.1.4</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.0</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -116,75 +112,41 @@
 
     <!-- Sports Manager Modal -->
     <div id="sports-manager-modal" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <!-- ... existing sports modal content ... -->
         <div class="bg-gray-800 rounded-2xl w-full max-w-3xl h-[80vh] flex flex-col shadow-2xl border border-gray-700">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-white">Manage Sports Data</h3>
                 <button onclick="closeSportsManager()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            
-            <!-- Tabs -->
             <div class="flex border-b border-gray-700 px-6 pt-2">
                 <button onclick="switchSportsTab('leagues')" id="tab-leagues" class="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">Leagues</button>
                 <button onclick="switchSportsTab('teams')" id="tab-teams" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Teams</button>
             </div>
-
             <div class="flex-1 overflow-y-auto p-6">
-                
-                <!-- LEAGUES TAB -->
                 <div id="view-leagues" class="block">
                     <div class="flex gap-2 mb-4">
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2">
-                        <!-- League Items -->
-                    </div>
+                    <div id="leagues-list" class="space-y-2"></div>
                 </div>
-
-                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
-                                <span id="team-form-title">Add Team</span>
-                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
-                            </h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div>
-                                    <label class="text-xs text-gray-500">League</label>
-                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Team Name</label>
-                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Abbreviation</label>
-                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Logo URL</label>
-                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
-                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
-                                </div>
+                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
+                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
+                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
-
-                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
-                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
-                            </div>
-                            <div id="teams-list" class="space-y-2">
-                                <!-- Teams injected here -->
-                            </div>
+                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
+                            <div id="teams-list" class="space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -194,6 +156,7 @@
 
     <!-- Nutrition Editor Modal -->
     <div id="nutrition-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <!-- ... existing nutrition modal ... -->
         <div class="bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl border border-gray-700">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-health">Log Nutrition</h3>
@@ -201,27 +164,13 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
-                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
-                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
-                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    
-                    <!-- Workouts Section -->
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
-                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -268,49 +217,20 @@
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
-                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
-                             </select>
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
-                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                     </div>
-                    
-                    <!-- SEASON FIELD ADDED HERE -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
-                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
-                    </div>
-
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
                     <div class="flex items-center gap-2">
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
-                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
-                        <div class="flex flex-col items-center justify-end pb-1">
-                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
-                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
-                        </div>
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
-                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
+                    <input type="hidden" id="sports-is-home" value="false">
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
-
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
-                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
-                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
                     </div>
                 </div>
 
@@ -321,72 +241,43 @@
                         <span>Work Holiday? (Day Off)</span>
                     </label>
                 </div>
-
-                <div id="common-fields">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
-                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
+                
+                <!-- Annual Recurrence (Birthdays/Anniversaries) -->
+                <div id="field-annual" class="hidden">
+                    <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-2">
+                        <input type="checkbox" id="item-add-next-year" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-pink-500 focus:ring-pink-500">
+                        <span>Also add to Next Year (2026)</span>
+                    </label>
                 </div>
+
+                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
-                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
-                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
-                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
-                    </div>
-                    <!-- Recurring Checkbox for Meetings -->
-                    <div class="col-span-2 flex items-center gap-2 mt-2">
-                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
-                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
+                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
+                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
-                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
-                </div>
+                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
-                    <input type="hidden" id="item-rating" value="5">
-                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
-                </div>
+                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
-                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
-                        </div>
-                        <div class="flex items-center">
-                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
-                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
-                                <span>Fill rest of month?</span>
-                             </label>
-                        </div>
+                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
+                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
                     </div>
                 </div>
 
-                <!-- URL/Image (General) -->
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
-                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
-                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -410,11 +301,22 @@
             return new Date(date.setDate(diff)); 
         }
         function getTypeColor(type) { 
-            const map = { 'meeting': 'border-work bg-work/10', 'task': 'border-work bg-work/5', 'habit': 'border-personal bg-personal/10', 'media': 'border-media bg-media/10', 'health': 'border-health bg-health/10', 'sports': 'border-sports bg-sports/10', 'holiday': 'border-holiday bg-holiday' }; 
+            const map = { 
+                'meeting': 'border-work bg-work/10', 
+                'task': 'border-work bg-work/5', 
+                'habit': 'border-personal bg-personal/10', 
+                'media': 'border-media bg-media/10', 
+                'health': 'border-health bg-health/10', 
+                'sports': 'border-sports bg-sports/10', 
+                'holiday': 'border-holiday bg-holiday',
+                'birthday': 'border-birthday bg-birthday/10',
+                'anniversary': 'border-anniversary bg-anniversary/10'
+            }; 
             return map[type] || 'border-gray-500'; 
         }
+        // No longer using a conflict key for holiday, uses tailwind colors only for text/dots
         function getTypeDotColor(type) { 
-            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500', 'sports': 'bg-red-500', 'holiday': 'bg-blue-600' }; 
+            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500', 'sports': 'bg-red-500', 'holiday': 'bg-blue-600', 'birthday': 'bg-pink-500', 'anniversary': 'bg-purple-500' }; 
             return map[type] || 'bg-gray-500'; 
         }
         function formatTime(timeStr) {
@@ -445,7 +347,6 @@
             return mins;
         }
         
-        // Clear dynamically added background divs
         function clearDynamicBackgrounds() {
             const existing = document.querySelectorAll('.dynamic-bg');
             existing.forEach(el => el.remove());
@@ -456,16 +357,51 @@
         function setNextBusinessDay() {
             const dateInput = document.getElementById('item-date');
             if (!dateInput.value) dateInput.value = toLocalYMD(appState.currentDate);
-            
             const current = new Date(dateInput.value + "T12:00:00");
-            const day = current.getDay(); // 0=Sun, 1=Mon, ..., 5=Fri, 6=Sat
-            
+            const day = current.getDay(); 
             let addDays = 1;
             if (day === 5) addDays = 3; // Fri -> Mon
             else if (day === 6) addDays = 2; // Sat -> Mon
-            
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
+        }
+        
+        function copyAnnualsToNextYear() {
+            if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
+            
+            let count = 0;
+            // Look for items in current year view context or maybe all items? 
+            // Let's check all items. If they are in 2025, make a 2026 copy.
+            const currentYear = appState.data.meta.year || 2025;
+            const nextYear = currentYear + 1;
+            
+            const newItems = [];
+            
+            appState.data.items.forEach(item => {
+                if((item.type === 'birthday' || item.type === 'anniversary') && item.date.startsWith(currentYear)) {
+                    // Create copy for next year
+                    const newDate = item.date.replace(currentYear, nextYear);
+                    // Check if already exists to avoid dupes
+                    const exists = appState.data.items.some(i => i.date === newDate && i.title === item.title && i.type === item.type);
+                    
+                    if(!exists) {
+                        const clone = JSON.parse(JSON.stringify(item));
+                        clone.id = `${item.type}_${new Date().getTime()}_${count}`;
+                        clone.date = newDate;
+                        newItems.push(clone);
+                        count++;
+                    }
+                }
+            });
+            
+            if(count > 0) {
+                appState.data.items.push(...newItems);
+                saveData();
+                alert(`Successfully copied ${count} items to ${nextYear}.`);
+                updateUI();
+            } else {
+                alert("No new items to copy or they already exist.");
+            }
         }
         
         function toggleSidebar() {
@@ -501,7 +437,7 @@
 
         // --- MAIN APP LOGIC ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.1.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.2.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -526,22 +462,17 @@
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
-                    // Merge Items
                     if(jsonData.items) {
                         jsonData.items.forEach(item => { 
                             if (!idMap.has(item.id)) idMap.set(item.id, item); 
                         });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
-                    
-                    // Merge Teams (JSON adds missing ones)
                     if (jsonData.teams) {
                         jsonData.teams.forEach(t => {
                             if (!teamMap.has(t.id)) teamMap.set(t.id, t);
                         });
                     }
-                    
-                    // Merge Leagues
                     if (jsonData.leagues) {
                         jsonData.leagues.forEach(l => leagueSet.add(l));
                     }
@@ -552,7 +483,6 @@
             appState.data.teams = Array.from(teamMap.values());
             appState.data.leagues = Array.from(leagueSet);
             
-            // AUTO-SORT ITEMS BY DATE
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -567,7 +497,6 @@
         }
 
         function saveData() { 
-            // Sort before saving
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -595,7 +524,6 @@
             updateUI();
         }
 
-        // --- SPORTS MANAGER LOGIC ---
         function openSportsManager() {
             document.getElementById('sports-manager-modal').classList.remove('hidden');
             switchSportsTab('leagues');
@@ -609,10 +537,8 @@
         function switchSportsTab(tab) {
             document.getElementById('tab-leagues').className = tab === 'leagues' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
             document.getElementById('tab-teams').className = tab === 'teams' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
-            
             document.getElementById('view-leagues').classList.toggle('hidden', tab !== 'leagues');
             document.getElementById('view-teams').classList.toggle('hidden', tab !== 'teams');
-            
             if(tab === 'leagues') renderLeaguesList();
             if(tab === 'teams') { renderTeamFilter(); renderTeamsList(); }
         }
@@ -646,9 +572,7 @@
                 const idx = appState.data.leagues.indexOf(oldName);
                 if (idx !== -1) {
                     appState.data.leagues[idx] = newName;
-                    // Cascade update teams
                     appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
-                    // Cascade update items
                     appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
                     saveData();
                     renderLeaguesList();
@@ -667,29 +591,21 @@
             const sel = document.getElementById('filter-league-select');
             const currentVal = sel.value;
             const leagues = [...appState.data.leagues].sort();
-
-            // Removed "All Leagues" option per request - default to first league
             sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
-            
             if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) {
                 sel.value = leagues.length > 0 ? leagues[0] : '';
             } else {
                 sel.value = currentVal;
             }
-            
-            // Populate the Add/Edit Form league select as well
             const addSel = document.getElementById('team-league-select');
             addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
         }
         
         function renderTeamsList() {
             const filter = document.getElementById('filter-league-select').value;
-            
-            // Filter teams by selected league and sort by name
             const teams = appState.data.teams
                 .filter(t => t.league === filter)
                 .sort((a, b) => a.name.localeCompare(b.name));
-            
             const container = document.getElementById('teams-list');
             container.innerHTML = teams.map(t => `
                 <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-2 rounded">
@@ -730,7 +646,6 @@
             } else {
                 appState.data.teams.push(teamObj);
             }
-            
             saveData();
             resetTeamForm();
             renderTeamsList();
@@ -750,7 +665,6 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
-                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -764,7 +678,6 @@
             document.getElementById('team-abbrev-input').value = '';
             document.getElementById('team-logo-input').value = '';
             document.getElementById('team-fav-input').checked = false;
-            
             document.getElementById('team-form-title').innerText = "Add Team";
             document.getElementById('team-form-btn').innerText = "Save Team";
             document.getElementById('team-form-cancel').classList.add('hidden');
@@ -829,8 +742,7 @@
         function goToDay(dateStr) { appState.currentDate = new Date(dateStr + "T12:00:00"); switchView('day'); }
 
         function updateUI() {
-            clearDynamicBackgrounds(); // CLEANUP BEFORE RENDER
-
+            clearDynamicBackgrounds(); 
             ['day', 'week', 'month'].forEach(v => {
                 document.getElementById(`btn-view-${v}`).className = v === appState.view ? "px-3 py-1 text-sm rounded-md bg-blue-600 text-white shadow" : "px-3 py-1 text-sm rounded-md hover:bg-gray-600 text-gray-300";
             });
@@ -855,43 +767,34 @@
             const list = document.getElementById('month-list');
             list.innerHTML = '';
             list.className = "space-y-4"; 
-
             const now = new Date(); 
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth();
-            
             const start = new Date(now.getFullYear(), now.getMonth() - 12, 1);
             const end = new Date(now.getFullYear(), now.getMonth() + 12, 1);
-            
             let iter = new Date(start);
             let currentRenderYear = -1;
             let yearContainer = null;
-
             while (iter <= end) {
                 const y = iter.getFullYear();
                 const m = iter.getMonth();
                 const mName = iter.toLocaleDateString('en-US', { month: 'short' });
-                
                 if (y !== currentRenderYear) {
                     currentRenderYear = y;
                     const yearLabel = document.createElement('div');
                     yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
                     yearLabel.innerText = y;
-                    
                     const grid = document.createElement('div');
                     grid.className = "grid grid-cols-4 gap-2";
                     yearContainer = grid;
-                    
                     const wrapper = document.createElement('div');
                     wrapper.appendChild(yearLabel);
                     wrapper.appendChild(grid);
                     list.appendChild(wrapper);
                 }
-
                 const btn = document.createElement('button');
                 const isActualCurrentMonth = (y === currentYear && m === currentMonth);
                 const isViewedMonth = (y === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
-                
                 let baseClass = "text-xs py-2 rounded text-center transition ";
                 if (isActualCurrentMonth) {
                     baseClass += "bg-purple-600 text-white font-bold shadow-lg ring-1 ring-purple-400";
@@ -900,11 +803,9 @@
                 } else {
                     baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
                 }
-
                 btn.className = baseClass;
                 btn.innerText = mName;
                 btn.onclick = ((year, month) => () => jumpToMonth(year, month))(y, m);
-                
                 yearContainer.appendChild(btn);
                 iter.setMonth(iter.getMonth() + 1);
             }
@@ -914,49 +815,40 @@
             const ymd = toLocalYMD(appState.currentDate);
             const isWeekend = appState.currentDate.getDay() === 0 || appState.currentDate.getDay() === 6;
             const holidayItem = appState.data.items.find(i => i.date === ymd && i.type === 'holiday' && i.isWorkHoliday);
-            
             let bgClass = '';
             if (holidayItem) {
                 bgClass = 'bg-holiday dynamic-bg';
             } else if (isWeekend) {
                 bgClass = 'bg-weekend dynamic-bg';
             }
-            
             if (bgClass) {
                  const bgDiv = document.createElement('div');
                  bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none`;
                  const main = document.querySelector('main');
                  main.appendChild(bgDiv);
-                 // Note: Cleanup is handled by clearDynamicBackgrounds() in updateUI
             }
-
             const items = appState.data.items.filter(i => i.date === ymd);
             const health = items.find(i => i.type === 'health');
-            const work = items.filter(i => i.category === 'work' || i.type === 'holiday'); // INCLUDED HOLIDAY
-            const personal = items.filter(i => i.category !== 'work' && i.type !== 'health');
+            const work = items.filter(i => i.category === 'work' || i.type === 'holiday' || i.type === 'birthday' || i.type === 'anniversary'); 
+            const personal = items.filter(i => i.category !== 'work' && i.type !== 'health' && i.type !== 'holiday' && i.type !== 'birthday' && i.type !== 'anniversary');
             
-            // Reset main scroll class to default to ensure clean transition
             document.getElementById('main-scroll').className = `flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900 transition-colors duration-300`;
 
             let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">`;
-            // COL 1: Work
-            html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-work">Work & Tasks</h3><button onclick="openItemModal('work', null, 'task,meeting,holiday')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
+            html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-work">Work & Tasks</h3><button onclick="openItemModal('work', null, 'task,meeting,holiday,birthday,anniversary')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
             if(work.length === 0 && items.length > 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
-            // COL 2: Personal (Includes Sports)
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-personal">Life & Media</h3><button onclick="openItemModal('personal', null, 'habit,media,sports')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
             if(personal.length === 0 && items.length > 0) html += `<p class="text-gray-500 italic text-sm">No items.</p>`;
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
-            // COL 3: Health
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-health">Health & Nutrition</h3><button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Meals">＋</button></div>`;
             if(health) html += renderHealthCard(health); 
             html += `</div></div>`;
             container.innerHTML = html;
         }
 
-        // HELPER FOR WEEK/MONTH VIEW ITEM RENDERING
         function renderItemChip(item) {
             let icon = '';
             let text = item.title;
@@ -994,6 +886,22 @@
                 text = 'Nutrition';
             } else if (item.type === 'holiday') {
                 icon = '🎉';
+                 if(item.imgUrl) {
+                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
+                        <span class="truncate block w-full">${text}</span>
+                    </div>`;
+                }
+            } else if (item.type === 'birthday') {
+                icon = '🎂';
+                 if(item.imgUrl) {
+                     return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
+                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
+                        <span class="truncate block w-full">${text}</span>
+                    </div>`;
+                }
+            } else if (item.type === 'anniversary') {
+                icon = '🥂';
                  if(item.imgUrl) {
                      return `<div class="${classes} px-1" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
                         <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-cover mb-1">
@@ -1041,7 +949,7 @@
                 let bgClass = isWeekend ? 'bg-weekend' : '';
                 if (holidayItem) bgClass = 'bg-holiday';
                 let borderClass = 'border-gray-700/50';
-                if (isToday) borderClass = 'border-yellow-500 border-2'; // Yellow Outline
+                if (isToday) borderClass = 'border-yellow-500 border-2'; 
 
                 html += `
                     <div class="glass-panel rounded-lg flex flex-col h-full border ${borderClass} ${bgClass}">
@@ -1061,15 +969,13 @@
         function renderMonthView(container) {
             const year = appState.currentDate.getFullYear(); const month = appState.currentDate.getMonth();
             const firstDay = new Date(year, month, 1); const lastDay = new Date(year, month + 1, 0);
-            const startDayIndex = (firstDay.getDay() + 6) % 7; // Mon start
+            const startDayIndex = (firstDay.getDay() + 6) % 7; 
             let html = `<div class="glass-panel rounded-2xl p-4"><div class="grid grid-cols-7 mb-2 text-center">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d => `<div class="font-bold text-gray-500 text-sm py-2">${d}</div>`).join('')}</div><div class="grid grid-cols-7 gap-2 auto-rows-fr">`;
             for(let i=0; i<startDayIndex; i++) { html += `<div class="min-h-[8rem] bg-gray-800/30 rounded-lg"></div>`; }
             for(let d=1; d<=lastDay.getDate(); d++) {
                 const currentDayStr = `${year}-${String(month+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-                
                 const dateObj = new Date(year, month, d);
                 const isWeekend = dateObj.getDay() === 0 || dateObj.getDay() === 6;
-                
                 const items = appState.data.items.filter(i => i.date === currentDayStr);
                 const isToday = currentDayStr === toLocalYMD(new Date());
                 const holidayItem = items.find(item => item.type === 'holiday' && item.isWorkHoliday);
@@ -1077,7 +983,7 @@
                 let bgClass = isWeekend ? 'bg-weekend' : 'bg-gray-800';
                 if (holidayItem) bgClass = 'bg-holiday';
                 let borderClass = 'border-gray-700 border';
-                if (isToday) borderClass = 'border-yellow-500 border-2'; // Yellow Outline
+                if (isToday) borderClass = 'border-yellow-500 border-2';
 
                 html += `
                     <div class="min-h-[8rem] rounded-lg ${borderClass} ${bgClass} p-1 flex flex-col hover:bg-gray-700 transition cursor-pointer" onclick="goToDay('${currentDayStr}')">
@@ -1193,7 +1099,7 @@
             } else if(item.type === 'habit') {
                  const isChecked = item.status === 'completed';
                  if(item.imgUrl) {
-                     let imgHtml = `<img src="${item.imgUrl}" class="max-h-[25px] w-auto max-w-full object-contain rounded mt-2 mb-2 shadow-sm">`;
+                     let imgHtml = `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded mt-2 mb-2 shadow-sm">`;
                      if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
                      content += imgHtml;
                  }
@@ -1202,12 +1108,26 @@
                     <input type="checkbox" class="w-6 h-6 rounded border-green-600 text-green-600 bg-gray-700 focus:ring-green-500" ${isChecked ? 'checked' : ''} onchange="toggleHabitStatus('${item.id}', event)">
                  </div>`;
             } else if(item.type === 'holiday') {
-                // New Holiday Card - Confetti Removed
+                // New Holiday Card
                 titleHtml = `<h4 class="font-bold text-lg text-blue-300 flex items-center gap-2">${item.title}</h4>`;
                 meta = `<span class="text-xs text-gray-400">${item.isWorkHoliday ? 'Official Work Holiday' : 'Observance'}</span>`;
                 
-                // Add Image if available
+                // Add Image if available - FULL WIDTH
                 if(item.imgUrl) {
+                    let imgHtml = `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded-lg mt-2 mb-2 shadow-md">`;
+                    if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
+                    content += imgHtml;
+                }
+            } else if(item.type === 'birthday') {
+                titleHtml = `<h4 class="font-bold text-lg text-pink-400 flex items-center gap-2">🎂 ${item.title}</h4>`;
+                 if(item.imgUrl) {
+                    let imgHtml = `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded-lg mt-2 mb-2 shadow-md">`;
+                    if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
+                    content += imgHtml;
+                }
+            } else if(item.type === 'anniversary') {
+                titleHtml = `<h4 class="font-bold text-lg text-purple-400 flex items-center gap-2">🥂 ${item.title}</h4>`;
+                 if(item.imgUrl) {
                     let imgHtml = `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded-lg mt-2 mb-2 shadow-md">`;
                     if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
                     content += imgHtml;
@@ -1354,11 +1274,13 @@
                 'media': 'Media (Movie/Show)',
                 'health': 'Nutrition Log',
                 'sports': 'Sports Game',
-                'holiday': 'Holiday'
+                'holiday': 'Holiday',
+                'birthday': 'Birthday',
+                'anniversary': 'Anniversary'
             };
             
             // Convert string to array for robust handling from HTML attributes
-            const typesList = allowedTypes ? allowedTypes.split(',') : ['task','meeting','habit','media','sports', 'holiday'];
+            const typesList = allowedTypes ? allowedTypes.split(',') : ['task','meeting','habit','media','sports', 'holiday', 'birthday', 'anniversary'];
             
             typesList.forEach(t => {
                 if(typeMap[t]) {
@@ -1378,6 +1300,9 @@
             document.getElementById('item-fill-month').checked = false;
             // DEFAULT "Work Holiday" to TRUE
             document.getElementById('item-is-work-holiday').checked = true;
+            // Uncheck recurring on new
+            document.getElementById('item-recur-weekly').checked = false;
+            document.getElementById('item-add-next-year').checked = false;
             
             // Default Season
             document.getElementById('sports-season').value = '2025/2026';
@@ -1456,6 +1381,7 @@
             document.getElementById('field-habit').classList.add('hidden');
             document.getElementById('field-sports').classList.add('hidden');
             document.getElementById('field-holiday').classList.add('hidden');
+            document.getElementById('field-annual').classList.add('hidden');
             
             // Title/Desc are hidden for sports to use specialized UI
             document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
@@ -1465,6 +1391,7 @@
             if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
             if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
             if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
+            if(type === 'birthday' || type === 'anniversary') document.getElementById('field-annual').classList.remove('hidden');
             
             if(type === 'sports') {
                 document.getElementById('field-sports').classList.remove('hidden');
@@ -1580,8 +1507,6 @@
             }
             if (type === 'holiday') {
                 newItemBase.isWorkHoliday = document.getElementById('item-is-work-holiday').checked;
-                // Removed specific holiday link/img logic as they were removed from DOM
-                // They are covered by the generic lines above
             }
             
             if (type === 'sports') {
@@ -1603,23 +1528,37 @@
                 newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
             }
 
-            // NEW: Check for Recurring Meeting
+            // RECURRING MEETING LOGIC
+            // Only on CREATE (not edit), create copies if checked
+            // We create the duplicates first
             if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
                 const baseDate = new Date(dateYMD + "T12:00:00");
                 for(let w=1; w<=4; w++) {
                     const nextDate = new Date(baseDate);
                     nextDate.setDate(baseDate.getDate() + (w * 7));
                     const nextYMD = toLocalYMD(nextDate);
-                    const clone = JSON.parse(JSON.stringify(newItemBase)); // Shallow clone of base
                     
-                    // We construct the full item here for the clone
+                    // Manually construct clone with same properties as newItemBase
                     const finalClone = { 
-                        ...clone, 
+                        ...newItemBase, 
                         id: `${type}_${new Date().getTime()}_${w}`, 
                         date: nextYMD 
                     };
                     appState.data.items.push(finalClone);
                 }
+            }
+            
+            // RECURRING ANNUAL (Birthday/Anniv)
+            if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
+                // Parse date to increment year
+                const [y, m, d] = dateYMD.split('-');
+                const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
+                const finalClone = {
+                    ...newItemBase,
+                    id: `${type}_${new Date().getTime()}_next`,
+                    date: nextYearYMD
+                };
+                appState.data.items.push(finalClone);
             }
 
             const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
