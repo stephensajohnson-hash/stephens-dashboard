@@ -1567,7 +1567,16 @@
           "protein": 31,
           "carbs": 7,
           "fat": 32.8,
-          "fiber": 6
+          "fiber": 1
+        },
+        {
+          "mealType": "lunch",
+          "name": "Hamburger Steak & Gravy",
+          "calories": 620,
+          "protein": 48,
+          "carbs": 2,
+          "fat": 46,
+          "fiber": 0
         }
       ],
       "workouts": []
@@ -1580,7 +1589,7 @@
       "imgUrl": "",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764083344304",
       "date": "2025-11-25"
     },
@@ -1616,7 +1625,7 @@
       "imgUrl": "",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764083516853",
       "date": "2025-11-25"
     },
@@ -1696,6 +1705,17 @@
       "streakCount": 1500
     },
     {
+      "type": "holiday",
+      "category": "work",
+      "title": "Thanksgiving",
+      "linkUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
+      "imgUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764095178828",
+      "date": "2025-11-27"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "KC @ DAL",
@@ -1724,6 +1744,17 @@
       "id": "habit_1764309600000_fq7xb",
       "date": "2025-11-28",
       "streakCount": 1501
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Black Friday",
+      "linkUrl": "https://www.cavendishschool.com/wp-content/uploads/black-friday-2894130_960_720-768x470.png",
+      "imgUrl": "https://www.cavendishschool.com/wp-content/uploads/black-friday-2894130_960_720-768x470.png",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100316048",
+      "date": "2025-11-28"
     },
     {
       "type": "habit",
@@ -2179,6 +2210,17 @@
       "streakCount": 1528
     },
     {
+      "type": "holiday",
+      "category": "work",
+      "title": "Christmas",
+      "linkUrl": "https://www.vmcdn.ca/f/files/glaciermedia/import/lmp-all/1533846-istock-1072608926.jpg",
+      "imgUrl": "https://www.vmcdn.ca/f/files/glaciermedia/import/lmp-all/1533846-istock-1072608926.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101375261",
+      "date": "2025-12-25"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "DAL @ WAS",
@@ -2207,6 +2249,17 @@
       "id": "habit_1766728800000_lfunw",
       "date": "2025-12-26",
       "streakCount": 1529
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Christmas Eve",
+      "linkUrl": "https://popmenucloud.com/cdn-cgi/image/width=1920,height=1920,format=auto,fit=scale-down/bfrnuyeh/c88591a7-8a1d-464a-bbae-a30a3e2728d5.jpg",
+      "imgUrl": "https://popmenucloud.com/cdn-cgi/image/width=1920,height=1920,format=auto,fit=scale-down/bfrnuyeh/c88591a7-8a1d-464a-bbae-a30a3e2728d5.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101333277",
+      "date": "2025-12-26"
     },
     {
       "id": "gm_23",
@@ -2299,6 +2352,17 @@
       "streakCount": 1534
     },
     {
+      "type": "holiday",
+      "category": "work",
+      "title": "New Years Day",
+      "linkUrl": "https://greenridgemarket.com/wp-content/uploads/happy-new-year.png",
+      "imgUrl": "https://greenridgemarket.com/wp-content/uploads/happy-new-year.png",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100488056",
+      "date": "2026-01-01"
+    },
+    {
       "id": "gm_25",
       "date": "2026-01-01",
       "type": "sports",
@@ -2360,6 +2424,17 @@
       "status": "scheduled",
       "startTime": "15:00",
       "season": "2025/2026"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Martin Luther King Jr. Day",
+      "linkUrl": "https://gray-wilx-prod.gtv-cdn.com/resizer/v2/GALD26D4VNGCPCNJMHGKWZ4D44.jpg?auth=60a00e6dd0b56e8b1e07bec3610709b259659b68cc486d9663664a256a69bcc4&width=1600&height=900&smart=true",
+      "imgUrl": "https://gray-wilx-prod.gtv-cdn.com/resizer/v2/GALD26D4VNGCPCNJMHGKWZ4D44.jpg?auth=60a00e6dd0b56e8b1e07bec3610709b259659b68cc486d9663664a256a69bcc4&width=1600&height=900&smart=true",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100554759",
+      "date": "2026-01-19"
     },
     {
       "id": "gm_28",
@@ -3323,6 +3398,17 @@
       "season": "2026"
     },
     {
+      "type": "holiday",
+      "category": "work",
+      "title": "Memorial Day",
+      "linkUrl": "https://cityoflamarque.org/ImageRepository/Document?documentID=5099",
+      "imgUrl": "https://cityoflamarque.org/ImageRepository/Document?documentID=5099",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100686737",
+      "date": "2026-05-25"
+    },
+    {
       "id": "gm_tex_0525",
       "date": "2026-05-25",
       "type": "sports",
@@ -3789,6 +3875,17 @@
       "startTime": "19:05",
       "status": "scheduled",
       "season": "2026"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Independence Day",
+      "linkUrl": "https://www.bradford.com/wp-content/uploads/2014/07/4th-of-july-1.jpg",
+      "imgUrl": "https://www.bradford.com/wp-content/uploads/2014/07/4th-of-july-1.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100773742",
+      "date": "2026-07-04"
     },
     {
       "id": "gm_tex_0704",
@@ -4519,6 +4616,17 @@
       "season": "2026"
     },
     {
+      "type": "holiday",
+      "category": "work",
+      "title": "Labor Day",
+      "linkUrl": "https://www.aerlex.com/app/uploads/2025/08/happy-labor-day-1280x720-1.png",
+      "imgUrl": "https://www.aerlex.com/app/uploads/2025/08/happy-labor-day-1280x720-1.png",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764100950300",
+      "date": "2026-09-07"
+    },
+    {
       "id": "gm_tex_0908",
       "date": "2026-09-08",
       "type": "sports",
@@ -4751,6 +4859,61 @@
       "startTime": "14:10",
       "status": "scheduled",
       "season": "2026"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Veterans Day",
+      "linkUrl": "https://oakgroveky.org/wp-content/uploads/2025/11/COG-Blog-Post-Veterans-Day.png",
+      "imgUrl": "https://oakgroveky.org/wp-content/uploads/2025/11/COG-Blog-Post-Veterans-Day.png",
+      "description": "",
+      "isWorkHoliday": false,
+      "id": "holiday_1764101076012",
+      "date": "2026-11-11"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Thanksgiving",
+      "linkUrl": "https://www.almanac.com/sites/default/files/images/shutterstock_1186136779.jpg",
+      "imgUrl": "https://www.almanac.com/sites/default/files/images/shutterstock_1186136779.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101158421",
+      "date": "2026-11-26"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Black Friday",
+      "linkUrl": "https://www.shopivo.com/blog/wp-content/uploads/2019/11/Black-Friday-and-Holidays-Header.png",
+      "imgUrl": "https://www.shopivo.com/blog/wp-content/uploads/2019/11/Black-Friday-and-Holidays-Header.png",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101198556",
+      "date": "2026-11-27"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Christmas Eve",
+      "linkUrl": "https://popmenucloud.com/cdn-cgi/image/width=1920,height=1920,format=auto,fit=scale-down/bfrnuyeh/c88591a7-8a1d-464a-bbae-a30a3e2728d5.jpg",
+      "imgUrl": "https://popmenucloud.com/cdn-cgi/image/width=1920,height=1920,format=auto,fit=scale-down/bfrnuyeh/c88591a7-8a1d-464a-bbae-a30a3e2728d5.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101297658",
+      "date": "2026-12-24"
+    },
+    {
+      "type": "holiday",
+      "category": "work",
+      "title": "Christmas",
+      "linkUrl": "https://cdn.britannica.com/38/196638-050-94E05EF4/Santa-Claus.jpg",
+      "imgUrl": "https://cdn.britannica.com/38/196638-050-94E05EF4/Santa-Claus.jpg",
+      "description": "",
+      "isWorkHoliday": true,
+      "id": "holiday_1764101259832",
+      "date": "2026-12-25"
     }
   ]
 }
