@@ -3003,7 +3003,7 @@
               }
             }
           ]
-        },      
+        },
         {
           "sectionTitle": "Blueberry Pie Filling Layer",
           "list": [
@@ -3097,8 +3097,10 @@
                 "fat": 0,
                 "fiber": 0
               }
-            },
-                    {
+            }
+          ]
+        },
+        {
           "sectionTitle": "Whipped Cream Layer",
           "list": [
             {
@@ -3127,8 +3129,6 @@
                 "fiber": 0
               }
             }
-          ]
-        }
           ]
         }
       ],
