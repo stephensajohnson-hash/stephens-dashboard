@@ -2917,50 +2917,6 @@
       ],
       "ingredients": [
         {
-          "sectionTitle": "Cream Cheese Layer",
-          "list": [
-            {
-              "name": "Cream Cheese",
-              "quantity": "16",
-              "unit": "oz",
-              "notes": "",
-              "macros": {
-                "calories": 1400,
-                "protein": 32,
-                "carbs": 32,
-                "fat": 140,
-                "fiber": 0
-              }
-            },
-            {
-              "name": "Whipping Cream",
-              "quantity": "1",
-              "unit": "cup",
-              "notes": "",
-              "macros": {
-                "calories": 821,
-                "protein": 5,
-                "carbs": 7,
-                "fat": 88,
-                "fiber": 0
-              }
-            },
-            {
-              "name": "Powdered Sugar",
-              "quantity": "1/2",
-              "unit": "cup",
-              "notes": "",
-              "macros": {
-                "calories": 175,
-                "protein": 0,
-                "carbs": 45,
-                "fat": 0,
-                "fiber": 0
-              }
-            }
-          ]
-        },
-        {
           "sectionTitle": "Graham Cracker Crust for 9x13",
           "list": [
             {
@@ -3005,36 +2961,49 @@
           ]
         },
         {
-          "sectionTitle": "Whipped Cream Layer",
+          "sectionTitle": "Cream Cheese Layer",
           "list": [
             {
-              "name": "Whipping Cream",
-              "quantity": "2",
-              "unit": "cups",
+              "name": "Cream Cheese",
+              "quantity": "16",
+              "unit": "oz",
               "notes": "",
               "macros": {
-                "calories": 1642,
-                "protein": 10,
-                "carbs": 14,
-                "fat": 176,
+                "calories": 1400,
+                "protein": 32,
+                "carbs": 32,
+                "fat": 140,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Whipping Cream",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 821,
+                "protein": 5,
+                "carbs": 7,
+                "fat": 88,
                 "fiber": 0
               }
             },
             {
               "name": "Powdered Sugar",
-              "quantity": "1",
-              "unit": "tbsp",
+              "quantity": "1/2",
+              "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 30,
+                "calories": 175,
                 "protein": 0,
-                "carbs": 8,
+                "carbs": 45,
                 "fat": 0,
                 "fiber": 0
               }
             }
           ]
-        },
+        },      
         {
           "sectionTitle": "Blueberry Pie Filling Layer",
           "list": [
@@ -3128,7 +3097,38 @@
                 "fat": 0,
                 "fiber": 0
               }
+            },
+                    {
+          "sectionTitle": "Whipped Cream Layer",
+          "list": [
+            {
+              "name": "Whipping Cream",
+              "quantity": "2",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 1642,
+                "protein": 10,
+                "carbs": 14,
+                "fat": 176,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Powdered Sugar",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 30,
+                "protein": 0,
+                "carbs": 8,
+                "fat": 0,
+                "fiber": 0
+              }
             }
+          ]
+        }
           ]
         }
       ],
