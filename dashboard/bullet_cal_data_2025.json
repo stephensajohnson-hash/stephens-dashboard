@@ -1474,8 +1474,27 @@
           "carbs": 18,
           "fat": 57,
           "fiber": 0
+        },
+        {
+          "mealType": "dinner",
+          "name": "Keto Lasagna",
+          "calories": 552,
+          "protein": 53,
+          "carbs": 11,
+          "fat": 37,
+          "fiber": 0
+        },
+        {
+          "mealType": "snack",
+          "name": "Cheese & Pepperoni",
+          "calories": 420,
+          "protein": 23,
+          "carbs": 3,
+          "fat": 35,
+          "fiber": 0
         }
-      ]
+      ],
+      "workouts": []
     },
     {
       "type": "meeting",
@@ -1489,18 +1508,6 @@
       "timeSpentMinutes": 15,
       "id": "meeting_1763878668966",
       "date": "2025-11-24"
-    },
-    {
-      "type": "habit",
-      "category": "general",
-      "title": "Learn Spanish",
-      "linkUrl": "https://www.duolingo.com/learn",
-      "imgUrl": "https://i0.wp.com/teltales.port.ac.uk/wp-content/uploads/2017/11/duolingo-1.png?fit=676%2C201&ssl=1",
-      "notes": "",
-      "description": "",
-      "id": "habit_1764050400000_v5al3",
-      "date": "2025-11-25",
-      "streakCount": 1498
     },
     {
       "type": "task",
@@ -1522,9 +1529,71 @@
       "imgUrl": "https://i0.wp.com/teltales.port.ac.uk/wp-content/uploads/2017/11/duolingo-1.png?fit=676%2C201&ssl=1",
       "notes": "",
       "description": "",
+      "id": "habit_1764050400000_v5al3",
+      "date": "2025-11-25",
+      "streakCount": 1498
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Daniel Out Today",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764025928085",
+      "date": "2025-11-25"
+    },
+    {
+      "id": "health_1764082335272",
+      "date": "2025-11-25",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 0,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 eggs, 2 bacon, 1/2 cup salsa",
+          "calories": 440,
+          "protein": 31,
+          "carbs": 7,
+          "fat": 32.8,
+          "fiber": 6
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "type": "habit",
+      "category": "general",
+      "title": "Learn Spanish",
+      "linkUrl": "https://www.duolingo.com/learn",
+      "imgUrl": "https://i0.wp.com/teltales.port.ac.uk/wp-content/uploads/2017/11/duolingo-1.png?fit=676%2C201&ssl=1",
+      "notes": "",
+      "description": "",
       "id": "habit_1764136800000_5xz6o",
       "date": "2025-11-26",
       "streakCount": 1499
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Daniel Out Today",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764025935741",
+      "date": "2025-11-26"
     },
     {
       "id": "gm_17",
