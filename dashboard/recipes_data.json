@@ -4191,7 +4191,7 @@
     {
       "id": "user_rec_1764174274051",
       "title": "'Easy' Turkey Gravy",
-      "description": "Still takes forever but not as crazy as the American Test Kitchen version.",
+      "description": "Still takes forever but not as crazy as the American Test Kitchen version.  Serving size 3 1/3 tbsp.",
       "category": "American",
       "servings": 24,
       "prepTime": "0 minutes",
@@ -4249,9 +4249,22 @@
             },
             {
               "name": "Reserved Giblets and Turkey Neck",
+              "quantity": "1",
+              "unit": "pkg",
+              "notes": "or Chicken Livers",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 10,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
               "quantity": "",
               "unit": "",
-              "notes": "or Chicken Livers",
+              "notes": "to taste",
               "macros": {
                 "calories": 0,
                 "protein": 0,
@@ -4272,6 +4285,7 @@
             "If you have broth that didn't fit in the large pot, start adding it to the large pan rue - about 1/4 cup at first.  This will cause the flour mixture to form clumps.  Stir until smooth, breaking up the clumps.  Then add more broth (a little more each time) until it is all incorporated and smooth.  Mixture should begin to boil gently - forming a few bubbles.  Increase heat if necessary to reach this boil - but reduce if the boil gets more aggressive.",
             "Remove turkey or chicken parts from the large part with a slotted spoon or colander.  Now start to incorporate the broth from the large pot in to the rue (a little more each time) until it is all mixed and smooth.",
             "Allow gravy mixture to come back to a gentle boil and stir often until the gravy thickens.  Volumn should reduce by 35% - 40%.",
+            "Add salt to taste.",
             "Note: 8 cups broth yields 5 cups of gravy."
           ]
         }
