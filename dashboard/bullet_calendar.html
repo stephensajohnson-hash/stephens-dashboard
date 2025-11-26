@@ -104,7 +104,7 @@
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.2</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.3</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -547,7 +547,7 @@
 
         // --- MAIN APP LOGIC ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.2.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.1.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -572,17 +572,22 @@
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
                     const jsonData = await response.json();
+                    // Merge Items
                     if(jsonData.items) {
                         jsonData.items.forEach(item => { 
                             if (!idMap.has(item.id)) idMap.set(item.id, item); 
                         });
                     }
                     appState.data.meta = jsonData.meta || appState.data.meta;
+                    
+                    // Merge Teams (JSON adds missing ones)
                     if (jsonData.teams) {
                         jsonData.teams.forEach(t => {
                             if (!teamMap.has(t.id)) teamMap.set(t.id, t);
                         });
                     }
+                    
+                    // Merge Leagues
                     if (jsonData.leagues) {
                         jsonData.leagues.forEach(l => leagueSet.add(l));
                     }
@@ -593,6 +598,7 @@
             appState.data.teams = Array.from(teamMap.values());
             appState.data.leagues = Array.from(leagueSet);
             
+            // AUTO-SORT ITEMS BY DATE
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -607,6 +613,7 @@
         }
 
         function saveData() { 
+            // Sort before saving
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -634,6 +641,7 @@
             updateUI();
         }
 
+        // --- SPORTS MANAGER LOGIC ---
         function openSportsManager() {
             document.getElementById('sports-manager-modal').classList.remove('hidden');
             switchSportsTab('leagues');
@@ -647,8 +655,10 @@
         function switchSportsTab(tab) {
             document.getElementById('tab-leagues').className = tab === 'leagues' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
             document.getElementById('tab-teams').className = tab === 'teams' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
+            
             document.getElementById('view-leagues').classList.toggle('hidden', tab !== 'leagues');
             document.getElementById('view-teams').classList.toggle('hidden', tab !== 'teams');
+            
             if(tab === 'leagues') renderLeaguesList();
             if(tab === 'teams') { renderTeamFilter(); renderTeamsList(); }
         }
@@ -682,7 +692,9 @@
                 const idx = appState.data.leagues.indexOf(oldName);
                 if (idx !== -1) {
                     appState.data.leagues[idx] = newName;
+                    // Cascade update teams
                     appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
+                    // Cascade update items
                     appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
                     saveData();
                     renderLeaguesList();
@@ -701,21 +713,29 @@
             const sel = document.getElementById('filter-league-select');
             const currentVal = sel.value;
             const leagues = [...appState.data.leagues].sort();
+
+            // Removed "All Leagues" option per request - default to first league
             sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            
             if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) {
                 sel.value = leagues.length > 0 ? leagues[0] : '';
             } else {
                 sel.value = currentVal;
             }
+            
+            // Populate the Add/Edit Form league select as well
             const addSel = document.getElementById('team-league-select');
             addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
         }
         
         function renderTeamsList() {
             const filter = document.getElementById('filter-league-select').value;
+            
+            // Filter teams by selected league and sort by name
             const teams = appState.data.teams
                 .filter(t => t.league === filter)
                 .sort((a, b) => a.name.localeCompare(b.name));
+            
             const container = document.getElementById('teams-list');
             container.innerHTML = teams.map(t => `
                 <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-2 rounded">
@@ -756,6 +776,7 @@
             } else {
                 appState.data.teams.push(teamObj);
             }
+            
             saveData();
             resetTeamForm();
             renderTeamsList();
@@ -775,6 +796,7 @@
                 document.getElementById('team-form-btn').innerText = "Update Team";
                 document.getElementById('team-form-cancel').classList.remove('hidden');
                 
+                // Visual Feedback
                 const form = document.getElementById('team-form-container');
                 form.scrollIntoView({ behavior: 'smooth' });
                 form.classList.add('highlight-pulse');
@@ -878,34 +900,43 @@
             const list = document.getElementById('month-list');
             list.innerHTML = '';
             list.className = "space-y-4"; 
+
             const now = new Date(); 
             const currentYear = now.getFullYear();
             const currentMonth = now.getMonth();
+            
             const start = new Date(now.getFullYear(), now.getMonth() - 12, 1);
             const end = new Date(now.getFullYear(), now.getMonth() + 12, 1);
+            
             let iter = new Date(start);
             let currentRenderYear = -1;
             let yearContainer = null;
+
             while (iter <= end) {
                 const y = iter.getFullYear();
                 const m = iter.getMonth();
                 const mName = iter.toLocaleDateString('en-US', { month: 'short' });
+                
                 if (y !== currentRenderYear) {
                     currentRenderYear = y;
                     const yearLabel = document.createElement('div');
                     yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
                     yearLabel.innerText = y;
+                    
                     const grid = document.createElement('div');
                     grid.className = "grid grid-cols-4 gap-2";
                     yearContainer = grid;
+                    
                     const wrapper = document.createElement('div');
                     wrapper.appendChild(yearLabel);
                     wrapper.appendChild(grid);
                     list.appendChild(wrapper);
                 }
+
                 const btn = document.createElement('button');
                 const isActualCurrentMonth = (y === currentYear && m === currentMonth);
                 const isViewedMonth = (y === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                
                 let baseClass = "text-xs py-2 rounded text-center transition ";
                 if (isActualCurrentMonth) {
                     baseClass += "bg-purple-600 text-white font-bold shadow-lg ring-1 ring-purple-400";
@@ -914,9 +945,11 @@
                 } else {
                     baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
                 }
+
                 btn.className = baseClass;
                 btn.innerText = mName;
                 btn.onclick = ((year, month) => () => jumpToMonth(year, month))(y, m);
+                
                 yearContainer.appendChild(btn);
                 iter.setMonth(iter.getMonth() + 1);
             }
@@ -926,18 +959,21 @@
             const ymd = toLocalYMD(appState.currentDate);
             const isWeekend = appState.currentDate.getDay() === 0 || appState.currentDate.getDay() === 6;
             const holidayItem = appState.data.items.find(i => i.date === ymd && i.type === 'holiday' && i.isWorkHoliday);
+            
             let bgClass = '';
             if (holidayItem) {
                 bgClass = 'bg-holiday dynamic-bg';
             } else if (isWeekend) {
                 bgClass = 'bg-weekend dynamic-bg';
             }
+            
             if (bgClass) {
                  const bgDiv = document.createElement('div');
                  bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none`;
                  const main = document.querySelector('main');
                  main.appendChild(bgDiv);
             }
+
             const items = appState.data.items.filter(i => i.date === ymd);
             const health = items.find(i => i.type === 'health');
             const work = items.filter(i => i.category === 'work' && i.type !== 'holiday' && i.type !== 'birthday' && i.type !== 'anniversary');
@@ -963,6 +999,7 @@
             container.innerHTML = html;
         }
 
+        // HELPER FOR WEEK/MONTH VIEW ITEM RENDERING
         function renderItemChip(item) {
             let icon = '';
             let text = item.title;
@@ -992,6 +1029,11 @@
                 }
             } else if (item.type === 'habit') {
                 icon = '🔥';
+                // Add streak to text
+                if (item.streakCount > 0) {
+                    text = `${text} (${item.streakCount})`; 
+                }
+
                  if(item.imgUrl) {
                      return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
                         <span class="truncate font-bold w-full">${text}</span>
@@ -1218,7 +1260,7 @@
             } else if(item.type === 'habit') {
                  const isChecked = item.status === 'completed';
                  if(item.imgUrl) {
-                     let imgHtml = `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded mt-2 mb-2 shadow-sm">`;
+                     let imgHtml = `<img src="${item.imgUrl}" class="max-h-[25px] w-auto max-w-full object-contain rounded mt-2 mb-2 shadow-sm">`;
                      if(item.linkUrl) imgHtml = `<a href="${item.linkUrl}" target="_blank" class="block hover:opacity-90 transition-opacity">${imgHtml}</a>`;
                      content += imgHtml;
                  }
@@ -1366,7 +1408,7 @@
                 `).join('');
             }
 
-            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
+            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff <0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
         }
 
         function renderStarInput(rating) {
