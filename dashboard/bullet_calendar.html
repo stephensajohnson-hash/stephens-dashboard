@@ -28,11 +28,18 @@
         .macro-bar-fill { height: 100%; border-radius: 2px; }
         .star-btn:hover, .star-btn.active { color: #fbbf24; } 
         .star-btn { color: #4b5563; transition: color 0.1s; } 
+        .highlight-pulse { animation: pulse-yellow 0.5s 2; }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgba(17, 24, 39, 0.5); }
+            50% { background-color: rgba(234, 179, 8, 0.2); }
+        }
         
         /* Special Backgrounds */
         .bg-weekend { background-color: rgba(30, 41, 59, 0.4); } 
+        /* Holidays: Color K - Darker Deep Blue */
         .bg-holiday { background-color: hsl(220, 45%, 27%) !important; border-color: hsl(220, 45%, 37%) !important; }
-        .bg-vacation { background-color: hsl(140, 45%, 22.5%); border-color: hsl(140, 45%, 32.5%); }
+        /* Vacation: Color K - Deep Forest Green */
+        .bg-vacation { background-color: hsl(150, 30%, 17.5%); border-color: hsl(150, 30%, 27.5%); }
     </style>
     <script>
         tailwind.config = { 
@@ -99,14 +106,19 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
-            <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
+            
+            <!-- New Rolling Month Grid Sidebar -->
+            <div class="flex-1 overflow-y-auto p-3" id="month-list">
+                <!-- Injected via JS -->
+            </div>
+
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.2.8</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.3.1</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -121,35 +133,70 @@
                 <h3 class="text-xl font-bold text-white">Manage Sports Data</h3>
                 <button onclick="closeSportsManager()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
+            
+            <!-- Tabs -->
             <div class="flex border-b border-gray-700 px-6 pt-2">
                 <button onclick="switchSportsTab('leagues')" id="tab-leagues" class="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">Leagues</button>
                 <button onclick="switchSportsTab('teams')" id="tab-teams" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Teams</button>
             </div>
+
             <div class="flex-1 overflow-y-auto p-6">
+                
+                <!-- LEAGUES TAB -->
                 <div id="view-leagues" class="block">
                     <div class="flex gap-2 mb-4">
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2"></div>
+                    <div id="leagues-list" class="space-y-2">
+                        <!-- League Items -->
+                    </div>
                 </div>
+
+                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
+                                <span id="team-form-title">Add Team</span>
+                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
+                            </h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
-                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
-                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
+                                <div>
+                                    <label class="text-xs text-gray-500">League</label>
+                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Team Name</label>
+                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Abbreviation</label>
+                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Logo URL</label>
+                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
+                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
+                                </div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
+
+                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
-                            <div id="teams-list" class="space-y-2"></div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
+                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
+                            </div>
+                            <div id="teams-list" class="space-y-2">
+                                <!-- Teams injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -166,13 +213,27 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
+                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
+                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
+                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
+                    </div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
+                    
+                    <!-- Workouts Section -->
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
+                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
+                    </div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -191,7 +252,8 @@
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <input type="hidden" id="item-category"><input type="hidden" id="item-id">
+                <input type="hidden" id="item-category">
+                <input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
                 <div>
@@ -202,26 +264,65 @@
                     </div>
                 </div>
 
-                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label><select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()"></select></div>
-                <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
+                    <select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()">
+                        <!-- Dynamic Options -->
+                    </select>
+                </div>
+                
+                <!-- Title Row -->
+                <div id="field-title">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
+                </div>
 
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
+                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
+                             </select>
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
+                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
+                    
+                    <!-- SEASON FIELD ADDED HERE -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
+                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
+                    </div>
+
                     <div class="flex items-center gap-2">
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
-                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
+                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
+                        <div class="flex flex-col items-center justify-end pb-1">
+                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
+                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
+                        </div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
+                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false">
+                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
+
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
+                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
+                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
                     </div>
                 </div>
                 
@@ -231,7 +332,9 @@
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Date</label><input type="date" id="vacation-end" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                     </div>
-                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
+                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2">
+                        <!-- Dynamic inputs will go here -->
+                    </div>
                 </div>
 
                 <!-- Holiday Specific Fields -->
@@ -250,34 +353,71 @@
                     </label>
                 </div>
 
-                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
+                <div id="common-fields">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
+                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
+                </div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
-                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
-                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
+                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
+                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
+                    </div>
+                    <!-- Recurring Checkbox for Meetings -->
+                    <div class="col-span-2 flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
+                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
+                    </div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
+                <div id="field-task" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
+                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
+                </div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
+                <div id="field-media" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
+                    <input type="hidden" id="item-rating" value="5">
+                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
+                </div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
-                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                        </div>
+                        <div class="flex items-center">
+                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
+                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                                <span>Fill rest of month?</span>
+                             </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- URL/Image -->
+                <!-- URL/Image (General) -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
+                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
+                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -288,307 +428,6 @@
     </div>
 
     <script>
-        const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.2.8", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
-        let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
-        let hoverTimeout;
-
-        // --- DATA MANAGEMENT ---
-        async function loadData() {
-            const idMap = new Map();
-            const teamMap = new Map(); 
-            const leagueSet = new Set();
-
-            try {
-                const localStr = localStorage.getItem(STORAGE_KEY);
-                if (localStr) {
-                    const localData = JSON.parse(localStr);
-                    if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
-                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
-                }
-            } catch (e) { console.warn("Error reading local storage", e); }
-            
-            try {
-                const response = await fetch('bullet_cal_data_2025.json');
-                if (response.ok) {
-                    const jsonData = await response.json();
-                    if(jsonData.items) {
-                        jsonData.items.forEach(item => { 
-                            if (!idMap.has(item.id)) idMap.set(item.id, item); 
-                        });
-                    }
-                    appState.data.meta = jsonData.meta || appState.data.meta;
-                    if (jsonData.teams) {
-                        jsonData.teams.forEach(t => {
-                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
-                        });
-                    }
-                    if (jsonData.leagues) {
-                        jsonData.leagues.forEach(l => leagueSet.add(l));
-                    }
-                }
-            } catch (error) { console.warn("Error fetching JSON", error); }
-
-            appState.data.items = Array.from(idMap.values());
-            appState.data.teams = Array.from(teamMap.values());
-            appState.data.leagues = Array.from(leagueSet);
-            
-            appState.data.items.sort((a, b) => {
-                if (a.date < b.date) return -1;
-                if (a.date > b.date) return 1;
-                const tA = a.startTime || '00:00';
-                const tB = b.startTime || '00:00';
-                if (tA < tB) return -1;
-                if (tA > tB) return 1;
-                return 0;
-            });
-            updateUI();
-        }
-
-        function saveData() { 
-            appState.data.items.sort((a, b) => {
-                if (a.date < b.date) return -1;
-                if (a.date > b.date) return 1;
-                const tA = a.startTime || '00:00';
-                const tB = b.startTime || '00:00';
-                if (tA < tB) return -1;
-                if (tA > tB) return 1;
-                return 0;
-            });
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } 
-        }
-        function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
-        
-        function downloadData() {
-            const url = URL.createObjectURL(new Blob([JSON.stringify(appState.data, null, 2)], { type: "application/json" }));
-            const a = document.createElement('a'); a.href = url; a.download = `bullet_cal_data_${appState.data.meta.year}.json`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            if(window.innerWidth < 1024) document.getElementById('bullet-sidebar').classList.replace('sidebar-open','sidebar-closed');
-        }
-
-        function deleteItem(id, type) {
-            if(!confirm("Delete this item?")) return;
-            if(type === 'vacation') {
-                const item = appState.data.items.find(i => i.id === id);
-                if (item && item.groupId) {
-                    appState.data.items = appState.data.items.filter(i => i.groupId !== item.groupId);
-                } else {
-                    appState.data.items = appState.data.items.filter(i => i.id !== id);
-                }
-            } else {
-                appState.data.items = appState.data.items.filter(i => i.id !== id);
-            }
-            saveData();
-            updateUI();
-        }
-
-        // --- UI INTERACTION ---
-        function openItemModal(category, itemId = null, allowedTypes = '') {
-            const ymd = toLocalYMD(appState.currentDate);
-            const typeSelect = document.getElementById('item-type');
-            typeSelect.innerHTML = '';
-            const typeMap = {
-                'task': 'Task', 'meeting': 'Meeting', 'habit': 'Habit', 'media': 'Media',
-                'health': 'Nutrition Log', 'sports': 'Sports Game', 'holiday': 'Holiday',
-                'birthday': 'Birthday', 'anniversary': 'Anniversary', 'vacation': 'Vacation'
-            };
-            
-            const typesList = allowedTypes ? allowedTypes.split(',') : Object.keys(typeMap).filter(k => k !== 'health');
-            
-            typesList.forEach(t => {
-                if(typeMap[t]) {
-                    const opt = document.createElement('option');
-                    opt.value = t; opt.innerText = typeMap[t];
-                    typeSelect.appendChild(opt);
-                }
-            });
-
-            // Reset Form
-            document.getElementById('item-id').value = ''; 
-            document.getElementById('item-title').value = ''; 
-            document.getElementById('item-desc').value = ''; 
-            document.getElementById('item-link').value = ''; 
-            document.getElementById('item-img').value = ''; 
-            document.getElementById('item-ticket').value = ''; 
-            document.getElementById('item-rating').value = '5'; 
-            renderStarInput(5); 
-            document.getElementById('item-duration').value = '60'; 
-            document.getElementById('item-actualDuration').value = '';
-            document.getElementById('item-startTime').value = '';
-            document.getElementById('item-streak').value = '0';
-            document.getElementById('item-fill-month').checked = false;
-            document.getElementById('item-is-work-holiday').checked = true;
-            document.getElementById('item-recur-weekly').checked = false;
-            document.getElementById('item-add-next-year').checked = false;
-            document.getElementById('vacation-start').value = '';
-            document.getElementById('vacation-end').value = '';
-            document.getElementById('vacation-daily-notes').innerHTML = '';
-            document.getElementById('sports-season').value = '2025/2026';
-            document.getElementById('item-date').value = toLocalYMD(appState.currentDate);
-
-            if (itemId) {
-                document.getElementById('item-modal-title').innerText = "Edit Item";
-                document.getElementById('item-id').value = itemId;
-                const item = appState.data.items.find(i => i.id === itemId);
-                if (item) {
-                    if(item.date) document.getElementById('item-date').value = item.date;
-                    if(!typesList.includes(item.type)) {
-                        const opt = document.createElement('option'); opt.value = item.type; opt.innerText = typeMap[item.type]; typeSelect.appendChild(opt);
-                    }
-                    document.getElementById('item-category').value = item.category; 
-                    typeSelect.value = item.type; 
-                    document.getElementById('item-title').value = item.title; 
-                    document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit') ? (item.notes || item.description || '') : (item.description || '');
-                    document.getElementById('item-link').value = item.linkUrl || ''; 
-                    document.getElementById('item-img').value = item.imgUrl || '';
-                    
-                    if(item.type === 'meeting') { 
-                        document.getElementById('item-startTime').value = item.startTime || ''; 
-                        document.getElementById('item-duration').value = item.durationMinutes ? formatDuration(item.durationMinutes) : '60m';
-                        document.getElementById('item-actualDuration').value = item.timeSpentMinutes ? formatDuration(item.timeSpentMinutes) : ''; 
-                    }
-                    if(item.type === 'task') { document.getElementById('item-ticket').value = item.ticketNumber || ''; }
-                    if(item.type === 'media') { const r = item.rating || 5; document.getElementById('item-rating').value = r; renderStarInput(r); }
-                    if(item.type === 'habit') { document.getElementById('item-streak').value = item.streakCount || 0; }
-                    if(item.type === 'holiday') { document.getElementById('item-is-work-holiday').checked = item.isWorkHoliday; }
-                    if(item.type === 'vacation') {
-                        const group = appState.data.items.filter(i => i.groupId === item.groupId);
-                        if(group.length > 0) {
-                            group.sort((a,b) => a.date.localeCompare(b.date));
-                            document.getElementById('vacation-start').value = group[0].date;
-                            document.getElementById('vacation-end').value = group[group.length-1].date;
-                            generateVacationDailyInputs();
-                        }
-                    }
-                    if(item.type === 'sports') { populateTeamSelects(); document.getElementById('sports-league').value = item.league; populateTeamSelects(); document.getElementById('sports-time').value = item.startTime || ''; document.getElementById('sports-score-my').value = (item.homeTeamId === item.homeTeamId) ? item.homeScore : item.awayScore; const isFavoriteHome = appState.data.teams.find(t=>t.id===item.homeTeamId)?.isFavorite; document.getElementById('sports-myteam').value = isFavoriteHome ? item.homeTeamId : item.awayTeamId; document.getElementById('sports-opponent').value = isFavoriteHome ? item.awayTeamId : item.homeTeamId; document.getElementById('sports-is-home').value = isFavoriteHome ? "true" : "false"; document.getElementById('sports-score-my').value = isFavoriteHome ? item.homeScore : item.awayScore; document.getElementById('sports-score-opp').value = isFavoriteHome ? item.awayScore : item.homeScore; document.getElementById('sports-season').value = item.season || '2025/2026'; updateSportsLabel(); }
-                }
-            } else {
-                document.getElementById('item-modal-title').innerText = "Add Item";
-                document.getElementById('item-category').value = category || 'work';
-            }
-            updateModalFields();
-            document.getElementById('item-modal').classList.remove('hidden');
-        }
-
-        function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
-        
-        function saveItem() {
-            const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; 
-            const editId = document.getElementById('item-id').value;
-            const inputDateVal = document.getElementById('item-date').value;
-            const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
-            let title = document.getElementById('item-title').value;
-            
-            if (type === 'sports') {
-                const myTeamId = document.getElementById('sports-myteam').value;
-                const oppTeamId = document.getElementById('sports-opponent').value;
-                const isHome = document.getElementById('sports-is-home').value === "true";
-                const homeId = isHome ? myTeamId : oppTeamId;
-                const awayId = isHome ? oppTeamId : myTeamId;
-                const homeTeam = appState.data.teams.find(t=>t.id === homeId);
-                const awayTeam = appState.data.teams.find(t=>t.id === awayId);
-                title = `${awayTeam?.abbrev || 'Away'} @ ${homeTeam?.abbrev || 'Home'}`;
-            }
-            
-            if(!title && type !== 'sports') return alert("Title required");
-
-            const newItemBase = { type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
-            const rawDesc = document.getElementById('item-desc').value;
-            if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } else { newItemBase.description = rawDesc; }
-
-            // Fill type specifics
-            if(type === 'meeting') { newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value); }
-            if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
-            if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
-            if(type === 'habit') { const existing = appState.data.items.find(i => i.id === editId); const inputStreak = parseInt(document.getElementById('item-streak').value); newItemBase.streakCount = (editId || !isNaN(inputStreak)) ? (inputStreak || 1) : (existing ? existing.streakCount : 1); }
-            if(type === 'holiday') { newItemBase.isWorkHoliday = document.getElementById('item-is-work-holiday').checked; }
-            if (type === 'sports') {
-                 const myTeamId = document.getElementById('sports-myteam').value; const oppTeamId = document.getElementById('sports-opponent').value; const isHome = document.getElementById('sports-is-home').value === "true"; const myScore = parseInt(document.getElementById('sports-score-my').value); const oppScore = parseInt(document.getElementById('sports-score-opp').value);
-                 newItemBase.league = document.getElementById('sports-league').value; newItemBase.homeTeamId = isHome ? myTeamId : oppTeamId; newItemBase.awayTeamId = isHome ? oppTeamId : myTeamId; newItemBase.homeScore = isHome ? myScore : oppScore; newItemBase.awayScore = isHome ? oppScore : myScore; newItemBase.startTime = document.getElementById('sports-time').value; newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled'; newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
-            }
-
-            // VACATION LOGIC
-            if (type === 'vacation') {
-                const startStr = document.getElementById('vacation-start').value;
-                const endStr = document.getElementById('vacation-end').value;
-                if(!startStr || !endStr) return alert("Start and End dates required");
-                const groupId = editId ? (appState.data.items.find(i=>i.id===editId)?.groupId || `vac_${Date.now()}`) : `vac_${Date.now()}`;
-                if(editId) appState.data.items = appState.data.items.filter(i => i.groupId !== groupId);
-                
-                const noteInputs = document.querySelectorAll('.vacation-day-note');
-                const notesMap = {};
-                noteInputs.forEach(inp => notesMap[inp.dataset.date] = inp.value);
-                
-                const start = new Date(startStr + 'T12:00:00');
-                const end = new Date(endStr + 'T12:00:00');
-                const loop = new Date(start);
-                while(loop <= end) {
-                    const ymd = toLocalYMD(loop);
-                    const dayNote = notesMap[ymd] || '';
-                    const dayItem = { ...newItemBase, id: `vac_${Date.now()}_${ymd}`, groupId: groupId, date: ymd, description: dayNote };
-                    appState.data.items.push(dayItem);
-                    loop.setDate(loop.getDate() + 1);
-                }
-                saveData(); closeItemModal(); updateUI();
-                return; 
-            }
-
-            // RECURRING
-            if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
-                const baseDate = new Date(dateYMD + "T12:00:00");
-                for(let w=1; w<=4; w++) {
-                    const nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + (w * 7)); const nextYMD = toLocalYMD(nextDate);
-                    const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_${w}`, date: nextYMD };
-                    appState.data.items.push(finalClone);
-                }
-            }
-            if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
-                const [y, m, d] = dateYMD.split('-'); const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
-                const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_next`, date: nextYearYMD };
-                appState.data.items.push(finalClone);
-            }
-
-            const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
-            if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = finalItem; } else { appState.data.items.push(finalItem); }
-            saveData(); closeItemModal(); updateUI();
-        }
-
-        function updateModalFields() {
-            const type = document.getElementById('item-type').value;
-            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
-            
-            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation'];
-            allFields.forEach(f => document.getElementById(`field-${f}`).classList.add('hidden'));
-            
-            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
-            
-            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
-            if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
-            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
-            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
-            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
-            if(type === 'birthday' || type === 'anniversary') {
-                const isEdit = document.getElementById('item-id').value !== '';
-                if(!isEdit) document.getElementById('field-annual').classList.remove('hidden');
-            }
-            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
-            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
-        }
-
-        function renderStarInput(rating) {
-            const container = document.getElementById('star-rating-container');
-            if(!container) return;
-            container.innerHTML = '';
-            for (let i = 1; i <= 10; i++) {
-                const star = document.createElement('span'); 
-                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
-                star.innerText = '★';
-                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
-                container.appendChild(star);
-            }
-        }
-
         // --- HELPER FUNCTIONS ---
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
@@ -600,6 +439,25 @@
             const day = date.getDay(); 
             const diff = date.getDate() - (day === 0 ? 6 : day - 1); 
             return new Date(date.setDate(diff)); 
+        }
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok) {
+                    const w = await wRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                }
+            } catch(e) { console.error("Weather fetch failed", e); }
+        }
+        function getForecastEmoji(c) {
+            if(c.includes('01')) return '☀️';
+            if(c.includes('02')) return '🌤️';
+            if(c.includes('03')) return '🌥️';
+            if(c.includes('09')||c.includes('10')) return '🌧️';
+            if(c.includes('13')) return '❄️';
+            return '☁️';
         }
         function getTypeColor(type) { 
             const map = { 
@@ -615,6 +473,10 @@
                 'vacation': 'border-green-500 bg-vacation/20' 
             }; 
             return map[type] || 'border-gray-500'; 
+        }
+        function getTypeDotColor(type) { 
+            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500', 'sports': 'bg-red-500', 'holiday': 'bg-blue-600', 'birthday': 'bg-pink-500', 'anniversary': 'bg-purple-500', 'vacation': 'bg-green-500' }; 
+            return map[type] || 'bg-gray-500'; 
         }
         function formatTime(timeStr) {
             if (!timeStr) return '';
@@ -662,96 +524,120 @@
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
         }
-        
-        function copyAnnualsToNextYear() {
-            if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
-            let count = 0;
-            const currentYear = appState.data.meta.year || 2025;
-            const nextYear = currentYear + 1;
-            const newItems = [];
-            appState.data.items.forEach(item => {
-                if((item.type === 'birthday' || item.type === 'anniversary') && item.date.startsWith(currentYear)) {
-                    const newDate = item.date.replace(currentYear, nextYear);
-                    const exists = appState.data.items.some(i => i.date === newDate && i.title === item.title && i.type === item.type);
-                    if(!exists) {
-                        const clone = JSON.parse(JSON.stringify(item));
-                        clone.id = `${item.type}_${new Date().getTime()}_${count}`;
-                        clone.date = newDate;
-                        newItems.push(clone);
-                        count++;
+
+        function renderStarInput(rating) {
+            const container = document.getElementById('star-rating-container');
+            if(!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const star = document.createElement('span'); 
+                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
+                star.innerText = '★';
+                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
+                container.appendChild(star);
+            }
+        }
+
+        // --- MAIN APP LOGIC ---
+        const STORAGE_KEY = 'bullet_cal_data_v2'; 
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3.1", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
+        let hoverTimeout;
+
+        // --- DATA MANAGEMENT ---
+        async function loadData() {
+            const idMap = new Map();
+            const teamMap = new Map(); 
+            const leagueSet = new Set();
+
+            try {
+                const localStr = localStorage.getItem(STORAGE_KEY);
+                if (localStr) {
+                    const localData = JSON.parse(localStr);
+                    if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
+                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
+                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
+                }
+            } catch (e) { console.warn("Error reading local storage", e); }
+            
+            try {
+                const response = await fetch('bullet_cal_data_2025.json');
+                if (response.ok) {
+                    const jsonData = await response.json();
+                    if(jsonData.items) {
+                        jsonData.items.forEach(item => { 
+                            if (!idMap.has(item.id)) idMap.set(item.id, item); 
+                        });
+                    }
+                    appState.data.meta = jsonData.meta || appState.data.meta;
+                    if (jsonData.teams) {
+                        jsonData.teams.forEach(t => {
+                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
+                        });
+                    }
+                    if (jsonData.leagues) {
+                        jsonData.leagues.forEach(l => leagueSet.add(l));
                     }
                 }
-            });
-            if(count > 0) {
-                appState.data.items.push(...newItems);
-                saveData();
-                alert(`Successfully copied ${count} items to ${nextYear}.`);
-                updateUI();
-            } else {
-                alert("No new items to copy or they already exist.");
-            }
-        }
+            } catch (error) { console.warn("Error fetching JSON", error); }
 
-        function generateVacationDailyInputs() {
-            const startStr = document.getElementById('vacation-start').value;
-            const endStr = document.getElementById('vacation-end').value;
-            const container = document.getElementById('vacation-daily-notes');
-            container.innerHTML = '';
-            if(!startStr || !endStr) return;
+            appState.data.items = Array.from(idMap.values());
+            appState.data.teams = Array.from(teamMap.values());
+            appState.data.leagues = Array.from(leagueSet);
             
-            const start = new Date(startStr + 'T12:00:00');
-            const end = new Date(endStr + 'T12:00:00');
-            if(end < start) return;
-
-            // Existing notes map?
-            const editId = document.getElementById('item-id').value;
-            let notesMap = {};
-            if(editId) {
-                // find existing items of this group
-                const item = appState.data.items.find(i => i.id === editId);
-                if(item && item.groupId) {
-                    const groupItems = appState.data.items.filter(i => i.groupId === item.groupId);
-                    groupItems.forEach(gi => notesMap[gi.date] = gi.description || '');
-                }
-            }
-
-            const current = new Date(start);
-            while(current <= end) {
-                const ymd = toLocalYMD(current);
-                const label = current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                const existingNote = notesMap[ymd] || '';
+            // Sort items: Vacation first, then others
+            appState.data.items.sort((a, b) => {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                // Prioritize Vacation
+                if (a.type === 'vacation' && b.type !== 'vacation') return -1;
+                if (a.type !== 'vacation' && b.type === 'vacation') return 1;
                 
-                const div = document.createElement('div');
-                div.className = "flex items-center gap-2";
-                div.innerHTML = `
-                    <span class="text-xs text-gray-400 w-24 flex-shrink-0">${label}</span>
-                    <input type="text" class="vacation-day-note flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs text-white outline-none focus:border-blue-500" data-date="${ymd}" placeholder="Activity..." value="${existingNote}">
-                `;
-                container.appendChild(div);
-                current.setDate(current.getDate() + 1);
-            }
+                const tA = a.startTime || '00:00';
+                const tB = b.startTime || '00:00';
+                if (tA < tB) return -1;
+                if (tA > tB) return 1;
+                return 0;
+            });
+            updateUI();
         }
 
-        async function fetchWeather() {
-            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-            try {
-                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok) {
-                    const w = await wRes.json();
-                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-                }
-            } catch(e) { console.error("Weather fetch failed", e); }
+        function saveData() { 
+            appState.data.items.sort((a, b) => {
+                if (a.date < b.date) return -1;
+                if (a.date > b.date) return 1;
+                if (a.type === 'vacation' && b.type !== 'vacation') return -1;
+                if (a.type !== 'vacation' && b.type === 'vacation') return 1;
+                return 0;
+            });
+            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } 
         }
-        function getForecastEmoji(c) {
-            if(c.includes('01')) return '☀️';
-            if(c.includes('02')) return '🌤️';
-            if(c.includes('03')) return '🌥️';
-            if(c.includes('09')||c.includes('10')) return '🌧️';
-            if(c.includes('13')) return '❄️';
-            return '☁️';
-        }
+
+        function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
         
+        function downloadData() {
+            const url = URL.createObjectURL(new Blob([JSON.stringify(appState.data, null, 2)], { type: "application/json" }));
+            const a = document.createElement('a'); a.href = url; a.download = `bullet_cal_data_${appState.data.meta.year}.json`;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+            if(window.innerWidth < 1024) document.getElementById('bullet-sidebar').classList.replace('sidebar-open','sidebar-closed');
+        }
+
+        function deleteItem(id, type) {
+            if(!confirm("Delete this item?")) return;
+            if(type === 'vacation') {
+                const item = appState.data.items.find(i => i.id === id);
+                if (item && item.groupId) {
+                    appState.data.items = appState.data.items.filter(i => i.groupId !== item.groupId);
+                } else {
+                    appState.data.items = appState.data.items.filter(i => i.id !== id);
+                }
+            } else {
+                appState.data.items = appState.data.items.filter(i => i.id !== id);
+            }
+            saveData();
+            updateUI();
+        }
+
         // --- CORE NAVIGATION FUNCTIONS ---
         function navigate(dir) {
             const d = new Date(appState.currentDate);
@@ -772,7 +658,9 @@
         // --- RENDERING FUNCTIONS ---
         function updateUI() {
             const mainScroll = document.getElementById('main-scroll');
+            // Clear dynamic backgrounds by resetting class
             if(mainScroll) mainScroll.className = "flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900 transition-colors duration-300";
+            // Remove any injected divs
             const existing = document.querySelectorAll('.dynamic-bg-layer');
             existing.forEach(el => el.remove());
 
@@ -806,9 +694,11 @@
             list.innerHTML = '';
             list.className = "space-y-4"; 
 
-            const start = new Date(appState.currentDate.getFullYear(), 0, 1); 
+            const start = new Date(appState.currentDate.getFullYear(), 0, 1); // Start of this year
+            // Show +/- 1 year
             const viewYear = appState.currentDate.getFullYear();
             
+            // Simplified sidebar: Just current year for stability
             const yearLabel = document.createElement('div');
             yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
             yearLabel.innerText = viewYear;
@@ -845,11 +735,12 @@
             else if (vacationItem) bgClass = 'bg-vacation';
             
             if (bgClass) {
+                 // Inject background layer
                  const bgDiv = document.createElement('div');
                  bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none dynamic-bg-layer transition-colors duration-300`;
                  const main = document.querySelector('main');
                  if(main) {
-                     main.insertBefore(bgDiv, main.firstChild);
+                     main.insertBefore(bgDiv, main.firstChild); // Insert at start so z-index 0 works
                  }
             }
 
@@ -873,8 +764,9 @@
             container.innerHTML = html;
         }
 
+        // ... (Render Card/Chip functions - keeping exactly as verified before) ...
         function renderCard(item) {
-            let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
+             let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
             let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
             let resultHtml = '';
 
@@ -1079,6 +971,251 @@
             }
         }
 
+        function generateVacationDailyInputs() {
+            const startStr = document.getElementById('vacation-start').value;
+            const endStr = document.getElementById('vacation-end').value;
+            const container = document.getElementById('vacation-daily-notes');
+            container.innerHTML = '';
+            if(!startStr || !endStr) return;
+            
+            const start = new Date(startStr + 'T12:00:00');
+            const end = new Date(endStr + 'T12:00:00');
+            if(end < start) return;
+
+            // Existing notes map?
+            const editId = document.getElementById('item-id').value;
+            let notesMap = {};
+            if(editId) {
+                // find existing items of this group
+                const item = appState.data.items.find(i => i.id === editId);
+                if(item && item.groupId) {
+                    const groupItems = appState.data.items.filter(i => i.groupId === item.groupId);
+                    groupItems.forEach(gi => notesMap[gi.date] = gi.description || '');
+                }
+            }
+
+            const current = new Date(start);
+            while(current <= end) {
+                const ymd = toLocalYMD(current);
+                const label = current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const existingNote = notesMap[ymd] || '';
+                
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-2";
+                div.innerHTML = `
+                    <span class="text-xs text-gray-400 w-24 flex-shrink-0">${label}</span>
+                    <input type="text" class="vacation-day-note flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs text-white outline-none focus:border-blue-500" data-date="${ymd}" placeholder="Activity..." value="${existingNote}">
+                `;
+                container.appendChild(div);
+                current.setDate(current.getDate() + 1);
+            }
+        }
+
+        // --- MODAL & INTERACTION FUNCTIONS (RESTORED) ---
+
+        function openItemModal(category, itemId = null, allowedTypes = '') {
+            const ymd = toLocalYMD(appState.currentDate);
+            
+            // Clear & Populate Type Select
+            const typeSelect = document.getElementById('item-type');
+            typeSelect.innerHTML = '';
+            const typeMap = {
+                'task': 'Task',
+                'meeting': 'Meeting',
+                'habit': 'Habit',
+                'media': 'Media (Movie/Show)',
+                'health': 'Nutrition Log',
+                'sports': 'Sports Game',
+                'holiday': 'Holiday',
+                'birthday': 'Birthday',
+                'anniversary': 'Anniversary',
+                'vacation': 'Vacation / Trip'
+            };
+            
+            const typesList = allowedTypes ? allowedTypes.split(',') : Object.keys(typeMap).filter(k => k !== 'health');
+            
+            typesList.forEach(t => {
+                if(typeMap[t]) {
+                    const opt = document.createElement('option');
+                    opt.value = t;
+                    opt.innerText = typeMap[t];
+                    typeSelect.appendChild(opt);
+                }
+            });
+
+            // Reset Fields
+            document.getElementById('item-id').value = ''; 
+            document.getElementById('item-title').value = ''; 
+            document.getElementById('item-desc').value = ''; 
+            document.getElementById('item-link').value = ''; 
+            document.getElementById('item-img').value = ''; 
+            document.getElementById('item-ticket').value = ''; 
+            document.getElementById('item-rating').value = '5'; 
+            renderStarInput(5); 
+            document.getElementById('item-duration').value = '60'; 
+            document.getElementById('item-actualDuration').value = '';
+            document.getElementById('item-startTime').value = '';
+            document.getElementById('item-streak').value = '0';
+            document.getElementById('item-fill-month').checked = false;
+            document.getElementById('item-is-work-holiday').checked = true;
+            document.getElementById('item-recur-weekly').checked = false;
+            document.getElementById('item-add-next-year').checked = false;
+            document.getElementById('vacation-start').value = '';
+            document.getElementById('vacation-end').value = '';
+            document.getElementById('vacation-daily-notes').innerHTML = '';
+            
+            document.getElementById('sports-season').value = '2025/2026';
+            document.getElementById('item-date').value = toLocalYMD(appState.currentDate);
+
+            if (itemId) {
+                document.getElementById('item-modal-title').innerText = "Edit Item";
+                document.getElementById('item-id').value = itemId;
+                const item = appState.data.items.find(i => i.id === itemId);
+                if (item) {
+                    if(item.date) document.getElementById('item-date').value = item.date;
+                    if(!typesList.includes(item.type)) {
+                        const opt = document.createElement('option'); opt.value = item.type; opt.innerText = typeMap[item.type]; typeSelect.appendChild(opt);
+                    }
+                    document.getElementById('item-category').value = item.category; 
+                    typeSelect.value = item.type; 
+                    document.getElementById('item-title').value = item.title; 
+                    document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit') ? (item.notes || item.description || '') : (item.description || '');
+                    document.getElementById('item-link').value = item.linkUrl || ''; 
+                    document.getElementById('item-img').value = item.imgUrl || '';
+                    
+                    if(item.type === 'meeting') { 
+                        document.getElementById('item-startTime').value = item.startTime || ''; 
+                        document.getElementById('item-duration').value = item.durationMinutes ? formatDuration(item.durationMinutes) : '60m';
+                        document.getElementById('item-actualDuration').value = item.timeSpentMinutes ? formatDuration(item.timeSpentMinutes) : ''; 
+                    }
+                    if(item.type === 'task') { document.getElementById('item-ticket').value = item.ticketNumber || ''; }
+                    if(item.type === 'media') { const r = item.rating || 5; document.getElementById('item-rating').value = r; renderStarInput(r); }
+                    if(item.type === 'habit') { document.getElementById('item-streak').value = item.streakCount || 0; }
+                    if(item.type === 'holiday') { document.getElementById('item-is-work-holiday').checked = item.isWorkHoliday; }
+                    if(item.type === 'vacation') {
+                        const group = appState.data.items.filter(i => i.groupId === item.groupId);
+                        if(group.length > 0) {
+                            group.sort((a,b) => a.date.localeCompare(b.date));
+                            document.getElementById('vacation-start').value = group[0].date;
+                            document.getElementById('vacation-end').value = group[group.length-1].date;
+                            generateVacationDailyInputs();
+                        }
+                    }
+                    if(item.type === 'sports') { populateTeamSelects(); document.getElementById('sports-league').value = item.league; populateTeamSelects(); document.getElementById('sports-time').value = item.startTime || ''; document.getElementById('sports-score-my').value = (item.homeTeamId === item.homeTeamId) ? item.homeScore : item.awayScore; const isFavoriteHome = appState.data.teams.find(t=>t.id===item.homeTeamId)?.isFavorite; document.getElementById('sports-myteam').value = isFavoriteHome ? item.homeTeamId : item.awayTeamId; document.getElementById('sports-opponent').value = isFavoriteHome ? item.awayTeamId : item.homeTeamId; document.getElementById('sports-is-home').value = isFavoriteHome ? "true" : "false"; document.getElementById('sports-score-my').value = isFavoriteHome ? item.homeScore : item.awayScore; document.getElementById('sports-score-opp').value = isFavoriteHome ? item.awayScore : item.homeScore; document.getElementById('sports-season').value = item.season || '2025/2026'; updateSportsLabel(); }
+                }
+            } else {
+                document.getElementById('item-modal-title').innerText = "Add Item";
+                document.getElementById('item-category').value = category || 'work';
+            }
+            updateModalFields();
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+        
+        function saveItem() {
+            const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; 
+            const editId = document.getElementById('item-id').value;
+            const inputDateVal = document.getElementById('item-date').value;
+            const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
+            let title = document.getElementById('item-title').value;
+            
+            if (type === 'sports') {
+                const myTeamId = document.getElementById('sports-myteam').value;
+                const oppTeamId = document.getElementById('sports-opponent').value;
+                const isHome = document.getElementById('sports-is-home').value === "true";
+                const homeId = isHome ? myTeamId : oppTeamId;
+                const awayId = isHome ? oppTeamId : myTeamId;
+                const homeTeam = appState.data.teams.find(t=>t.id === homeId);
+                const awayTeam = appState.data.teams.find(t=>t.id === awayId);
+                title = `${awayTeam?.abbrev || 'Away'} @ ${homeTeam?.abbrev || 'Home'}`;
+            }
+            
+            if(!title && type !== 'sports') return alert("Title required");
+
+            const newItemBase = { type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
+            const rawDesc = document.getElementById('item-desc').value;
+            if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } else { newItemBase.description = rawDesc; }
+
+            // Fill type specifics
+            if(type === 'meeting') { newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value); }
+            if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
+            if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
+            if(type === 'habit') { const existing = appState.data.items.find(i => i.id === editId); const inputStreak = parseInt(document.getElementById('item-streak').value); newItemBase.streakCount = (editId || !isNaN(inputStreak)) ? (inputStreak || 1) : (existing ? existing.streakCount : 1); }
+            if(type === 'holiday') { newItemBase.isWorkHoliday = document.getElementById('item-is-work-holiday').checked; }
+            if (type === 'sports') {
+                 const myTeamId = document.getElementById('sports-myteam').value; const oppTeamId = document.getElementById('sports-opponent').value; const isHome = document.getElementById('sports-is-home').value === "true"; const myScore = parseInt(document.getElementById('sports-score-my').value); const oppScore = parseInt(document.getElementById('sports-score-opp').value);
+                 newItemBase.league = document.getElementById('sports-league').value; newItemBase.homeTeamId = isHome ? myTeamId : oppTeamId; newItemBase.awayTeamId = isHome ? oppTeamId : myTeamId; newItemBase.homeScore = isHome ? myScore : oppScore; newItemBase.awayScore = isHome ? oppScore : myScore; newItemBase.startTime = document.getElementById('sports-time').value; newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled'; newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
+            }
+
+            // VACATION LOGIC
+            if (type === 'vacation') {
+                const startStr = document.getElementById('vacation-start').value;
+                const endStr = document.getElementById('vacation-end').value;
+                if(!startStr || !endStr) return alert("Start and End dates required");
+                const groupId = editId ? (appState.data.items.find(i=>i.id===editId)?.groupId || `vac_${Date.now()}`) : `vac_${Date.now()}`;
+                if(editId) appState.data.items = appState.data.items.filter(i => i.groupId !== groupId);
+                
+                const noteInputs = document.querySelectorAll('.vacation-day-note');
+                const notesMap = {};
+                noteInputs.forEach(inp => notesMap[inp.dataset.date] = inp.value);
+                
+                const start = new Date(startStr + 'T12:00:00');
+                const end = new Date(endStr + 'T12:00:00');
+                const loop = new Date(start);
+                while(loop <= end) {
+                    const ymd = toLocalYMD(loop);
+                    const dayNote = notesMap[ymd] || '';
+                    const dayItem = { ...newItemBase, id: `vac_${Date.now()}_${ymd}`, groupId: groupId, date: ymd, description: dayNote };
+                    appState.data.items.push(dayItem);
+                    loop.setDate(loop.getDate() + 1);
+                }
+                saveData(); closeItemModal(); updateUI();
+                return; 
+            }
+
+            // RECURRING
+            if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
+                const baseDate = new Date(dateYMD + "T12:00:00");
+                for(let w=1; w<=4; w++) {
+                    const nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + (w * 7)); const nextYMD = toLocalYMD(nextDate);
+                    const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_${w}`, date: nextYMD };
+                    appState.data.items.push(finalClone);
+                }
+            }
+            if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
+                const [y, m, d] = dateYMD.split('-'); const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
+                const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_next`, date: nextYearYMD };
+                appState.data.items.push(finalClone);
+            }
+
+            const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
+            if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = finalItem; } else { appState.data.items.push(finalItem); }
+            saveData(); closeItemModal(); updateUI();
+        }
+
+        function updateModalFields() {
+            const type = document.getElementById('item-type').value;
+            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
+            
+            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation'];
+            allFields.forEach(f => document.getElementById(`field-${f}`).classList.add('hidden'));
+            
+            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
+            
+            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
+            if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
+            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
+            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
+            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
+            if(type === 'birthday' || type === 'anniversary') {
+                const isEdit = document.getElementById('item-id').value !== '';
+                if(!isEdit) document.getElementById('field-annual').classList.remove('hidden');
+            }
+            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
+            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
+        }
+        
         // Initialization
         window.onload = () => { 
             renderSidebar(); 
