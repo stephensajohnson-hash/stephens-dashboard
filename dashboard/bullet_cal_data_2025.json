@@ -1759,7 +1759,7 @@
       "imgUrl": "https://www.thegunnysack.com/wp-content/uploads/2013/10/Blueberry-Cheesecake-Dessert-Recipe.jpg",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764083457491",
       "date": "2025-11-25"
     },
@@ -1771,7 +1771,7 @@
       "imgUrl": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764083499281",
       "date": "2025-11-25"
     },
@@ -1843,8 +1843,44 @@
       "imgUrl": "",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764025935741",
+      "date": "2025-11-26"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Remove embedded images",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Get rid of all embedded images in bullet_cal_data_2025.json",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764112969215",
+      "date": "2025-11-26"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Call Pharmacy",
+      "linkUrl": "https://www.christushealth.org/locations/specialty-pharmacy",
+      "imgUrl": "https://www.christushealth.org/-/media/images/logo/branded-logo-svg-format/christuslogo.ashx?h=51&iar=0&w=237&hash=9B90F1E8A50191FBF23BDEBDBE738B33",
+      "description": "Call Christus Specialty Pharmacy for Ozempic Prescription.  Cost was going to be over $900 after insurance paid a small amount.",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764168275605",
+      "date": "2025-11-26"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Call BCBS of Texas",
+      "linkUrl": "https://mybam.bcbstx.com/",
+      "imgUrl": "https://account.bcbstx.com/login/?goto=https://cim.bcbstx.com/am/oauth2/realms/members/authorize?client_id%3DOAuth-BlueAccessMember20_APP00007045%26code_challenge%3Dl7qfZiCTUmLCr_PnzoOxzYrBr7P0IUfV_pL5FEnyGRs%26code_challenge_method%3DS256%26prompt%3Dnone%26redirect_uri%3Dhttps://mybam.bcbstx.com/%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520bam2.0%2520fr:idm:*%2520restrictedmids%26service%3Dhcsc-members-mma-mfa%26state%3DMXkyRA%253D%253D",
+      "description": "Call insurance about Ozempic price",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764170567168",
       "date": "2025-11-26"
     },
     {
