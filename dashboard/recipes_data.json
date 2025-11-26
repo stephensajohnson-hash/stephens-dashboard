@@ -908,7 +908,7 @@
     },
     {
       "id": "user_rec_1763653389089",
-      "title": "Turkey Gravy",
+      "title": "ATK - Turkey Gravy",
       "description": "Giblets and Neck anyone?",
       "category": "American",
       "servings": 16,
@@ -922,7 +922,8 @@
       "tags": [
         "Thanksgiving",
         "Gluten Free",
-        "Keto"
+        "Keto",
+        "Difficult"
       ],
       "ingredients": [
         {
@@ -2923,7 +2924,7 @@
               "name": "Graham Cracker Crumbs",
               "quantity": "2",
               "unit": "cups",
-              "notes": "12 graham crackers",
+              "notes": "~16 graham crackers",
               "macros": {
                 "calories": 722,
                 "protein": 28,
@@ -4183,6 +4184,95 @@
             "Sprinkle the remaining teff grain onto a clean work surface. Turn the dough out onto the grain and lightly roll it around using your hands to shape it into a ball. You want the inner mixture to stay wet and soft and want a good coating of teff grain on the outside. There is no need to knead the dough. Using your hands, lightly press the ball down into a circle 3 inches high. Cut the circle into 6 triangles.",
             "Transfer the scones onto a tray covered in baking paper. Bake in the preheated oven for 40 minutes.",
             "Take out of the oven and leave on the tray for 5 minutes. After, you can transfer the scones to a wire rack to cool."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1764174274051",
+      "title": "'Easy' Turkey Gravy",
+      "description": "Still takes forever but not as crazy as the American Test Kitchen version.",
+      "category": "American",
+      "servings": 24,
+      "prepTime": "0 minutes",
+      "cookTime": "2 hours",
+      "image": "https://natashaskitchen.com/wp-content/uploads/2023/11/Turkey-Gravy-tall.jpg",
+      "source": {
+        "description": "Cayce",
+        "url": ""
+      },
+      "tags": [
+        "Thanksgiving"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Chicken Broth",
+              "quantity": "8",
+              "unit": "cups",
+              "notes": "or Turkey Broth ",
+              "macros": {
+                "calories": 64,
+                "protein": 8,
+                "carbs": 8,
+                "fat": 8,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "All-purpose Flour",
+              "quantity": "8",
+              "unit": "tbsp",
+              "notes": "or Gluten Free Flour Mix",
+              "macros": {
+                "calories": 240,
+                "protein": 8,
+                "carbs": 52,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Butter",
+              "quantity": "8",
+              "unit": "tbsp",
+              "notes": "1 stick",
+              "macros": {
+                "calories": 800,
+                "protein": 2,
+                "carbs": 0,
+                "fat": 60,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Reserved Giblets and Turkey Neck",
+              "quantity": "",
+              "unit": "",
+              "notes": "or Chicken Livers",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "In a large pot, add broth and reserved turkey parts or chicken livers. Bring to a boil over med-high heat.  If you can't fit all the broth just add as much as will fit for now and hold the rest aside.  Let boil for about 10 minutes to extract flavor from turkey or chicken parts.",
+            "While broth is coming to a boil - in a large pan over low heat (2%), add butter and flour to make a rue.  Stir until smooth.",
+            "If you have broth that didn't fit in the large pot, start adding it to the large pan rue - about 1/4 cup at first.  This will cause the flour mixture to form clumps.  Stir until smooth, breaking up the clumps.  Then add more broth (a little more each time) until it is all incorporated and smooth.  Mixture should begin to boil gently - forming a few bubbles.  Increase heat if necessary to reach this boil - but reduce if the boil gets more aggressive.",
+            "Remove turkey or chicken parts from the large part with a slotted spoon or colander.  Now start to incorporate the broth from the large pot in to the rue (a little more each time) until it is all mixed and smooth.",
+            "Allow gravy mixture to come back to a gentle boil and stir often until the gravy thickens.  Volumn should reduce by 35% - 40%.",
+            "Note: 8 cups broth yields 5 cups of gravy."
           ]
         }
       ]
