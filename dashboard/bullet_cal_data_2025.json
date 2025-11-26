@@ -701,6 +701,42 @@
   ],
   "items": [
     {
+      "type": "media",
+      "category": "personal",
+      "title": "His Three Daughters",
+      "linkUrl": "https://www.imdb.com/title/tt28491891/",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/yTIHBPLQyzhgz1c2spak3btJxsg.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764178647221",
+      "date": "2025-01-01"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": " To All The Boys I’ve Loved Before",
+      "linkUrl": "",
+      "imgUrl": "https://www.thevro.com/wp-content/uploads/to-all-the-boys-ive-loved-before-movie-poster-1-790x543.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764178796743",
+      "date": "2025-01-11"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Five Feet Apart",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/kreTuJBkUjVWePRfhHZuYfhNE1T.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764178872015",
+      "date": "2025-01-12"
+    },
+    {
       "type": "birthday",
       "category": "work",
       "title": "Cayce",
@@ -709,6 +745,54 @@
       "description": "",
       "id": "task_1764110503121",
       "date": "2025-01-17"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Choice ",
+      "linkUrl": "",
+      "imgUrl": "https://resizing.flixster.com/VuEiYfxFTLbA5KsxaaFfB1C-DWE=/206x305/v2/https://resizing.flixster.com/-XZAfHZM39UwaGJIFWKAE8fS0ak=/v3/t/assets/p12017653_p_v8_aa.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 5,
+      "id": "media_1764178964846",
+      "date": "2025-01-17"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Venom ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/nbtm0juWvRnpP4GVUo2mUh529mN.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764179120159",
+      "date": "2025-01-19"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Mad Max Fury Road",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/hA2ple9q4qnwxp3hKVNhroipsir.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764179494247",
+      "date": "2025-01-19"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Back In Action",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/3L3l6LsiLGHkTG4RFB2aBA6BttB.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764179729003",
+      "date": "2025-01-19"
     },
     {
       "type": "anniversary",
@@ -741,6 +825,30 @@
       "date": "2025-01-24"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "Real Women Have Curves",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/4NNWf2uXJ1NFEQwkkaRgZoEEf43.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764179892884",
+      "date": "2025-02-01"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Remember Sunday",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/triS1L9nHDjVwWmYNBItgDo525P.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764179981353",
+      "date": "2025-02-01"
+    },
+    {
       "type": "anniversary",
       "category": "personal",
       "title": "Star's Death Anniversary",
@@ -751,6 +859,162 @@
       "date": "2025-02-07"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "A League of Their Own ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/7xpFXAOjgzFPE3vyVerFGfrXhFK.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764180098736",
+      "date": "2025-02-08"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "To All The Boys: PS I Still Love You",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/maib5VlmEqp5xlN8lptnBSftp2o.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764180152524",
+      "date": "2025-02-08"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Fever Pitch ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/xwJBEOM5BVElAgQIA82KBLX10fu.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764180205568",
+      "date": "2025-02-08"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Spectacular Now ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/mm8SYMoZPQMvG3xySSfsItB6NAQ.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180284769",
+      "date": "2025-02-09"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "All the Bright Places ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/2HHEPoYYkSKUZPwvegNQok89xoY.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180347374",
+      "date": "2025-02-09"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Limitless ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/zbcO8KCUpAkRUvHoYfz2lR6nSIg.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 9,
+      "id": "media_1764180482047",
+      "date": "2025-02-11"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Gorge ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/7HWs3MZWqhLSugFcgS54ZyKmrPS.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180565966",
+      "date": "2025-02-14"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "You’ve Got Mail ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/e2uVtH6TpMfUl7WeOM70ezkcjsU.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764180636794",
+      "date": "2025-02-15"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Moneyball ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/4yIQq1e6iOcaZ5rLDG3lZBP3j7a.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180707489",
+      "date": "2025-02-15"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "57 Seconds ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gxQQoMgsmU0nqZChzpVWIloFwiz.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764180796717",
+      "date": "2025-02-16"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Fight Club ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/2jVOvPaQkRjt92oTr8zzno4zuz7.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180845258",
+      "date": "2025-02-16"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "An Uncommon Grace ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/vvxH0buCmxhHWHBWfu2VEnYP9.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 5,
+      "id": "media_1764180928813",
+      "date": "2025-02-23"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Jumper ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/3pPZ9JhNz3VMmASVir5SMHvTDUU.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764180978185",
+      "date": "2025-02-23"
+    },
+    {
       "type": "birthday",
       "category": "personal",
       "title": "Tony",
@@ -759,6 +1023,90 @@
       "description": "",
       "id": "birthday_1764111310434",
       "date": "2025-02-26"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Look Both Ways ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/jq8IGJgg16mJ95a5OPyS7eGJaam.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764186125657",
+      "date": "2025-03-09"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Top Gun Maverick ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/jeGvNOVMs5QIU1VaoGvnd3gSv0G.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 10,
+      "id": "media_1764186249538",
+      "date": "2025-03-14"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Captain America: Brave New World",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/4YFyYcUPfrbpj6VpgWh7xoUnwLA.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764186316772",
+      "date": "2025-03-23"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Changeland ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/zbH4zrlQS4AVwfUkz8ZTcNX1CSp.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764186393022",
+      "date": "2025-03-29"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Life List ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/2SvRwPGVpxdqpXbBicLkNTE2mGK.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 9,
+      "id": "media_1764186847192",
+      "date": "2025-04-05"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Class Action ",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/9BOsvZL2DuE2JFGYOssynTjs8K6.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764186914043",
+      "date": "2025-04-05"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Picture This",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/qnUN0QoLE4Afay6iPa5f3tv8Wug.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764186997166",
+      "date": "2025-04-06"
     },
     {
       "type": "birthday",
@@ -781,6 +1129,66 @@
       "date": "2025-05-26"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "Guiding Emily",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/amJHrFXIDI5tubfelFiUux0THvu.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764187097252",
+      "date": "2025-05-26"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Fountain of Youth",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/jum9XatT4dWG2JNA2ao1CcG5VUH.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764187148252",
+      "date": "2025-05-26"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Nonas",
+      "linkUrl": "",
+      "imgUrl": "https://m.media-amazon.com/images/M/MV5BODM0M2M4YWQtMzhlNy00NjdkLWFkODktOGNlNTc4OTFiZjZmXkEyXkFqcGc@._V1_QL75_UX147_.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764187594315",
+      "date": "2025-05-30"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Death of a Unicorn",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/zkt8ZiI5QAoTkogpa2dhzVxgTuS.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764187677714",
+      "date": "2025-05-31"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Luckiest Girl Alive",
+      "linkUrl": "",
+      "imgUrl": "https://m.media-amazon.com/images/M/MV5BMzRmOWFkODEtOGYyZi00YTZjLTk1YTktNmUyNjBmODljZGQxXkEyXkFqcGc@._V1_QL75_UX156_.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764187874810",
+      "date": "2025-06-01"
+    },
+    {
       "type": "birthday",
       "category": "personal",
       "title": "Kay",
@@ -801,6 +1209,102 @@
       "date": "2025-06-15"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "A Few Good Men",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/rLOk4z9zL1tTukIYV56P94aZXKk.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 10,
+      "id": "media_1764187962812",
+      "date": "2025-06-22"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "US Marshals",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/5ST0BydDSXtW5AtfDDhTVS13pTt.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764188014928",
+      "date": "2025-06-22"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Companion",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/oCoTgC3UyWGfyQ9thE10ulWR7bn.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764188095385",
+      "date": "2025-07-18"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "I See You",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/E6mwyjpjvQISbUDYCTVg50rJyl.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764188273472",
+      "date": "2025-07-20"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Materialists",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/zh4kaa2dGhVjojHulCWt3AR4b2l.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764188334212",
+      "date": "2025-07-26"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Kindergarten Teacher",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/pwavkdZb2xNRh5Y9MHhkZJ2UaHT.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764189137827",
+      "date": "2025-07-27"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Signs",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/YtrIdrTxpRhvCnlw43dwOjfLqx.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 9,
+      "id": "media_1764189896862",
+      "date": "2025-08-03"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Freakier Friday",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/9wV65OmsjLAqBfDnYTkMPutXH8j.jpg",
+      "notes": "Saw this one at a theater.",
+      "description": "Saw this one at a theater.",
+      "rating": 8,
+      "id": "media_1764189977655",
+      "date": "2025-08-08"
+    },
+    {
       "id": "gm_01",
       "date": "2025-08-09",
       "type": "sports",
@@ -814,6 +1318,18 @@
       "status": "completed",
       "startTime": "12:30",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Jurassic World: Rebirth",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/mJjd2wLDw7FTKOWBiZ8JDkjDgyI.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764190170537",
+      "date": "2025-08-10"
     },
     {
       "id": "gm_02",
@@ -831,6 +1347,30 @@
       "season": "2025/2026"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "Elysium",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/uiiXHBd9oUrtUa4YqZiAoy05cRz.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 5,
+      "id": "media_1764190275320",
+      "date": "2025-08-16"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "My Oxford Year",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/jrhXbIOFingzdLjkccjg9vZnqIp.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764190355366",
+      "date": "2025-08-16"
+    },
+    {
       "id": "gm_03",
       "date": "2025-08-23",
       "type": "sports",
@@ -846,6 +1386,42 @@
       "season": "2025/2026"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "Superman",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/ldyfo0BKmz5rWtJJKCvwaNS4cJT.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764190421051",
+      "date": "2025-08-23"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Thunderbolts",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/hqcexYHbiTBfDIdDWxrxPtVndBX.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764190460151",
+      "date": "2025-08-23"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Green Mile",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/o0lO84GI7qrG6XFvtsPOSV7CTNa.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 9,
+      "id": "media_1764190507530",
+      "date": "2025-08-23"
+    },
+    {
       "id": "gm_04",
       "date": "2025-08-30",
       "type": "sports",
@@ -859,6 +1435,18 @@
       "status": "completed",
       "startTime": "15:00",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Judge",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/3K93GWotLXe4FqpErri0xkpLaD5.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764190695544",
+      "date": "2025-08-30"
     },
     {
       "type": "sports",
@@ -975,6 +1563,18 @@
       "date": "2025-09-26"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "The Firm",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/kFexXCzidkm4LwlgZqxsJsDQB5v.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 9,
+      "id": "media_1764190796140",
+      "date": "2025-09-26"
+    },
+    {
       "id": "gm_07",
       "date": "2025-09-27",
       "type": "sports",
@@ -988,6 +1588,30 @@
       "status": "completed",
       "startTime": "12:30",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "F1: The Movie",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/vqBmyAj0Xm9LnS1xe1MSlMAJyHq.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764190864448",
+      "date": "2025-09-27"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Sneakers",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/l2pIGwCvpZEpBuMb55YBl6A04Jv.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 10,
+      "id": "media_1764190914947",
+      "date": "2025-09-27"
     },
     {
       "type": "sports",
@@ -1006,6 +1630,18 @@
       "id": "sports_1764004136094",
       "date": "2025-09-28",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Dark Waters",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/bzvzaHqKBSuGIIWhinTQPHvT0zf.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764190981814",
+      "date": "2025-09-28"
     },
     {
       "id": "gm_08",
@@ -1038,6 +1674,30 @@
       "season": "2025/2026"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "Twilight",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/3Gkb6jm6962ADUPaCBqzz9CTbn9.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191055525",
+      "date": "2025-10-04"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Twilight: New Moon",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/k2qTooPlHffgNABNWxeJdGMglPK.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191089879",
+      "date": "2025-10-04"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "DAL @ NYJ",
@@ -1054,6 +1714,42 @@
       "id": "sports_1764004197390",
       "date": "2025-10-05",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Twilight: Eclipse",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/dK4Gi1UdMiHzHc7r7CZQG4IQ9Sr.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191132251",
+      "date": "2025-10-05"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Twilight: Breaking Dawn Part 1",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/qs8LsHKYlVRmJbFUiSUhhRAygwj.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191175542",
+      "date": "2025-10-05"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Twilight: Breaking Dawn Part 2",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/7IGdPaKujv0BjI0Zd0m0a4CzEjJ.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191213652",
+      "date": "2025-10-05"
     },
     {
       "type": "anniversary",
@@ -1076,6 +1772,18 @@
       "date": "2025-10-10"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "The Fantastic Four: First Steps",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/z7wI0jpec9gz2IwVciND1nbRBy0.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764191276467",
+      "date": "2025-10-10"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "DAL @ CAR",
@@ -1092,6 +1800,54 @@
       "id": "sports_1764004256599",
       "date": "2025-10-12",
       "season": "2025/2026"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Grandma",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/4LW20TF4NfQgHj5rZs0d0cgxRjV.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764191323497",
+      "date": "2025-10-13"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Love Hard",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/oTkAFDZRLnqrXOrOwuy3Tvul0v5.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191373956",
+      "date": "2025-10-14"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Happythankyoumoreplease",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/qWZwKkrPNoSa7LIvUTwClmFUjBn.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764191420938",
+      "date": "2025-10-17"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Sketch",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/sxiDj3dTgZuCPkx30Jvyq8K9QUV.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191460193",
+      "date": "2025-10-17"
     },
     {
       "id": "gm_10",
@@ -1127,6 +1883,30 @@
       "season": "2025/2026"
     },
     {
+      "type": "media",
+      "category": "personal",
+      "title": "It’s Kind of a Funny Story",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/hQE4q8Szeaae4davgB7o8MTLmwr.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191519493",
+      "date": "2025-10-19"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Hundred Foot Journey",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/1vFhSr7INoulu18smHqicft05i8.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191552452",
+      "date": "2025-10-19"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "OXF @ WRE",
@@ -1143,6 +1923,18 @@
       "season": "2025/2026",
       "id": "gm_11",
       "date": "2025-10-22"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Gentleman",
+      "linkUrl": "",
+      "imgUrl": "https://m.media-amazon.com/images/M/MV5BYzlhZjhhZTktMThmMS00MTE4LWFiOGEtMGViYjk0NTA5YmZlXkEyXkFqcGc@._V1_QL75_UX147_.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764191722497",
+      "date": "2025-10-24"
     },
     {
       "id": "gm_12",
@@ -1194,6 +1986,42 @@
       "season": "2025/2026",
       "id": "gm_13",
       "date": "2025-10-31"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Life of Chuck",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/oumprkO9bThExP8NwxBIBnvBu2v.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 8,
+      "id": "media_1764191773273",
+      "date": "2025-10-31"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Roses",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/98n5HnCJ5LnXKIMNP9SBfVNyxCE.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 7,
+      "id": "media_1764191890404",
+      "date": "2025-11-01"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "The Reluctant Royal",
+      "linkUrl": "",
+      "imgUrl": "https://media.themoviedb.org/t/p/w300_and_h450_face/A0IOjMS9hLsmL32vDrUL9bNuWze.jpg",
+      "notes": "",
+      "description": "",
+      "rating": 6,
+      "id": "media_1764191930393",
+      "date": "2025-11-02"
     },
     {
       "type": "sports",
@@ -1833,7 +2661,8 @@
       "description": "",
       "id": "habit_1764136800000_5xz6o",
       "date": "2025-11-26",
-      "streakCount": 1499
+      "streakCount": 1499,
+      "status": "completed"
     },
     {
       "type": "task",
@@ -1898,6 +2727,18 @@
       "workouts": []
     },
     {
+      "type": "task",
+      "category": "work",
+      "title": "Contact Airbnb Host",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Request Early Check-in at 1:30pm for Tammy & Johnny.  Approved!",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764177710383",
+      "date": "2025-11-26"
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "BRI @ WRE",
@@ -1914,6 +2755,17 @@
       "season": "2025/2026",
       "id": "gm_17",
       "date": "2025-11-26"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Thanksgiving",
+      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "description": "Thanksgiving",
+      "id": "vac_1764186628460_2025-11-27",
+      "groupId": "vac_1764186628460",
+      "date": "2025-11-27"
     },
     {
       "type": "habit",
@@ -1957,6 +2809,17 @@
       "season": "2025/2026"
     },
     {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Thanksgiving",
+      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "description": "Black Friday",
+      "id": "vac_1764186628460_2025-11-28",
+      "groupId": "vac_1764186628460",
+      "date": "2025-11-28"
+    },
+    {
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
@@ -1978,6 +2841,17 @@
       "isWorkHoliday": true,
       "id": "holiday_1764100316048",
       "date": "2025-11-28"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Thanksgiving",
+      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "description": "",
+      "id": "vac_1764186628460_2025-11-29",
+      "groupId": "vac_1764186628460",
+      "date": "2025-11-29"
     },
     {
       "type": "habit",
@@ -2005,6 +2879,17 @@
       "status": "scheduled",
       "startTime": "15:00",
       "season": "2025/2026"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Thanksgiving",
+      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "imgUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
+      "description": "",
+      "id": "vac_1764186628460_2025-11-30",
+      "groupId": "vac_1764186628460",
+      "date": "2025-11-30"
     },
     {
       "type": "habit",
@@ -2877,6 +3762,17 @@
       "season": "2025/2026"
     },
     {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "To Galveston",
+      "id": "vac_1764179267235_2026-01-31",
+      "groupId": "vac_1764179267235",
+      "date": "2026-01-31"
+    },
+    {
       "id": "gm_30",
       "date": "2026-01-31",
       "type": "sports",
@@ -2890,6 +3786,83 @@
       "status": "scheduled",
       "startTime": "12:30",
       "season": "2025/2026"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Embarcation",
+      "id": "vac_1764179267235_2026-02-01",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-01"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Sea Day",
+      "id": "vac_1764179267235_2026-02-02",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-02"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Sea Day",
+      "id": "vac_1764179267235_2026-02-03",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-03"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Roatan",
+      "id": "vac_1764179267235_2026-02-04",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-04"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Costa Maya",
+      "id": "vac_1764179267235_2026-02-05",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-05"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Cozomel",
+      "id": "vac_1764179267235_2026-02-06",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-06"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Sea Day",
+      "id": "vac_1764179267235_2026-02-07",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-07"
     },
     {
       "type": "anniversary",
@@ -2915,6 +3888,17 @@
       "status": "scheduled",
       "startTime": "15:00",
       "season": "2025/2026"
+    },
+    {
+      "type": "vacation",
+      "category": "personal",
+      "title": "Cruise!",
+      "linkUrl": "",
+      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
+      "description": "Disembarcation",
+      "id": "vac_1764179267235_2026-02-08",
+      "groupId": "vac_1764179267235",
+      "date": "2026-02-08"
     },
     {
       "id": "gm_32",
