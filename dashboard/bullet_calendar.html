@@ -101,10 +101,7 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
-            
-            <!-- New Rolling Month Grid Sidebar -->
             <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
-
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
@@ -126,70 +123,35 @@
                 <h3 class="text-xl font-bold text-white">Manage Sports Data</h3>
                 <button onclick="closeSportsManager()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            
-            <!-- Tabs -->
             <div class="flex border-b border-gray-700 px-6 pt-2">
                 <button onclick="switchSportsTab('leagues')" id="tab-leagues" class="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">Leagues</button>
                 <button onclick="switchSportsTab('teams')" id="tab-teams" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Teams</button>
             </div>
-
             <div class="flex-1 overflow-y-auto p-6">
-                
-                <!-- LEAGUES TAB -->
                 <div id="view-leagues" class="block">
                     <div class="flex gap-2 mb-4">
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2">
-                        <!-- League Items -->
-                    </div>
+                    <div id="leagues-list" class="space-y-2"></div>
                 </div>
-
-                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
-                                <span id="team-form-title">Add Team</span>
-                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
-                            </h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div>
-                                    <label class="text-xs text-gray-500">League</label>
-                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Team Name</label>
-                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Abbreviation</label>
-                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Logo URL</label>
-                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
-                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
-                                </div>
+                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
+                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
+                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
-
-                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
-                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
-                            </div>
-                            <div id="teams-list" class="space-y-2">
-                                <!-- Teams injected here -->
-                            </div>
+                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
+                            <div id="teams-list" class="space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -206,27 +168,13 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
-                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
-                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
-                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    
-                    <!-- Workouts Section -->
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
-                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -245,8 +193,7 @@
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <input type="hidden" id="item-category">
-                <input type="hidden" id="item-id">
+                <input type="hidden" id="item-category"><input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
                 <div>
@@ -257,65 +204,26 @@
                     </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
-                    <select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()">
-                        <!-- Dynamic Options -->
-                    </select>
-                </div>
-                
-                <!-- Title Row -->
-                <div id="field-title">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
-                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
-                </div>
+                <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label><select id="item-type" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="updateModalFields()"></select></div>
+                <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
 
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
-                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
-                             </select>
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
-                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                     </div>
-                    
-                    <!-- SEASON FIELD ADDED HERE -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
-                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
-                    </div>
-
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
                     <div class="flex items-center gap-2">
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
-                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
-                        <div class="flex flex-col items-center justify-end pb-1">
-                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
-                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
-                        </div>
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
-                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
+                    <input type="hidden" id="sports-is-home" value="false">
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
-
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
-                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
-                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
                     </div>
                 </div>
                 
@@ -325,9 +233,7 @@
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Date</label><input type="date" id="vacation-end" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                     </div>
-                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2">
-                        <!-- Dynamic inputs will go here -->
-                    </div>
+                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
                 </div>
 
                 <!-- Holiday Specific Fields -->
@@ -346,71 +252,34 @@
                     </label>
                 </div>
 
-                <div id="common-fields">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
-                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
-                </div>
+                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
-                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
-                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
-                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
-                    </div>
-                    <!-- Recurring Checkbox for Meetings -->
-                    <div class="col-span-2 flex items-center gap-2 mt-2">
-                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
-                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
+                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
+                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
-                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
-                </div>
+                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
-                    <input type="hidden" id="item-rating" value="5">
-                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
-                </div>
+                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
-                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
-                        </div>
-                        <div class="flex items-center">
-                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
-                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
-                                <span>Fill rest of month?</span>
-                             </label>
-                        </div>
+                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
+                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
                     </div>
                 </div>
 
-                <!-- URL/Image (General) -->
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
-                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
-                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -421,21 +290,12 @@
     </div>
 
     <script>
-        // Explicit definition of renderStarInput before usage
-        function renderStarInput(rating) {
-            const container = document.getElementById('star-rating-container');
-            if(!container) return;
-            container.innerHTML = '';
-            for (let i = 1; i <= 10; i++) {
-                const star = document.createElement('span'); 
-                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
-                star.innerText = '★';
-                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
-                container.appendChild(star);
-            }
-        }
+        // --- STATE & HELPERS ---
+        const STORAGE_KEY = 'bullet_cal_data_v2'; 
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3.9", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
+        let hoverTimeout;
 
-        // --- HELPER FUNCTIONS ---
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
             const adjusted = new Date(date.getTime() - (offset*60*1000)); 
@@ -512,7 +372,20 @@
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
         }
-        
+
+        function renderStarInput(rating) {
+            const container = document.getElementById('star-rating-container');
+            if(!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const star = document.createElement('span'); 
+                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
+                star.innerText = '★';
+                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
+                container.appendChild(star);
+            }
+        }
+
         function copyAnnualsToNextYear() {
             if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
             let count = 0;
@@ -582,57 +455,6 @@
             }
         }
 
-        // --- NUTRITION FUNCTIONS (RESTORED) ---
-        function openNutritionModal() {
-            const ymd = toLocalYMD(appState.currentDate);
-            let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-            if (!item) item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
-            document.getElementById('edit-weight').value = item.weightLbs || ''; document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
-            const container = document.getElementById('meal-inputs-container'); container.innerHTML = '';
-            const workoutContainer = document.getElementById('workout-inputs-container'); workoutContainer.innerHTML = '';
-            if (item.meals && item.meals.length > 0) item.meals.forEach(m => addMealInput(m)); else addMealInput(); 
-            if (item.workouts && item.workouts.length > 0) item.workouts.forEach(w => addWorkoutInput(w));
-            document.getElementById('nutrition-modal').classList.remove('hidden');
-        }
-
-        function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
-        
-        function addMealInput(data = {}) {
-            const container = document.getElementById('meal-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 meal-row";
-            div.innerHTML = `<div class="flex gap-2 mb-2"><select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health"><option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option><option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option><option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option><option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option></select><input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health"><button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div><div class="grid grid-cols-5 gap-2"><div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div></div>`;
-            container.appendChild(div);
-        }
-        
-        function addWorkoutInput(data = {}) {
-            const container = document.getElementById('workout-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 workout-row";
-            div.innerHTML = `<div class="flex gap-2 items-center"><input type="text" placeholder="Workout Description" value="${data.description || ''}" class="workout-desc flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><input type="number" placeholder="Cal Burned" value="${data.calories || ''}" class="workout-cal w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><button onclick="this.closest('.workout-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div>`;
-            container.appendChild(div);
-        }
-        
-        function saveNutrition() {
-            const ymd = toLocalYMD(appState.currentDate); const weight = parseFloat(document.getElementById('edit-weight').value) || 0; const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
-            const mealRows = document.querySelectorAll('.meal-row');
-            const meals = Array.from(mealRows).map(row => ({ mealType: row.querySelector('.meal-type').value, name: row.querySelector('.meal-name').value, calories: parseFloat(row.querySelector('.meal-cal').value) || 0, protein: parseFloat(row.querySelector('.meal-pro').value) || 0, carbs: parseFloat(row.querySelector('.meal-carb').value) || 0, fat: parseFloat(row.querySelector('.meal-fat').value) || 0, fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0 })).filter(m => m.name.trim() !== ""); 
-            const workoutRows = document.querySelectorAll('.workout-row');
-            const workouts = Array.from(workoutRows).map(row => ({ description: row.querySelector('.workout-desc').value, calories: parseFloat(row.querySelector('.workout-cal').value) || 0 })).filter(w => w.description.trim() !== "");
-            let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
-            const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals, workouts: workouts };
-            if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
-            saveData(); closeNutritionModal(); updateUI();
-        }
-        
-        function getWeeklyDeficit() {
-            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
-            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); let totalDeficit = 0; let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); let dailyBurn = 0; (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += ((dailyCal - dailyBurn) - tdee); daysCounted++; }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
-        }
-
         async function fetchWeather() {
             const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
             try {
@@ -653,13 +475,7 @@
             return '☁️';
         }
 
-        // --- MAIN APP LOGIC ---
-        const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3.8", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
-        let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
-        let hoverTimeout;
-
-        // --- DATA MANAGEMENT ---
+        // --- DATA MANAGEMENT (HOISTED) ---
         async function loadData() {
             const idMap = new Map();
             const teamMap = new Map(); 
@@ -729,6 +545,7 @@
         }
 
         function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
+        
         function downloadData() {
             const url = URL.createObjectURL(new Blob([JSON.stringify(appState.data, null, 2)], { type: "application/json" }));
             const a = document.createElement('a'); a.href = url; a.download = `bullet_cal_data_${appState.data.meta.year}.json`;
@@ -750,6 +567,328 @@
             }
             saveData();
             updateUI();
+        }
+
+        // --- MODAL & INTERACTION FUNCTIONS (RESTORED) ---
+        function openItemModal(category, itemId = null, allowedTypes = '') {
+            const ymd = toLocalYMD(appState.currentDate);
+            
+            // Clear & Populate Type Select
+            const typeSelect = document.getElementById('item-type');
+            typeSelect.innerHTML = '';
+            const typeMap = {
+                'task': 'Task', 'meeting': 'Meeting', 'habit': 'Habit', 'media': 'Media',
+                'health': 'Nutrition Log', 'sports': 'Sports Game', 'holiday': 'Holiday',
+                'birthday': 'Birthday', 'anniversary': 'Anniversary', 'vacation': 'Vacation'
+            };
+            
+            const typesList = allowedTypes ? allowedTypes.split(',') : Object.keys(typeMap).filter(k => k !== 'health');
+            
+            typesList.forEach(t => {
+                if(typeMap[t]) {
+                    const opt = document.createElement('option');
+                    opt.value = t; opt.innerText = typeMap[t];
+                    typeSelect.appendChild(opt);
+                }
+            });
+
+            // Reset Fields
+            document.getElementById('item-id').value = ''; 
+            document.getElementById('item-title').value = ''; 
+            document.getElementById('item-desc').value = ''; 
+            document.getElementById('item-link').value = ''; 
+            document.getElementById('item-img').value = ''; 
+            document.getElementById('item-ticket').value = ''; 
+            document.getElementById('item-rating').value = '5'; 
+            renderStarInput(5); 
+            document.getElementById('item-duration').value = '60'; 
+            document.getElementById('item-actualDuration').value = '';
+            document.getElementById('item-startTime').value = '';
+            document.getElementById('item-streak').value = '0';
+            document.getElementById('item-fill-month').checked = false;
+            document.getElementById('item-is-work-holiday').checked = true;
+            document.getElementById('item-recur-weekly').checked = false;
+            document.getElementById('item-add-next-year').checked = false;
+            document.getElementById('vacation-start').value = ymd; 
+            document.getElementById('vacation-end').value = '';
+            document.getElementById('vacation-daily-notes').innerHTML = '';
+            document.getElementById('sports-season').value = '2025/2026';
+            document.getElementById('item-date').value = ymd;
+
+            if (itemId) {
+                document.getElementById('item-modal-title').innerText = "Edit Item";
+                document.getElementById('item-id').value = itemId;
+                const item = appState.data.items.find(i => i.id === itemId);
+                if (item) {
+                    if(item.date) document.getElementById('item-date').value = item.date;
+                    if(!typesList.includes(item.type)) {
+                        const opt = document.createElement('option'); opt.value = item.type; opt.innerText = typeMap[item.type]; typeSelect.appendChild(opt);
+                    }
+                    document.getElementById('item-category').value = item.category; 
+                    typeSelect.value = item.type; 
+                    document.getElementById('item-title').value = item.title; 
+                    document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit') ? (item.notes || item.description || '') : (item.description || '');
+                    document.getElementById('item-link').value = item.linkUrl || ''; 
+                    document.getElementById('item-img').value = item.imgUrl || '';
+                    
+                    if(item.type === 'meeting') { 
+                        document.getElementById('item-startTime').value = item.startTime || ''; 
+                        document.getElementById('item-duration').value = item.durationMinutes ? formatDuration(item.durationMinutes) : '60m';
+                        document.getElementById('item-actualDuration').value = item.timeSpentMinutes ? formatDuration(item.timeSpentMinutes) : ''; 
+                    }
+                    if(item.type === 'task') { document.getElementById('item-ticket').value = item.ticketNumber || ''; }
+                    if(item.type === 'media') { const r = item.rating || 5; document.getElementById('item-rating').value = r; renderStarInput(r); }
+                    if(item.type === 'habit') { document.getElementById('item-streak').value = item.streakCount || 0; }
+                    if(item.type === 'holiday') { document.getElementById('item-is-work-holiday').checked = item.isWorkHoliday; }
+                    if(item.type === 'vacation') {
+                        const group = appState.data.items.filter(i => i.groupId === item.groupId);
+                        if(group.length > 0) {
+                            group.sort((a,b) => a.date.localeCompare(b.date));
+                            document.getElementById('vacation-start').value = group[0].date;
+                            document.getElementById('vacation-end').value = group[group.length-1].date;
+                            generateVacationDailyInputs();
+                        }
+                    }
+                    if(item.type === 'sports') { populateTeamSelects(); document.getElementById('sports-league').value = item.league; populateTeamSelects(); document.getElementById('sports-time').value = item.startTime || ''; document.getElementById('sports-score-my').value = (item.homeTeamId === item.homeTeamId) ? item.homeScore : item.awayScore; const isFavoriteHome = appState.data.teams.find(t=>t.id===item.homeTeamId)?.isFavorite; document.getElementById('sports-myteam').value = isFavoriteHome ? item.homeTeamId : item.awayTeamId; document.getElementById('sports-opponent').value = isFavoriteHome ? item.awayTeamId : item.homeTeamId; document.getElementById('sports-is-home').value = isFavoriteHome ? "true" : "false"; document.getElementById('sports-score-my').value = isFavoriteHome ? item.homeScore : item.awayScore; document.getElementById('sports-score-opp').value = isFavoriteHome ? item.awayScore : item.homeScore; document.getElementById('sports-season').value = item.season || '2025/2026'; updateSportsLabel(); }
+                }
+            } else {
+                document.getElementById('item-modal-title').innerText = "Add Item";
+                document.getElementById('item-category').value = category || 'work';
+            }
+            updateModalFields();
+            document.getElementById('item-modal').classList.remove('hidden');
+        }
+
+        function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+        
+        function saveItem() {
+            const category = document.getElementById('item-category').value; const type = document.getElementById('item-type').value; 
+            const editId = document.getElementById('item-id').value;
+            const inputDateVal = document.getElementById('item-date').value;
+            const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
+            let title = document.getElementById('item-title').value;
+            
+            if (type === 'sports') {
+                const myTeamId = document.getElementById('sports-myteam').value;
+                const oppTeamId = document.getElementById('sports-opponent').value;
+                const isHome = document.getElementById('sports-is-home').value === "true";
+                const homeId = isHome ? myTeamId : oppTeamId;
+                const awayId = isHome ? oppTeamId : myTeamId;
+                const homeTeam = appState.data.teams.find(t=>t.id === homeId);
+                const awayTeam = appState.data.teams.find(t=>t.id === awayId);
+                title = `${awayTeam?.abbrev || 'Away'} @ ${homeTeam?.abbrev || 'Home'}`;
+            }
+            
+            if(!title && type !== 'sports') return alert("Title required");
+
+            const newItemBase = { type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
+            const rawDesc = document.getElementById('item-desc').value;
+            if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } else { newItemBase.description = rawDesc; }
+
+            // Fill type specifics
+            if(type === 'meeting') { newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value); }
+            if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
+            if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
+            if(type === 'habit') { const existing = appState.data.items.find(i => i.id === editId); const inputStreak = parseInt(document.getElementById('item-streak').value); newItemBase.streakCount = (editId || !isNaN(inputStreak)) ? (inputStreak || 1) : (existing ? existing.streakCount : 1); }
+            if(type === 'holiday') { newItemBase.isWorkHoliday = document.getElementById('item-is-work-holiday').checked; }
+            if (type === 'sports') {
+                 const myTeamId = document.getElementById('sports-myteam').value; const oppTeamId = document.getElementById('sports-opponent').value; const isHome = document.getElementById('sports-is-home').value === "true"; const myScore = parseInt(document.getElementById('sports-score-my').value); const oppScore = parseInt(document.getElementById('sports-score-opp').value);
+                 newItemBase.league = document.getElementById('sports-league').value; newItemBase.homeTeamId = isHome ? myTeamId : oppTeamId; newItemBase.awayTeamId = isHome ? oppTeamId : myTeamId; newItemBase.homeScore = isHome ? myScore : oppScore; newItemBase.awayScore = isHome ? oppScore : myScore; newItemBase.startTime = document.getElementById('sports-time').value; newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled'; newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
+            }
+
+            // VACATION LOGIC
+            if (type === 'vacation') {
+                const startStr = document.getElementById('vacation-start').value;
+                const endStr = document.getElementById('vacation-end').value;
+                if(!startStr || !endStr) return alert("Start and End dates required");
+                const groupId = editId ? (appState.data.items.find(i=>i.id===editId)?.groupId || `vac_${Date.now()}`) : `vac_${Date.now()}`;
+                if(editId) appState.data.items = appState.data.items.filter(i => i.groupId !== groupId);
+                
+                const noteInputs = document.querySelectorAll('.vacation-day-note');
+                const notesMap = {};
+                noteInputs.forEach(inp => notesMap[inp.dataset.date] = inp.value);
+                
+                const start = new Date(startStr + 'T12:00:00');
+                const end = new Date(endStr + 'T12:00:00');
+                const loop = new Date(start);
+                while(loop <= end) {
+                    const ymd = toLocalYMD(loop);
+                    const dayNote = notesMap[ymd] || '';
+                    const dayItem = { ...newItemBase, id: `vac_${Date.now()}_${ymd}`, groupId: groupId, date: ymd, description: dayNote };
+                    appState.data.items.push(dayItem);
+                    loop.setDate(loop.getDate() + 1);
+                }
+                saveData(); closeItemModal(); updateUI();
+                return; 
+            }
+
+            // RECURRING
+            if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
+                const baseDate = new Date(dateYMD + "T12:00:00");
+                for(let w=1; w<=4; w++) {
+                    const nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + (w * 7)); const nextYMD = toLocalYMD(nextDate);
+                    const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_${w}`, date: nextYMD };
+                    appState.data.items.push(finalClone);
+                }
+            }
+            if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
+                const [y, m, d] = dateYMD.split('-'); const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
+                const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_next`, date: nextYearYMD };
+                appState.data.items.push(finalClone);
+            }
+
+            const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
+            if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = finalItem; } else { appState.data.items.push(finalItem); }
+            saveData(); closeItemModal(); updateUI();
+        }
+
+        function updateModalFields() {
+            const type = document.getElementById('item-type').value;
+            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
+            
+            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation'];
+            allFields.forEach(f => document.getElementById(`field-${f}`).classList.add('hidden'));
+            
+            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
+            
+            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
+            if(type === 'task') document.getElementById('field-task').classList.remove('hidden');
+            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
+            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
+            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
+            if(type === 'birthday' || type === 'anniversary') {
+                const isEdit = document.getElementById('item-id').value !== '';
+                if(!isEdit) document.getElementById('field-annual').classList.remove('hidden');
+            }
+            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
+            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
+        }
+
+        // --- SPORTS MANAGER LOGIC ---
+        function openSportsManager() { document.getElementById('sports-manager-modal').classList.remove('hidden'); switchSportsTab('leagues'); }
+        function closeSportsManager() { document.getElementById('sports-manager-modal').classList.add('hidden'); resetTeamForm(); }
+        function switchSportsTab(tab) {
+            document.getElementById('tab-leagues').className = tab === 'leagues' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
+            document.getElementById('tab-teams').className = tab === 'teams' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
+            document.getElementById('view-leagues').classList.toggle('hidden', tab !== 'leagues');
+            document.getElementById('view-teams').classList.toggle('hidden', tab !== 'teams');
+            if(tab === 'leagues') renderLeaguesList();
+            if(tab === 'teams') { renderTeamFilter(); renderTeamsList(); }
+        }
+        function renderLeaguesList() {
+            const container = document.getElementById('leagues-list');
+            container.innerHTML = appState.data.leagues.map(l => `
+                <div class="flex justify-between items-center bg-gray-700 p-2 rounded"><span>${l}</span><div class="flex gap-2"><button onclick="editLeague('${l}')" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteLeague('${l}')" class="text-red-400 hover:text-red-200">&times;</button></div></div>
+            `).join('');
+        }
+        function addLeague() {
+            const val = document.getElementById('new-league-input').value.trim();
+            if(val && !appState.data.leagues.includes(val)) { appState.data.leagues.push(val); document.getElementById('new-league-input').value = ''; saveData(); renderLeaguesList(); }
+        }
+        function editLeague(oldName) {
+            const newName = prompt("Rename league:", oldName);
+            if (newName && newName.trim() !== "" && newName !== oldName) {
+                const idx = appState.data.leagues.indexOf(oldName);
+                if (idx !== -1) {
+                    appState.data.leagues[idx] = newName;
+                    appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
+                    appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
+                    saveData(); renderLeaguesList();
+                }
+            }
+        }
+        function deleteLeague(name) { if(!confirm(`Delete league ${name}?`)) return; appState.data.leagues = appState.data.leagues.filter(l => l !== name); saveData(); renderLeaguesList(); }
+        function renderTeamFilter() {
+            const sel = document.getElementById('filter-league-select');
+            const currentVal = sel.value;
+            const leagues = [...appState.data.leagues].sort();
+            sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) { sel.value = leagues.length > 0 ? leagues[0] : ''; } else { sel.value = currentVal; }
+            const addSel = document.getElementById('team-league-select');
+            addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+        }
+        function renderTeamsList() {
+            const filter = document.getElementById('filter-league-select').value;
+            const teams = appState.data.teams.filter(t => t.league === filter).sort((a, b) => a.name.localeCompare(b.name));
+            const container = document.getElementById('teams-list');
+            container.innerHTML = teams.map(t => `
+                <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-2 rounded"><div class="flex items-center gap-3"><img src="${t.logo}" class="w-8 h-8 object-contain bg-white/10 rounded"><div><div class="text-sm font-bold">${t.name}</div><div class="text-[10px] text-gray-500">${t.league} • ${t.abbrev}</div></div></div><div class="flex items-center gap-2"><button onclick="toggleTeamFav('${t.id}')" class="${t.isFavorite ? 'text-yellow-400' : 'text-gray-600'} hover:text-yellow-200">★</button><button onclick="editTeam('${t.id}')" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteTeam('${t.id}')" class="text-red-400 hover:text-red-200">&times;</button></div></div>
+            `).join('');
+        }
+        function saveTeamForm() {
+            const league = document.getElementById('team-league-select').value; const name = document.getElementById('team-name-input').value; const abbrev = document.getElementById('team-abbrev-input').value; const logo = document.getElementById('team-logo-input').value; const fav = document.getElementById('team-fav-input').checked; const editId = document.getElementById('team-edit-id').value;
+            if(!league || !name || !abbrev) return alert("Fill required fields");
+            const teamObj = { id: editId || `t_${Date.now()}`, league, name, abbrev, logo, isFavorite: fav };
+            if (editId) { const idx = appState.data.teams.findIndex(t => t.id === editId); if (idx !== -1) appState.data.teams[idx] = teamObj; } else { appState.data.teams.push(teamObj); }
+            saveData(); resetTeamForm(); renderTeamsList();
+        }
+        function editTeam(id) {
+            const team = appState.data.teams.find(t => t.id === id);
+            if (team) {
+                document.getElementById('team-edit-id').value = team.id; document.getElementById('team-league-select').value = team.league; document.getElementById('team-name-input').value = team.name; document.getElementById('team-abbrev-input').value = team.abbrev; document.getElementById('team-logo-input').value = team.logo; document.getElementById('team-fav-input').checked = team.isFavorite;
+                document.getElementById('team-form-title').innerText = "Edit Team"; document.getElementById('team-form-btn').innerText = "Update Team"; document.getElementById('team-form-cancel').classList.remove('hidden');
+                const form = document.getElementById('team-form-container'); form.scrollIntoView({ behavior: 'smooth' }); form.classList.add('highlight-pulse'); setTimeout(() => form.classList.remove('highlight-pulse'), 1000);
+            }
+        }
+        function resetTeamForm() {
+            document.getElementById('team-edit-id').value = ''; document.getElementById('team-name-input').value = ''; document.getElementById('team-abbrev-input').value = ''; document.getElementById('team-logo-input').value = ''; document.getElementById('team-fav-input').checked = false;
+            document.getElementById('team-form-title').innerText = "Add Team"; document.getElementById('team-form-btn').innerText = "Save Team"; document.getElementById('team-form-cancel').classList.add('hidden');
+        }
+        function deleteTeam(id) { if(!confirm("Delete this team?")) return; appState.data.teams = appState.data.teams.filter(t => t.id !== id); saveData(); renderTeamsList(); }
+        function toggleTeamFav(id) { const t = appState.data.teams.find(x => x.id === id); if(t) { t.isFavorite = !t.isFavorite; saveData(); renderTeamsList(); } }
+        function toggleTaskStatus(id) { const item = appState.data.items.find(i => i.id === id); if (item) { item.status = item.status === 'completed' ? 'pending' : 'completed'; saveData(); updateUI(); } }
+        function fireConfetti(x, y) { confetti({ particleCount: 100, spread: 70, origin: { x: x / window.innerWidth, y: y / window.innerHeight }, colors: ['#10b981', '#34d399', '#6ee7b7'], disableForReducedMotion: true }); }
+        function toggleHabitStatus(id, event) { const item = appState.data.items.find(i => i.id === id); if (item) { const wasCompleted = item.status === 'completed'; item.status = wasCompleted ? 'pending' : 'completed'; if (!wasCompleted && event) fireConfetti(event.clientX, event.clientY); saveData(); updateUI(); } }
+
+        // --- NUTRITION MODAL FUNCTIONS (RESTORED) ---
+        function openNutritionModal() {
+            const ymd = toLocalYMD(appState.currentDate);
+            let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+            if (!item) item = { weightLbs: 0, goals: { calorieGoal: 2220 }, meals: [] };
+            document.getElementById('edit-weight').value = item.weightLbs || ''; document.getElementById('edit-cal-goal').value = (item.goals ? item.goals.calorieGoal : 2220);
+            const container = document.getElementById('meal-inputs-container'); container.innerHTML = '';
+            const workoutContainer = document.getElementById('workout-inputs-container'); workoutContainer.innerHTML = '';
+            if (item.meals && item.meals.length > 0) item.meals.forEach(m => addMealInput(m)); else addMealInput(); 
+            if (item.workouts && item.workouts.length > 0) item.workouts.forEach(w => addWorkoutInput(w));
+            document.getElementById('nutrition-modal').classList.remove('hidden');
+        }
+
+        function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
+        
+        function addMealInput(data = {}) {
+            const container = document.getElementById('meal-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 meal-row";
+            div.innerHTML = `<div class="flex gap-2 mb-2"><select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health"><option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option><option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option><option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option><option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option></select><input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health"><button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div><div class="grid grid-cols-5 gap-2"><div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div></div>`;
+            container.appendChild(div);
+        }
+        
+        function addWorkoutInput(data = {}) {
+            const container = document.getElementById('workout-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 workout-row";
+            div.innerHTML = `<div class="flex gap-2 items-center"><input type="text" placeholder="Workout Description" value="${data.description || ''}" class="workout-desc flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><input type="number" placeholder="Cal Burned" value="${data.calories || ''}" class="workout-cal w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><button onclick="this.closest('.workout-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div>`;
+            container.appendChild(div);
+        }
+        
+        function saveNutrition() {
+            const ymd = toLocalYMD(appState.currentDate); const weight = parseFloat(document.getElementById('edit-weight').value) || 0; const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
+            const mealRows = document.querySelectorAll('.meal-row');
+            const meals = Array.from(mealRows).map(row => ({ mealType: row.querySelector('.meal-type').value, name: row.querySelector('.meal-name').value, calories: parseFloat(row.querySelector('.meal-cal').value) || 0, protein: parseFloat(row.querySelector('.meal-pro').value) || 0, carbs: parseFloat(row.querySelector('.meal-carb').value) || 0, fat: parseFloat(row.querySelector('.meal-fat').value) || 0, fiber: parseFloat(row.querySelector('.meal-fiber').value) || 0 })).filter(m => m.name.trim() !== ""); 
+            const workoutRows = document.querySelectorAll('.workout-row');
+            const workouts = Array.from(workoutRows).map(row => ({ description: row.querySelector('.workout-desc').value, calories: parseFloat(row.querySelector('.workout-cal').value) || 0 })).filter(w => w.description.trim() !== "");
+            let itemIndex = appState.data.items.findIndex(i => i.date === ymd && i.type === 'health');
+            const newItem = { id: itemIndex >= 0 ? appState.data.items[itemIndex].id : `health_${new Date().getTime()}`, date: ymd, type: 'health', category: 'personal', weightLbs: weight, goals: { tdee: 2816, calorieGoal: calGoal, protein: 167, fat: 150, netCarbs: 100 }, meals: meals, workouts: workouts };
+            if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
+            saveData(); closeNutritionModal(); updateUI();
+        }
+        
+        function getWeeklyDeficit() {
+            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
+            const start = getStartOfWeek(appState.currentDate); const end = new Date(appState.currentDate); let totalDeficit = 0; let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); let dailyBurn = 0; (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0)); const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; totalDeficit += ((dailyCal - dailyBurn) - tdee); daysCounted++; }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
         }
 
         // --- CORE NAVIGATION FUNCTIONS ---
