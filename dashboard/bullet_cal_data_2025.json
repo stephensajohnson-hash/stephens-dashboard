@@ -969,7 +969,7 @@
       "category": "personal",
       "title": "Stephens",
       "linkUrl": "",
-      "imgUrl": "",
+      "imgUrl": "https://bakerbynature.com/wp-content/uploads/2024/04/german-chocolate-cake-6.22-13-2-682x1024.jpg",
       "description": "",
       "id": "birthday_1764111062623",
       "date": "2025-09-26"
@@ -1855,7 +1855,7 @@
       "imgUrl": "",
       "description": "Get rid of all embedded images in bullet_cal_data_2025.json",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764112969215",
       "date": "2025-11-26"
     },
@@ -1872,31 +1872,48 @@
       "date": "2025-11-26"
     },
     {
-      "type": "task",
-      "category": "work",
-      "title": "Call BCBS of Texas",
-      "linkUrl": "https://mybam.bcbstx.com/",
-      "imgUrl": "https://account.bcbstx.com/login/?goto=https://cim.bcbstx.com/am/oauth2/realms/members/authorize?client_id%3DOAuth-BlueAccessMember20_APP00007045%26code_challenge%3Dl7qfZiCTUmLCr_PnzoOxzYrBr7P0IUfV_pL5FEnyGRs%26code_challenge_method%3DS256%26prompt%3Dnone%26redirect_uri%3Dhttps://mybam.bcbstx.com/%26response_type%3Dcode%26scope%3Dopenid%2520profile%2520bam2.0%2520fr:idm:*%2520restrictedmids%26service%3Dhcsc-members-mma-mfa%26state%3DMXkyRA%253D%253D",
-      "description": "Call insurance about Ozempic price",
-      "ticketNumber": "",
-      "status": "pending",
-      "id": "task_1764170567168",
-      "date": "2025-11-26"
+      "id": "health_1764172814936",
+      "date": "2025-11-26",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 Eggs, 2 Bacon, 1/2 cup Salsa",
+          "calories": 400,
+          "protein": 31,
+          "carbs": 7,
+          "fat": 28.3,
+          "fiber": 1
+        }
+      ],
+      "workouts": []
     },
     {
-      "id": "gm_17",
-      "date": "2025-11-26",
       "type": "sports",
       "category": "personal",
       "title": "BRI @ WRE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_bristol",
-      "homeScore": 0,
-      "awayScore": 0,
+      "homeScore": null,
+      "awayScore": null,
+      "startTime": "13:45",
       "status": "scheduled",
-      "startTime": "19:45",
-      "season": "2025/2026"
+      "season": "2025/2026",
+      "id": "gm_17",
+      "date": "2025-11-26"
     },
     {
       "type": "habit",
