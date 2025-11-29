@@ -2966,39 +2966,39 @@
           "list": [
             {
               "name": "Cream Cheese",
-              "quantity": "16",
+              "quantity": "24",
               "unit": "oz",
-              "notes": "",
+              "notes": "3 blocks",
               "macros": {
-                "calories": 1400,
-                "protein": 32,
-                "carbs": 32,
-                "fat": 140,
+                "calories": 2100,
+                "protein": 48,
+                "carbs": 48,
+                "fat": 210,
                 "fiber": 0
               }
             },
             {
               "name": "Whipping Cream",
-              "quantity": "1",
+              "quantity": "1 1/2",
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 821,
-                "protein": 5,
-                "carbs": 7,
-                "fat": 88,
+                "calories": 1232,
+                "protein": 8,
+                "carbs": 11,
+                "fat": 132,
                 "fiber": 0
               }
             },
             {
               "name": "Powdered Sugar",
-              "quantity": "1/2",
+              "quantity": "3/4",
               "unit": "cup",
               "notes": "",
               "macros": {
-                "calories": 175,
+                "calories": 263,
                 "protein": 0,
-                "carbs": 45,
+                "carbs": 68,
                 "fat": 0,
                 "fiber": 0
               }
@@ -3119,13 +3119,13 @@
             },
             {
               "name": "Powdered Sugar",
-              "quantity": "1",
+              "quantity": "2",
               "unit": "tbsp",
               "notes": "",
               "macros": {
-                "calories": 30,
+                "calories": 44,
                 "protein": 0,
-                "carbs": 8,
+                "carbs": 11,
                 "fat": 0,
                 "fiber": 0
               }
@@ -3145,7 +3145,7 @@
         {
           "sectionTitle": "Cream Cheese Layer",
           "steps": [
-            "In a large mixing bowl, mix 16 oz. cream cheese,  ½ cup powdered sugar, and about ¼ cup of whipping cream.  Add whipping cream as needed to get mixture thinned enough to spread over crust.",
+            "In a large mixing bowl, mix 24 oz. cream cheese,  3/4 cup powdered sugar, and about 1 1/2 cup of whipping cream.  Add whipping cream as needed to get mixture thinned enough to spread over crust.",
             "Spread cream cheese layer over cooled crust evenly."
           ]
         },
@@ -3166,8 +3166,8 @@
         {
           "sectionTitle": "Whipped Cream Layer",
           "steps": [
-            "In a large mixing bowl, whip 2 cups whipping cream until firm.",
-            "Add 1 Tbsp powdered sugar and mix well.",
+            "In a large mixing bowl, whip 2 cups whipping cream until firm.  This takes 2-3 minutes with a mixer on high.",
+            "Add 2 Tbsp powdered sugar and mix well.",
             "Add whipped cream layer on top of blueberry pie filling layer in 9x13.  "
           ]
         }
