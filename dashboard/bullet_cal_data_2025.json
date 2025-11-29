@@ -2537,7 +2537,7 @@
       "date": "2025-11-25",
       "type": "health",
       "category": "personal",
-      "weightLbs": 0,
+      "weightLbs": 270,
       "goals": {
         "tdee": 2816,
         "calorieGoal": 2220,
@@ -2563,6 +2563,15 @@
           "carbs": 2,
           "fat": 46,
           "fiber": 0
+        },
+        {
+          "mealType": "dinner",
+          "name": "Salad, Poppers, Corn, Chicken Leg",
+          "calories": 750,
+          "protein": 39,
+          "carbs": 27,
+          "fat": 55,
+          "fiber": 4
         }
       ],
       "workouts": []
@@ -2710,6 +2719,15 @@
           "carbs": 7,
           "fat": 28.3,
           "fiber": 1
+        },
+        {
+          "mealType": "dinner",
+          "name": "Juan Pablos Nachos",
+          "calories": 1240,
+          "protein": 53,
+          "carbs": 85,
+          "fat": 84,
+          "fiber": 11
         }
       ],
       "workouts": []
@@ -2745,17 +2763,6 @@
       "date": "2025-11-26"
     },
     {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Thanksgiving",
-      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
-      "imgUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
-      "description": "Thanksgiving",
-      "id": "vac_1764196136795_2025-11-27",
-      "groupId": "vac_1764186628460",
-      "date": "2025-11-27"
-    },
-    {
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
@@ -2765,7 +2772,8 @@
       "description": "",
       "id": "habit_1764223200000_39ope",
       "date": "2025-11-27",
-      "streakCount": 1500
+      "streakCount": 1500,
+      "status": "completed"
     },
     {
       "type": "holiday",
@@ -2777,6 +2785,41 @@
       "isWorkHoliday": true,
       "id": "holiday_1764095178828",
       "date": "2025-11-27"
+    },
+    {
+      "id": "health_1764389490539",
+      "date": "2025-11-27",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "Caramel Macchiato",
+          "calories": 350,
+          "protein": 10,
+          "carbs": 58,
+          "fat": 10,
+          "fiber": 0
+        },
+        {
+          "mealType": "lunch",
+          "name": "Thanksgiving Feast",
+          "calories": 2910,
+          "protein": 101,
+          "carbs": 302,
+          "fat": 156,
+          "fiber": 13
+        }
+      ],
+      "workouts": []
     },
     {
       "type": "sports",
@@ -2797,17 +2840,6 @@
       "season": "2025/2026"
     },
     {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Thanksgiving",
-      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
-      "imgUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
-      "description": "Black Friday",
-      "id": "vac_1764196136795_2025-11-28",
-      "groupId": "vac_1764186628460",
-      "date": "2025-11-28"
-    },
-    {
       "type": "habit",
       "category": "general",
       "title": "Learn Spanish",
@@ -2817,7 +2849,8 @@
       "description": "",
       "id": "habit_1764309600000_fq7xb",
       "date": "2025-11-28",
-      "streakCount": 1501
+      "streakCount": 1501,
+      "status": "completed"
     },
     {
       "type": "holiday",
@@ -2831,15 +2864,39 @@
       "date": "2025-11-28"
     },
     {
-      "type": "vacation",
+      "id": "health_1764389832852",
+      "date": "2025-11-28",
+      "type": "health",
       "category": "personal",
-      "title": "Thanksgiving",
-      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
-      "imgUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
-      "description": "",
-      "id": "vac_1764196136795_2025-11-29",
-      "groupId": "vac_1764186628460",
-      "date": "2025-11-29"
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "dinner",
+          "name": "5 Turkey & Dressing Muffins",
+          "calories": 425,
+          "protein": 50,
+          "carbs": 12.5,
+          "fat": 30,
+          "fiber": 2.5
+        },
+        {
+          "mealType": "snack",
+          "name": "Grilled Cheese Sandwich",
+          "calories": 390,
+          "protein": 12,
+          "carbs": 22,
+          "fat": 30,
+          "fiber": 1
+        }
+      ],
+      "workouts": []
     },
     {
       "type": "habit",
@@ -2867,17 +2924,6 @@
       "status": "scheduled",
       "startTime": "15:00",
       "season": "2025/2026"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Thanksgiving",
-      "linkUrl": "https://media.themoviedb.org/t/p/w220_and_h330_face/gjtjsnxaN8iJuYttHVpHKortc29.jpg",
-      "imgUrl": "https://i0.wp.com/mymissnina.com/wp-content/uploads/2018/11/a-turkey-clipart-2.png?resize=451%2C468&ssl=1",
-      "description": "",
-      "id": "vac_1764196136795_2025-11-30",
-      "groupId": "vac_1764186628460",
-      "date": "2025-11-30"
     },
     {
       "type": "habit",
