@@ -2901,7 +2901,7 @@
     },
     {
       "id": "user_rec_1763756545104",
-      "title": "Blueberry Pie",
+      "title": "Aunt Kay's Blueberry Pie",
       "description": "Stephens' favorite dessert goes way back to childhood and Aunt Kay's Blueberry Pie!",
       "category": "Sweets",
       "servings": 12,
@@ -4287,6 +4287,248 @@
             "Allow gravy mixture to come back to a gentle boil and stir often until the gravy thickens.  Volumn should reduce by 35% - 40%.",
             "Add salt to taste.",
             "Note: 8 cups broth yields 5 cups of gravy."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1764392264983",
+      "title": "Turkey & Dressing Muffins",
+      "description": "Make use of leftover turkey and give it the taste of dressing without the carbs!",
+      "category": "American",
+      "servings": 15,
+      "prepTime": "5 minutes",
+      "cookTime": "20 minutes",
+      "image": "https://www.kimschob.com/wp-content/uploads/2023/09/Muffin-Tin-Turkey-and-Stuffing-Bites.jpg",
+      "source": {
+        "description": "Cooking with Dave",
+        "url": "https://www.youtube.com/watch?v=UbPBeloxfXs&t=508s"
+      },
+      "tags": [
+        "Keto",
+        "Thanksgiving",
+        "Poultry"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Turkey Base",
+          "list": [
+            {
+              "name": "Turkey",
+              "quantity": "1",
+              "unit": "lb",
+              "notes": "",
+              "macros": {
+                "calories": 317,
+                "protein": 33,
+                "carbs": 0,
+                "fat": 15,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Riced Cauliflower",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 25,
+                "protein": 2,
+                "carbs": 5,
+                "fat": 0,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Celery",
+              "quantity": "3/4",
+              "unit": "cup",
+              "notes": "diced",
+              "macros": {
+                "calories": 12,
+                "protein": 1,
+                "carbs": 3,
+                "fat": 0.5,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Onion",
+              "quantity": "1/3",
+              "unit": "cup",
+              "notes": "diced",
+              "macros": {
+                "calories": 22,
+                "protein": 1,
+                "carbs": 5,
+                "fat": 0.1,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Butter",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 200,
+                "protein": 1,
+                "carbs": 0,
+                "fat": 15,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Poultry Seasoning",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic Powder",
+              "quantity": "3/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "3/4",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 6,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Custard Binder",
+          "list": [
+            {
+              "name": "Cottage Cheese",
+              "quantity": "3/4",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 122,
+                "protein": 21,
+                "carbs": 5,
+                "fat": 2,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Large Eggs",
+              "quantity": "3",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 240,
+                "protein": 20,
+                "carbs": 2,
+                "fat": 17,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Heavy Cream",
+              "quantity": "3",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 154,
+                "protein": 1,
+                "carbs": 1,
+                "fat": 17,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Mozzarella Cheese",
+              "quantity": "1/3",
+              "unit": "cups",
+              "notes": "shredded",
+              "macros": {
+                "calories": 107,
+                "protein": 5,
+                "carbs": 1,
+                "fat": 6,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chicken drippings",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 38,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 4,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Preheat oven to 375°F. Grease 15 silicon muffin cups - place in muffin tin or other pan.",
+            "Sauté celery, onion, and mushrooms in butter for 5 minutes.",
+            "Add riced cauliflower and cook 3 minutes, just until moisture cooks off (don’t brown).",
+            "Add turkey, poultry seasoning, garlic powder, onion powder, salt, and pepper.",
+            "Remove pan from heat and let sit 2–3 minutes.",
+            "In a bowl, whisk blended cottage cheese, eggs, cream, mozzarella, and chicken drippings.",
+            "Combine custard with turkey mixture and mix thoroughly.",
+            "Pack tightly into 15 muffin cups.",
+            "Bake 20–24 minutes, until lightly golden and set. Toothpick should come out mostly clean."
           ]
         }
       ]
