@@ -108,7 +108,7 @@
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.3.14</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.3.15</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -362,14 +362,12 @@
             if(m) mins += parseInt(m[1]);
             return mins;
         }
-        
         function clearDynamicBackgrounds() {
             const existing = document.querySelectorAll('.dynamic-bg-layer');
             existing.forEach(el => el.remove());
             const mainScroll = document.getElementById('main-scroll');
             if(mainScroll) mainScroll.className = "flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900 transition-colors duration-300";
         }
-        
         function setNextBusinessDay() {
             const dateInput = document.getElementById('item-date');
             if (!dateInput.value) dateInput.value = toLocalYMD(appState.currentDate);
@@ -381,7 +379,6 @@
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
         }
-        
         function copyAnnualsToNextYear() {
             if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
             let count = 0;
@@ -451,40 +448,32 @@
             }
         }
 
-        // --- SPORTS FUNCTIONS (RESTORED) ---
-        function populateTeamSelects() {
-            const league = document.getElementById('sports-league').value;
-            const teams = (appState.data.teams || []).filter(t => t.league === league);
-            teams.sort((a, b) => a.name.localeCompare(b.name));
-            const mySelect = document.getElementById('sports-myteam');
-            const oppSelect = document.getElementById('sports-opponent');
-            const oldMy = mySelect.value;
-            mySelect.innerHTML = ''; oppSelect.innerHTML = '';
-            teams.forEach(t => {
-                const opt = document.createElement('option'); opt.value = t.id; opt.innerText = t.name; 
-                mySelect.appendChild(opt.cloneNode(true));
-                oppSelect.appendChild(opt.cloneNode(true));
-            });
-            const fav = teams.find(t => t.isFavorite);
-            if(fav && !oldMy) mySelect.value = fav.id;
-            else if(oldMy) mySelect.value = oldMy;
-            updateSportsLabel();
-        }
-
-        function swapHomeAway() {
-            const isHomeInput = document.getElementById('sports-is-home');
-            isHomeInput.value = (isHomeInput.value === "true") ? "false" : "true";
-            updateSportsLabel();
-        }
-
-        function updateSportsLabel() {
-            const mySelect = document.getElementById('sports-myteam');
-            const oppSelect = document.getElementById('sports-opponent');
-            const isHome = document.getElementById('sports-is-home').value === "true";
-            const myName = mySelect.options[mySelect.selectedIndex]?.text || "My Team";
-            const oppName = oppSelect.options[oppSelect.selectedIndex]?.text || "Opponent";
-            const label = isHome ? `${oppName} @ ${myName}` : `${myName} @ ${oppName}`;
-            document.getElementById('sports-matchup-label').innerText = label;
+        // --- NUTRITION HELPER RESTORED ---
+        function getWeeklyDeficit() {
+            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
+            const start = getStartOfWeek(appState.currentDate); 
+            const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; 
+            let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); 
+                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { 
+                    let dailyCal = 0; 
+                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
+                    
+                    let dailyBurn = 0;
+                    (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
+                    
+                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
+                    // Deficit = (Food - Burned) - TDEE
+                    totalDeficit += ((dailyCal - dailyBurn) - tdee); 
+                    daysCounted++; 
+                }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
         }
 
         async function fetchWeather() {
@@ -509,7 +498,7 @@
 
         // --- MAIN APP LOGIC ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3.14", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.3.15", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -614,7 +603,7 @@
             const typeMap = {
                 'task': 'Task', 'meeting': 'Meeting', 'habit': 'Habit', 'media': 'Media',
                 'health': 'Nutrition Log', 'sports': 'Sports Game', 'holiday': 'Holiday',
-                'birthday': 'Birthday', 'anniversary': 'Anniversary', 'vacation': 'Vacation'
+                'birthday': 'Birthday', 'anniversary': 'Anniversary', 'vacation': 'Vacation / Trip'
             };
             
             const typesList = allowedTypes ? allowedTypes.split(',') : Object.keys(typeMap).filter(k => k !== 'health');
@@ -1148,13 +1137,6 @@
             if(item.type === 'vacation') {
                 icon = '✈️';
                 if(item.description) text = item.description; 
-                // VACATION IMAGE IN CHIP
-                if(item.imgUrl) {
-                     return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
-                        <span class="truncate font-bold w-full">${text}</span>
-                        <img src="${item.imgUrl}" class="w-full h-auto rounded-md object-contain">
-                    </div>`;
-                }
                 return `<div class="${classes}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
                     <span class="mr-1">${icon}</span>
                     <span class="truncate">${text}</span>
