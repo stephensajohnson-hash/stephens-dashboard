@@ -2754,10 +2754,10 @@
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_bristol",
-      "homeScore": null,
-      "awayScore": null,
+      "homeScore": 2,
+      "awayScore": 0,
       "startTime": "13:45",
-      "status": "scheduled",
+      "status": "completed",
       "season": "2025/2026",
       "id": "gm_17",
       "date": "2025-11-26"
@@ -2831,13 +2831,13 @@
       "league": "NFL",
       "homeTeamId": "t_1764002388573",
       "awayTeamId": "t_1764002826388",
-      "homeScore": null,
-      "awayScore": null,
+      "homeScore": 31,
+      "awayScore": 28,
       "startTime": "15:30",
-      "status": "scheduled",
+      "status": "completed",
+      "season": "2025/2026",
       "id": "sports_1764004686169",
-      "date": "2025-11-27",
-      "season": "2025/2026"
+      "date": "2025-11-27"
     },
     {
       "type": "habit",
@@ -2908,22 +2908,97 @@
       "description": "",
       "id": "habit_1764396000000_jhppa",
       "date": "2025-11-29",
-      "streakCount": 1502
+      "streakCount": 1502,
+      "status": "completed"
     },
     {
-      "id": "gm_18",
+      "id": "health_1764478585682",
       "date": "2025-11-29",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 eggs, 1 bacon, 1/2 cup salsa",
+          "calories": 360,
+          "protein": 28,
+          "carbs": 7,
+          "fat": 25.3,
+          "fiber": 1
+        },
+        {
+          "mealType": "lunch",
+          "name": "Leftover Turkey sandwich on Sourdough bread",
+          "calories": 320,
+          "protein": 29,
+          "carbs": 18,
+          "fat": 14,
+          "fiber": 1
+        },
+        {
+          "mealType": "snack",
+          "name": ".4 cups pecans",
+          "calories": 276,
+          "protein": 3.6,
+          "carbs": 5.3,
+          "fat": 28.5,
+          "fiber": 4
+        },
+        {
+          "mealType": "dinner",
+          "name": "Roasted Turkey - white meat with skin",
+          "calories": 450,
+          "protein": 60,
+          "carbs": 0,
+          "fat": 22,
+          "fiber": 0
+        },
+        {
+          "mealType": "snack",
+          "name": "Colby Jack Cheese, Pepperoni, Pickles & Jalapeños",
+          "calories": 455,
+          "protein": 29,
+          "carbs": 4,
+          "fat": 37,
+          "fiber": 0
+        },
+        {
+          "mealType": "snack",
+          "name": "Little Debbie Christmas Tree Cake",
+          "calories": 280,
+          "protein": 2,
+          "carbs": 40,
+          "fat": 12,
+          "fiber": 0
+        }
+      ],
+      "workouts": []
+    },
+    {
       "type": "sports",
       "category": "personal",
       "title": "BLA @ WRE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_wrexham",
       "awayTeamId": "t_blackburn",
-      "homeScore": 0,
-      "awayScore": 0,
-      "status": "scheduled",
+      "homeScore": 1,
+      "awayScore": 1,
       "startTime": "15:00",
-      "season": "2025/2026"
+      "status": "completed",
+      "season": "2025/2026",
+      "id": "gm_18",
+      "date": "2025-11-29"
     },
     {
       "type": "habit",
