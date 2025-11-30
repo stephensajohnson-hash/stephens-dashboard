@@ -1056,7 +1056,7 @@
       "title": "Un-Stuffed Peppers",
       "description": "All the flavors of stuff bell peppers with easier preparation and less pepper per bite for those that don't like bells that much.",
       "category": "American",
-      "servings": 5,
+      "servings": 6,
       "prepTime": "10 minutes",
       "cookTime": "35 minutes",
       "image": "https://www.thefoodieaffair.com/wp-content/uploads/2017/10/low-carb-unstuffed-bell-pepper-casserole-A.jpg",
@@ -1127,7 +1127,7 @@
             },
             {
               "name": "Salt",
-              "quantity": "1/2",
+              "quantity": "1",
               "unit": "tsp",
               "notes": "",
               "macros": {
@@ -1189,6 +1189,19 @@
                 "fat": 1,
                 "fiber": 7
               }
+            },
+            {
+              "name": "Garlic",
+              "quantity": "1",
+              "unit": "tbsp",
+              "notes": "minced",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
             }
           ]
         }
@@ -1198,7 +1211,7 @@
           "sectionTitle": "Directions",
           "steps": [
             "Brown 1 lb ground beef.  Add in 1 Tbsp minced garlic, and 1 chopped onion when beef is half done.",
-            "Add 10 oz cauliflower, 2 Bell Peppers, can tomato sauce, ½ Tsp Salt, 1 Tsp Cajun Seasoning, 1 Tbsp All Purpose Seasoning, ¼ Tsp Black Pepper.  Stir and bring to a boil.",
+            "Add 10 oz cauliflower, 2 Bell Peppers, can tomato sauce, 1 Tsp Salt, 1 Tsp Cajun Seasoning, 1 Tbsp All Purpose Seasoning, ¼ Tsp Black Pepper.  Stir and bring to a boil.",
             "Reduce heat to simmer, cover pan for 15 minutes or until cauliflower is done.",
             "Add cheese to top and allow to melt."
           ]
@@ -4528,7 +4541,123 @@
             "In a bowl, whisk blended cottage cheese, eggs, cream, mozzarella, and chicken drippings.",
             "Combine custard with turkey mixture and mix thoroughly.",
             "Pack tightly into 15 muffin cups.",
-            "Bake 20–24 minutes, until lightly golden and set. Toothpick should come out mostly clean."
+            "Bake 20–24 minutes, until lightly golden and set. Toothpick should come out mostly clean.",
+            "Fridge: Up to 5 days.\nFreezer: 2–3 months (freeze solid, then bag).\nReheat: Air fryer 3–4 minutes at 350°F"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1764535868955",
+      "title": "Turkey Soup",
+      "description": "A delicious way to use up that left-over Thanksgiving turkey.",
+      "category": "Soup",
+      "servings": 6,
+      "prepTime": "20 minutes",
+      "cookTime": "15 minutes",
+      "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_728,h_546/k%2Farchive%2Ff0508ceb5f37dba94ffec72c0b2f6d3932f2f5d8_4c5e7a_cropped",
+      "source": {
+        "description": "Cayce",
+        "url": ""
+      },
+      "tags": [
+        "Thanksgiving"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Turkey",
+              "quantity": "17.5",
+              "unit": "oz",
+              "notes": "chopped",
+              "macros": {
+                "calories": 346,
+                "protein": 36,
+                "carbs": 0,
+                "fat": 16,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "celery",
+              "quantity": "3",
+              "unit": "cups",
+              "notes": "chopped",
+              "macros": {
+                "calories": 48,
+                "protein": 2,
+                "carbs": 9,
+                "fat": 1,
+                "fiber": 5
+              }
+            },
+            {
+              "name": "Carrot",
+              "quantity": "3",
+              "unit": "cups",
+              "notes": "chopped",
+              "macros": {
+                "calories": 150,
+                "protein": 8,
+                "carbs": 33,
+                "fat": 1.5,
+                "fiber": 10
+              }
+            },
+            {
+              "name": "Onion",
+              "quantity": "2",
+              "unit": "cups",
+              "notes": "chopped",
+              "macros": {
+                "calories": 128,
+                "protein": 4,
+                "carbs": 30,
+                "fat": 0.3,
+                "fiber": 5
+              }
+            },
+            {
+              "name": "Potatoes",
+              "quantity": "2",
+              "unit": "cups",
+              "notes": "diced",
+              "macros": {
+                "calories": 181,
+                "protein": 3,
+                "carbs": 39,
+                "fat": 0.3,
+                "fiber": 5
+              }
+            },
+            {
+              "name": "Turkey Broth",
+              "quantity": "6",
+              "unit": "cups",
+              "notes": "",
+              "macros": {
+                "calories": 246,
+                "protein": 18,
+                "carbs": 6,
+                "fat": 3,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "To make your own broth - instant pot the turkey carcass and innards with 8 cups of water.  Add 1 tbsp salt.  Pressure cook for 1 hour.  Quick release.",
+            "Chop celery, carrots, onion, and turkey.  Dice potatoes.",
+            "Strain broth to remove carcass, bones, innards, etc.",
+            "Add celery, carrots, onion, potatoes, and turkey to the strained broth in the instant pot.",
+            "Add salt to taste.  Add dill.",
+            "Pressure cook for 2 minutes."
           ]
         }
       ]
