@@ -4552,9 +4552,9 @@
       "title": "Turkey Soup",
       "description": "A delicious way to use up that left-over Thanksgiving turkey.",
       "category": "Soup",
-      "servings": 6,
+      "servings": 16,
       "prepTime": "20 minutes",
-      "cookTime": "15 minutes",
+      "cookTime": "1 hour 15 minutes",
       "image": "https://cdn.apartmenttherapy.info/image/upload/f_auto,q_auto:eco,c_fill,g_auto,w_728,h_546/k%2Farchive%2Ff0508ceb5f37dba94ffec72c0b2f6d3932f2f5d8_4c5e7a_cropped",
       "source": {
         "description": "Cayce",
@@ -4634,14 +4634,14 @@
             },
             {
               "name": "Turkey Broth",
-              "quantity": "6",
+              "quantity": "20",
               "unit": "cups",
               "notes": "",
               "macros": {
-                "calories": 246,
-                "protein": 18,
-                "carbs": 6,
-                "fat": 3,
+                "calories": 400,
+                "protein": 40,
+                "carbs": 0,
+                "fat": 20,
                 "fiber": 0
               }
             }
