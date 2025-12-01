@@ -2675,7 +2675,7 @@
     },
     {
       "type": "task",
-      "category": "work",
+      "category": "personal",
       "title": "Remove embedded images",
       "linkUrl": "",
       "imgUrl": "",
@@ -2687,7 +2687,7 @@
     },
     {
       "type": "task",
-      "category": "work",
+      "category": "personal",
       "title": "Call Pharmacy",
       "linkUrl": "https://www.christushealth.org/locations/specialty-pharmacy",
       "imgUrl": "https://www.christushealth.org/-/media/images/logo/branded-logo-svg-format/christuslogo.ashx?h=51&iar=0&w=237&hash=9B90F1E8A50191FBF23BDEBDBE738B33",
@@ -2734,7 +2734,7 @@
     },
     {
       "type": "task",
-      "category": "work",
+      "category": "personal",
       "title": "Contact Airbnb Host",
       "linkUrl": "",
       "imgUrl": "",
@@ -3088,7 +3088,8 @@
       "description": "",
       "id": "habit_1764568800000_7mztg",
       "date": "2025-12-01",
-      "streakCount": 1504
+      "streakCount": 1504,
+      "status": "completed"
     },
     {
       "type": "meeting",
@@ -3096,10 +3097,10 @@
       "title": "Conversion Review",
       "linkUrl": "",
       "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
-      "description": "",
+      "description": "Baytown issue - file available - corrected.\nLawrence County - LGC - Balance & Offense Date - Does balance include our fee?\nHalo workflow - conversion ticketing queue\nRussell - Payment Processes - Done - add in to conversion code with Dave\n",
       "startTime": "09:00",
       "durationMinutes": 60,
-      "timeSpentMinutes": 0,
+      "timeSpentMinutes": 15,
       "id": "meeting_1764106697022",
       "date": "2025-12-01"
     },
@@ -3460,6 +3461,18 @@
       "id": "habit_1766037600000_2ghev",
       "date": "2025-12-18",
       "streakCount": 1521
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Cruise Check In",
+      "linkUrl": "https://www.royalcaribbean.com/account/cruise-planner?bookingId=112019&shipCode=HM&sailDate=20260201",
+      "imgUrl": "https://www.royalcaribbean.com/account/assets/images/royal/logo.svg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764600892919",
+      "date": "2025-12-18"
     },
     {
       "type": "vacation",
@@ -4069,17 +4082,6 @@
       "date": "2026-01-31"
     },
     {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "To Galveston",
-      "id": "vac_1764179267235_2026-01-31",
-      "groupId": "vac_1764179267235",
-      "date": "2026-01-31"
-    },
-    {
       "id": "gm_30",
       "date": "2026-01-31",
       "type": "sports",
@@ -4110,31 +4112,9 @@
       "category": "personal",
       "title": "Cruise!",
       "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Embarcation",
-      "id": "vac_1764179267235_2026-02-01",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-01"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
       "imgUrl": "https://www.usatoday.com/gcdn/-mm-/7f3fb6f68b1522b2988c80acd9b2aa54d16d7949/c=0-137-2700-1662/local/-/media/2016/12/31/USATODAY/USATODAY/636187697100892488-1465219227-HM-Aerials-June2016-275.jpg?width=660&height=373&fit=crop&format=pjpg&auto=webp",
       "description": "Sea Day",
       "id": "vac_1764194838068_2026-02-02",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-02"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Sea Day",
-      "id": "vac_1764179267235_2026-02-02",
       "groupId": "vac_1764179267235",
       "date": "2026-02-02"
     },
@@ -4154,31 +4134,9 @@
       "category": "personal",
       "title": "Cruise!",
       "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Sea Day",
-      "id": "vac_1764179267235_2026-02-03",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-03"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
       "imgUrl": "https://www.usatoday.com/gcdn/-mm-/7f3fb6f68b1522b2988c80acd9b2aa54d16d7949/c=0-137-2700-1662/local/-/media/2016/12/31/USATODAY/USATODAY/636187697100892488-1465219227-HM-Aerials-June2016-275.jpg?width=660&height=373&fit=crop&format=pjpg&auto=webp",
       "description": "Roatan",
       "id": "vac_1764194838068_2026-02-04",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-04"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Roatan",
-      "id": "vac_1764179267235_2026-02-04",
       "groupId": "vac_1764179267235",
       "date": "2026-02-04"
     },
@@ -4198,17 +4156,6 @@
       "category": "personal",
       "title": "Cruise!",
       "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Costa Maya",
-      "id": "vac_1764179267235_2026-02-05",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-05"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
       "imgUrl": "https://www.usatoday.com/gcdn/-mm-/7f3fb6f68b1522b2988c80acd9b2aa54d16d7949/c=0-137-2700-1662/local/-/media/2016/12/31/USATODAY/USATODAY/636187697100892488-1465219227-HM-Aerials-June2016-275.jpg?width=660&height=373&fit=crop&format=pjpg&auto=webp",
       "description": "Cozomel",
       "id": "vac_1764194838068_2026-02-06",
@@ -4220,31 +4167,9 @@
       "category": "personal",
       "title": "Cruise!",
       "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Cozomel",
-      "id": "vac_1764179267235_2026-02-06",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-06"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
       "imgUrl": "https://www.usatoday.com/gcdn/-mm-/7f3fb6f68b1522b2988c80acd9b2aa54d16d7949/c=0-137-2700-1662/local/-/media/2016/12/31/USATODAY/USATODAY/636187697100892488-1465219227-HM-Aerials-June2016-275.jpg?width=660&height=373&fit=crop&format=pjpg&auto=webp",
       "description": "Sea Day",
       "id": "vac_1764194838068_2026-02-07",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-07"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Sea Day",
-      "id": "vac_1764179267235_2026-02-07",
       "groupId": "vac_1764179267235",
       "date": "2026-02-07"
     },
@@ -4281,17 +4206,6 @@
       "imgUrl": "https://www.usatoday.com/gcdn/-mm-/7f3fb6f68b1522b2988c80acd9b2aa54d16d7949/c=0-137-2700-1662/local/-/media/2016/12/31/USATODAY/USATODAY/636187697100892488-1465219227-HM-Aerials-June2016-275.jpg?width=660&height=373&fit=crop&format=pjpg&auto=webp",
       "description": "Disembarcation",
       "id": "vac_1764194838068_2026-02-08",
-      "groupId": "vac_1764179267235",
-      "date": "2026-02-08"
-    },
-    {
-      "type": "vacation",
-      "category": "personal",
-      "title": "Cruise!",
-      "linkUrl": "",
-      "imgUrl": "https://keep.google.com/u/0/media/v2/1x_4SNhoZ8Bt-sMxzkVmU2aKq89cP1IoOhGj957bpqKsIUPbbfNhWzjaXJT0ywg/1UhTPAmOsOiVm5jtvszqA2PgTo1ZVAn0_5y7j_WYomlwTmNwzO_3he6wNl0zCXtc?accept=image%2Fgif%2Cimage%2Fjpeg%2Cimage%2Fjpg%2Cimage%2Fpng%2Caudio%2Faac&sz=671",
-      "description": "Disembarcation",
-      "id": "vac_1764179267235_2026-02-08",
       "groupId": "vac_1764179267235",
       "date": "2026-02-08"
     },
