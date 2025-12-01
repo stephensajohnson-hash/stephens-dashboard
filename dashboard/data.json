@@ -78,6 +78,34 @@
           "name": "Royal Caribbean",
           "url": "https://www.royalcaribbean.com",
           "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSwdd2L_gTZtJM7N_K5OpKk5SlqKflxBddeQQ&s"
+        },
+        {
+          "id": "l33",
+          "groupId": "g2",
+          "name": "Mega Millions",
+          "url": "https://www.megamillions.com",
+          "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
+        },
+        {
+          "id": "l34",
+          "groupId": "g2",
+          "name": "Power Ball",
+          "url": "https://www.powerball.com/games/home",
+          "img": "https://simublast.com/assets/images/lottery/us-powerball.png"
+        },
+        {
+          "id": "l32",
+          "groupId": "g2",
+          "name": "Big Money",
+          "url": "https://docs.google.com/spreadsheets/d/17aFT-1c1eZgnvKkHnw8oS2SQzbTh3JnacRS3ChaW9dM/edit?gid=1898418506#gid=1898418506",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "id": "l36",
+          "groupId": "g2",
+          "name": "Realtor",
+          "url": "http://www.realtor.com",
+          "img": "https://hooquest.com/wp-content/uploads/2018/09/realtor-com-logo-300.png"
         }
       ],
       "isStatic": true
@@ -160,7 +188,7 @@
       "id": "g_1764604923739",
       "name": "Bills",
       "color": "green",
-      "isStatic": false,
+      "isStatic": true,
       "links": [
         {
           "id": "l_1764604968323",
@@ -346,28 +374,10 @@
           "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
         },
         {
-          "id": "l33",
-          "name": "Mega Millions",
-          "url": "https://www.megamillions.com",
-          "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
-        },
-        {
-          "id": "l34",
-          "name": "Power Ball",
-          "url": "https://www.powerball.com/games/home",
-          "img": "https://simublast.com/assets/images/lottery/us-powerball.png"
-        },
-        {
           "id": "l35",
           "name": "Book Sales",
           "url": "https://kdp.amazon.com/en_US/",
           "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"
-        },
-        {
-          "id": "l36",
-          "name": "Realtor",
-          "url": "http://www.realtor.com",
-          "img": "https://hooquest.com/wp-content/uploads/2018/09/realtor-com-logo-300.png"
         }
       ],
       "isStatic": true
@@ -440,7 +450,7 @@
       "id": "g_1763789013710",
       "name": "Gifts",
       "color": "red",
-      "isStatic": false,
+      "isStatic": true,
       "links": [
         {
           "id": "l_1763789064922",
@@ -467,7 +477,7 @@
       "targetDate": "2025-11-27",
       "linkUrl": "https://www.facebook.com/groups/522257848201031",
       "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
-      "isStatic": false
+      "isStatic": true
     },
     {
       "id": "c3",
@@ -475,7 +485,7 @@
       "targetDate": "2033-03-26",
       "linkUrl": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
       "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
-      "isStatic": false
+      "isStatic": true
     }
   ],
   "stocks": [
