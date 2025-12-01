@@ -112,14 +112,17 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
+            
+            <!-- New Rolling Month Grid Sidebar -->
             <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
+
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.3.21</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.2</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -144,25 +147,55 @@
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2"></div>
+                    <div id="leagues-list" class="space-y-2">
+                        <!-- League Items -->
+                    </div>
                 </div>
+
+                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
+                                <span id="team-form-title">Add Team</span>
+                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
+                            </h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
-                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
-                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
+                                <div>
+                                    <label class="text-xs text-gray-500">League</label>
+                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Team Name</label>
+                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Abbreviation</label>
+                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Logo URL</label>
+                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
+                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
+                                </div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
+
+                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
-                            <div id="teams-list" class="space-y-2"></div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
+                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
+                            </div>
+                            <div id="teams-list" class="space-y-2">
+                                <!-- Teams injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,13 +212,27 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
+                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
+                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
+                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
+                    </div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
+                    
+                    <!-- Workouts Section -->
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
+                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
+                    </div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -204,7 +251,8 @@
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <input type="hidden" id="item-category"><input type="hidden" id="item-id">
+                <input type="hidden" id="item-category">
+                <input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
                 <div>
@@ -240,25 +288,57 @@
                 </div>
                 
                 <!-- Title Row -->
-                <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
+                <div id="field-title">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
+                </div>
 
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
+                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
+                             </select>
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
+                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
+                    
+                    <!-- SEASON FIELD ADDED HERE -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
+                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
+                    </div>
+
                     <div class="flex items-center gap-2">
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
-                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
+                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
+                        <div class="flex flex-col items-center justify-end pb-1">
+                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
+                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
+                        </div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
+                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false">
+                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
+
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
+                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
+                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
                     </div>
                 </div>
                 
@@ -268,7 +348,9 @@
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Date</label><input type="date" id="vacation-end" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                     </div>
-                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
+                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2">
+                        <!-- Dynamic inputs will go here -->
+                    </div>
                 </div>
 
                 <!-- Holiday Specific Fields -->
@@ -287,34 +369,71 @@
                     </label>
                 </div>
 
-                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
+                <div id="common-fields">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
+                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
+                </div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
-                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
-                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
+                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
+                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
+                    </div>
+                    <!-- Recurring Checkbox for Meetings -->
+                    <div class="col-span-2 flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
+                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
+                    </div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
+                <div id="field-task" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
+                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
+                </div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
+                <div id="field-media" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
+                    <input type="hidden" id="item-rating" value="5">
+                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
+                </div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
-                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                        </div>
+                        <div class="flex items-center">
+                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
+                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                                <span>Fill rest of month?</span>
+                             </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- URL/Image -->
+                <!-- URL/Image (General) -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
+                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
+                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -327,7 +446,7 @@
     <script>
         // --- STATE & CONSTANTS ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -340,30 +459,68 @@
             { id: 'holiday', label: 'Holiday', icon: '🎉' },
             { id: 'birthday', label: 'Birthday', icon: '🎂' },
             { id: 'anniversary', label: 'Anniv.', icon: '🥂' },
-            { id: 'vacation', label: 'Trip', icon: '✈️' },
-            // Health is handled separately
+            { id: 'vacation', label: 'Trip', icon: '✈️' }
         ];
 
-        // --- HELPERS (HOISTED) ---
-        async function fetchWeather() {
-            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-            try {
-                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok) {
-                    const w = await wRes.json();
-                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+        // --- UI FUNCTIONS ---
+        function toggleSidebar() {
+            const sb = document.getElementById('bullet-sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            if(sb.classList.contains('sidebar-closed')) {
+                sb.classList.replace('sidebar-closed', 'sidebar-open');
+                ov.classList.remove('hidden');
+            } else {
+                sb.classList.replace('sidebar-open', 'sidebar-closed');
+                ov.classList.add('hidden');
+            }
+        }
+
+        function renderSidebar() {
+            const list = document.getElementById('month-list');
+            if(!list) return;
+            list.innerHTML = '';
+            list.className = "space-y-6 p-4"; 
+
+            const journalYear = appState.data.meta.year || new Date().getFullYear();
+            const years = [journalYear - 1, journalYear, journalYear + 1];
+            
+            years.forEach(year => {
+                const yearWrapper = document.createElement('div');
+                const yearLabel = document.createElement('div');
+                yearLabel.className = "text-xs font-bold text-purple-400 mb-2 uppercase tracking-wider sticky top-0 bg-gray-800 py-1 z-10";
+                yearLabel.innerText = year;
+                yearWrapper.appendChild(yearLabel);
+                
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-4 gap-2";
+                
+                for(let m=0; m<12; m++) {
+                     const btn = document.createElement('button');
+                     const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                     const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
+                     
+                     let baseClass = "text-[10px] py-2 rounded text-center transition border ";
+                     
+                     if (isViewedMonth) {
+                        baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105";
+                     } else if (isActualToday) {
+                        baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; 
+                     } else {
+                        baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600";
+                     }
+                     
+                     btn.className = baseClass;
+                     const d = new Date(year, m, 1);
+                     btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
+                     btn.onclick = () => jumpToMonth(year, m);
+                     grid.appendChild(btn);
                 }
-            } catch(e) { console.error("Weather fetch failed", e); }
+                yearWrapper.appendChild(grid);
+                list.appendChild(yearWrapper);
+            });
         }
-        function getForecastEmoji(c) {
-            if(c.includes('01')) return '☀️';
-            if(c.includes('02')) return '🌤️';
-            if(c.includes('03')) return '🌥️';
-            if(c.includes('09')||c.includes('10')) return '🌧️';
-            if(c.includes('13')) return '❄️';
-            return '☁️';
-        }
+
+        // --- HELPERS ---
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
             const adjusted = new Date(date.getTime() - (offset*60*1000)); 
@@ -389,10 +546,6 @@
                 'vacation': 'border-green-500 bg-vacation/20' 
             }; 
             return map[type] || 'border-gray-500'; 
-        }
-        function getTypeDotColor(type) { 
-            const map = { 'meeting': 'bg-blue-500', 'task': 'bg-blue-400', 'habit': 'bg-green-500', 'media': 'bg-purple-500', 'health': 'bg-orange-500', 'sports': 'bg-red-500', 'holiday': 'bg-blue-600', 'birthday': 'bg-pink-500', 'anniversary': 'bg-purple-500', 'vacation': 'bg-green-500' }; 
-            return map[type] || 'bg-gray-500'; 
         }
         function formatTime(timeStr) {
             if (!timeStr) return '';
@@ -437,72 +590,6 @@
             else if (day === 6) addDays = 2; // Sat -> Mon
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
-        }
-        function copyAnnualsToNextYear() {
-            if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
-            let count = 0;
-            const currentYear = appState.data.meta.year || 2025;
-            const nextYear = currentYear + 1;
-            const newItems = [];
-            appState.data.items.forEach(item => {
-                if((item.type === 'birthday' || item.type === 'anniversary') && item.date.startsWith(currentYear)) {
-                    const newDate = item.date.replace(currentYear, nextYear);
-                    const exists = appState.data.items.some(i => i.date === newDate && i.title === item.title && i.type === item.type);
-                    if(!exists) {
-                        const clone = JSON.parse(JSON.stringify(item));
-                        clone.id = `${item.type}_${new Date().getTime()}_${count}`;
-                        clone.date = newDate;
-                        newItems.push(clone);
-                        count++;
-                    }
-                }
-            });
-            if(count > 0) {
-                appState.data.items.push(...newItems);
-                saveData();
-                alert(`Successfully copied ${count} items to ${nextYear}.`);
-                updateUI();
-            } else {
-                alert("No new items to copy or they already exist.");
-            }
-        }
-        function generateVacationDailyInputs() {
-            const startStr = document.getElementById('vacation-start').value;
-            const endStr = document.getElementById('vacation-end').value;
-            const container = document.getElementById('vacation-daily-notes');
-            container.innerHTML = '';
-            if(!startStr || !endStr) return;
-            
-            const start = new Date(startStr + 'T12:00:00');
-            const end = new Date(endStr + 'T12:00:00');
-            if(end < start) return;
-
-            // Existing notes map?
-            const editId = document.getElementById('item-id').value;
-            let notesMap = {};
-            if(editId) {
-                const item = appState.data.items.find(i => i.id === editId);
-                if(item && item.groupId) {
-                    const groupItems = appState.data.items.filter(i => i.groupId === item.groupId);
-                    groupItems.forEach(gi => notesMap[gi.date] = gi.description || '');
-                }
-            }
-
-            const current = new Date(start);
-            while(current <= end) {
-                const ymd = toLocalYMD(current);
-                const label = current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                const existingNote = notesMap[ymd] || '';
-                
-                const div = document.createElement('div');
-                div.className = "flex items-center gap-2";
-                div.innerHTML = `
-                    <span class="text-xs text-gray-400 w-24 flex-shrink-0">${label}</span>
-                    <input type="text" class="vacation-day-note flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs text-white outline-none focus:border-blue-500" data-date="${ymd}" placeholder="Activity..." value="${existingNote}">
-                `;
-                container.appendChild(div);
-                current.setDate(current.getDate() + 1);
-            }
         }
         function renderStarInput(rating) {
             const container = document.getElementById('star-rating-container');
@@ -561,13 +648,90 @@
             }
             return { deficit: totalDeficit, days: daysCounted };
         }
+        function getTypeDotColor(type) { return 'bg-gray-500'; } 
+        function copyAnnualsToNextYear() {
+            if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
+            let count = 0;
+            const currentYear = appState.data.meta.year || 2025;
+            const nextYear = currentYear + 1;
+            const newItems = [];
+            appState.data.items.forEach(item => {
+                if((item.type === 'birthday' || item.type === 'anniversary') && item.date.startsWith(currentYear)) {
+                    const newDate = item.date.replace(currentYear, nextYear);
+                    const exists = appState.data.items.some(i => i.date === newDate && i.title === item.title && i.type === item.type);
+                    if(!exists) {
+                        const clone = JSON.parse(JSON.stringify(item));
+                        clone.id = `${item.type}_${new Date().getTime()}_${count}`;
+                        clone.date = newDate;
+                        newItems.push(clone);
+                        count++;
+                    }
+                }
+            });
+            if(count > 0) {
+                appState.data.items.push(...newItems);
+                saveData();
+                alert(`Successfully copied ${count} items to ${nextYear}.`);
+                updateUI();
+            } else {
+                alert("No new items to copy or they already exist.");
+            }
+        }
+        function generateVacationDailyInputs() {
+            const startStr = document.getElementById('vacation-start').value;
+            const endStr = document.getElementById('vacation-end').value;
+            const container = document.getElementById('vacation-daily-notes');
+            container.innerHTML = '';
+            if(!startStr || !endStr) return;
+            const start = new Date(startStr + 'T12:00:00');
+            const end = new Date(endStr + 'T12:00:00');
+            if(end < start) return;
+            const editId = document.getElementById('item-id').value;
+            let notesMap = {};
+            if(editId) {
+                const item = appState.data.items.find(i => i.id === editId);
+                if(item && item.groupId) {
+                    const groupItems = appState.data.items.filter(i => i.groupId === item.groupId);
+                    groupItems.forEach(gi => notesMap[gi.date] = gi.description || '');
+                }
+            }
+            const current = new Date(start);
+            while(current <= end) {
+                const ymd = toLocalYMD(current);
+                const label = current.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const existingNote = notesMap[ymd] || '';
+                const div = document.createElement('div');
+                div.className = "flex items-center gap-2";
+                div.innerHTML = `<span class="text-xs text-gray-400 w-24 flex-shrink-0">${label}</span><input type="text" class="vacation-day-note flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-xs text-white outline-none focus:border-blue-500" data-date="${ymd}" placeholder="Activity..." value="${existingNote}">`;
+                container.appendChild(div);
+                current.setDate(current.getDate() + 1);
+            }
+        }
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok) {
+                    const w = await wRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
+                }
+            } catch(e) { console.error("Weather fetch failed", e); }
+        }
+        function getForecastEmoji(c) {
+            if(c.includes('01')) return '☀️';
+            if(c.includes('02')) return '🌤️';
+            if(c.includes('03')) return '🌥️';
+            if(c.includes('09')||c.includes('10')) return '🌧️';
+            if(c.includes('13')) return '❄️';
+            return '☁️';
+        }
 
         // --- DATA MANAGEMENT ---
         async function loadData() {
             const idMap = new Map();
             const teamMap = new Map(); 
             const leagueSet = new Set();
-
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
@@ -577,7 +741,6 @@
                     if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
                 }
             } catch (e) { console.warn("Error reading local storage", e); }
-            
             try {
                 const response = await fetch('bullet_cal_data_2025.json');
                 if (response.ok) {
@@ -598,11 +761,9 @@
                     }
                 }
             } catch (error) { console.warn("Error fetching JSON", error); }
-
             appState.data.items = Array.from(idMap.values());
             appState.data.teams = Array.from(teamMap.values());
             appState.data.leagues = Array.from(leagueSet);
-            
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -706,7 +867,6 @@
             else taskCatRadios[0].checked = true;
 
             let defaultType = 'task'; 
-
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
                 document.getElementById('item-id').value = itemId;
@@ -715,12 +875,10 @@
                     defaultType = item.type;
                     if(item.date) document.getElementById('item-date').value = item.date;
                     document.getElementById('item-category').value = item.category; 
-                    
                     if(item.type === 'task') {
                         if(item.category === 'personal') taskCatRadios[1].checked = true;
                         else taskCatRadios[0].checked = true;
                     }
-
                     document.getElementById('item-title').value = item.title; 
                     document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit' || item.type === 'vacation') ? (item.notes || item.description || '') : (item.description || '');
                     document.getElementById('item-link').value = item.linkUrl || ''; 
@@ -749,15 +907,22 @@
             } else {
                 document.getElementById('item-modal-title').innerText = "Add Item";
             }
-            
             selectType(defaultType);
             document.getElementById('item-modal').classList.remove('hidden');
         }
+
         function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+        
         function saveItem() {
             const type = document.getElementById('item-type').value; 
             let category = 'personal'; 
-            if (type === 'task') { const radios = document.getElementsByName('task-cat'); if(radios[0].checked) category = 'work'; } else if (type === 'meeting' || type === 'holiday') { category = 'work'; }
+            if (type === 'task') {
+                const radios = document.getElementsByName('task-cat');
+                if(radios[0].checked) category = 'work';
+            } else if (type === 'meeting' || type === 'holiday') {
+                category = 'work';
+            }
+            
             const editId = document.getElementById('item-id').value;
             const inputDateVal = document.getElementById('item-date').value;
             const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
@@ -834,28 +999,22 @@
             const type = document.getElementById('item-type').value;
             if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
             const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation','task-category'];
-            allFields.forEach(f => {
-                const el = document.getElementById(`field-${f}`);
-                if(el) el.classList.add('hidden');
-            });
+            allFields.forEach(f => { const el = document.getElementById(`field-${f}`); if(el) el.classList.add('hidden'); });
             document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
             if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
             if(type === 'task') {
                  document.getElementById('field-task').classList.remove('hidden');
-                 document.getElementById('field-task-category').classList.remove('hidden');
+                 document.getElementById('field-task-category').classList.remove('hidden'); 
             }
             if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
             if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
             if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
-            if(type === 'birthday' || type === 'anniversary') {
-                const isEdit = document.getElementById('item-id').value !== '';
-                if(!isEdit) document.getElementById('field-annual').classList.remove('hidden');
-            }
+            if(type === 'birthday' || type === 'anniversary') { const isEdit = document.getElementById('item-id').value !== ''; if(!isEdit) document.getElementById('field-annual').classList.remove('hidden'); }
             if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
             if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
         }
 
-        // ... (Sports & Nutrition Logic) ...
+        // --- SPORTS & NUTRITION LOGIC ---
         function openSportsManager() { document.getElementById('sports-manager-modal').classList.remove('hidden'); switchSportsTab('leagues'); }
         function closeSportsManager() { document.getElementById('sports-manager-modal').classList.add('hidden'); resetTeamForm(); }
         function switchSportsTab(tab) {
@@ -961,8 +1120,6 @@
             const label = isHome ? `${oppName} @ ${myName}` : `${myName} @ ${oppName}`;
             document.getElementById('sports-matchup-label').innerText = label;
         }
-
-        // --- NUTRITION MODAL FUNCTIONS ---
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -974,21 +1131,17 @@
             if (item.workouts && item.workouts.length > 0) item.workouts.forEach(w => addWorkoutInput(w));
             document.getElementById('nutrition-modal').classList.remove('hidden');
         }
-
         function closeNutritionModal() { document.getElementById('nutrition-modal').classList.add('hidden'); }
-        
         function addMealInput(data = {}) {
             const container = document.getElementById('meal-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 meal-row";
             div.innerHTML = `<div class="flex gap-2 mb-2"><select class="meal-type bg-gray-700 border border-gray-600 rounded text-xs px-2 py-1 text-gray-300 outline-none focus:border-health"><option value="breakfast" ${data.mealType === 'breakfast' ? 'selected' : ''}>Breakfast</option><option value="lunch" ${data.mealType === 'lunch' ? 'selected' : ''}>Lunch</option><option value="dinner" ${data.mealType === 'dinner' ? 'selected' : ''}>Dinner</option><option value="snack" ${data.mealType === 'snack' ? 'selected' : ''}>Snack</option></select><input type="text" placeholder="Food Item" value="${data.name || ''}" class="meal-name flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-health"><button onclick="this.closest('.meal-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div><div class="grid grid-cols-5 gap-2"><div><label class="text-[10px] text-gray-500 block">Cal</label><input type="number" value="${data.calories || ''}" class="meal-cal w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Pro</label><input type="number" value="${data.protein || ''}" class="meal-pro w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Carb</label><input type="number" value="${data.carbs || ''}" class="meal-carb w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fat</label><input type="number" value="${data.fat || ''}" class="meal-fat w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div><div><label class="text-[10px] text-gray-500 block">Fiber</label><input type="number" value="${data.fiber || ''}" class="meal-fiber w-full bg-gray-800 border border-gray-600 rounded px-1 py-1 text-xs outline-none focus:border-health"></div></div>`;
             container.appendChild(div);
         }
-        
         function addWorkoutInput(data = {}) {
             const container = document.getElementById('workout-inputs-container'); const div = document.createElement('div'); div.className = "bg-gray-700/30 p-3 rounded-lg border border-gray-700 workout-row";
             div.innerHTML = `<div class="flex gap-2 items-center"><input type="text" placeholder="Workout Description" value="${data.description || ''}" class="workout-desc flex-1 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><input type="number" placeholder="Cal Burned" value="${data.calories || ''}" class="workout-cal w-24 bg-gray-700 border border-gray-600 rounded px-2 py-1 text-sm text-white outline-none focus:border-blue-400"><button onclick="this.closest('.workout-row').remove()" class="text-red-400 hover:text-red-300 px-1">&times;</button></div>`;
             container.appendChild(div);
         }
-        
         function saveNutrition() {
             const ymd = toLocalYMD(appState.currentDate); const weight = parseFloat(document.getElementById('edit-weight').value) || 0; const calGoal = parseFloat(document.getElementById('edit-cal-goal').value) || 2220;
             const mealRows = document.querySelectorAll('.meal-row');
@@ -1001,99 +1154,7 @@
             saveData(); closeNutritionModal(); updateUI();
         }
 
-        function getWeeklyDeficit() {
-            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
-            const start = getStartOfWeek(appState.currentDate); 
-            const end = new Date(appState.currentDate); 
-            let totalDeficit = 0; 
-            let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); 
-                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { 
-                    let dailyCal = 0; 
-                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
-                    let dailyBurn = 0;
-                    (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
-                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
-                    totalDeficit += ((dailyCal - dailyBurn) - tdee); 
-                    daysCounted++; 
-                }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
-        }
-
-        function renderHealthCard(item) {
-            const g = item.goals || { tdee: 2500, calorieGoal: 2000, protein: 150, fat: 80, netCarbs: 100 };
-            let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
-            (item.meals || []).forEach(m => { totalCal += Number(m.calories||0); totalPro += Number(m.protein||0); totalCarb += Number(m.carbs||0); totalFat += Number(m.fat||0); totalFiber += Number(m.fiber||0); });
-            
-            let totalBurned = 0;
-            (item.workouts || []).forEach(w => totalBurned += Number(w.calories || 0));
-            
-            const netCal = totalCal - totalBurned;
-            const netCarbs = totalCarb - totalFiber;
-            
-            const calRemaining = g.calorieGoal - netCal; 
-            const tdeeDiff = netCal - g.tdee; 
-
-            const pctCal = Math.min((netCal / g.calorieGoal) * 100, 100);
-            const pctPro = Math.min((totalPro / g.protein) * 100, 100);
-            const pctFat = Math.min((totalFat / g.fat) * 100, 100);
-            const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
-            const weeklyData = getWeeklyDeficit();
-            
-            let logHtml = '';
-            
-            if(item.meals && item.meals.length > 0) {
-                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Meals</div>`;
-                logHtml += item.meals.map(m => `
-                    <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
-                        <div class="overflow-hidden"><span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType||'meal'}</span><span class="font-medium text-gray-300 truncate">${m.name}</span></div>
-                        <span class="text-gray-400 whitespace-nowrap ml-2">${m.calories} Cal</span>
-                    </div>
-                `).join('');
-            }
-            
-            if(item.workouts && item.workouts.length > 0) {
-                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Workouts</div>`;
-                logHtml += item.workouts.map(w => `
-                    <div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0">
-                        <div class="overflow-hidden"><span class="text-[10px] text-blue-400 uppercase bg-blue-900/20 px-1 rounded mr-1">BURN</span><span class="font-medium text-gray-300 truncate">${w.description}</span></div>
-                        <span class="text-green-400 whitespace-nowrap ml-2">-${w.calories} Cal</span>
-                    </div>
-                `).join('');
-            }
-
-            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
-        }
-
-        function getTeamRecord(teamId, season) {
-            let wins = 0, losses = 0, ties = 0;
-            const cutoffDate = toLocalYMD(appState.currentDate);
-            const sportsItems = appState.data.items.filter(i => 
-                i.type === 'sports' && 
-                i.status === 'completed' && 
-                i.date <= cutoffDate &&
-                (i.season === season || (!i.season && season === '2025/2026'))
-            );
-            sportsItems.forEach(g => {
-                if (g.homeTeamId === teamId || g.awayTeamId === teamId) {
-                    const isHome = g.homeTeamId === teamId;
-                    const myScore = isHome ? g.homeScore : g.awayScore;
-                    const oppScore = isHome ? g.awayScore : g.homeScore;
-                    if (myScore > oppScore) wins++;
-                    else if (myScore < oppScore) losses++;
-                    else ties++;
-                }
-            });
-            if (ties > 0) return `${wins}-${losses}-${ties}`;
-            return `${wins}-${losses}`;
-        }
-
-        // --- CORE NAVIGATION FUNCTIONS ---
+        // --- RENDERING FUNCTIONS ---
         function navigate(dir) {
             const d = new Date(appState.currentDate);
             if (appState.view === 'day') d.setDate(d.getDate() + dir);
@@ -1109,8 +1170,7 @@
             if(window.innerWidth < 1024) { const sb = document.getElementById('bullet-sidebar'); if(sb && sb.classList.contains('sidebar-open')) toggleSidebar(); }
         }
         function goToDay(dateStr) { appState.currentDate = new Date(dateStr + "T12:00:00"); switchView('day'); }
-
-        // --- RENDERING FUNCTIONS ---
+        
         function updateUI() {
             const mainScroll = document.getElementById('main-scroll');
             if(mainScroll) mainScroll.className = "flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900 transition-colors duration-300";
@@ -1145,33 +1205,43 @@
             const list = document.getElementById('month-list');
             if(!list) return;
             list.innerHTML = '';
-            list.className = "space-y-4"; 
+            list.className = "space-y-6 p-4"; 
 
-            const start = new Date(appState.currentDate.getFullYear(), 0, 1); 
-            const viewYear = appState.currentDate.getFullYear();
+            const journalYear = appState.data.meta.year || new Date().getFullYear();
+            const years = [journalYear - 1, journalYear, journalYear + 1];
             
-            const yearLabel = document.createElement('div');
-            yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
-            yearLabel.innerText = viewYear;
-            list.appendChild(yearLabel);
-            
-            const grid = document.createElement('div');
-            grid.className = "grid grid-cols-4 gap-2";
-            
-            for(let m=0; m<12; m++) {
-                 const btn = document.createElement('button');
-                 const isViewedMonth = (m === appState.currentDate.getMonth());
-                 let baseClass = "text-xs py-2 rounded text-center transition ";
-                 if (isViewedMonth) baseClass += "bg-blue-600 text-white font-bold shadow";
-                 else baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
-                 
-                 btn.className = baseClass;
-                 const d = new Date(viewYear, m, 1);
-                 btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
-                 btn.onclick = () => jumpToMonth(viewYear, m);
-                 grid.appendChild(btn);
-            }
-            list.appendChild(grid);
+            years.forEach(year => {
+                const yearWrapper = document.createElement('div');
+                const yearLabel = document.createElement('div');
+                yearLabel.className = "text-xs font-bold text-purple-400 mb-2 uppercase tracking-wider sticky top-0 bg-gray-800 py-1 z-10";
+                yearLabel.innerText = year;
+                yearWrapper.appendChild(yearLabel);
+                
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-4 gap-2";
+                
+                for(let m=0; m<12; m++) {
+                     const btn = document.createElement('button');
+                     const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                     const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
+                     
+                     let baseClass = "text-[10px] py-2 rounded text-center transition border ";
+                     if (isViewedMonth) {
+                        baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105";
+                     } else if (isActualToday) {
+                        baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; 
+                     } else {
+                        baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600";
+                     }
+                     
+                     btn.className = baseClass;
+                     btn.innerText = new Date(year, m, 1).toLocaleDateString('en-US', { month: 'short' });
+                     btn.onclick = () => jumpToMonth(year, m);
+                     grid.appendChild(btn);
+                }
+                yearWrapper.appendChild(grid);
+                list.appendChild(yearWrapper);
+            });
         }
 
         function renderDayView(container) {
@@ -1186,13 +1256,10 @@
             else if (vacationItem) bgClass = 'bg-vacation';
             
             if (bgClass) {
-                 // Inject background layer
                  const bgDiv = document.createElement('div');
                  bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none dynamic-bg-layer transition-colors duration-300`;
                  const main = document.querySelector('main');
-                 if(main) {
-                     main.insertBefore(bgDiv, main.firstChild);
-                 }
+                 if(main) main.insertBefore(bgDiv, main.firstChild);
             }
 
             const items = appState.data.items.filter(i => i.date === ymd);
@@ -1200,7 +1267,6 @@
             const work = items.filter(i => i.category === 'work' && i.type !== 'holiday' && i.type !== 'birthday' && i.type !== 'anniversary' && i.type !== 'vacation');
             const personal = items.filter(i => (i.category !== 'work' && i.type !== 'health') || (i.type === 'holiday' || i.type === 'birthday' || i.type === 'anniversary' || i.type === 'vacation'));
             
-            // Sort Personal: Vacation first
             personal.sort((a, b) => {
                 if (a.type === 'vacation' && b.type !== 'vacation') return -1;
                 if (a.type !== 'vacation' && b.type === 'vacation') return 1;
@@ -1230,10 +1296,7 @@
             if (item.type === 'vacation') {
                 titleHtml = `<h4 class="font-bold text-lg text-green-400 flex items-center gap-2">✈️ ${item.title}</h4>`;
                 if (item.description) descriptionHtml = `<p class="text-sm font-mono text-green-200 mt-1 bg-green-900/30 p-1 rounded inline-block">${item.description}</p>`;
-                // Vacation Full Width Image
-                if(item.imgUrl) {
-                     content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
-                }
+                if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
             }
             else if(item.type === 'meeting') {
                 meta = `<div class="text-xs text-gray-400 flex flex-col gap-1 mt-1"><span><i class="mr-1">⏰</i> ${formatTime(item.startTime)}</span><span class="font-mono bg-gray-800 px-1 rounded w-fit">Planned: ${formatDuration(item.durationMinutes)}</span>${item.timeSpentMinutes ? `<span class="font-mono bg-gray-800 px-1 rounded w-fit text-green-400">Actual: ${formatDuration(item.timeSpentMinutes)}</span>` : ''}</div>`;
@@ -1287,7 +1350,6 @@
                     content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record (${seasonLabel}): <span class="text-white font-bold">${getTeamRecord(myTeam.id, seasonLabel)}</span></div>`;
                 }
             }
-
             return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group">${resultHtml}<div class="flex justify-between items-start relative z-10"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : (item.type === 'vacation' ? 'vacation' : '')}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
         }
 
@@ -1300,7 +1362,6 @@
             if(item.type === 'vacation') {
                 icon = '✈️';
                 if(item.description) text = item.description; 
-                // VACATION IMAGE IN CHIP
                 if(item.imgUrl) {
                      return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
                         <span class="truncate font-bold w-full text-center">${text}</span>
@@ -1414,18 +1475,6 @@
                 `;
             }
             html += `</div></div>`; container.innerHTML = html;
-        }
-
-        function toggleSidebar() {
-            const sb = document.getElementById('bullet-sidebar');
-            const ov = document.getElementById('sidebar-overlay');
-            if(sb.classList.contains('sidebar-closed')) {
-                sb.classList.replace('sidebar-closed', 'sidebar-open');
-                ov.classList.remove('hidden');
-            } else {
-                sb.classList.replace('sidebar-open', 'sidebar-closed');
-                ov.classList.add('hidden');
-            }
         }
 
         // Initialization
