@@ -35,10 +35,8 @@
         }
         
         /* Special Backgrounds */
-        .bg-weekend { background-color: rgba(30, 41, 59, 0.4); } 
-        /* Holidays: Color K - Darker Deep Blue */
+        .bg-weekend { background-color: hsla(220, 25%, 67.5%, 0.4); } 
         .bg-holiday { background-color: hsl(220, 45%, 27%) !important; border-color: hsl(220, 45%, 37%) !important; }
-        /* Vacation: Color K - Deep Forest Green */
         .bg-vacation { background-color: hsl(150, 30%, 17.5%) !important; border-color: hsl(150, 30%, 27.5%) !important; }
 
         /* Type Button Styling */
@@ -114,7 +112,7 @@
             </div>
             
             <!-- New Rolling Month Grid Sidebar -->
-            <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
+            <div class="flex-1 overflow-y-auto p-3 min-h-0" id="month-list"></div>
 
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
@@ -122,7 +120,7 @@
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.2</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.3</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -147,55 +145,25 @@
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2">
-                        <!-- League Items -->
-                    </div>
+                    <div id="leagues-list" class="space-y-2"></div>
                 </div>
-
-                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
-                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
-                                <span id="team-form-title">Add Team</span>
-                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
-                            </h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div>
-                                    <label class="text-xs text-gray-500">League</label>
-                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Team Name</label>
-                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Abbreviation</label>
-                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
-                                </div>
-                                <div>
-                                    <label class="text-xs text-gray-500">Logo URL</label>
-                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
-                                </div>
-                                <div class="flex items-center gap-2">
-                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
-                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
-                                </div>
+                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
+                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
+                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
+                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
-
-                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2">
-                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
-                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
-                            </div>
-                            <div id="teams-list" class="space-y-2">
-                                <!-- Teams injected here -->
-                            </div>
+                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
+                            <div id="teams-list" class="space-y-2"></div>
                         </div>
                     </div>
                 </div>
@@ -212,27 +180,13 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
-                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
-                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
-                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    
-                    <!-- Workouts Section -->
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
-                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
-                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
-                    </div>
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -245,14 +199,13 @@
 
     <!-- General Item Editor Modal -->
     <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700 max-h-[85vh]">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-white" id="item-modal-title">Add Item</h3>
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <div class="p-6 space-y-4">
-                <input type="hidden" id="item-category">
-                <input type="hidden" id="item-id">
+            <div class="p-6 space-y-4 overflow-y-auto">
+                <input type="hidden" id="item-category"><input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
                 <div>
@@ -288,57 +241,25 @@
                 </div>
                 
                 <!-- Title Row -->
-                <div id="field-title">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
-                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
-                </div>
+                <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
 
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
-                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
-                             </select>
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
-                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                     </div>
-                    
-                    <!-- SEASON FIELD ADDED HERE -->
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
-                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
-                    </div>
-
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
                     <div class="flex items-center gap-2">
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
-                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
-                        <div class="flex flex-col items-center justify-end pb-1">
-                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
-                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
-                        </div>
-                        <div class="flex-1">
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
-                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
-                        </div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
+                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
+                    <input type="hidden" id="sports-is-home" value="false">
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
-
                     <div class="grid grid-cols-2 gap-4">
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
-                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
-                         <div>
-                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
-                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                         </div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
                     </div>
                 </div>
                 
@@ -348,9 +269,7 @@
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Date</label><input type="date" id="vacation-end" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                     </div>
-                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2">
-                        <!-- Dynamic inputs will go here -->
-                    </div>
+                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
                 </div>
 
                 <!-- Holiday Specific Fields -->
@@ -369,71 +288,34 @@
                     </label>
                 </div>
 
-                <div id="common-fields">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
-                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
-                </div>
+                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
-                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
-                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
-                    </div>
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
-                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
-                    </div>
-                    <!-- Recurring Checkbox for Meetings -->
-                    <div class="col-span-2 flex items-center gap-2 mt-2">
-                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
-                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
+                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
+                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
-                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
-                </div>
+                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden">
-                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
-                    <input type="hidden" id="item-rating" value="5">
-                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
-                </div>
+                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
-                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
-                        </div>
-                        <div class="flex items-center">
-                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
-                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
-                                <span>Fill rest of month?</span>
-                             </label>
-                        </div>
+                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
+                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
                     </div>
                 </div>
 
-                <!-- URL/Image (General) -->
+                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
-                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
-                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
-                    </div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -446,7 +328,7 @@
     <script>
         // --- STATE & CONSTANTS ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.2", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -462,65 +344,26 @@
             { id: 'vacation', label: 'Trip', icon: '✈️' }
         ];
 
-        // --- UI FUNCTIONS ---
-        function toggleSidebar() {
-            const sb = document.getElementById('bullet-sidebar');
-            const ov = document.getElementById('sidebar-overlay');
-            if(sb.classList.contains('sidebar-closed')) {
-                sb.classList.replace('sidebar-closed', 'sidebar-open');
-                ov.classList.remove('hidden');
-            } else {
-                sb.classList.replace('sidebar-open', 'sidebar-closed');
-                ov.classList.add('hidden');
-            }
-        }
-
-        function renderSidebar() {
-            const list = document.getElementById('month-list');
-            if(!list) return;
-            list.innerHTML = '';
-            list.className = "space-y-6 p-4"; 
-
-            const journalYear = appState.data.meta.year || new Date().getFullYear();
-            const years = [journalYear - 1, journalYear, journalYear + 1];
-            
-            years.forEach(year => {
-                const yearWrapper = document.createElement('div');
-                const yearLabel = document.createElement('div');
-                yearLabel.className = "text-xs font-bold text-purple-400 mb-2 uppercase tracking-wider sticky top-0 bg-gray-800 py-1 z-10";
-                yearLabel.innerText = year;
-                yearWrapper.appendChild(yearLabel);
-                
-                const grid = document.createElement('div');
-                grid.className = "grid grid-cols-4 gap-2";
-                
-                for(let m=0; m<12; m++) {
-                     const btn = document.createElement('button');
-                     const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
-                     const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
-                     
-                     let baseClass = "text-[10px] py-2 rounded text-center transition border ";
-                     
-                     if (isViewedMonth) {
-                        baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105";
-                     } else if (isActualToday) {
-                        baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; 
-                     } else {
-                        baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600";
-                     }
-                     
-                     btn.className = baseClass;
-                     const d = new Date(year, m, 1);
-                     btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
-                     btn.onclick = () => jumpToMonth(year, m);
-                     grid.appendChild(btn);
+        // --- HELPERS (HOISTED) ---
+        async function fetchWeather() {
+            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
+            try {
+                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
+                if(wRes.ok) {
+                    const w = await wRes.json();
+                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
+                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
                 }
-                yearWrapper.appendChild(grid);
-                list.appendChild(yearWrapper);
-            });
+            } catch(e) { console.error("Weather fetch failed", e); }
         }
-
-        // --- HELPERS ---
+        function getForecastEmoji(c) {
+            if(c.includes('01')) return '☀️';
+            if(c.includes('02')) return '🌤️';
+            if(c.includes('03')) return '🌥️';
+            if(c.includes('09')||c.includes('10')) return '🌧️';
+            if(c.includes('13')) return '❄️';
+            return '☁️';
+        }
         function toLocalYMD(date) { 
             const offset = date.getTimezoneOffset(); 
             const adjusted = new Date(date.getTime() - (offset*60*1000)); 
@@ -591,64 +434,6 @@
             current.setDate(current.getDate() + addDays);
             dateInput.value = toLocalYMD(current);
         }
-        function renderStarInput(rating) {
-            const container = document.getElementById('star-rating-container');
-            if(!container) return;
-            container.innerHTML = '';
-            for (let i = 1; i <= 10; i++) {
-                const star = document.createElement('span'); 
-                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
-                star.innerText = '★';
-                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
-                container.appendChild(star);
-            }
-        }
-        function getTeamRecord(teamId, season) {
-            let wins = 0, losses = 0, ties = 0;
-            const cutoffDate = toLocalYMD(appState.currentDate);
-            const sportsItems = appState.data.items.filter(i => 
-                i.type === 'sports' && 
-                i.status === 'completed' && 
-                i.date <= cutoffDate &&
-                (i.season === season || (!i.season && season === '2025/2026'))
-            );
-            sportsItems.forEach(g => {
-                if (g.homeTeamId === teamId || g.awayTeamId === teamId) {
-                    const isHome = g.homeTeamId === teamId;
-                    const myScore = isHome ? g.homeScore : g.awayScore;
-                    const oppScore = isHome ? g.awayScore : g.homeScore;
-                    if (myScore > oppScore) wins++;
-                    else if (myScore < oppScore) losses++;
-                    else ties++;
-                }
-            });
-            if (ties > 0) return `${wins}-${losses}-${ties}`;
-            return `${wins}-${losses}`;
-        }
-        function getWeeklyDeficit() {
-            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
-            const start = getStartOfWeek(appState.currentDate); 
-            const end = new Date(appState.currentDate); 
-            let totalDeficit = 0; 
-            let daysCounted = 0;
-            const loopDate = new Date(start);
-            while(loopDate <= end) {
-                const ymd = toLocalYMD(loopDate); 
-                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
-                if (item) { 
-                    let dailyCal = 0; 
-                    (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
-                    let dailyBurn = 0;
-                    (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
-                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
-                    totalDeficit += ((dailyCal - dailyBurn) - tdee); 
-                    daysCounted++; 
-                }
-                loopDate.setDate(loopDate.getDate() + 1);
-            }
-            return { deficit: totalDeficit, days: daysCounted };
-        }
-        function getTypeDotColor(type) { return 'bg-gray-500'; } 
         function copyAnnualsToNextYear() {
             if(!confirm("Copy all Birthdays and Anniversaries from this year to next year?")) return;
             let count = 0;
@@ -683,6 +468,7 @@
             const container = document.getElementById('vacation-daily-notes');
             container.innerHTML = '';
             if(!startStr || !endStr) return;
+            
             const start = new Date(startStr + 'T12:00:00');
             const end = new Date(endStr + 'T12:00:00');
             if(end < start) return;
@@ -707,24 +493,55 @@
                 current.setDate(current.getDate() + 1);
             }
         }
-        async function fetchWeather() {
-            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-            try {
-                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok) {
-                    const w = await wRes.json();
-                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-                }
-            } catch(e) { console.error("Weather fetch failed", e); }
+        function renderStarInput(rating) {
+            const container = document.getElementById('star-rating-container');
+            if(!container) return;
+            container.innerHTML = '';
+            for (let i = 1; i <= 10; i++) {
+                const star = document.createElement('span'); 
+                star.className = `star-btn ${i <= rating ? 'active' : ''}`; 
+                star.innerText = '★';
+                star.onclick = () => { document.getElementById('item-rating').value = i; renderStarInput(i); };
+                container.appendChild(star);
+            }
         }
-        function getForecastEmoji(c) {
-            if(c.includes('01')) return '☀️';
-            if(c.includes('02')) return '🌤️';
-            if(c.includes('03')) return '🌥️';
-            if(c.includes('09')||c.includes('10')) return '🌧️';
-            if(c.includes('13')) return '❄️';
-            return '☁️';
+        function getTeamRecord(teamId, season) {
+            let wins = 0, losses = 0, ties = 0;
+            const cutoffDate = toLocalYMD(appState.currentDate);
+            const sportsItems = appState.data.items.filter(i => 
+                i.type === 'sports' && i.status === 'completed' && i.date <= cutoffDate && (i.season === season || (!i.season && season === '2025/2026'))
+            );
+            sportsItems.forEach(g => {
+                if (g.homeTeamId === teamId || g.awayTeamId === teamId) {
+                    const isHome = g.homeTeamId === teamId;
+                    const myScore = isHome ? g.homeScore : g.awayScore;
+                    const oppScore = isHome ? g.awayScore : g.homeScore;
+                    if (myScore > oppScore) wins++;
+                    else if (myScore < oppScore) losses++;
+                    else ties++;
+                }
+            });
+            if (ties > 0) return `${wins}-${losses}-${ties}`;
+            return `${wins}-${losses}`;
+        }
+        function getWeeklyDeficit() {
+            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
+            const start = getStartOfWeek(appState.currentDate); 
+            const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); 
+                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { 
+                    let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
+                    let dailyBurn = 0; (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
+                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
+                    totalDeficit += ((dailyCal - dailyBurn) - tdee); daysCounted++; 
+                }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
         }
 
         // --- DATA MANAGEMENT ---
@@ -777,7 +594,6 @@
             });
             updateUI();
         }
-
         function saveData() { 
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
@@ -788,7 +604,6 @@
             });
             try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } 
         }
-
         function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
         function downloadData() {
             const url = URL.createObjectURL(new Blob([JSON.stringify(appState.data, null, 2)], { type: "application/json" }));
@@ -821,7 +636,6 @@
             });
             updateModalFields();
         }
-
         function renderTypeButtons() {
             const container = document.getElementById('type-buttons-container');
             container.innerHTML = '';
@@ -834,11 +648,11 @@
                 container.appendChild(btn);
             });
         }
-
         function openItemModal(category, itemId = null, allowedTypes = '') {
             const ymd = toLocalYMD(appState.currentDate);
-            if(document.getElementById('type-buttons-container').children.length === 0) renderTypeButtons();
-
+            if(document.getElementById('type-buttons-container').children.length === 0) {
+                renderTypeButtons();
+            }
             document.getElementById('item-id').value = ''; 
             document.getElementById('item-title').value = ''; 
             document.getElementById('item-desc').value = ''; 
@@ -860,12 +674,10 @@
             document.getElementById('vacation-daily-notes').innerHTML = '';
             document.getElementById('sports-season').value = '2025/2026';
             document.getElementById('item-date').value = ymd;
-            
             document.getElementById('item-category').value = category || 'work';
             const taskCatRadios = document.getElementsByName('task-cat');
             if(category === 'personal') taskCatRadios[1].checked = true; 
             else taskCatRadios[0].checked = true;
-
             let defaultType = 'task'; 
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
@@ -883,7 +695,6 @@
                     document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit' || item.type === 'vacation') ? (item.notes || item.description || '') : (item.description || '');
                     document.getElementById('item-link').value = item.linkUrl || ''; 
                     document.getElementById('item-img').value = item.imgUrl || '';
-                    
                     if(item.type === 'meeting') { 
                         document.getElementById('item-startTime').value = item.startTime || ''; 
                         document.getElementById('item-duration').value = item.durationMinutes ? formatDuration(item.durationMinutes) : '60m'; 
@@ -910,9 +721,7 @@
             selectType(defaultType);
             document.getElementById('item-modal').classList.remove('hidden');
         }
-
         function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
-        
         function saveItem() {
             const type = document.getElementById('item-type').value; 
             let category = 'personal'; 
@@ -922,12 +731,10 @@
             } else if (type === 'meeting' || type === 'holiday') {
                 category = 'work';
             }
-            
             const editId = document.getElementById('item-id').value;
             const inputDateVal = document.getElementById('item-date').value;
             const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
             let title = document.getElementById('item-title').value;
-            
             if (type === 'sports') {
                 const myTeamId = document.getElementById('sports-myteam').value;
                 const oppTeamId = document.getElementById('sports-opponent').value;
@@ -939,13 +746,10 @@
                 title = `${awayTeam?.abbrev || 'Away'} @ ${homeTeam?.abbrev || 'Home'}`;
                 category = 'personal';
             }
-            
             if(!title && type !== 'sports') return alert("Title required");
-
             const newItemBase = { type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
             const rawDesc = document.getElementById('item-desc').value;
             if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } else { newItemBase.description = rawDesc; }
-
             if(type === 'meeting') { newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value); }
             if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
             if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
@@ -955,7 +759,6 @@
                  const myTeamId = document.getElementById('sports-myteam').value; const oppTeamId = document.getElementById('sports-opponent').value; const isHome = document.getElementById('sports-is-home').value === "true"; const myScore = parseInt(document.getElementById('sports-score-my').value); const oppScore = parseInt(document.getElementById('sports-score-opp').value);
                  newItemBase.league = document.getElementById('sports-league').value; newItemBase.homeTeamId = isHome ? myTeamId : oppTeamId; newItemBase.awayTeamId = isHome ? oppTeamId : myTeamId; newItemBase.homeScore = isHome ? myScore : oppScore; newItemBase.awayScore = isHome ? oppScore : myScore; newItemBase.startTime = document.getElementById('sports-time').value; newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled'; newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
             }
-            
             if (type === 'vacation') {
                 const startStr = document.getElementById('vacation-start').value;
                 const endStr = document.getElementById('vacation-end').value;
@@ -999,7 +802,10 @@
             const type = document.getElementById('item-type').value;
             if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
             const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation','task-category'];
-            allFields.forEach(f => { const el = document.getElementById(`field-${f}`); if(el) el.classList.add('hidden'); });
+            allFields.forEach(f => {
+                const el = document.getElementById(`field-${f}`);
+                if(el) el.classList.add('hidden');
+            });
             document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
             if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
             if(type === 'task') {
@@ -1009,12 +815,15 @@
             if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
             if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
             if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
-            if(type === 'birthday' || type === 'anniversary') { const isEdit = document.getElementById('item-id').value !== ''; if(!isEdit) document.getElementById('field-annual').classList.remove('hidden'); }
+            if(type === 'birthday' || type === 'anniversary') {
+                const isEdit = document.getElementById('item-id').value !== '';
+                if(!isEdit) document.getElementById('field-annual').classList.remove('hidden');
+            }
             if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
             if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
         }
 
-        // --- SPORTS & NUTRITION LOGIC ---
+        // --- SPORTS LOGIC ---
         function openSportsManager() { document.getElementById('sports-manager-modal').classList.remove('hidden'); switchSportsTab('leagues'); }
         function closeSportsManager() { document.getElementById('sports-manager-modal').classList.add('hidden'); resetTeamForm(); }
         function switchSportsTab(tab) {
@@ -1120,6 +929,8 @@
             const label = isHome ? `${oppName} @ ${myName}` : `${myName} @ ${oppName}`;
             document.getElementById('sports-matchup-label').innerText = label;
         }
+
+        // --- NUTRITION LOGIC ---
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -1153,8 +964,59 @@
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
         }
+        function getWeeklyDeficit() {
+            if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
+            const start = getStartOfWeek(appState.currentDate); 
+            const end = new Date(appState.currentDate); 
+            let totalDeficit = 0; let daysCounted = 0;
+            const loopDate = new Date(start);
+            while(loopDate <= end) {
+                const ymd = toLocalYMD(loopDate); 
+                const item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
+                if (item) { 
+                    let dailyCal = 0; (item.meals || []).forEach(m => dailyCal += (m.calories || 0)); 
+                    let dailyBurn = 0; (item.workouts || []).forEach(w => dailyBurn += (w.calories || 0));
+                    const tdee = (item.goals && item.goals.tdee) ? item.goals.tdee : 2816; 
+                    totalDeficit += ((dailyCal - dailyBurn) - tdee); daysCounted++; 
+                }
+                loopDate.setDate(loopDate.getDate() + 1);
+            }
+            return { deficit: totalDeficit, days: daysCounted };
+        }
+        function renderHealthCard(item) {
+            const g = item.goals || { tdee: 2500, calorieGoal: 2000, protein: 150, fat: 80, netCarbs: 100 };
+            let totalCal=0, totalPro=0, totalCarb=0, totalFat=0, totalFiber=0;
+            (item.meals || []).forEach(m => { totalCal += Number(m.calories||0); totalPro += Number(m.protein||0); totalCarb += Number(m.carbs||0); totalFat += Number(m.fat||0); totalFiber += Number(m.fiber||0); });
+            let totalBurned = 0; (item.workouts || []).forEach(w => totalBurned += Number(w.calories || 0));
+            const netCal = totalCal - totalBurned; const netCarbs = totalCarb - totalFiber;
+            const calRemaining = g.calorieGoal - netCal; const tdeeDiff = netCal - g.tdee; 
+            const pctCal = Math.min((netCal / g.calorieGoal) * 100, 100); const pctPro = Math.min((totalPro / g.protein) * 100, 100); const pctFat = Math.min((totalFat / g.fat) * 100, 100); const pctCarb = Math.min((netCarbs / g.netCarbs) * 100, 100);
+            const weeklyData = getWeeklyDeficit();
+            let logHtml = '';
+            if(item.meals && item.meals.length > 0) {
+                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Meals</div>`;
+                logHtml += item.meals.map(m => `<div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0"><div class="overflow-hidden"><span class="text-[10px] text-gray-500 uppercase bg-gray-800 px-1 rounded mr-1">${m.mealType||'meal'}</span><span class="font-medium text-gray-300 truncate">${m.name}</span></div><span class="text-gray-400 whitespace-nowrap ml-2">${m.calories} Cal</span></div>`).join('');
+            }
+            if(item.workouts && item.workouts.length > 0) {
+                logHtml += `<div class="text-[10px] font-bold text-gray-500 uppercase mb-1 mt-2">Workouts</div>`;
+                logHtml += item.workouts.map(w => `<div class="flex justify-between items-center text-sm py-1 border-b border-gray-700/50 last:border-0"><div class="overflow-hidden"><span class="text-[10px] text-blue-400 uppercase bg-blue-900/20 px-1 rounded mr-1">BURN</span><span class="font-medium text-gray-300 truncate">${w.description}</span></div><span class="text-green-400 whitespace-nowrap ml-2">-${w.calories} Cal</span></div>`).join('');
+            }
+            return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
+        }
 
-        // --- RENDERING FUNCTIONS ---
+        // --- CORE UI ---
+        function toggleSidebar() {
+            const sb = document.getElementById('bullet-sidebar');
+            const ov = document.getElementById('sidebar-overlay');
+            if(sb.classList.contains('sidebar-closed')) {
+                sb.classList.replace('sidebar-closed', 'sidebar-open');
+                ov.classList.remove('hidden');
+            } else {
+                sb.classList.replace('sidebar-open', 'sidebar-closed');
+                ov.classList.add('hidden');
+            }
+        }
+
         function navigate(dir) {
             const d = new Date(appState.currentDate);
             if (appState.view === 'day') d.setDate(d.getDate() + dir);
@@ -1170,7 +1032,7 @@
             if(window.innerWidth < 1024) { const sb = document.getElementById('bullet-sidebar'); if(sb && sb.classList.contains('sidebar-open')) toggleSidebar(); }
         }
         function goToDay(dateStr) { appState.currentDate = new Date(dateStr + "T12:00:00"); switchView('day'); }
-        
+
         function updateUI() {
             const mainScroll = document.getElementById('main-scroll');
             if(mainScroll) mainScroll.className = "flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900 transition-colors duration-300";
@@ -1206,36 +1068,27 @@
             if(!list) return;
             list.innerHTML = '';
             list.className = "space-y-6 p-4"; 
-
             const journalYear = appState.data.meta.year || new Date().getFullYear();
             const years = [journalYear - 1, journalYear, journalYear + 1];
-            
             years.forEach(year => {
                 const yearWrapper = document.createElement('div');
                 const yearLabel = document.createElement('div');
                 yearLabel.className = "text-xs font-bold text-purple-400 mb-2 uppercase tracking-wider sticky top-0 bg-gray-800 py-1 z-10";
                 yearLabel.innerText = year;
                 yearWrapper.appendChild(yearLabel);
-                
                 const grid = document.createElement('div');
                 grid.className = "grid grid-cols-4 gap-2";
-                
                 for(let m=0; m<12; m++) {
                      const btn = document.createElement('button');
                      const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
                      const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
-                     
                      let baseClass = "text-[10px] py-2 rounded text-center transition border ";
-                     if (isViewedMonth) {
-                        baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105";
-                     } else if (isActualToday) {
-                        baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; 
-                     } else {
-                        baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600";
-                     }
-                     
+                     if (isViewedMonth) { baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105"; } 
+                     else if (isActualToday) { baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; } 
+                     else { baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600"; }
                      btn.className = baseClass;
-                     btn.innerText = new Date(year, m, 1).toLocaleDateString('en-US', { month: 'short' });
+                     const d = new Date(year, m, 1);
+                     btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
                      btn.onclick = () => jumpToMonth(year, m);
                      grid.appendChild(btn);
                 }
@@ -1249,39 +1102,32 @@
             const isWeekend = appState.currentDate.getDay() === 0 || appState.currentDate.getDay() === 6;
             const holidayItem = appState.data.items.find(i => i.date === ymd && i.type === 'holiday' && i.isWorkHoliday);
             const vacationItem = appState.data.items.find(i => i.date === ymd && i.type === 'vacation');
-            
             let bgClass = '';
             if (holidayItem) bgClass = 'bg-holiday';
             else if (isWeekend) bgClass = 'bg-weekend';
             else if (vacationItem) bgClass = 'bg-vacation';
-            
             if (bgClass) {
                  const bgDiv = document.createElement('div');
                  bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none dynamic-bg-layer transition-colors duration-300`;
                  const main = document.querySelector('main');
                  if(main) main.insertBefore(bgDiv, main.firstChild);
             }
-
             const items = appState.data.items.filter(i => i.date === ymd);
             const health = items.find(i => i.type === 'health');
             const work = items.filter(i => i.category === 'work' && i.type !== 'holiday' && i.type !== 'birthday' && i.type !== 'anniversary' && i.type !== 'vacation');
             const personal = items.filter(i => (i.category !== 'work' && i.type !== 'health') || (i.type === 'holiday' || i.type === 'birthday' || i.type === 'anniversary' || i.type === 'vacation'));
-            
             personal.sort((a, b) => {
                 if (a.type === 'vacation' && b.type !== 'vacation') return -1;
                 if (a.type !== 'vacation' && b.type === 'vacation') return 1;
                 return 0;
             });
-
             let html = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 relative z-10">`;
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-work">Work & Tasks</h3><button onclick="openItemModal('work', null, 'task,meeting')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
             work.forEach(item => { html += renderCard(item); });
             html += `</div>`;
-            
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-personal">Life & Media</h3><button onclick="openItemModal('personal', null, 'habit,media,sports,holiday,birthday,anniversary,vacation')" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Item">＋</button></div>`;
             personal.forEach(item => { html += renderCard(item); });
             html += `</div>`;
-            
             html += `<div class="space-y-6"><div class="flex justify-between items-center border-b border-gray-700 pb-2"><h3 class="text-xl font-bold text-health">Health & Nutrition</h3><button onclick="openNutritionModal()" class="text-sm bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded flex items-center justify-center text-gray-400 hover:text-white transition" title="Add Meals">＋</button></div>`;
             if(health) html += renderHealthCard(health); 
             html += `</div></div>`;
@@ -1292,7 +1138,6 @@
              let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
             let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
             let resultHtml = '';
-
             if (item.type === 'vacation') {
                 titleHtml = `<h4 class="font-bold text-lg text-green-400 flex items-center gap-2">✈️ ${item.title}</h4>`;
                 if (item.description) descriptionHtml = `<p class="text-sm font-mono text-green-200 mt-1 bg-green-900/30 p-1 rounded inline-block">${item.description}</p>`;
