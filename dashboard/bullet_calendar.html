@@ -112,14 +112,17 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
+            
+            <!-- New Rolling Month Grid Sidebar -->
             <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
+
             <div class="p-4 border-t border-gray-700">
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.3.21</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.1</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -134,35 +137,70 @@
                 <h3 class="text-xl font-bold text-white">Manage Sports Data</h3>
                 <button onclick="closeSportsManager()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
+            
+            <!-- Tabs -->
             <div class="flex border-b border-gray-700 px-6 pt-2">
                 <button onclick="switchSportsTab('leagues')" id="tab-leagues" class="px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500">Leagues</button>
                 <button onclick="switchSportsTab('teams')" id="tab-teams" class="px-4 py-2 text-sm font-medium text-gray-400 hover:text-white">Teams</button>
             </div>
+
             <div class="flex-1 overflow-y-auto p-6">
+                
+                <!-- LEAGUES TAB -->
                 <div id="view-leagues" class="block">
                     <div class="flex gap-2 mb-4">
                         <input type="text" id="new-league-input" placeholder="New League Name (e.g. NHL)" class="flex-1 bg-gray-700 border border-gray-600 rounded px-3 py-2 text-white focus:border-blue-500 outline-none">
                         <button onclick="addLeague()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded font-bold">Add</button>
                     </div>
-                    <div id="leagues-list" class="space-y-2"></div>
+                    <div id="leagues-list" class="space-y-2">
+                        <!-- League Items -->
+                    </div>
                 </div>
+
+                <!-- TEAMS TAB -->
                 <div id="view-teams" class="hidden">
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 h-full">
+                        <!-- Add/Edit Team Form -->
                         <div class="bg-gray-900/50 p-4 rounded-xl border border-gray-700 h-fit" id="team-form-container">
-                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center"><span id="team-form-title">Add Team</span><button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button></h4>
+                            <h4 class="font-bold text-sm mb-3 text-gray-400 uppercase flex justify-between items-center">
+                                <span id="team-form-title">Add Team</span>
+                                <button onclick="resetTeamForm()" id="team-form-cancel" class="hidden text-xs text-red-400 hover:text-red-300">Cancel</button>
+                            </h4>
                             <div class="space-y-3">
                                 <input type="hidden" id="team-edit-id">
-                                <div><label class="text-xs text-gray-500">League</label><select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select></div>
-                                <div><label class="text-xs text-gray-500">Team Name</label><input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div><label class="text-xs text-gray-500">Abbreviation</label><input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4"></div>
-                                <div><label class="text-xs text-gray-500">Logo URL</label><input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></div>
-                                <div class="flex items-center gap-2"><input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600"><label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label></div>
+                                <div>
+                                    <label class="text-xs text-gray-500">League</label>
+                                    <select id="team-league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white"></select>
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Team Name</label>
+                                    <input type="text" id="team-name-input" placeholder="e.g. Dallas Cowboys" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Abbreviation</label>
+                                    <input type="text" id="team-abbrev-input" placeholder="e.g. DAL" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white uppercase" maxlength="4">
+                                </div>
+                                <div>
+                                    <label class="text-xs text-gray-500">Logo URL</label>
+                                    <input type="text" id="team-logo-input" placeholder="https://..." class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-xs text-white">
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" id="team-fav-input" class="rounded bg-gray-700 border-gray-600">
+                                    <label for="team-fav-input" class="text-xs text-gray-300">Favorite Team?</label>
+                                </div>
                                 <button onclick="saveTeamForm()" id="team-form-btn" class="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded text-sm font-bold">Save Team</button>
                             </div>
                         </div>
+
+                        <!-- Team List -->
                         <div class="md:col-span-2 overflow-y-auto">
-                            <div class="flex justify-between items-center mb-2"><h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4><select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select></div>
-                            <div id="teams-list" class="space-y-2"></div>
+                            <div class="flex justify-between items-center mb-2">
+                                <h4 class="font-bold text-sm text-gray-400 uppercase">Current Teams</h4>
+                                <select id="filter-league-select" class="bg-gray-700 border-gray-600 rounded text-xs px-2 py-1 text-white" onchange="renderTeamsList()"></select>
+                            </div>
+                            <div id="teams-list" class="space-y-2">
+                                <!-- Teams injected here -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -179,13 +217,27 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 space-y-6">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label><input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label><input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Weight (lbs)</label>
+                        <input type="number" step="0.1" id="edit-weight" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Calorie Goal</label>
+                        <input type="number" id="edit-cal-goal" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-health outline-none">
+                    </div>
                 </div>
                 <div>
-                    <div class="flex justify-between items-center mb-2"><label class="text-xs font-bold text-gray-500 uppercase">Meals</label><button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button></div>
+                    <div class="flex justify-between items-center mb-2">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Meals</label>
+                        <button type="button" onclick="addMealInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-health font-bold border border-gray-600">+ Add Meal</button>
+                    </div>
                     <div id="meal-inputs-container" class="space-y-2"></div>
-                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4"><label class="text-xs font-bold text-gray-500 uppercase">Workouts</label><button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button></div>
+                    
+                    <!-- Workouts Section -->
+                    <div class="flex justify-between items-center mb-2 mt-6 border-t border-gray-700 pt-4">
+                        <label class="text-xs font-bold text-gray-500 uppercase">Workouts</label>
+                        <button type="button" onclick="addWorkoutInput()" class="text-xs bg-gray-700 hover:bg-gray-600 px-2 py-1 rounded text-blue-400 font-bold border border-gray-600">+ Add Workout</button>
+                    </div>
                     <div id="workout-inputs-container" class="space-y-2"></div>
                 </div>
             </div>
@@ -204,7 +256,8 @@
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
             <div class="p-6 space-y-4">
-                <input type="hidden" id="item-category"><input type="hidden" id="item-id">
+                <input type="hidden" id="item-category">
+                <input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
                 <div>
@@ -240,25 +293,57 @@
                 </div>
                 
                 <!-- Title Row -->
-                <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
+                <div id="field-title">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label>
+                    <input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title...">
+                </div>
 
                 <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label><input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label>
+                             <select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()">
+                             </select>
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Time / Status</label>
+                             <input type="time" id="sports-time" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                         </div>
                     </div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label><input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026"></div>
+                    
+                    <!-- SEASON FIELD ADDED HERE -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Season</label>
+                        <input type="text" id="sports-season" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" value="2025/2026">
+                    </div>
+
                     <div class="flex items-center gap-2">
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label><select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
-                        <div class="flex flex-col items-center justify-end pb-1"><label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label><button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button></div>
-                        <div class="flex-1"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label><select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select></div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Team</label>
+                             <select id="sports-myteam" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
+                        <div class="flex flex-col items-center justify-end pb-1">
+                            <label class="text-[10px] text-gray-500 uppercase mb-1">Vs/At</label>
+                            <button onclick="swapHomeAway()" class="bg-gray-600 p-2 rounded hover:bg-gray-500">⇄</button>
+                        </div>
+                        <div class="flex-1">
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opponent</label>
+                             <select id="sports-opponent" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></select>
+                        </div>
                     </div>
-                    <input type="hidden" id="sports-is-home" value="false">
+                    <input type="hidden" id="sports-is-home" value="false"> <!-- Track if My Team is Home -->
                     <div class="text-center text-xs text-gray-400" id="sports-matchup-label">My Team @ Opponent</div>
+
                     <div class="grid grid-cols-2 gap-4">
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label><input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label><input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">My Score</label>
+                             <input type="number" id="sports-score-my" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
+                         <div>
+                             <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Opp Score</label>
+                             <input type="number" id="sports-score-opp" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                         </div>
                     </div>
                 </div>
                 
@@ -268,7 +353,9 @@
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">End Date</label><input type="date" id="vacation-end" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
                     </div>
-                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
+                    <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2">
+                        <!-- Dynamic inputs will go here -->
+                    </div>
                 </div>
 
                 <!-- Holiday Specific Fields -->
@@ -287,34 +374,71 @@
                     </label>
                 </div>
 
-                <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
+                <div id="common-fields">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label>
+                    <textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea>
+                </div>
                 
                 <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
-                    <div class="col-span-2"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label><input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m"></div>
-                    <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label>
+                        <input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label>
+                        <input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90">
+                    </div>
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Actual Duration</label>
+                        <input type="text" id="item-actualDuration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 15m">
+                    </div>
+                    <!-- Recurring Checkbox for Meetings -->
+                    <div class="col-span-2 flex items-center gap-2 mt-2">
+                        <input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600">
+                        <label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label>
+                    </div>
                 </div>
                 
                 <!-- Task Fields -->
-                <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
+                <div id="field-task" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label>
+                    <input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123">
+                </div>
                 
                 <!-- Media Fields -->
-                <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
+                <div id="field-media" class="hidden">
+                    <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label>
+                    <input type="hidden" id="item-rating" value="5">
+                    <div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div>
+                </div>
 
                 <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
-                        <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
-                        <div class="flex items-center"><label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4"><input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500"><span>Fill rest of month?</span></label></div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label>
+                            <input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0">
+                        </div>
+                        <div class="flex items-center">
+                             <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-4">
+                                <input type="checkbox" id="item-fill-month" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
+                                <span>Fill rest of month?</span>
+                             </label>
+                        </div>
                     </div>
                 </div>
 
-                <!-- URL/Image -->
+                <!-- URL/Image (General) -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
-                    <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label>
+                        <input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label>
+                        <input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs">
+                    </div>
                 </div>
             </div>
             <div class="p-6 border-t border-gray-700 flex justify-end gap-3">
@@ -327,7 +451,7 @@
     <script>
         // --- STATE & CONSTANTS ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.1", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -466,6 +590,7 @@
                 alert("No new items to copy or they already exist.");
             }
         }
+
         function generateVacationDailyInputs() {
             const startStr = document.getElementById('vacation-start').value;
             const endStr = document.getElementById('vacation-end').value;
@@ -603,6 +728,7 @@
             appState.data.teams = Array.from(teamMap.values());
             appState.data.leagues = Array.from(leagueSet);
             
+            // Sort items: Vacation first, then others
             appState.data.items.sort((a, b) => {
                 if (a.date < b.date) return -1;
                 if (a.date > b.date) return 1;
@@ -635,6 +761,7 @@
             document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
             if(window.innerWidth < 1024) document.getElementById('bullet-sidebar').classList.replace('sidebar-open','sidebar-closed');
         }
+
         function deleteItem(id, type) {
             if(!confirm("Delete this item?")) return;
             if(type === 'vacation') {
@@ -651,7 +778,7 @@
             updateUI();
         }
 
-        // --- MODAL FUNCTIONS ---
+        // --- MODAL FUNCTIONS (NEW BUTTON LOGIC) ---
         function selectType(type) {
             document.getElementById('item-type').value = type;
             document.querySelectorAll('.type-btn').forEach(btn => {
@@ -753,7 +880,9 @@
             selectType(defaultType);
             document.getElementById('item-modal').classList.remove('hidden');
         }
+
         function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+        
         function saveItem() {
             const type = document.getElementById('item-type').value; 
             let category = 'personal'; 
@@ -962,7 +1091,7 @@
             document.getElementById('sports-matchup-label').innerText = label;
         }
 
-        // --- NUTRITION MODAL FUNCTIONS ---
+        // --- RESTORED HEALTH CARD FUNCTIONS ---
         function openNutritionModal() {
             const ymd = toLocalYMD(appState.currentDate);
             let item = appState.data.items.find(i => i.date === ymd && i.type === 'health');
@@ -1000,7 +1129,7 @@
             if (itemIndex >= 0) appState.data.items[itemIndex] = newItem; else appState.data.items.push(newItem);
             saveData(); closeNutritionModal(); updateUI();
         }
-
+        
         function getWeeklyDeficit() {
             if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
             const start = getStartOfWeek(appState.currentDate); 
@@ -1070,25 +1199,30 @@
             return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
         }
 
+        // --- HELPER FOR SPORTS RECORD ---
         function getTeamRecord(teamId, season) {
             let wins = 0, losses = 0, ties = 0;
             const cutoffDate = toLocalYMD(appState.currentDate);
+
             const sportsItems = appState.data.items.filter(i => 
                 i.type === 'sports' && 
                 i.status === 'completed' && 
                 i.date <= cutoffDate &&
-                (i.season === season || (!i.season && season === '2025/2026'))
+                (i.season === season || (!i.season && season === '2025/2026')) // Match season logic
             );
+            
             sportsItems.forEach(g => {
                 if (g.homeTeamId === teamId || g.awayTeamId === teamId) {
                     const isHome = g.homeTeamId === teamId;
                     const myScore = isHome ? g.homeScore : g.awayScore;
                     const oppScore = isHome ? g.awayScore : g.homeScore;
+                    
                     if (myScore > oppScore) wins++;
                     else if (myScore < oppScore) losses++;
                     else ties++;
                 }
             });
+            
             if (ties > 0) return `${wins}-${losses}-${ties}`;
             return `${wins}-${losses}`;
         }
@@ -1145,33 +1279,39 @@
             const list = document.getElementById('month-list');
             if(!list) return;
             list.innerHTML = '';
-            list.className = "space-y-4"; 
+            list.className = "space-y-6"; 
 
-            const start = new Date(appState.currentDate.getFullYear(), 0, 1); 
-            const viewYear = appState.currentDate.getFullYear();
-            
-            const yearLabel = document.createElement('div');
-            yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1";
-            yearLabel.innerText = viewYear;
-            list.appendChild(yearLabel);
-            
-            const grid = document.createElement('div');
-            grid.className = "grid grid-cols-4 gap-2";
-            
-            for(let m=0; m<12; m++) {
-                 const btn = document.createElement('button');
-                 const isViewedMonth = (m === appState.currentDate.getMonth());
-                 let baseClass = "text-xs py-2 rounded text-center transition ";
-                 if (isViewedMonth) baseClass += "bg-blue-600 text-white font-bold shadow";
-                 else baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
-                 
-                 btn.className = baseClass;
-                 const d = new Date(viewYear, m, 1);
-                 btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
-                 btn.onclick = () => jumpToMonth(viewYear, m);
-                 grid.appendChild(btn);
-            }
-            list.appendChild(grid);
+            const baseYear = new Date().getFullYear();
+            const yearsToShow = [baseYear - 1, baseYear, baseYear + 1];
+
+            yearsToShow.forEach(year => {
+                const yearLabel = document.createElement('div');
+                yearLabel.className = "text-xs font-bold text-purple-400 mt-2 mb-2 px-1 uppercase tracking-wider border-b border-gray-700 pb-1";
+                yearLabel.innerText = year;
+                list.appendChild(yearLabel);
+
+                const grid = document.createElement('div');
+                grid.className = "grid grid-cols-4 gap-2";
+                
+                for(let m=0; m<12; m++) {
+                    const btn = document.createElement('button');
+                    const isViewedMonth = (m === appState.currentDate.getMonth() && year === appState.currentDate.getFullYear());
+                    const now = new Date();
+                    const isActualCurrentMonth = (m === now.getMonth() && year === now.getFullYear());
+
+                    let baseClass = "text-[10px] py-2 rounded text-center transition ";
+                    if (isViewedMonth) { baseClass += "bg-blue-600 text-white font-bold shadow ring-1 ring-blue-400"; } 
+                    else if (isActualCurrentMonth) { baseClass += "bg-gray-700 text-purple-400 font-bold border border-purple-500/50"; } 
+                    else { baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white"; }
+                    
+                    btn.className = baseClass;
+                    const d = new Date(year, m, 1);
+                    btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
+                    btn.onclick = () => jumpToMonth(year, m);
+                    grid.appendChild(btn);
+                }
+                list.appendChild(grid);
+            });
         }
 
         function renderDayView(container) {
@@ -1222,6 +1362,7 @@
             container.innerHTML = html;
         }
 
+        // ... (Render Card/Chip functions - keeping exactly as verified before) ...
         function renderCard(item) {
              let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
             let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
@@ -1299,8 +1440,10 @@
 
             if(item.type === 'vacation') {
                 icon = '✈️';
+                // Prioritize daily note for title
                 if(item.description) text = item.description; 
-                // VACATION IMAGE IN CHIP
+                
+                // VACATION IMAGE IN CHIP (Full Width)
                 if(item.imgUrl) {
                      return `<div class="${verticalClasses}" onmouseenter="delayedShowHover(event, '${item.id}')" onmouseleave="cancelHover()">
                         <span class="truncate font-bold w-full text-center">${text}</span>
