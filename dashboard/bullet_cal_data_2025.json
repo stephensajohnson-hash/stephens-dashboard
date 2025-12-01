@@ -3010,7 +3010,61 @@
       "description": "",
       "id": "habit_1764482400000_r08yh",
       "date": "2025-11-30",
-      "streakCount": 1503
+      "streakCount": 1503,
+      "status": "completed"
+    },
+    {
+      "id": "health_1764563316000",
+      "date": "2025-11-30",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "Turkey Soup - 4 cups",
+          "calories": 272,
+          "protein": 20,
+          "carbs": 28,
+          "fat": 8,
+          "fiber": 8
+        },
+        {
+          "mealType": "snack",
+          "name": "1 Glass Moscato",
+          "calories": 130,
+          "protein": 0,
+          "carbs": 20,
+          "fat": 0,
+          "fiber": 0
+        },
+        {
+          "mealType": "dinner",
+          "name": "Whataburger - Bacon & Cheese Burger",
+          "calories": 750,
+          "protein": 40,
+          "carbs": 46,
+          "fat": 59,
+          "fiber": 2
+        },
+        {
+          "mealType": "snack",
+          "name": "3 Keto Turkey & Dressing Muffins",
+          "calories": 255,
+          "protein": 30,
+          "carbs": 26,
+          "fat": 18,
+          "fiber": 1.5
+        }
+      ],
+      "workouts": []
     },
     {
       "type": "task",
