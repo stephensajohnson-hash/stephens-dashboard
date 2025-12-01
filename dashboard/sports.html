@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sports Season Tracker</title>
+    <link rel="icon" href="/images/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Theme Colors matching Bullet Calendar */
+        :root { --bg-dark: #111827; --panel-bg: rgba(31, 41, 55, 0.7); --sports-red: #ef4444; }
+        body { background-color: var(--bg-dark); color: white; font-family: 'Inter', sans-serif; }
+        
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: #4B5563; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #6B7280; }
+
+        .glass-panel { 
+            background: var(--panel-bg); 
+            backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            transition: transform 0.2s;
+        }
+        .game-card:hover { transform: translateX(4px); background-color: rgba(55, 65, 81, 0.8); }
+        
+        .win-indicator { border-left: 4px solid #10b981; }
+        .loss-indicator { border-left: 4px solid #ef4444; }
+        .tie-indicator { border-left: 4px solid #9ca3af; }
+        .scheduled-indicator { border-left: 4px solid #3b82f6; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-40 p-2 flex items-center justify-between h-16">
+        <div class="flex items-center gap-3">
+            <a href="bullet_calendar.html" class="text-gray-400 hover:text-white p-2 transition-colors flex items-center gap-2">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                <span class="font-bold text-lg">Back to Calendar</span>
+            </a>
+        </div>
+        <div class="text-xl font-bold text-red-500 tracking-widest uppercase">Season Tracker</div>
+        <div class="w-24"></div> <!-- Spacer for balance -->
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 pt-16 h-full">
+        
+        <!-- Sidebar Controls -->
+        <aside class="w-64 bg-gray-800 border-r border-gray-700 p-6 flex flex-col gap-6">
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Filter by League</label>
+                <select id="league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-red-500 outline-none" onchange="renderPage()">
+                    <!-- Populated via JS -->
+                </select>
+            </div>
+            
+            <div>
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Season</label>
+                <select id="season-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-red-500 outline-none" onchange="renderPage()">
+                     <option value="2025/2026">2025/2026</option>
+                     <option value="2024/2025">2024/2025</option>
+                </select>
+            </div>
+
+            <div class="mt-auto pt-6 border-t border-gray-700">
+                <button onclick="openAddGameModal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded shadow-lg flex items-center justify-center gap-2">
+                    <span>+ Add Game</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <main class="flex-1 overflow-y-auto p-8 bg-gray-900">
+            
+            <!-- Stats Banner -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center">
+                    <span class="text-gray-400 text-xs uppercase tracking-wider">Record</span>
+                    <span class="text-4xl font-black text-white mt-1" id="stat-record">0-0-0</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center">
+                    <span class="text-gray-400 text-xs uppercase tracking-wider">Win %</span>
+                    <span class="text-4xl font-black text-green-400 mt-1" id="stat-winpct">.000</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center">
+                    <span class="text-gray-400 text-xs uppercase tracking-wider">Streak</span>
+                    <span class="text-4xl font-black text-blue-400 mt-1" id="stat-streak">-</span>
+                </div>
+                <div class="glass-panel p-4 rounded-xl flex flex-col items-center justify-center bg-red-900/20 border-red-800/50">
+                    <span class="text-red-300 text-xs uppercase tracking-wider">Next Game</span>
+                    <div class="text-center mt-1" id="stat-next-game">
+                        <span class="text-sm text-gray-400">No Upcoming Games</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Game List -->
+            <h2 class="text-xl font-bold text-gray-400 mb-4 border-b border-gray-700 pb-2">Game Schedule</h2>
+            <div id="game-list" class="space-y-3">
+                <!-- Games injected here -->
+            </div>
+        </main>
+    </div>
+
+    <!-- Add/Edit Game Modal -->
+    <div id="game-modal" class="fixed inset-0 bg-black/80 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-md border border-gray-700 shadow-2xl p-6">
+            <div class="flex justify-between items-center mb-6 border-b border-gray-700 pb-2">
+                <h3 class="text-xl font-bold text-white" id="modal-title">Add Game</h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            
+            <div class="space-y-4">
+                <input type="hidden" id="edit-game-id">
+                <div class="grid grid-cols-2 gap-4">
+                    <div><label class="text-xs text-gray-500 block mb-1">Date</label><input type="date" id="game-date" class="w-full bg-gray-700 rounded p-2 text-white"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Time</label><input type="time" id="game-time" class="w-full bg-gray-700 rounded p-2 text-white"></div>
+                </div>
+                
+                <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                        <label class="text-xs text-gray-500 block mb-1">Home Team</label>
+                        <select id="game-home-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm"></select>
+                    </div>
+                    <span class="text-gray-500 pb-2">vs</span>
+                    <div class="flex-1">
+                        <label class="text-xs text-gray-500 block mb-1">Away Team</label>
+                        <select id="game-away-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm"></select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-gray-900/50 p-3 rounded-lg border border-gray-700">
+                    <div><label class="text-xs text-gray-500 block mb-1">Home Score</label><input type="number" id="game-home-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Away Score</label><input type="number" id="game-away-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold"></div>
+                </div>
+                
+                <div>
+                    <label class="text-xs text-gray-500 block mb-1">Location / Notes</label>
+                    <input type="text" id="game-location" class="w-full bg-gray-700 rounded p-2 text-white text-sm" placeholder="Stadium...">
+                </div>
+
+                <button onclick="saveGame()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded mt-2">Save Game</button>
+                <button onclick="deleteGame()" id="btn-delete" class="w-full text-red-400 hover:text-red-300 text-xs py-2 hidden">Delete Game</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'bullet_cal_data_v2'; 
+        let appData = { leagues: [], teams: [], items: [] };
+        let currentLeague = '';
+
+        window.onload = async () => {
+            await loadData();
+            initFilters();
+            renderPage();
+        };
+
+        async function loadData() {
+            // Load from LocalStorage first
+            try {
+                const localStr = localStorage.getItem(STORAGE_KEY);
+                if (localStr) {
+                    const json = JSON.parse(localStr);
+                    appData = { ...appData, ...json };
+                }
+            } catch (e) { console.error("Load Error", e); }
+
+            // If empty, try fallback (for demo)
+            if (appData.teams.length === 0) {
+                try {
+                    const res = await fetch('bullet_cal_data_2025.json');
+                    if (res.ok) {
+                        const json = await res.json();
+                        // Merge smartly
+                        if(json.teams) appData.teams = json.teams;
+                        if(json.leagues) appData.leagues = json.leagues;
+                        if(json.items) {
+                            json.items.forEach(i => {
+                                if (!appData.items.some(exist => exist.id === i.id)) {
+                                    appData.items.push(i);
+                                }
+                            });
+                        }
+                    }
+                } catch(e) { console.warn("No fallback JSON"); }
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+            } catch(e) { console.error("Save Error", e); }
+        }
+
+        function initFilters() {
+            const sel = document.getElementById('league-select');
+            sel.innerHTML = appData.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
+            if (appData.leagues.length > 0) currentLeague = appData.leagues[0];
+            populateTeamSelects();
+        }
+
+        function populateTeamSelects() {
+            const h = document.getElementById('game-home-team');
+            const a = document.getElementById('game-away-team');
+            h.innerHTML = ''; a.innerHTML = '';
+            
+            const league = document.getElementById('league-select').value;
+            const teams = appData.teams.filter(t => t.league === league).sort((a,b) => a.name.localeCompare(b.name));
+            
+            teams.forEach(t => {
+                const opt = `<option value="${t.id}">${t.name}</option>`;
+                h.innerHTML += opt;
+                a.innerHTML += opt;
+            });
+        }
+
+        function renderPage() {
+            currentLeague = document.getElementById('league-select').value;
+            const season = document.getElementById('season-select').value;
+            const container = document.getElementById('game-list');
+            container.innerHTML = '';
+
+            // Filter Games
+            const games = appData.items.filter(i => 
+                i.type === 'sports' && 
+                i.league === currentLeague && 
+                (i.season === season || (!i.season && season === '2025/2026'))
+            );
+            
+            // Sort by Date
+            games.sort((a, b) => new Date(a.date + 'T' + (a.startTime||'00:00')) - new Date(b.date + 'T' + (b.startTime||'00:00')));
+
+            // Identify Favorite Team in this League
+            const favTeam = appData.teams.find(t => t.league === currentLeague && t.isFavorite);
+            let wins=0, losses=0, ties=0;
+            let nextGame = null;
+            const today = new Date().toISOString().split('T')[0];
+
+            games.forEach(g => {
+                const home = appData.teams.find(t => t.id === g.homeTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
+                const away = appData.teams.find(t => t.id === g.awayTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
+                
+                // Stats Logic
+                let resultClass = 'scheduled-indicator';
+                let resultLabel = '';
+                
+                if (g.status === 'completed') {
+                    if (favTeam) {
+                        const isHome = g.homeTeamId === favTeam.id;
+                        const myScore = isHome ? g.homeScore : g.awayScore;
+                        const oppScore = isHome ? g.awayScore : g.homeScore;
+                        
+                        if (g.homeTeamId === favTeam.id || g.awayTeamId === favTeam.id) {
+                            if (myScore > oppScore) { wins++; resultClass = 'win-indicator'; resultLabel = 'W'; }
+                            else if (myScore < oppScore) { losses++; resultClass = 'loss-indicator'; resultLabel = 'L'; }
+                            else { ties++; resultClass = 'tie-indicator'; resultLabel = 'T'; }
+                        } else {
+                            resultClass = 'tie-indicator'; // Neutral game
+                        }
+                    } else {
+                        resultClass = 'tie-indicator';
+                    }
+                } else {
+                    if (!nextGame && g.date >= today) nextGame = g;
+                }
+
+                // Render Card
+                const dateObj = new Date(g.date);
+                const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+                const timeStr = g.startTime ? formatTime(g.startTime) : 'TBD';
+                
+                const scoreDisplay = g.status === 'completed' 
+                    ? `<span class="text-2xl font-bold tracking-widest">${g.awayScore} - ${g.homeScore}</span>`
+                    : `<span class="text-lg font-mono text-gray-400 bg-gray-800 px-2 py-1 rounded">${timeStr}</span>`;
+
+                const html = `
+                    <div class="glass-panel rounded-lg p-4 flex items-center justify-between game-card cursor-pointer ${resultClass}" onclick="editGame('${g.id}')">
+                        <div class="w-24 text-center border-r border-gray-700 pr-4">
+                            <div class="text-gray-400 text-xs font-bold uppercase">${dateStr}</div>
+                            <div class="text-xs text-gray-600 mt-1">${g.description || 'Game'}</div>
+                        </div>
+                        
+                        <div class="flex-1 flex justify-between items-center px-6">
+                            <div class="flex flex-col items-center w-1/3">
+                                <img src="${away.logo}" class="w-10 h-10 object-contain mb-1" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm text-center">${away.name}</span>
+                            </div>
+                            
+                            <div class="flex flex-col items-center">
+                                <span class="text-[10px] text-gray-500 uppercase mb-1">AT</span>
+                                ${scoreDisplay}
+                            </div>
+
+                            <div class="flex flex-col items-center w-1/3">
+                                <img src="${home.logo}" class="w-10 h-10 object-contain mb-1" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm text-center">${home.name}</span>
+                            </div>
+                        </div>
+
+                        <div class="w-10 text-right font-black text-gray-500 text-xl">${resultLabel}</div>
+                    </div>
+                `;
+                container.innerHTML += html;
+            });
+
+            // Update Stats Banner
+            document.getElementById('stat-record').innerText = `${wins}-${losses}-${ties}`;
+            const total = wins + losses + ties;
+            const pct = total > 0 ? (wins / total).toFixed(3).substring(1) : '.000';
+            document.getElementById('stat-winpct').innerText = pct;
+            
+            if (nextGame) {
+                 const oppId = nextGame.homeTeamId === favTeam?.id ? nextGame.awayTeamId : nextGame.homeTeamId;
+                 const opp = appData.teams.find(t => t.id === oppId);
+                 const d = new Date(nextGame.date);
+                 document.getElementById('stat-next-game').innerHTML = `
+                    <div class="font-bold text-white">vs ${opp ? opp.abbrev : 'Opponent'}</div>
+                    <div class="text-xs text-gray-400">${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})} @ ${nextGame.startTime}</div>
+                 `;
+            } else {
+                 document.getElementById('stat-next-game').innerHTML = `<span class="text-sm text-gray-500">Season Complete</span>`;
+            }
+        }
+
+        // --- MODAL LOGIC ---
+        function openAddGameModal() {
+            document.getElementById('modal-title').innerText = "Add Game";
+            document.getElementById('edit-game-id').value = '';
+            document.getElementById('game-date').value = new Date().toISOString().split('T')[0];
+            document.getElementById('game-time').value = '19:00';
+            document.getElementById('game-home-score').value = '';
+            document.getElementById('game-away-score').value = '';
+            document.getElementById('game-location').value = '';
+            document.getElementById('btn-delete').classList.add('hidden');
+            
+            populateTeamSelects(); // Ensure lists are fresh
+            document.getElementById('game-modal').classList.remove('hidden');
+        }
+
+        function editGame(id) {
+            const g = appData.items.find(i => i.id === id);
+            if(!g) return;
+            
+            document.getElementById('modal-title').innerText = "Edit Game";
+            document.getElementById('edit-game-id').value = g.id;
+            document.getElementById('game-date').value = g.date;
+            document.getElementById('game-time').value = g.startTime;
+            document.getElementById('game-home-team').value = g.homeTeamId;
+            document.getElementById('game-away-team').value = g.awayTeamId;
+            document.getElementById('game-home-score').value = g.homeScore;
+            document.getElementById('game-away-score').value = g.awayScore;
+            document.getElementById('game-location').value = g.description || '';
+            document.getElementById('btn-delete').classList.remove('hidden');
+            
+            document.getElementById('game-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('game-modal').classList.add('hidden');
+        }
+
+        function saveGame() {
+            const id = document.getElementById('edit-game-id').value;
+            const league = document.getElementById('league-select').value;
+            const season = document.getElementById('season-select').value;
+            
+            const hScore = document.getElementById('game-home-score').value;
+            const aScore = document.getElementById('game-away-score').value;
+            
+            const newGame = {
+                id: id || `game_${Date.now()}`,
+                type: 'sports',
+                category: 'personal', // Default to personal for calendar logic
+                league: league,
+                season: season,
+                date: document.getElementById('game-date').value,
+                startTime: document.getElementById('game-time').value,
+                homeTeamId: document.getElementById('game-home-team').value,
+                awayTeamId: document.getElementById('game-away-team').value,
+                homeScore: hScore === '' ? null : parseInt(hScore),
+                awayScore: aScore === '' ? null : parseInt(aScore),
+                description: document.getElementById('game-location').value,
+                status: (hScore !== '' && aScore !== '') ? 'completed' : 'scheduled',
+                // Generate a title for the main calendar
+                title: '' // Will be generated dynamically by calendar, but we can set a default
+            };
+            
+            // Find names for title
+            const home = appData.teams.find(t=>t.id === newGame.homeTeamId);
+            const away = appData.teams.find(t=>t.id === newGame.awayTeamId);
+            newGame.title = `${away?.abbrev} @ ${home?.abbrev}`;
+
+            if (id) {
+                const idx = appData.items.findIndex(i => i.id === id);
+                if(idx !== -1) appData.items[idx] = newGame;
+            } else {
+                appData.items.push(newGame);
+            }
+            
+            saveData();
+            closeModal();
+            renderPage();
+        }
+
+        function deleteGame() {
+            if(!confirm("Delete this game?")) return;
+            const id = document.getElementById('edit-game-id').value;
+            appData.items = appData.items.filter(i => i.id !== id);
+            saveData();
+            closeModal();
+            renderPage();
+        }
+
+        // Helpers
+        function formatTime(timeStr) {
+            if (!timeStr) return '';
+            const [h, m] = timeStr.split(':');
+            const hour = parseInt(h);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const hour12 = hour % 12 || 12;
+            return `${hour12}:${m} ${ampm}`;
+        }
+    </script>
+</body>
+</html>
