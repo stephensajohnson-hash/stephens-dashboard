@@ -3067,18 +3067,6 @@
       "workouts": []
     },
     {
-      "type": "task",
-      "category": "work",
-      "title": "FTP Download",
-      "linkUrl": "",
-      "imgUrl": "",
-      "description": "Attempt to copy files with sftp using fields in the records",
-      "ticketNumber": "",
-      "status": "pending",
-      "id": "task_1764023034485",
-      "date": "2025-12-01"
-    },
-    {
       "type": "habit",
       "category": "personal",
       "title": "Learn Spanish",
@@ -3096,7 +3084,7 @@
       "date": "2025-12-01",
       "type": "health",
       "category": "personal",
-      "weightLbs": 0,
+      "weightLbs": 270,
       "goals": {
         "tdee": 2816,
         "calorieGoal": 2220,
@@ -3138,6 +3126,18 @@
       "timeSpentMinutes": 15,
       "id": "meeting_1764106697022",
       "date": "2025-12-01"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "FTP Download",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Attempt to copy files with sftp using fields in the records",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764023034485",
+      "date": "2025-12-02"
     },
     {
       "type": "habit",
