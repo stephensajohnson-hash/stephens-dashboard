@@ -69,9 +69,9 @@
 
             <div class="mt-4">
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Filter Year</label>
-                <select id="year-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-media outline-none" onchange="renderGallery()">
-                    <option value="all">All Years</option>
-                    <!-- Years populated by JS -->
+                <select id="year-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-media outline-none" onchange="handleYearChange()">
+                    <option value="current">Current Year (Local)</option>
+                    <option value="all">All History (Load Files)</option>
                 </select>
             </div>
 
@@ -95,6 +95,7 @@
 
         <!-- Gallery Area -->
         <main class="flex-1 overflow-y-auto p-8 bg-gray-900">
+            <div id="loading-indicator" class="hidden text-center text-gray-500 py-10">Loading Archive Data...</div>
             <div id="media-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 <!-- Cards injected here -->
             </div>
@@ -146,24 +147,31 @@
     </div>
 
     <script>
+        // --- CONFIGURATION ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
         const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
-        let appData = { items: [] };
+        
+        // Define which years have archive files. 
+        // As you add years, simply add them to this list.
+        const KNOWN_YEARS = [2025, 2026, 2027, 2028, 2029, 2030]; 
+
+        let appData = { items: [] }; // Current Local Storage Data
+        let combinedData = { items: [] }; // Aggregated Data (Local + Archives)
 
         window.onload = async () => {
-            await loadData();
-            updateYearFilterOptions();
+            await loadLocalData();
+            // Default to displaying what is in local storage
+            combinedData.items = [...appData.items]; 
             renderGallery();
         };
 
-        async function loadData() {
+        async function loadLocalData() {
             try {
                 const localStr = localStorage.getItem(STORAGE_KEY);
                 if (localStr) {
                     const json = JSON.parse(localStr);
                     appData = { ...appData, ...json };
                 } else {
-                    // Fallback to default structure if no local data exists
                     appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
                     saveData();
                 }
@@ -173,54 +181,68 @@
             }
         }
 
+        async function handleYearChange() {
+            const mode = document.getElementById('year-select').value;
+            const loader = document.getElementById('loading-indicator');
+            
+            if (mode === 'current') {
+                // Just use local storage data
+                combinedData.items = [...appData.items];
+                renderGallery();
+                return;
+            }
+            
+            if (mode === 'all') {
+                loader.classList.remove('hidden');
+                const allItems = new Map(); // Use Map to prevent duplicates by ID
+
+                // 1. Add current local items first
+                appData.items.filter(i => i.type === 'media').forEach(i => allItems.set(i.id, i));
+
+                // 2. Fetch all historical files
+                const promises = KNOWN_YEARS.map(year => 
+                    fetch(`bullet_cal_data_${year}.json`)
+                        .then(res => {
+                            if(!res.ok) throw new Error(res.status);
+                            return res.json();
+                        })
+                        .then(data => {
+                            if(data.items) {
+                                data.items.filter(i => i.type === 'media').forEach(i => {
+                                    // Only add if not already present (Local edits take precedence)
+                                    if(!allItems.has(i.id)) allItems.set(i.id, i);
+                                });
+                            }
+                        })
+                        .catch(err => console.warn(`Could not load ${year} data:`, err))
+                );
+
+                await Promise.allSettled(promises);
+                
+                combinedData.items = Array.from(allItems.values());
+                loader.classList.add('hidden');
+                renderGallery();
+            }
+        }
+
         function saveData() {
             try {
                 localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
-            } catch(e) { console.error("Save Error", e); }
-        }
-
-        function updateYearFilterOptions() {
-            const yearSelect = document.getElementById('year-select');
-            const currentSelection = yearSelect.value;
-            
-            // Get unique years from media items
-            const years = new Set();
-            (appData.items || []).forEach(i => {
-                if (i.type === 'media' && i.date) {
-                    years.add(i.date.substring(0, 4));
+                // If we are in "Current" mode, update view immediately
+                if (document.getElementById('year-select').value === 'current') {
+                    combinedData.items = [...appData.items];
+                    renderGallery();
                 }
-            });
-            
-            // Sort years descending
-            const sortedYears = Array.from(years).sort().reverse();
-            
-            // Rebuild options
-            yearSelect.innerHTML = '<option value="all">All Years</option>';
-            sortedYears.forEach(year => {
-                const opt = document.createElement('option');
-                opt.value = year;
-                opt.innerText = year;
-                yearSelect.appendChild(opt);
-            });
-            
-            // Restore selection if possible
-            if (sortedYears.includes(currentSelection) || currentSelection === 'all') {
-                yearSelect.value = currentSelection;
-            }
+            } catch(e) { console.error("Save Error", e); }
         }
 
         function renderGallery() {
             const container = document.getElementById('media-grid');
             const sortMode = document.getElementById('sort-select').value;
-            const yearFilter = document.getElementById('year-select').value;
             container.innerHTML = '';
 
-            // Filter for media items
-            let mediaItems = (appData.items || []).filter(i => {
-                if (i.type !== 'media') return false;
-                if (yearFilter !== 'all' && !i.date.startsWith(yearFilter)) return false;
-                return true;
-            });
+            // Filter for media items from the combined dataset
+            let mediaItems = (combinedData.items || []).filter(i => i.type === 'media');
             
             // Sort
             mediaItems.sort((a, b) => {
@@ -243,12 +265,21 @@
             mediaItems.forEach(item => {
                 const stars = '★'.repeat(item.rating || 0) + '☆'.repeat(10 - (item.rating || 0));
                 const dateStr = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-                
                 const imgUrl = item.imgUrl || 'https://via.placeholder.com/300x450/1f2937/4b5563?text=No+Poster';
 
+                // Check if item is "Read Only" (from archive) or Editable (in local storage)
+                const isEditable = appData.items.some(i => i.id === item.id);
+                const opacityClass = isEditable ? '' : 'opacity-75 border-dashed border-gray-600';
+
                 const card = document.createElement('div');
-                card.className = 'glass-panel media-card rounded-xl overflow-hidden flex flex-col cursor-pointer relative group';
-                card.onclick = () => editMedia(item.id);
+                card.className = `glass-panel media-card rounded-xl overflow-hidden flex flex-col cursor-pointer relative group ${opacityClass}`;
+                
+                // Only allow editing if it is in local storage
+                if (isEditable) {
+                    card.onclick = () => editMedia(item.id);
+                } else {
+                    card.title = "Archived Item (Read Only)";
+                }
                 
                 card.innerHTML = `
                     <div class="relative">
@@ -256,6 +287,7 @@
                         <div class="absolute top-2 right-2 bg-black/70 text-yellow-400 text-xs font-bold px-2 py-1 rounded backdrop-blur-sm">
                             ${item.rating}/10
                         </div>
+                        ${!isEditable ? '<div class="absolute top-2 left-2 bg-gray-700/80 text-white text-[10px] px-2 py-1 rounded">ARCHIVE</div>' : ''}
                     </div>
                     <div class="p-4 flex flex-col flex-1">
                         <h3 class="font-bold text-white text-lg leading-tight mb-1">${item.title}</h3>
@@ -283,7 +315,7 @@
 
         function editMedia(id) {
             const item = appData.items.find(i => i.id === id);
-            if(!item) return;
+            if(!item) return; // Should not happen due to isEditable check
             
             document.getElementById('modal-title').innerText = "Edit Entry";
             document.getElementById('edit-id').value = item.id;
@@ -307,13 +339,13 @@
             const newItem = {
                 id: id || `media_${Date.now()}`,
                 type: 'media',
-                category: 'personal', // Always personal for media
+                category: 'personal', 
                 title: document.getElementById('media-title').value,
                 date: document.getElementById('media-date').value,
                 rating: parseInt(document.getElementById('media-rating').value),
                 imgUrl: document.getElementById('media-img').value,
                 description: document.getElementById('media-notes').value,
-                notes: document.getElementById('media-notes').value // Save to both for compatibility
+                notes: document.getElementById('media-notes').value
             };
             
             if(!newItem.title) return alert("Title required");
@@ -327,8 +359,6 @@
             
             saveData();
             closeModal();
-            updateYearFilterOptions(); // Update year list in case a new year was added
-            renderGallery();
         }
 
         function deleteMedia() {
@@ -337,8 +367,6 @@
             appData.items = appData.items.filter(i => i.id !== id);
             saveData();
             closeModal();
-            updateYearFilterOptions();
-            renderGallery();
         }
     </script>
 </body>
