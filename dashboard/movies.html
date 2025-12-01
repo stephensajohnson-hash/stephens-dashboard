@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Media Log</title>
+    <title>Movies</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -46,7 +46,7 @@
                 <span class="font-bold text-lg">Back to Calendar</span>
             </a>
         </div>
-        <div class="text-xl font-bold text-media tracking-widest uppercase">Media Log</div>
+        <div class="text-xl font-bold text-media tracking-widest uppercase">Movies</div>
         <div class="w-24"></div> 
     </nav>
 
@@ -68,12 +68,21 @@
             </div>
 
             <div class="mt-4">
+                <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Filter Year</label>
+                <select id="year-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-media outline-none" onchange="renderGallery()">
+                    <option value="all">All Years</option>
+                    <!-- Years populated by JS -->
+                </select>
+            </div>
+
+            <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Sort By</label>
                 <select id="sort-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-media outline-none" onchange="renderGallery()">
-                    <option value="date-desc">Newest First</option>
+                    <option value="date-desc">Recent First</option>
                     <option value="date-asc">Oldest First</option>
                     <option value="rating-desc">Highest Rated</option>
                     <option value="rating-asc">Lowest Rated</option>
+                    <option value="alpha-asc">Alphabetic (A-Z)</option>
                 </select>
             </div>
 
@@ -138,10 +147,12 @@
 
     <script>
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appData = { items: [] };
 
         window.onload = async () => {
             await loadData();
+            updateYearFilterOptions();
             renderGallery();
         };
 
@@ -152,11 +163,14 @@
                     const json = JSON.parse(localStr);
                     appData = { ...appData, ...json };
                 } else {
-                    // Fallback fetch if local is empty
-                    const res = await fetch('bullet_cal_data_2025.json');
-                    if (res.ok) appData = await res.json();
+                    // Fallback to default structure if no local data exists
+                    appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+                    saveData();
                 }
-            } catch (e) { console.error("Load Error", e); }
+            } catch (e) { 
+                console.error("Load Error", e);
+                appData = JSON.parse(JSON.stringify(DEFAULT_DATA));
+            }
         }
 
         function saveData() {
@@ -165,13 +179,48 @@
             } catch(e) { console.error("Save Error", e); }
         }
 
+        function updateYearFilterOptions() {
+            const yearSelect = document.getElementById('year-select');
+            const currentSelection = yearSelect.value;
+            
+            // Get unique years from media items
+            const years = new Set();
+            (appData.items || []).forEach(i => {
+                if (i.type === 'media' && i.date) {
+                    years.add(i.date.substring(0, 4));
+                }
+            });
+            
+            // Sort years descending
+            const sortedYears = Array.from(years).sort().reverse();
+            
+            // Rebuild options
+            yearSelect.innerHTML = '<option value="all">All Years</option>';
+            sortedYears.forEach(year => {
+                const opt = document.createElement('option');
+                opt.value = year;
+                opt.innerText = year;
+                yearSelect.appendChild(opt);
+            });
+            
+            // Restore selection if possible
+            if (sortedYears.includes(currentSelection) || currentSelection === 'all') {
+                yearSelect.value = currentSelection;
+            }
+        }
+
         function renderGallery() {
             const container = document.getElementById('media-grid');
             const sortMode = document.getElementById('sort-select').value;
+            const yearFilter = document.getElementById('year-select').value;
             container.innerHTML = '';
 
             // Filter for media items
-            let mediaItems = (appData.items || []).filter(i => i.type === 'media');
+            let mediaItems = (appData.items || []).filter(i => {
+                if (i.type !== 'media') return false;
+                if (yearFilter !== 'all' && !i.date.startsWith(yearFilter)) return false;
+                return true;
+            });
             
             // Sort
             mediaItems.sort((a, b) => {
@@ -179,6 +228,7 @@
                 if (sortMode === 'date-asc') return new Date(a.date) - new Date(b.date);
                 if (sortMode === 'rating-desc') return b.rating - a.rating;
                 if (sortMode === 'rating-asc') return a.rating - b.rating;
+                if (sortMode === 'alpha-asc') return a.title.localeCompare(b.title);
                 return 0;
             });
 
@@ -194,7 +244,6 @@
                 const stars = '★'.repeat(item.rating || 0) + '☆'.repeat(10 - (item.rating || 0));
                 const dateStr = new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
                 
-                // Default placeholder if no image
                 const imgUrl = item.imgUrl || 'https://via.placeholder.com/300x450/1f2937/4b5563?text=No+Poster';
 
                 const card = document.createElement('div');
@@ -221,7 +270,7 @@
 
         // --- MODAL LOGIC ---
         function openMediaModal() {
-            document.getElementById('modal-title').innerText = "Log Media";
+            document.getElementById('modal-title').innerText = "Log Movie / Show";
             document.getElementById('edit-id').value = '';
             document.getElementById('media-title').value = '';
             document.getElementById('media-date').value = new Date().toISOString().split('T')[0];
@@ -278,6 +327,7 @@
             
             saveData();
             closeModal();
+            updateYearFilterOptions(); // Update year list in case a new year was added
             renderGallery();
         }
 
@@ -287,6 +337,7 @@
             appData.items = appData.items.filter(i => i.id !== id);
             saveData();
             closeModal();
+            updateYearFilterOptions();
             renderGallery();
         }
     </script>
