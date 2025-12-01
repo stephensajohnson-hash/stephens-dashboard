@@ -157,6 +157,112 @@
       "isStatic": true
     },
     {
+      "id": "g_1764604923739",
+      "name": "Bills",
+      "color": "green",
+      "isStatic": false,
+      "links": [
+        {
+          "id": "l_1764604968323",
+          "groupId": "g_1764604923739",
+          "name": "Alliance Bank",
+          "url": "https://alliancebank.com",
+          "img": "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/styles/article_420/public/2020-03/xVBU_UXM.png?itok=XpQwRzsj"
+        },
+        {
+          "id": "l_1764605012715",
+          "groupId": "g_1764604923739",
+          "name": "2025 Budget",
+          "url": "https://docs.google.com/spreadsheets/d/1o3Ab6q4nMFVZIzxM-6lDXCd6jFt-nhHtT5b1yAKgUkw",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "id": "l_1764605097407",
+          "groupId": "g_1764604923739",
+          "name": "Budget Power",
+          "url": "https://budgetpowertx.myaccount.energy/sigma/myeaccount/?connectName=SigmaVPower",
+          "img": "https://budgetpowertx.com/wp-content/uploads/2024/06/BudgertPower_NotificationLogo2.png"
+        },
+        {
+          "id": "l_1764605224439",
+          "groupId": "g_1764604923739",
+          "name": "Cricket",
+          "url": "https://www.cricketwireless.com/myaccount.html#/login",
+          "img": "https://cdn.brandfetch.io/idf23sH6E3/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1668057164930"
+        },
+        {
+          "id": "l_1764605325589",
+          "groupId": "g_1764604923739",
+          "name": "Frontier",
+          "url": "https://frontier.com/account#/statements/current",
+          "img": "https://1000logos.net/wp-content/uploads/2022/05/frontier-communications-logo-symbol.jpg"
+        },
+        {
+          "id": "l_1764605466123",
+          "groupId": "g_1764604923739",
+          "name": "Toll Tag",
+          "url": "https://www.hctra.org/AccountOverview",
+          "img": "https://www.governmentjobs.com/images/AgencyImages/hctra_HCTRA%20New%20Logo%202024%20250x250.png"
+        },
+        {
+          "id": "l_1764605755652",
+          "groupId": "g_1764604923739",
+          "name": "Mohela",
+          "url": "https://www.mohela.com/dl/secure/account/loginstep1.aspx",
+          "img": "https://s3.eu-west-2.amazonaws.com/merchant-icons.emma-app.com/merchant-234208-958e0435-511c-471b-a5b7-bcc5e5bdb5d7.png"
+        },
+        {
+          "id": "l_1764605896702",
+          "groupId": "g_1764604923739",
+          "name": "Green Sky",
+          "url": "https://auth.prod.greensky.com/auth/realms/CSSP/protocol/openid-connect/auth?client_id=cssp-ui&redirect_uri=https%3A%2F%2Fwww.greenskyonline.com%2Fgreensky%2Foverview%3Fuser_id%3Dstephens.a.johnson%2540gmail.com%26app_log_id%3DCSSP2-XFJ1JBQ2-000000&state=12951425-e520-449a-9883-39988291d978&response_mode=fragment&response_type=code&scope=openid&nonce=c55f3165-f2d9-4ef5-8a50-8edfb92c5d41",
+          "img": "https://www.paulhenryswindows.com/wp-content/uploads/2022/04/financing-greensky-300x300-min-300x300.jpg"
+        },
+        {
+          "id": "l_1764605974271",
+          "groupId": "g_1764604923739",
+          "name": "State Farm",
+          "url": "https://www.statefarm.com",
+          "img": "https://content.presspage.com/uploads/1441/1920_sf-logo-vertical-reversed.png"
+        },
+        {
+          "id": "l_1764606143756",
+          "groupId": "g_1764604923739",
+          "name": "Google Financing",
+          "url": "https://www.synchronycredit.com/eSecurity/Login/login.action?clientId=google&accountType=plcc&langId=en",
+          "img": "https://companieslogo.com/img/orig/SYF-87a24d5c.png?t=1720244494"
+        },
+        {
+          "id": "l_1764606286104",
+          "groupId": "g_1764604923739",
+          "name": "Chase",
+          "url": "https://www.chase.com",
+          "img": "https://cdn.brandfetch.io/idudVYts5w/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1667568551135"
+        },
+        {
+          "id": "l_1764606337612",
+          "groupId": "g_1764604923739",
+          "name": "Discover",
+          "url": "https://www.discover.com",
+          "img": "https://cdn.brandfetch.io/idyXDiKxGF/w/319/h/319/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1685079041017"
+        },
+        {
+          "id": "l_1764606445226",
+          "groupId": "g_1764604923739",
+          "name": "Aviator Mastercard",
+          "url": "https://www.aviatormastercard.com/servicing/home?secureLogin=",
+          "img": "https://cdn.brandfetch.io/idVQyrwR39/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1689935442018"
+        },
+        {
+          "id": "l_1764606500757",
+          "groupId": "g_1764604923739",
+          "name": "Capital One",
+          "url": "https://myaccounts.capitalone.com/accountSummary",
+          "img": "https://images.seeklogo.com/logo-png/42/1/capital-one-logo-png_seeklogo-425557.png"
+        }
+      ]
+    },
+    {
       "id": "g4",
       "name": "Movies & TV",
       "color": "purple",
