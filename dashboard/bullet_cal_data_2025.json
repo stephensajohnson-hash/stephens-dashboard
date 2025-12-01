@@ -3092,6 +3092,41 @@
       "status": "completed"
     },
     {
+      "id": "health_1764620243638",
+      "date": "2025-12-01",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 0,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "3 cups Turkey Soup",
+          "calories": 234,
+          "protein": 18,
+          "carbs": 21,
+          "fat": 6,
+          "fiber": 6
+        },
+        {
+          "mealType": "lunch",
+          "name": "Keto Unstuffed Bell Peppers",
+          "calories": 226,
+          "protein": 22,
+          "carbs": 12,
+          "fat": 10,
+          "fiber": 4
+        }
+      ],
+      "workouts": []
+    },
+    {
       "type": "meeting",
       "category": "work",
       "title": "Conversion Review",
@@ -3330,6 +3365,18 @@
       "id": "habit_1765519200000_c5lav",
       "date": "2025-12-12",
       "streakCount": 1515
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "6:30 Cayce's Christmas Party",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "meeting_1764622580245",
+      "date": "2025-12-12"
     },
     {
       "type": "meeting",
