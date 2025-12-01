@@ -378,6 +378,20 @@
           "name": "Book Sales",
           "url": "https://kdp.amazon.com/en_US/",
           "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"
+        },
+        {
+          "id": "l_1764610358974",
+          "groupId": "g6",
+          "name": "Fidelity",
+          "url": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
+          "img": "https://cdn.brandfetch.io/idzIUUVEBm/w/400/h/400/theme/dark/icon.jpeg?c=1bxid64Mup7aczewSAYMX&t=1752030331882"
+        },
+        {
+          "id": "l_1764610411832",
+          "groupId": "g6",
+          "name": "Charles Schwab",
+          "url": "https://www.schwab.com/client-home",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Charles_Schwab_Corporation_logo.svg/250px-Charles_Schwab_Corporation_logo.svg.png?20210616031939"
         }
       ],
       "isStatic": true
@@ -472,20 +486,20 @@
       "isStatic": true
     },
     {
-      "id": "c2",
-      "name": "Thanksgiving",
-      "targetDate": "2025-11-27",
-      "linkUrl": "https://www.facebook.com/groups/522257848201031",
-      "img": "https://1r77nq.media.zestyio.com/assisted-living-thanksgiving.jpg",
-      "isStatic": true
-    },
-    {
       "id": "c3",
       "name": "Stephens Retires",
       "targetDate": "2033-03-26",
       "linkUrl": "https://login.fidelity.com/ftgw/Fidelity/RtlCust/Login/Init?AuthRedUrl=https://oltx.fidelity.com/ftgw/fbc/ofpositions/brokerageAccountPositions",
       "img": "https://i0.wp.com/goodstuffconnections.com/wp-content/uploads/2020/04/retirement.jpg?w=1000&ssl=1",
       "isStatic": true
+    },
+    {
+      "id": "c_1764608068067",
+      "name": "Christmas Break",
+      "targetDate": "2025-12-24",
+      "linkUrl": "",
+      "img": "https://www.ecsd.net/images/721c8d3e-b367-4c9d-bebf-fc83cf8e80e8",
+      "isStatic": false
     }
   ],
   "stocks": [
