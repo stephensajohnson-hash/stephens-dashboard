@@ -7,7 +7,6 @@
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Theme Colors matching Bullet Calendar */
         :root { --bg-dark: #111827; --panel-bg: rgba(31, 41, 55, 0.7); --sports-red: #ef4444; }
         body { background-color: var(--bg-dark); color: white; font-family: 'Inter', sans-serif; }
         
@@ -20,14 +19,27 @@
             background: var(--panel-bg); 
             backdrop-filter: blur(10px); 
             border: 1px solid rgba(255,255,255,0.1); 
-            transition: transform 0.2s;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
-        .game-card:hover { transform: translateX(4px); background-color: rgba(55, 65, 81, 0.8); }
         
-        .win-indicator { border-left: 4px solid #10b981; }
-        .loss-indicator { border-left: 4px solid #ef4444; }
-        .tie-indicator { border-left: 4px solid #9ca3af; }
-        .scheduled-indicator { border-left: 4px solid #3b82f6; }
+        .game-card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 220px; /* Approx 3 inches relative scaling */
+        }
+        .game-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5); 
+            background-color: rgba(55, 65, 81, 0.9);
+        }
+        
+        .win-border { border-top: 4px solid #10b981; }
+        .loss-border { border-top: 4px solid #ef4444; }
+        .tie-border { border-top: 4px solid #9ca3af; }
+        .scheduled-border { border-top: 4px solid #3b82f6; }
+        
+        .team-logo-lg { width: 80px; height: 80px; object-fit: contain; }
     </style>
 </head>
 <body class="h-screen flex flex-col overflow-hidden">
@@ -41,17 +53,17 @@
             </a>
         </div>
         <div class="text-xl font-bold text-red-500 tracking-widest uppercase">Season Tracker</div>
-        <div class="w-24"></div> <!-- Spacer for balance -->
+        <div class="w-24"></div> 
     </nav>
 
     <!-- Main Layout -->
     <div class="flex flex-1 pt-16 h-full">
         
         <!-- Sidebar Controls -->
-        <aside class="w-64 bg-gray-800 border-r border-gray-700 p-6 flex flex-col gap-6">
+        <aside class="w-64 bg-gray-800 border-r border-gray-700 p-6 flex flex-col gap-6 shrink-0">
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Filter by League</label>
-                <select id="league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-red-500 outline-none" onchange="renderPage()">
+                <select id="league-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-red-500 outline-none" onchange="updateSeasonOptions()">
                     <!-- Populated via JS -->
                 </select>
             </div>
@@ -59,13 +71,12 @@
             <div>
                 <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Season</label>
                 <select id="season-select" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-red-500 outline-none" onchange="renderPage()">
-                     <option value="2025/2026">2025/2026</option>
-                     <option value="2024/2025">2024/2025</option>
+                     <!-- Populated Dynamic via JS -->
                 </select>
             </div>
 
             <div class="mt-auto pt-6 border-t border-gray-700">
-                <button onclick="openAddGameModal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded shadow-lg flex items-center justify-center gap-2">
+                <button onclick="openAddGameModal()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded shadow-lg flex items-center justify-center gap-2 transition-colors">
                     <span>+ Add Game</span>
                 </button>
             </div>
@@ -96,9 +107,13 @@
                 </div>
             </div>
 
-            <!-- Game List -->
-            <h2 class="text-xl font-bold text-gray-400 mb-4 border-b border-gray-700 pb-2">Game Schedule</h2>
-            <div id="game-list" class="space-y-3">
+            <!-- Game List Grid -->
+            <h2 class="text-xl font-bold text-gray-400 mb-4 border-b border-gray-700 pb-2 flex justify-between items-end">
+                <span>Game Schedule</span>
+                <span class="text-xs font-normal text-gray-500" id="game-count-label">0 Games</span>
+            </h2>
+            
+            <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 <!-- Games injected here -->
             </div>
         </main>
@@ -115,34 +130,40 @@
             <div class="space-y-4">
                 <input type="hidden" id="edit-game-id">
                 <div class="grid grid-cols-2 gap-4">
-                    <div><label class="text-xs text-gray-500 block mb-1">Date</label><input type="date" id="game-date" class="w-full bg-gray-700 rounded p-2 text-white"></div>
-                    <div><label class="text-xs text-gray-500 block mb-1">Time</label><input type="time" id="game-time" class="w-full bg-gray-700 rounded p-2 text-white"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Date</label><input type="date" id="game-date" class="w-full bg-gray-700 rounded p-2 text-white focus:border-red-500 outline-none"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Time</label><input type="time" id="game-time" class="w-full bg-gray-700 rounded p-2 text-white focus:border-red-500 outline-none"></div>
                 </div>
                 
                 <div class="flex items-end gap-2">
                     <div class="flex-1">
                         <label class="text-xs text-gray-500 block mb-1">Home Team</label>
-                        <select id="game-home-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm"></select>
+                        <select id="game-home-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm focus:border-red-500 outline-none"></select>
                     </div>
                     <span class="text-gray-500 pb-2">vs</span>
                     <div class="flex-1">
                         <label class="text-xs text-gray-500 block mb-1">Away Team</label>
-                        <select id="game-away-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm"></select>
+                        <select id="game-away-team" class="w-full bg-gray-700 rounded p-2 text-white text-sm focus:border-red-500 outline-none"></select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4 bg-gray-900/50 p-3 rounded-lg border border-gray-700">
-                    <div><label class="text-xs text-gray-500 block mb-1">Home Score</label><input type="number" id="game-home-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold"></div>
-                    <div><label class="text-xs text-gray-500 block mb-1">Away Score</label><input type="number" id="game-away-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Home Score</label><input type="number" id="game-home-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold focus:border-red-500 outline-none"></div>
+                    <div><label class="text-xs text-gray-500 block mb-1">Away Score</label><input type="number" id="game-away-score" class="w-full bg-gray-700 rounded p-2 text-white text-center font-bold focus:border-red-500 outline-none"></div>
                 </div>
                 
                 <div>
                     <label class="text-xs text-gray-500 block mb-1">Location / Notes</label>
-                    <input type="text" id="game-location" class="w-full bg-gray-700 rounded p-2 text-white text-sm" placeholder="Stadium...">
+                    <input type="text" id="game-location" class="w-full bg-gray-700 rounded p-2 text-white text-sm focus:border-red-500 outline-none" placeholder="Stadium...">
+                </div>
+                
+                <!-- Season Field (Hidden in add if inferred, but useful for editing) -->
+                <div>
+                    <label class="text-xs text-gray-500 block mb-1">Season</label>
+                    <input type="text" id="game-season-input" class="w-full bg-gray-700 rounded p-2 text-white text-sm focus:border-red-500 outline-none">
                 </div>
 
                 <button onclick="saveGame()" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-2 rounded mt-2">Save Game</button>
-                <button onclick="deleteGame()" id="btn-delete" class="w-full text-red-400 hover:text-red-300 text-xs py-2 hidden">Delete Game</button>
+                <button onclick="deleteGame()" id="btn-delete" class="w-full text-red-400 hover:text-red-300 text-xs py-2 hidden border border-red-900/30 rounded mt-2 hover:bg-red-900/20">Delete Game</button>
             </div>
         </div>
     </div>
@@ -155,7 +176,6 @@
         window.onload = async () => {
             await loadData();
             initFilters();
-            renderPage();
         };
 
         async function loadData() {
@@ -168,13 +188,12 @@
                 }
             } catch (e) { console.error("Load Error", e); }
 
-            // If empty, try fallback (for demo)
-            if (appData.teams.length === 0) {
+            // Fallback to fetch if empty
+            if (!appData.teams || appData.teams.length === 0) {
                 try {
                     const res = await fetch('bullet_cal_data_2025.json');
                     if (res.ok) {
                         const json = await res.json();
-                        // Merge smartly
                         if(json.teams) appData.teams = json.teams;
                         if(json.leagues) appData.leagues = json.leagues;
                         if(json.items) {
@@ -184,6 +203,7 @@
                                 }
                             });
                         }
+                        saveData(); // Save initial fetch to local
                     }
                 } catch(e) { console.warn("No fallback JSON"); }
             }
@@ -197,9 +217,36 @@
 
         function initFilters() {
             const sel = document.getElementById('league-select');
-            sel.innerHTML = appData.leagues.map(l => `<option value="${l}">${l}</option>`).join('');
-            if (appData.leagues.length > 0) currentLeague = appData.leagues[0];
+            sel.innerHTML = (appData.leagues || []).map(l => `<option value="${l}">${l}</option>`).join('');
+            if (appData.leagues && appData.leagues.length > 0) currentLeague = appData.leagues[0];
+            updateSeasonOptions();
+        }
+
+        function updateSeasonOptions() {
+            currentLeague = document.getElementById('league-select').value;
+            const seasonSel = document.getElementById('season-select');
+            
+            // Find all seasons associated with this league in the items data
+            const seasons = new Set();
+            
+            // Add default current year/next year as fallback
+            const currentYear = new Date().getFullYear();
+            seasons.add(`${currentYear}/${currentYear+1}`);
+            
+            (appData.items || []).forEach(item => {
+                if (item.type === 'sports' && item.league === currentLeague && item.season) {
+                    seasons.add(item.season);
+                }
+            });
+            
+            // Sort seasons descending (newest first)
+            const sortedSeasons = Array.from(seasons).sort().reverse();
+            
+            seasonSel.innerHTML = sortedSeasons.map(s => `<option value="${s}">${s}</option>`).join('');
+            
+            // Trigger render
             populateTeamSelects();
+            renderPage();
         }
 
         function populateTeamSelects() {
@@ -208,13 +255,21 @@
             h.innerHTML = ''; a.innerHTML = '';
             
             const league = document.getElementById('league-select').value;
-            const teams = appData.teams.filter(t => t.league === league).sort((a,b) => a.name.localeCompare(b.name));
+            const teams = (appData.teams || []).filter(t => t.league === league).sort((a,b) => a.name.localeCompare(b.name));
             
             teams.forEach(t => {
                 const opt = `<option value="${t.id}">${t.name}</option>`;
                 h.innerHTML += opt;
                 a.innerHTML += opt;
             });
+        }
+        
+        // --- HELPER: DATE PARSING ---
+        function parseLocalYMD(dateStr) {
+            // dateStr is YYYY-MM-DD. splitting creates local date values
+            if(!dateStr) return new Date();
+            const parts = dateStr.split('-');
+            return new Date(parts[0], parts[1]-1, parts[2]);
         }
 
         function renderPage() {
@@ -224,83 +279,114 @@
             container.innerHTML = '';
 
             // Filter Games
-            const games = appData.items.filter(i => 
+            let games = (appData.items || []).filter(i => 
                 i.type === 'sports' && 
                 i.league === currentLeague && 
-                (i.season === season || (!i.season && season === '2025/2026'))
+                (i.season === season)
             );
             
-            // Sort by Date
-            games.sort((a, b) => new Date(a.date + 'T' + (a.startTime||'00:00')) - new Date(b.date + 'T' + (b.startTime||'00:00')));
+            document.getElementById('game-count-label').innerText = `${games.length} Games`;
 
-            // Identify Favorite Team in this League
+            // Sort by Date
+            games.sort((a, b) => {
+                const dateA = new Date(a.date + 'T' + (a.startTime || '00:00'));
+                const dateB = new Date(b.date + 'T' + (b.startTime || '00:00'));
+                return dateA - dateB;
+            });
+
+            // Identify Favorite Team
             const favTeam = appData.teams.find(t => t.league === currentLeague && t.isFavorite);
+            
+            // --- STATS LOGIC ---
             let wins=0, losses=0, ties=0;
             let nextGame = null;
-            const today = new Date().toISOString().split('T')[0];
+            // Get today's date string YYYY-MM-DD in local time for accurate comparison
+            const now = new Date();
+            const todayStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0');
+            
+            // Streak Logic Prep
+            let completedGames = [];
 
             games.forEach(g => {
                 const home = appData.teams.find(t => t.id === g.homeTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
                 const away = appData.teams.find(t => t.id === g.awayTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
                 
-                // Stats Logic
-                let resultClass = 'scheduled-indicator';
-                let resultLabel = '';
-                
+                let borderClass = 'scheduled-border';
+                let resultBadge = '';
+                let cardOpacity = 'opacity-100';
+
+                // Game Result Logic
                 if (g.status === 'completed') {
+                    cardOpacity = 'opacity-80 hover:opacity-100'; // slightly dim completed games
                     if (favTeam) {
                         const isHome = g.homeTeamId === favTeam.id;
-                        const myScore = isHome ? g.homeScore : g.awayScore;
-                        const oppScore = isHome ? g.awayScore : g.homeScore;
+                        const isAway = g.awayTeamId === favTeam.id;
                         
-                        if (g.homeTeamId === favTeam.id || g.awayTeamId === favTeam.id) {
-                            if (myScore > oppScore) { wins++; resultClass = 'win-indicator'; resultLabel = 'W'; }
-                            else if (myScore < oppScore) { losses++; resultClass = 'loss-indicator'; resultLabel = 'L'; }
-                            else { ties++; resultClass = 'tie-indicator'; resultLabel = 'T'; }
+                        if (isHome || isAway) {
+                            const myScore = isHome ? g.homeScore : g.awayScore;
+                            const oppScore = isHome ? g.awayScore : g.homeScore;
+                            
+                            let resultChar = 'T';
+                            if (myScore > oppScore) { wins++; resultChar = 'W'; borderClass = 'win-border'; }
+                            else if (myScore < oppScore) { losses++; resultChar = 'L'; borderClass = 'loss-border'; }
+                            else { ties++; borderClass = 'tie-border'; }
+                            
+                            completedGames.push({ date: g.date, result: resultChar });
+                            
+                            // Badge
+                            let badgeColor = resultChar === 'W' ? 'bg-green-600' : (resultChar === 'L' ? 'bg-red-600' : 'bg-gray-500');
+                            resultBadge = `<div class="absolute top-2 right-2 ${badgeColor} text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">${resultChar}</div>`;
                         } else {
-                            resultClass = 'tie-indicator'; // Neutral game
+                            borderClass = 'tie-border'; // Neutral game
                         }
                     } else {
-                        resultClass = 'tie-indicator';
+                        borderClass = 'tie-border';
                     }
                 } else {
-                    if (!nextGame && g.date >= today) nextGame = g;
+                    // Find Next Game
+                    if (!nextGame && g.date >= todayStr) {
+                        nextGame = g;
+                        borderClass = 'border-t-4 border-yellow-400'; // Highlight next game
+                    }
                 }
 
                 // Render Card
-                const dateObj = new Date(g.date);
+                const dateObj = parseLocalYMD(g.date);
                 const dateStr = dateObj.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
-                const timeStr = g.startTime ? formatTime(g.startTime) : 'TBD';
+                const timeStr = g.startTime ? formatTime12(g.startTime) : 'TBD';
                 
                 const scoreDisplay = g.status === 'completed' 
-                    ? `<span class="text-2xl font-bold tracking-widest">${g.awayScore} - ${g.homeScore}</span>`
-                    : `<span class="text-lg font-mono text-gray-400 bg-gray-800 px-2 py-1 rounded">${timeStr}</span>`;
+                    ? `<div class="text-3xl font-black tracking-widest flex gap-4"><span>${g.awayScore}</span><span class="text-gray-600">-</span><span>${g.homeScore}</span></div>`
+                    : `<div class="text-lg font-mono text-blue-300 bg-blue-900/20 border border-blue-800/50 px-3 py-1 rounded mt-1">${timeStr}</div>`;
 
                 const html = `
-                    <div class="glass-panel rounded-lg p-4 flex items-center justify-between game-card cursor-pointer ${resultClass}" onclick="editGame('${g.id}')">
-                        <div class="w-24 text-center border-r border-gray-700 pr-4">
-                            <div class="text-gray-400 text-xs font-bold uppercase">${dateStr}</div>
-                            <div class="text-xs text-gray-600 mt-1">${g.description || 'Game'}</div>
+                    <div class="glass-panel rounded-xl p-0 flex flex-col game-card cursor-pointer ${borderClass} ${cardOpacity} relative" onclick="editGame('${g.id}')">
+                        ${resultBadge}
+                        <div class="bg-gray-800/50 p-3 flex justify-between items-center border-b border-gray-700/50">
+                            <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">${dateStr}</div>
+                            <div class="text-[10px] text-gray-500 truncate max-w-[50%]">${g.description || ''}</div>
                         </div>
                         
-                        <div class="flex-1 flex justify-between items-center px-6">
-                            <div class="flex flex-col items-center w-1/3">
-                                <img src="${away.logo}" class="w-10 h-10 object-contain mb-1" onerror="this.style.display='none'">
-                                <span class="font-bold text-sm text-center">${away.name}</span>
+                        <div class="flex-1 flex items-center justify-between px-6 py-6">
+                            <!-- Away Team -->
+                            <div class="flex flex-col items-center w-1/3 group">
+                                <img src="${away.logo}" class="team-logo-lg mb-2 group-hover:scale-110 transition-transform" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm text-center leading-tight text-gray-300 group-hover:text-white">${away.name}</span>
+                                <span class="text-[10px] text-gray-500 mt-1 font-mono">AWAY</span>
                             </div>
                             
-                            <div class="flex flex-col items-center">
-                                <span class="text-[10px] text-gray-500 uppercase mb-1">AT</span>
+                            <!-- VS / Score -->
+                            <div class="flex flex-col items-center justify-center w-1/3 h-full">
                                 ${scoreDisplay}
                             </div>
 
-                            <div class="flex flex-col items-center w-1/3">
-                                <img src="${home.logo}" class="w-10 h-10 object-contain mb-1" onerror="this.style.display='none'">
-                                <span class="font-bold text-sm text-center">${home.name}</span>
+                            <!-- Home Team -->
+                            <div class="flex flex-col items-center w-1/3 group">
+                                <img src="${home.logo}" class="team-logo-lg mb-2 group-hover:scale-110 transition-transform" onerror="this.style.display='none'">
+                                <span class="font-bold text-sm text-center leading-tight text-gray-300 group-hover:text-white">${home.name}</span>
+                                <span class="text-[10px] text-gray-500 mt-1 font-mono">HOME</span>
                             </div>
                         </div>
-
-                        <div class="w-10 text-right font-black text-gray-500 text-xl">${resultLabel}</div>
                     </div>
                 `;
                 container.innerHTML += html;
@@ -308,20 +394,51 @@
 
             // Update Stats Banner
             document.getElementById('stat-record').innerText = `${wins}-${losses}-${ties}`;
-            const total = wins + losses + ties;
-            const pct = total > 0 ? (wins / total).toFixed(3).substring(1) : '.000';
-            document.getElementById('stat-winpct').innerText = pct;
+            
+            const totalGames = wins + losses + ties;
+            // Win % = (Wins + 0.5 * Ties) / Total Games
+            const winPct = totalGames > 0 ? ((wins + (ties * 0.5)) / totalGames).toFixed(3).substring(1) : '.000';
+            document.getElementById('stat-winpct').innerText = winPct;
+            
+            // Streak Calculation
+            let streakLabel = '-';
+            let streakColor = 'text-gray-400';
+            
+            if (completedGames.length > 0) {
+                // Sort newest to oldest for streak counting
+                // Note: games array was sorted oldest to newest for display, so reverse completedGames logic or re-sort
+                completedGames.sort((a, b) => new Date(b.date) - new Date(a.date)); // Newest first
+                
+                const lastResult = completedGames[0].result;
+                let count = 0;
+                for (let i = 0; i < completedGames.length; i++) {
+                    if (completedGames[i].result === lastResult) {
+                        count++;
+                    } else {
+                        break;
+                    }
+                }
+                
+                streakLabel = `${lastResult}${count}`;
+                if (lastResult === 'W') streakColor = 'text-green-400';
+                else if (lastResult === 'L') streakColor = 'text-red-400';
+                else streakColor = 'text-gray-400';
+            }
+            
+            const streakEl = document.getElementById('stat-streak');
+            streakEl.innerText = streakLabel;
+            streakEl.className = `text-4xl font-black mt-1 ${streakColor}`;
             
             if (nextGame) {
                  const oppId = nextGame.homeTeamId === favTeam?.id ? nextGame.awayTeamId : nextGame.homeTeamId;
                  const opp = appData.teams.find(t => t.id === oppId);
-                 const d = new Date(nextGame.date);
+                 const d = parseLocalYMD(nextGame.date);
                  document.getElementById('stat-next-game').innerHTML = `
-                    <div class="font-bold text-white">vs ${opp ? opp.abbrev : 'Opponent'}</div>
-                    <div class="text-xs text-gray-400">${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})} @ ${nextGame.startTime}</div>
+                    <div class="font-bold text-white text-xl">vs ${opp ? (opp.abbrev || opp.name) : 'Opponent'}</div>
+                    <div class="text-sm text-red-400 font-bold mt-1">${d.toLocaleDateString('en-US', {month:'short', day:'numeric'})} @ ${formatTime12(nextGame.startTime)}</div>
                  `;
             } else {
-                 document.getElementById('stat-next-game').innerHTML = `<span class="text-sm text-gray-500">Season Complete</span>`;
+                 document.getElementById('stat-next-game').innerHTML = `<span class="text-sm text-gray-500">No Scheduled Games</span>`;
             }
         }
 
@@ -329,14 +446,21 @@
         function openAddGameModal() {
             document.getElementById('modal-title').innerText = "Add Game";
             document.getElementById('edit-game-id').value = '';
-            document.getElementById('game-date').value = new Date().toISOString().split('T')[0];
+            // Get local date string
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            document.getElementById('game-date').value = `${year}-${month}-${day}`;
+            
             document.getElementById('game-time').value = '19:00';
             document.getElementById('game-home-score').value = '';
             document.getElementById('game-away-score').value = '';
             document.getElementById('game-location').value = '';
+            document.getElementById('game-season-input').value = document.getElementById('season-select').value; // Default to current view
             document.getElementById('btn-delete').classList.add('hidden');
             
-            populateTeamSelects(); // Ensure lists are fresh
+            populateTeamSelects(); 
             document.getElementById('game-modal').classList.remove('hidden');
         }
 
@@ -348,10 +472,18 @@
             document.getElementById('edit-game-id').value = g.id;
             document.getElementById('game-date').value = g.date;
             document.getElementById('game-time').value = g.startTime;
+            document.getElementById('game-season-input').value = g.season || document.getElementById('season-select').value;
+            
+            // Ensure options are populated for this league before setting values
+            // We might need to switch the league filter temporarily in logic, but simpler to just re-pop
+            // Note: This simplistic approach assumes user is editing game in current view league. 
+            // If cross-league editing is needed, we'd need to switch dropdowns. 
+            // For now, assume context is correct.
             document.getElementById('game-home-team').value = g.homeTeamId;
             document.getElementById('game-away-team').value = g.awayTeamId;
-            document.getElementById('game-home-score').value = g.homeScore;
-            document.getElementById('game-away-score').value = g.awayScore;
+            
+            document.getElementById('game-home-score').value = g.homeScore !== null ? g.homeScore : '';
+            document.getElementById('game-away-score').value = g.awayScore !== null ? g.awayScore : '';
             document.getElementById('game-location').value = g.description || '';
             document.getElementById('btn-delete').classList.remove('hidden');
             
@@ -365,7 +497,7 @@
         function saveGame() {
             const id = document.getElementById('edit-game-id').value;
             const league = document.getElementById('league-select').value;
-            const season = document.getElementById('season-select').value;
+            const season = document.getElementById('game-season-input').value;
             
             const hScore = document.getElementById('game-home-score').value;
             const aScore = document.getElementById('game-away-score').value;
@@ -373,7 +505,7 @@
             const newGame = {
                 id: id || `game_${Date.now()}`,
                 type: 'sports',
-                category: 'personal', // Default to personal for calendar logic
+                category: 'personal', 
                 league: league,
                 season: season,
                 date: document.getElementById('game-date').value,
@@ -384,8 +516,7 @@
                 awayScore: aScore === '' ? null : parseInt(aScore),
                 description: document.getElementById('game-location').value,
                 status: (hScore !== '' && aScore !== '') ? 'completed' : 'scheduled',
-                // Generate a title for the main calendar
-                title: '' // Will be generated dynamically by calendar, but we can set a default
+                title: '' 
             };
             
             // Find names for title
@@ -402,7 +533,9 @@
             
             saveData();
             closeModal();
-            renderPage();
+            
+            // Refresh season options in case a new season was added
+            updateSeasonOptions(); 
         }
 
         function deleteGame() {
@@ -415,7 +548,7 @@
         }
 
         // Helpers
-        function formatTime(timeStr) {
+        function formatTime12(timeStr) {
             if (!timeStr) return '';
             const [h, m] = timeStr.split(':');
             const hour = parseInt(h);
