@@ -28,12 +28,15 @@
         .macro-bar-fill { height: 100%; border-radius: 2px; }
         .star-btn:hover, .star-btn.active { color: #fbbf24; } 
         .star-btn { color: #4b5563; transition: color 0.1s; } 
+        .highlight-pulse { animation: pulse-yellow 0.5s 2; }
+        @keyframes pulse-yellow {
+            0%, 100% { background-color: rgba(17, 24, 39, 0.5); }
+            50% { background-color: rgba(234, 179, 8, 0.2); }
+        }
         
         /* Special Backgrounds */
-        .bg-weekend { background-color: rgba(30, 41, 59, 0.4); } 
-        /* Holidays: Color K - Darker Deep Blue */
+        .bg-weekend { background-color: hsla(220, 25%, 67.5%, 0.4); } 
         .bg-holiday { background-color: hsl(220, 45%, 27%) !important; border-color: hsl(220, 45%, 37%) !important; }
-        /* Vacation: Color K - Deep Forest Green */
         .bg-vacation { background-color: hsl(150, 30%, 17.5%) !important; border-color: hsl(150, 30%, 27.5%) !important; }
 
         /* Type Button Styling */
@@ -107,8 +110,7 @@
                 <h2 class="text-xl font-bold text-purple-400">Bullet Journal</h2>
                 <p class="text-xs text-gray-500">Year 2025</p>
             </div>
-            
-            <!-- Sidebar Scroll Container -->
+            <!-- Restored Full List -->
             <div class="flex-1 overflow-y-auto p-3" id="month-list"></div>
 
             <div class="p-4 border-t border-gray-700">
@@ -117,7 +119,7 @@
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
                 <button onclick="downloadData()" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Download Data</button>
                 <button onclick="resetData()" class="block w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 hover:text-red-200 text-sm mb-1 transition-colors">Reset to JSON</button>
-                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.0</p>
+                <p id="version-display" class="text-xs font-mono text-gray-500 mt-2 text-center">Stephens' Dashboard v1.4.1</p>
             </div>
         </aside>
         <main class="flex-1 overflow-y-auto p-4 sm:p-6 relative bg-gray-900" id="main-scroll">
@@ -196,13 +198,13 @@
 
     <!-- General Item Editor Modal -->
     <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700">
+        <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700 max-h-[90vh] overflow-hidden">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
                 <h3 class="text-xl font-bold text-white" id="item-modal-title">Add Item</h3>
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <!-- Modal Scroll Container Fix: max-h-[65vh] + overflow-y-auto -->
-            <div class="p-6 space-y-4 max-h-[65vh] overflow-y-auto">
+            <!-- Added overflow-y-auto here to fix scrolling issue -->
+            <div class="p-6 space-y-4 overflow-y-auto max-h-[70vh]">
                 <input type="hidden" id="item-category"><input type="hidden" id="item-id">
                 
                 <!-- DATE MOVER -->
@@ -326,7 +328,7 @@
     <script>
         // --- STATE & CONSTANTS ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.1", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -467,7 +469,6 @@
             const end = new Date(endStr + 'T12:00:00');
             if(end < start) return;
 
-            // Existing notes map?
             const editId = document.getElementById('item-id').value;
             let notesMap = {};
             if(editId) {
@@ -660,7 +661,7 @@
             updateUI();
         }
 
-        // --- MODAL FUNCTIONS ---
+        // --- MODAL FUNCTIONS (NEW BUTTON LOGIC) ---
         function selectType(type) {
             document.getElementById('item-type').value = type;
             document.querySelectorAll('.type-btn').forEach(btn => {
@@ -690,6 +691,7 @@
                 renderTypeButtons();
             }
 
+            // Reset Fields
             document.getElementById('item-id').value = ''; 
             document.getElementById('item-title').value = ''; 
             document.getElementById('item-desc').value = ''; 
@@ -712,12 +714,13 @@
             document.getElementById('sports-season').value = '2025/2026';
             document.getElementById('item-date').value = ymd;
             
+            // Default Category & Type
             document.getElementById('item-category').value = category || 'work';
             const taskCatRadios = document.getElementsByName('task-cat');
             if(category === 'personal') taskCatRadios[1].checked = true; 
             else taskCatRadios[0].checked = true;
 
-            let defaultType = 'task'; 
+            let defaultType = 'task'; // Default
 
             if (itemId) {
                 document.getElementById('item-modal-title').innerText = "Edit Item";
@@ -859,7 +862,10 @@
             
             document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
             if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
-            if(type === 'task') { document.getElementById('field-task').classList.remove('hidden'); document.getElementById('field-task-category').classList.remove('hidden'); }
+            if(type === 'task') {
+                 document.getElementById('field-task').classList.remove('hidden');
+                 document.getElementById('field-task-category').classList.remove('hidden'); 
+            }
             if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
             if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
             if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
@@ -975,7 +981,7 @@
             document.getElementById('sports-matchup-label').innerText = label;
         }
 
-        // --- HEALTH CARD HELPERS ---
+        // --- HEALTH CARD FUNCTIONS (RESTORED) ---
         function getWeeklyDeficit() {
             if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
             const start = getStartOfWeek(appState.currentDate); 
@@ -1045,6 +1051,7 @@
             return `<div class="glass-panel p-5 rounded-xl border-l-4 border-health relative group"><div class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button onclick="openNutritionModal()" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteItem('${item.id}', 'health')" class="text-red-400 hover:text-red-300">🗑️</button></div><div class="flex justify-between items-center mb-4"><div class="text-sm text-gray-400">Weight</div><span class="text-xl font-bold text-white">${item.weightLbs} lbs</span></div><div class="bg-gray-800/50 rounded-lg p-3 mb-4"><div class="flex justify-between text-sm mb-1"><span class="text-gray-400">Net Calories</span><span class="font-bold ${netCal > g.calorieGoal ? 'text-red-400' : 'text-white'}">${netCal.toLocaleString()} / ${g.calorieGoal.toLocaleString()}</span></div><div class="macro-bar-bg mb-2"><div class="macro-bar-fill bg-health" style="width: ${pctCal}%"></div></div><div class="flex justify-between text-xs"><span class="${calRemaining >= 0 ? 'text-green-400' : 'text-red-400'}">${calRemaining >= 0 ? 'Remaining: ' + calRemaining : 'Over: ' + Math.abs(calRemaining)}</span><span class="text-gray-500">${pctCal.toFixed(1)}% of Goal</span></div></div><div class="grid grid-cols-4 gap-2 mb-4"><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Pro</span><span>${totalPro}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-blue-500" style="width: ${pctPro}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Fat</span><span>${totalFat}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-yellow-500" style="width: ${pctFat}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded"><div class="flex justify-between text-xs text-gray-400 mb-1"><span>Carb</span><span>${netCarbs}</span></div><div class="macro-bar-bg"><div class="macro-bar-fill bg-green-500" style="width: ${pctCarb}%"></div></div></div><div class="bg-gray-800/30 p-2 rounded border border-gray-700/50"><div class="text-[10px] text-gray-500 uppercase text-center mb-1">Burned</div><div class="text-sm font-bold text-center text-orange-400">${totalBurned}</div></div></div><div class="border-t border-gray-700 pt-3 mb-4"><div class="flex justify-between items-center mb-1"><span class="text-xs text-gray-400">Daily Deficit (vs TDEE)</span><span class="text-sm font-bold ${tdeeDiff < 0 ? 'text-green-400' : 'text-red-400'}">${tdeeDiff > 0 ? '+' : ''}${tdeeDiff.toLocaleString()} Cal</span></div><div class="flex justify-between items-center"><span class="text-xs text-gray-400">Weekly Running Deficit</span><span class="text-sm font-bold ${weeklyData.deficit < 0 ? 'text-green-400' : 'text-gray-400'}">${weeklyData.deficit.toLocaleString()} Cal</span></div><div class="text-[10px] text-gray-500 text-right mt-1">Target: -4,200/wk (1.2lbs)</div></div><div class="space-y-1">${logHtml}</div></div>`;
         }
 
+        // --- HELPER FOR SPORTS RECORD ---
         function getTeamRecord(teamId, season) {
             let wins = 0, losses = 0, ties = 0;
             const cutoffDate = toLocalYMD(appState.currentDate);
@@ -1070,434 +1077,6 @@
             
             if (ties > 0) return `${wins}-${losses}-${ties}`;
             return `${wins}-${losses}`;
-        }
-
-        function getForecastEmoji(c) {
-            if(c.includes('01')) return '☀️';
-            if(c.includes('02')) return '🌤️';
-            if(c.includes('03')) return '🌥️';
-            if(c.includes('09')||c.includes('10')) return '🌧️';
-            if(c.includes('13')) return '❄️';
-            return '☁️';
-        }
-
-        async function fetchWeather() {
-            const ZIP = '75482,us', KEY = '87256fe2710631542ff491e4c5d73306';
-            try {
-                const wRes = await fetch(`https://api.openweathermap.org/data/2.5/weather?zip=${ZIP}&units=imperial&appid=${KEY}`);
-                if(wRes.ok) {
-                    const w = await wRes.json();
-                    document.getElementById('weather-current-temp').textContent = Math.round(w.main.temp) + '°';
-                    document.getElementById('weather-icon').innerHTML = getForecastEmoji(w.weather[0].icon);
-                }
-            } catch(e) { console.error("Weather fetch failed", e); }
-        }
-
-        // --- DATA MANAGEMENT ---
-        async function loadData() {
-            const idMap = new Map();
-            const teamMap = new Map(); 
-            const leagueSet = new Set();
-
-            try {
-                const localStr = localStorage.getItem(STORAGE_KEY);
-                if (localStr) {
-                    const localData = JSON.parse(localStr);
-                    if(localData.items) localData.items.forEach(item => idMap.set(item.id, item));
-                    if(localData.teams) localData.teams.forEach(t => teamMap.set(t.id, t));
-                    if(localData.leagues) localData.leagues.forEach(l => leagueSet.add(l));
-                }
-            } catch (e) { console.warn("Error reading local storage", e); }
-            
-            try {
-                const response = await fetch('bullet_cal_data_2025.json');
-                if (response.ok) {
-                    const jsonData = await response.json();
-                    if(jsonData.items) {
-                        jsonData.items.forEach(item => { 
-                            if (!idMap.has(item.id)) idMap.set(item.id, item); 
-                        });
-                    }
-                    appState.data.meta = jsonData.meta || appState.data.meta;
-                    if (jsonData.teams) {
-                        jsonData.teams.forEach(t => {
-                            if (!teamMap.has(t.id)) teamMap.set(t.id, t);
-                        });
-                    }
-                    if (jsonData.leagues) {
-                        jsonData.leagues.forEach(l => leagueSet.add(l));
-                    }
-                }
-            } catch (error) { console.warn("Error fetching JSON", error); }
-
-            appState.data.items = Array.from(idMap.values());
-            appState.data.teams = Array.from(teamMap.values());
-            appState.data.leagues = Array.from(leagueSet);
-            
-            // Sort items
-            appState.data.items.sort((a, b) => {
-                if (a.date < b.date) return -1;
-                if (a.date > b.date) return 1;
-                if (a.type === 'vacation' && b.type !== 'vacation') return -1;
-                if (a.type !== 'vacation' && b.type === 'vacation') return 1;
-                
-                const tA = a.startTime || '00:00';
-                const tB = b.startTime || '00:00';
-                if (tA < tB) return -1;
-                if (tA > tB) return 1;
-                return 0;
-            });
-            updateUI();
-        }
-
-        function saveData() { 
-            appState.data.items.sort((a, b) => {
-                if (a.date < b.date) return -1;
-                if (a.date > b.date) return 1;
-                if (a.type === 'vacation' && b.type !== 'vacation') return -1;
-                if (a.type !== 'vacation' && b.type === 'vacation') return 1;
-                return 0;
-            });
-            try { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState.data)); } catch (e) { console.error("Save failed", e); } 
-        }
-
-        function resetData() { if(confirm("Wipe local edits?")) { localStorage.removeItem(STORAGE_KEY); appState.data.items = []; loadData(); } }
-        function downloadData() {
-            const url = URL.createObjectURL(new Blob([JSON.stringify(appState.data, null, 2)], { type: "application/json" }));
-            const a = document.createElement('a'); a.href = url; a.download = `bullet_cal_data_${appState.data.meta.year}.json`;
-            document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
-            if(window.innerWidth < 1024) document.getElementById('bullet-sidebar').classList.replace('sidebar-open','sidebar-closed');
-        }
-
-        function deleteItem(id, type) {
-            if(!confirm("Delete this item?")) return;
-            if(type === 'vacation') {
-                const item = appState.data.items.find(i => i.id === id);
-                if (item && item.groupId) {
-                    appState.data.items = appState.data.items.filter(i => i.groupId !== item.groupId);
-                } else {
-                    appState.data.items = appState.data.items.filter(i => i.id !== id);
-                }
-            } else {
-                appState.data.items = appState.data.items.filter(i => i.id !== id);
-            }
-            saveData();
-            updateUI();
-        }
-
-        // --- MODAL FUNCTIONS ---
-        function selectType(type) {
-            document.getElementById('item-type').value = type;
-            document.querySelectorAll('.type-btn').forEach(btn => {
-                if (btn.dataset.type === type) btn.classList.add('selected');
-                else btn.classList.remove('selected');
-            });
-            updateModalFields();
-        }
-
-        function renderTypeButtons() {
-            const container = document.getElementById('type-buttons-container');
-            container.innerHTML = '';
-            TYPE_CONFIG.forEach(t => {
-                const btn = document.createElement('div');
-                btn.className = 'type-btn cursor-pointer';
-                btn.dataset.type = t.id;
-                btn.onclick = () => selectType(t.id);
-                btn.innerHTML = `<span class="type-btn-icon">${t.icon}</span><span>${t.label}</span>`;
-                container.appendChild(btn);
-            });
-        }
-
-        function openItemModal(category, itemId = null, allowedTypes = '') {
-            const ymd = toLocalYMD(appState.currentDate);
-            
-            if(document.getElementById('type-buttons-container').children.length === 0) {
-                renderTypeButtons();
-            }
-
-            document.getElementById('item-id').value = ''; 
-            document.getElementById('item-title').value = ''; 
-            document.getElementById('item-desc').value = ''; 
-            document.getElementById('item-link').value = ''; 
-            document.getElementById('item-img').value = ''; 
-            document.getElementById('item-ticket').value = ''; 
-            document.getElementById('item-rating').value = '5'; 
-            renderStarInput(5); 
-            document.getElementById('item-duration').value = '60'; 
-            document.getElementById('item-actualDuration').value = '';
-            document.getElementById('item-startTime').value = '';
-            document.getElementById('item-streak').value = '0';
-            document.getElementById('item-fill-month').checked = false;
-            document.getElementById('item-is-work-holiday').checked = true;
-            document.getElementById('item-recur-weekly').checked = false;
-            document.getElementById('item-add-next-year').checked = false;
-            document.getElementById('vacation-start').value = ymd; 
-            document.getElementById('vacation-end').value = '';
-            document.getElementById('vacation-daily-notes').innerHTML = '';
-            document.getElementById('sports-season').value = '2025/2026';
-            document.getElementById('item-date').value = ymd;
-            
-            document.getElementById('item-category').value = category || 'work';
-            const taskCatRadios = document.getElementsByName('task-cat');
-            if(category === 'personal') taskCatRadios[1].checked = true; 
-            else taskCatRadios[0].checked = true;
-
-            let defaultType = 'task'; 
-
-            if (itemId) {
-                document.getElementById('item-modal-title').innerText = "Edit Item";
-                document.getElementById('item-id').value = itemId;
-                const item = appState.data.items.find(i => i.id === itemId);
-                if (item) {
-                    defaultType = item.type;
-                    if(item.date) document.getElementById('item-date').value = item.date;
-                    document.getElementById('item-category').value = item.category; 
-                    
-                    if(item.type === 'task') {
-                        if(item.category === 'personal') taskCatRadios[1].checked = true;
-                        else taskCatRadios[0].checked = true;
-                    }
-
-                    document.getElementById('item-title').value = item.title; 
-                    document.getElementById('item-desc').value = (item.type === 'media' || item.type === 'habit' || item.type === 'vacation') ? (item.notes || item.description || '') : (item.description || '');
-                    document.getElementById('item-link').value = item.linkUrl || ''; 
-                    document.getElementById('item-img').value = item.imgUrl || '';
-                    
-                    if(item.type === 'meeting') { 
-                        document.getElementById('item-startTime').value = item.startTime || ''; 
-                        document.getElementById('item-duration').value = item.durationMinutes ? formatDuration(item.durationMinutes) : '60m'; 
-                        document.getElementById('item-actualDuration').value = item.timeSpentMinutes ? formatDuration(item.timeSpentMinutes) : ''; 
-                    }
-                    if(item.type === 'task') { document.getElementById('item-ticket').value = item.ticketNumber || ''; }
-                    if(item.type === 'media') { const r = item.rating || 5; document.getElementById('item-rating').value = r; renderStarInput(r); }
-                    if(item.type === 'habit') { document.getElementById('item-streak').value = item.streakCount || 0; }
-                    if(item.type === 'holiday') { document.getElementById('item-is-work-holiday').checked = item.isWorkHoliday; }
-                    if(item.type === 'vacation') {
-                        const group = appState.data.items.filter(i => i.groupId === item.groupId);
-                        if(group.length > 0) {
-                            group.sort((a,b) => a.date.localeCompare(b.date));
-                            document.getElementById('vacation-start').value = group[0].date;
-                            document.getElementById('vacation-end').value = group[group.length-1].date;
-                            generateVacationDailyInputs();
-                        }
-                    }
-                    if(item.type === 'sports') { populateTeamSelects(); document.getElementById('sports-league').value = item.league; populateTeamSelects(); document.getElementById('sports-time').value = item.startTime || ''; document.getElementById('sports-score-my').value = (item.homeTeamId === item.homeTeamId) ? item.homeScore : item.awayScore; const isFavoriteHome = appState.data.teams.find(t=>t.id===item.homeTeamId)?.isFavorite; document.getElementById('sports-myteam').value = isFavoriteHome ? item.homeTeamId : item.awayTeamId; document.getElementById('sports-opponent').value = isFavoriteHome ? item.awayTeamId : item.homeTeamId; document.getElementById('sports-is-home').value = isFavoriteHome ? "true" : "false"; document.getElementById('sports-score-my').value = isFavoriteHome ? item.homeScore : item.awayScore; document.getElementById('sports-score-opp').value = isFavoriteHome ? item.awayScore : item.homeScore; document.getElementById('sports-season').value = item.season || '2025/2026'; updateSportsLabel(); }
-                }
-            } else {
-                document.getElementById('item-modal-title').innerText = "Add Item";
-            }
-            
-            selectType(defaultType);
-            document.getElementById('item-modal').classList.remove('hidden');
-        }
-
-        function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
-        
-        function saveItem() {
-            const type = document.getElementById('item-type').value; 
-            
-            let category = 'personal'; 
-            if (type === 'task') {
-                const radios = document.getElementsByName('task-cat');
-                if(radios[0].checked) category = 'work';
-            } else if (type === 'meeting' || type === 'holiday') {
-                category = 'work';
-            }
-            
-            const editId = document.getElementById('item-id').value;
-            const inputDateVal = document.getElementById('item-date').value;
-            const dateYMD = inputDateVal || toLocalYMD(appState.currentDate);
-            let title = document.getElementById('item-title').value;
-            
-            if (type === 'sports') {
-                const myTeamId = document.getElementById('sports-myteam').value;
-                const oppTeamId = document.getElementById('sports-opponent').value;
-                const isHome = document.getElementById('sports-is-home').value === "true";
-                const homeId = isHome ? myTeamId : oppTeamId;
-                const awayId = isHome ? oppTeamId : myTeamId;
-                const homeTeam = appState.data.teams.find(t=>t.id === homeId);
-                const awayTeam = appState.data.teams.find(t=>t.id === awayId);
-                title = `${awayTeam?.abbrev || 'Away'} @ ${homeTeam?.abbrev || 'Home'}`;
-                category = 'personal';
-            }
-            
-            if(!title && type !== 'sports') return alert("Title required");
-
-            const newItemBase = { type: type, category: category, title: title, linkUrl: document.getElementById('item-link').value, imgUrl: document.getElementById('item-img').value };
-            const rawDesc = document.getElementById('item-desc').value;
-            if(type === 'media' || type === 'habit') { newItemBase.notes = rawDesc; newItemBase.description = rawDesc; } else { newItemBase.description = rawDesc; }
-
-            if(type === 'meeting') { newItemBase.startTime = document.getElementById('item-startTime').value || "09:00"; newItemBase.durationMinutes = parseDuration(document.getElementById('item-duration').value); newItemBase.timeSpentMinutes = parseDuration(document.getElementById('item-actualDuration').value); }
-            if(type === 'task') { newItemBase.ticketNumber = document.getElementById('item-ticket').value; newItemBase.status = 'pending'; }
-            if(type === 'media') { newItemBase.rating = parseInt(document.getElementById('item-rating').value) || 5; }
-            if(type === 'habit') { const existing = appState.data.items.find(i => i.id === editId); const inputStreak = parseInt(document.getElementById('item-streak').value); newItemBase.streakCount = (editId || !isNaN(inputStreak)) ? (inputStreak || 1) : (existing ? existing.streakCount : 1); }
-            if(type === 'holiday') { newItemBase.isWorkHoliday = document.getElementById('item-is-work-holiday').checked; }
-            if (type === 'sports') {
-                 const myTeamId = document.getElementById('sports-myteam').value; const oppTeamId = document.getElementById('sports-opponent').value; const isHome = document.getElementById('sports-is-home').value === "true"; const myScore = parseInt(document.getElementById('sports-score-my').value); const oppScore = parseInt(document.getElementById('sports-score-opp').value);
-                 newItemBase.league = document.getElementById('sports-league').value; newItemBase.homeTeamId = isHome ? myTeamId : oppTeamId; newItemBase.awayTeamId = isHome ? oppTeamId : myTeamId; newItemBase.homeScore = isHome ? myScore : oppScore; newItemBase.awayScore = isHome ? oppScore : myScore; newItemBase.startTime = document.getElementById('sports-time').value; newItemBase.status = (!isNaN(myScore) && !isNaN(oppScore)) ? 'completed' : 'scheduled'; newItemBase.season = document.getElementById('sports-season').value || '2025/2026';
-            }
-            
-            if (type === 'vacation') {
-                const startStr = document.getElementById('vacation-start').value;
-                const endStr = document.getElementById('vacation-end').value;
-                if(!startStr || !endStr) return alert("Start and End dates required");
-                const groupId = editId ? (appState.data.items.find(i=>i.id===editId)?.groupId || `vac_${Date.now()}`) : `vac_${Date.now()}`;
-                if(editId) appState.data.items = appState.data.items.filter(i => i.groupId !== groupId);
-                const noteInputs = document.querySelectorAll('.vacation-day-note');
-                const notesMap = {};
-                noteInputs.forEach(inp => notesMap[inp.dataset.date] = inp.value);
-                const start = new Date(startStr + 'T12:00:00');
-                const end = new Date(endStr + 'T12:00:00');
-                const loop = new Date(start);
-                while(loop <= end) {
-                    const ymd = toLocalYMD(loop);
-                    const dayNote = notesMap[ymd] || '';
-                    const dayItem = { ...newItemBase, id: `vac_${Date.now()}_${ymd}`, groupId: groupId, date: ymd, description: dayNote };
-                    appState.data.items.push(dayItem);
-                    loop.setDate(loop.getDate() + 1);
-                }
-                saveData(); closeItemModal(); updateUI();
-                return; 
-            }
-            if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
-                const baseDate = new Date(dateYMD + "T12:00:00");
-                for(let w=1; w<=4; w++) {
-                    const nextDate = new Date(baseDate); nextDate.setDate(baseDate.getDate() + (w * 7)); const nextYMD = toLocalYMD(nextDate);
-                    const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_${w}`, date: nextYMD };
-                    appState.data.items.push(finalClone);
-                }
-            }
-            if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
-                const [y, m, d] = dateYMD.split('-'); const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
-                const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_next`, date: nextYearYMD };
-                appState.data.items.push(finalClone);
-            }
-            const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
-            if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = finalItem; } else { appState.data.items.push(finalItem); }
-            saveData(); closeItemModal(); updateUI();
-        }
-        function updateModalFields() {
-            const type = document.getElementById('item-type').value;
-            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
-            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation','task-category'];
-            allFields.forEach(f => { const el = document.getElementById(`field-${f}`); if(el) el.classList.add('hidden'); });
-            
-            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
-            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
-            if(type === 'task') { document.getElementById('field-task').classList.remove('hidden'); document.getElementById('field-task-category').classList.remove('hidden'); }
-            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
-            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
-            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
-            if(type === 'birthday' || type === 'anniversary') { const isEdit = document.getElementById('item-id').value !== ''; if(!isEdit) document.getElementById('field-annual').classList.remove('hidden'); }
-            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
-            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
-        }
-
-        // ... (Sports & Nutrition Logic) ...
-        function openSportsManager() { document.getElementById('sports-manager-modal').classList.remove('hidden'); switchSportsTab('leagues'); }
-        function closeSportsManager() { document.getElementById('sports-manager-modal').classList.add('hidden'); resetTeamForm(); }
-        function switchSportsTab(tab) {
-            document.getElementById('tab-leagues').className = tab === 'leagues' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
-            document.getElementById('tab-teams').className = tab === 'teams' ? 'px-4 py-2 text-sm font-medium text-white border-b-2 border-blue-500' : 'px-4 py-2 text-sm font-medium text-gray-400 hover:text-white';
-            document.getElementById('view-leagues').classList.toggle('hidden', tab !== 'leagues');
-            document.getElementById('view-teams').classList.toggle('hidden', tab !== 'teams');
-            if(tab === 'leagues') renderLeaguesList();
-            if(tab === 'teams') { renderTeamFilter(); renderTeamsList(); }
-        }
-        function renderLeaguesList() {
-            const container = document.getElementById('leagues-list');
-            container.innerHTML = appState.data.leagues.map(l => `
-                <div class="flex justify-between items-center bg-gray-700 p-2 rounded"><span>${l}</span><div class="flex gap-2"><button onclick="editLeague('${l}')" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteLeague('${l}')" class="text-red-400 hover:text-red-200">&times;</button></div></div>
-            `).join('');
-        }
-        function addLeague() {
-            const val = document.getElementById('new-league-input').value.trim();
-            if(val && !appState.data.leagues.includes(val)) { appState.data.leagues.push(val); document.getElementById('new-league-input').value = ''; saveData(); renderLeaguesList(); }
-        }
-        function editLeague(oldName) {
-            const newName = prompt("Rename league:", oldName);
-            if (newName && newName.trim() !== "" && newName !== oldName) {
-                const idx = appState.data.leagues.indexOf(oldName);
-                if (idx !== -1) {
-                    appState.data.leagues[idx] = newName;
-                    appState.data.teams.forEach(t => { if(t.league === oldName) t.league = newName; });
-                    appState.data.items.forEach(i => { if(i.type === 'sports' && i.league === oldName) i.league = newName; });
-                    saveData(); renderLeaguesList();
-                }
-            }
-        }
-        function deleteLeague(name) { if(!confirm(`Delete league ${name}?`)) return; appState.data.leagues = appState.data.leagues.filter(l => l !== name); saveData(); renderLeaguesList(); }
-        function renderTeamFilter() {
-            const sel = document.getElementById('filter-league-select');
-            const currentVal = sel.value;
-            const leagues = [...appState.data.leagues].sort();
-            sel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
-            if (!currentVal || currentVal === 'all' || !leagues.includes(currentVal)) { sel.value = leagues.length > 0 ? leagues[0] : ''; } else { sel.value = currentVal; }
-            const addSel = document.getElementById('team-league-select');
-            addSel.innerHTML = leagues.map(l => `<option value="${l}">${l}</option>`).join('');
-        }
-        function renderTeamsList() {
-            const filter = document.getElementById('filter-league-select').value;
-            const teams = appState.data.teams.filter(t => t.league === filter).sort((a, b) => a.name.localeCompare(b.name));
-            const container = document.getElementById('teams-list');
-            container.innerHTML = teams.map(t => `
-                <div class="flex justify-between items-center bg-gray-800 border border-gray-700 p-2 rounded"><div class="flex items-center gap-3"><img src="${t.logo}" class="w-8 h-8 object-contain bg-white/10 rounded"><div><div class="text-sm font-bold">${t.name}</div><div class="text-[10px] text-gray-500">${t.league} • ${t.abbrev}</div></div></div><div class="flex items-center gap-2"><button onclick="toggleTeamFav('${t.id}')" class="${t.isFavorite ? 'text-yellow-400' : 'text-gray-600'} hover:text-yellow-200">★</button><button onclick="editTeam('${t.id}')" class="text-gray-400 hover:text-white">✎</button><button onclick="deleteTeam('${t.id}')" class="text-red-400 hover:text-red-200">&times;</button></div></div>
-            `).join('');
-        }
-        function saveTeamForm() {
-            const league = document.getElementById('team-league-select').value; const name = document.getElementById('team-name-input').value; const abbrev = document.getElementById('team-abbrev-input').value; const logo = document.getElementById('team-logo-input').value; const fav = document.getElementById('team-fav-input').checked; const editId = document.getElementById('team-edit-id').value;
-            if(!league || !name || !abbrev) return alert("Fill required fields");
-            const teamObj = { id: editId || `t_${Date.now()}`, league, name, abbrev, logo, isFavorite: fav };
-            if (editId) { const idx = appState.data.teams.findIndex(t => t.id === editId); if (idx !== -1) appState.data.teams[idx] = teamObj; } else { appState.data.teams.push(teamObj); }
-            saveData(); resetTeamForm(); renderTeamsList();
-        }
-        function editTeam(id) {
-            const team = appState.data.teams.find(t => t.id === id);
-            if (team) {
-                document.getElementById('team-edit-id').value = team.id; document.getElementById('team-league-select').value = team.league; document.getElementById('team-name-input').value = team.name; document.getElementById('team-abbrev-input').value = team.abbrev; document.getElementById('team-logo-input').value = team.logo; document.getElementById('team-fav-input').checked = team.isFavorite;
-                document.getElementById('team-form-title').innerText = "Edit Team"; document.getElementById('team-form-btn').innerText = "Update Team"; document.getElementById('team-form-cancel').classList.remove('hidden');
-                const form = document.getElementById('team-form-container'); form.scrollIntoView({ behavior: 'smooth' }); form.classList.add('highlight-pulse'); setTimeout(() => form.classList.remove('highlight-pulse'), 1000);
-            }
-        }
-        function resetTeamForm() {
-            document.getElementById('team-edit-id').value = ''; document.getElementById('team-name-input').value = ''; document.getElementById('team-abbrev-input').value = ''; document.getElementById('team-logo-input').value = ''; document.getElementById('team-fav-input').checked = false;
-            document.getElementById('team-form-title').innerText = "Add Team"; document.getElementById('team-form-btn').innerText = "Save Team"; document.getElementById('team-form-cancel').classList.add('hidden');
-        }
-        function deleteTeam(id) { if(!confirm("Delete this team?")) return; appState.data.teams = appState.data.teams.filter(t => t.id !== id); saveData(); renderTeamsList(); }
-        function toggleTeamFav(id) { const t = appState.data.teams.find(x => x.id === id); if(t) { t.isFavorite = !t.isFavorite; saveData(); renderTeamsList(); } }
-        function toggleTaskStatus(id) { const item = appState.data.items.find(i => i.id === id); if (item) { item.status = item.status === 'completed' ? 'pending' : 'completed'; saveData(); updateUI(); } }
-        function fireConfetti(x, y) { confetti({ particleCount: 100, spread: 70, origin: { x: x / window.innerWidth, y: y / window.innerHeight }, colors: ['#10b981', '#34d399', '#6ee7b7'], disableForReducedMotion: true }); }
-        function toggleHabitStatus(id, event) { const item = appState.data.items.find(i => i.id === id); if (item) { const wasCompleted = item.status === 'completed'; item.status = wasCompleted ? 'pending' : 'completed'; if (!wasCompleted && event) fireConfetti(event.clientX, event.clientY); saveData(); updateUI(); } }
-        function populateTeamSelects() {
-            const league = document.getElementById('sports-league').value;
-            const teams = (appState.data.teams || []).filter(t => t.league === league);
-            teams.sort((a, b) => a.name.localeCompare(b.name));
-            const mySelect = document.getElementById('sports-myteam');
-            const oppSelect = document.getElementById('sports-opponent');
-            const oldMy = mySelect.value;
-            mySelect.innerHTML = ''; oppSelect.innerHTML = '';
-            teams.forEach(t => {
-                const opt = document.createElement('option'); opt.value = t.id; opt.innerText = t.name; 
-                mySelect.appendChild(opt.cloneNode(true));
-                oppSelect.appendChild(opt.cloneNode(true));
-            });
-            const fav = teams.find(t => t.isFavorite);
-            if(fav) mySelect.value = fav.id; else if(oldMy) mySelect.value = oldMy;
-            updateSportsLabel();
-        }
-        function swapHomeAway() {
-            const isHomeInput = document.getElementById('sports-is-home');
-            isHomeInput.value = (isHomeInput.value === "true") ? "false" : "true";
-            updateSportsLabel();
-        }
-        function updateSportsLabel() {
-            const mySelect = document.getElementById('sports-myteam');
-            const oppSelect = document.getElementById('sports-opponent');
-            const isHome = document.getElementById('sports-is-home').value === "true";
-            const myName = mySelect.options[mySelect.selectedIndex]?.text || "My Team";
-            const oppName = oppSelect.options[oppSelect.selectedIndex]?.text || "Opponent";
-            const label = isHome ? `${oppName} @ ${myName}` : `${myName} @ ${oppName}`;
-            document.getElementById('sports-matchup-label').innerText = label;
         }
 
         // --- CORE NAVIGATION FUNCTIONS ---
@@ -1554,31 +1133,40 @@
             list.innerHTML = '';
             list.className = "space-y-4"; 
 
-            const start = new Date(appState.currentDate.getFullYear(), 0, 1); 
+            // Render 3 Years: Prev, Current, Next
             const viewYear = appState.currentDate.getFullYear();
-            
-            // Show Previous, Current, Next Year in Sidebar
-            for(let y = viewYear - 1; y <= viewYear + 1; y++) {
+            const startYear = viewYear - 1;
+            const endYear = viewYear + 1;
+
+            for (let y = startYear; y <= endYear; y++) {
                 const yearLabel = document.createElement('div');
-                yearLabel.className = "text-xs font-bold text-gray-500 mt-4 mb-1 px-1 border-b border-gray-700 pb-1";
+                yearLabel.className = "text-xs font-bold text-gray-500 mt-2 mb-1 px-1 sticky top-0 bg-gray-800 z-10 py-1"; 
                 yearLabel.innerText = y;
                 list.appendChild(yearLabel);
-                
+
                 const grid = document.createElement('div');
-                grid.className = "grid grid-cols-4 gap-2";
+                grid.className = "grid grid-cols-4 gap-2 mb-4";
                 
                 for(let m=0; m<12; m++) {
-                     const btn = document.createElement('button');
-                     const isViewedMonth = (m === appState.currentDate.getMonth() && y === appState.currentDate.getFullYear());
-                     let baseClass = "text-xs py-2 rounded text-center transition ";
-                     if (isViewedMonth) baseClass += "bg-blue-600 text-white font-bold shadow";
-                     else baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
-                     
-                     btn.className = baseClass;
-                     const d = new Date(y, m, 1);
-                     btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
-                     btn.onclick = () => jumpToMonth(y, m);
-                     grid.appendChild(btn);
+                    const btn = document.createElement('button');
+                    const isRealCurrent = (y === new Date().getFullYear() && m === new Date().getMonth());
+                    const isViewed = (y === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                    
+                    let baseClass = "text-xs py-2 rounded text-center transition ";
+                    
+                    if (isViewed) {
+                        baseClass += "bg-blue-600 text-white font-bold shadow ring-1 ring-blue-400";
+                    } else if (isRealCurrent) {
+                        baseClass += "bg-gray-700 text-blue-400 border border-blue-900/50 font-bold";
+                    } else {
+                        baseClass += "bg-gray-800 text-gray-400 hover:bg-gray-700 hover:text-white";
+                    }
+                    
+                    btn.className = baseClass;
+                    const d = new Date(y, m, 1);
+                    btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
+                    btn.onclick = () => jumpToMonth(y, m);
+                    grid.appendChild(btn);
                 }
                 list.appendChild(grid);
             }
