@@ -36,7 +36,9 @@
         
         /* Special Backgrounds */
         .bg-weekend { background-color: hsla(220, 25%, 67.5%, 0.4); } 
+        /* Holidays: Color K - Darker Deep Blue */
         .bg-holiday { background-color: hsl(220, 45%, 27%) !important; border-color: hsl(220, 45%, 37%) !important; }
+        /* Vacation: Color K - Deep Forest Green */
         .bg-vacation { background-color: hsl(150, 30%, 17.5%) !important; border-color: hsl(150, 30%, 27.5%) !important; }
 
         /* Type Button Styling */
@@ -103,7 +105,6 @@
     </nav>
 
     <!-- Layout -->
-    <!-- LAYOUT FIX: Use h-[calc(100vh-4rem)] and mt-16 to force exact height -->
     <div class="flex h-[calc(100vh-4rem)] mt-16 relative overflow-hidden">
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
         
@@ -114,11 +115,12 @@
             </div>
             
             <!-- SCROLLABLE MENU AREA -->
-            <div class="flex-1 overflow-y-auto p-3 min-h-0" id="month-list">
-                <!-- 3 Years of links injected here -->
-            </div>
+            <div class="flex-1 overflow-y-auto p-3 min-h-0" id="month-list"></div>
 
             <div class="p-4 border-t border-gray-700 shrink-0">
+                 <!-- NEW LINKS ADDED HERE -->
+                 <a href="movies.html" class="block w-full text-left py-2 px-3 rounded-lg text-media hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Movies Log</a>
+                 <a href="sports.html" class="block w-full text-left py-2 px-3 rounded-lg text-sports hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Season Tracker</a>
                  <a href="recipes.html" class="block w-full text-left py-2 px-3 rounded-lg text-gray-400 hover:bg-gray-700 hover:text-white text-sm mb-1">View Recipes</a>
                 <button onclick="openSportsManager()" class="block w-full text-left py-2 px-3 rounded-lg text-blue-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Manage Sports</button>
                 <button onclick="copyAnnualsToNextYear()" class="block w-full text-left py-2 px-3 rounded-lg text-purple-400 hover:bg-gray-700 hover:text-white text-sm mb-1 transition-colors">Copy Annuals to Next Year</button>
@@ -204,13 +206,11 @@
 
     <!-- General Item Editor Modal -->
     <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
-        <!-- SCROLLABLE MODAL FIX: max-h-[85vh] -->
         <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700 max-h-[85vh]">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center shrink-0">
                 <h3 class="text-xl font-bold text-white" id="item-modal-title">Add Item</h3>
                 <button onclick="closeItemModal()" class="text-gray-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
-            <!-- SCROLLABLE CONTENT AREA -->
             <div class="p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
                 <input type="hidden" id="item-category"><input type="hidden" id="item-id">
                 
@@ -223,7 +223,7 @@
                     </div>
                 </div>
 
-                <!-- TYPE SELECTOR BUTTONS -->
+                <!-- TYPE SELECTOR REPLACED WITH BUTTONS -->
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
                     <input type="hidden" id="item-type">
@@ -335,7 +335,7 @@
     <script>
         // --- STATE & CONSTANTS ---
         const STORAGE_KEY = 'bullet_cal_data_v2'; 
-        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.5.0", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
+        const DEFAULT_DATA = { "meta": { "year": 2025, "version": "1.4.3", "owner": "Stephens" }, "leagues": [], "teams": [], "items": [] };
         let appState = { currentDate: new Date(), view: 'day', data: { meta: DEFAULT_DATA.meta, leagues:[], teams:[], items: [] } };
         let hoverTimeout;
 
@@ -1014,6 +1014,7 @@
             saveData(); closeNutritionModal(); updateUI();
         }
 
+        // --- HEALTH CARD HELPERS ---
         function getWeeklyDeficit() {
             if (!appState || !appState.currentDate) return { deficit: 0, days: 0 };
             const start = getStartOfWeek(appState.currentDate); 
