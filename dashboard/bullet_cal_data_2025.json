@@ -3110,6 +3110,24 @@
           "carbs": 12,
           "fat": 10,
           "fiber": 4
+        },
+        {
+          "mealType": "dinner",
+          "name": "Homemade Burger",
+          "calories": 870,
+          "protein": 47,
+          "carbs": 41,
+          "fat": 56,
+          "fiber": 4
+        },
+        {
+          "mealType": "dinner",
+          "name": "Homemade GF Noodles & Alfredo w/ Chicken",
+          "calories": 800,
+          "protein": 55,
+          "carbs": 20,
+          "fat": 55,
+          "fiber": 2
         }
       ],
       "workouts": []
@@ -3149,7 +3167,34 @@
       "description": "",
       "id": "habit_1764655200000_rm60g",
       "date": "2025-12-02",
-      "streakCount": 1505
+      "streakCount": 1505,
+      "status": "completed"
+    },
+    {
+      "id": "health_1764686379171",
+      "date": "2025-12-02",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "4 eggs, 2 Bacon, 1/2 cup salsa",
+          "calories": 405,
+          "protein": 31,
+          "carbs": 7,
+          "fat": 28,
+          "fiber": 1
+        }
+      ],
+      "workouts": []
     },
     {
       "type": "habit",
