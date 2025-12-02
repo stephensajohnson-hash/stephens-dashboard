@@ -1,0 +1,76 @@
+{
+  "meta": { "appVersion": "1.1", "lastModified": "2025-12-02T14:45:00" },
+  "periods": [
+    {
+      "id": "2025-12",
+      "displayName": "December Budget",
+      "startDate": "2025-11-21",
+      "initialBankBalance": 3500.00,
+
+      "paycheckCycles": [
+        {
+          "cycleId": 1,
+          "label": "Paycheck Set 1",
+          "budgetItems": [
+            {
+              "id": "b1",
+              "name": "Groceries",
+              "plannedAmount": 400.00,
+              "carriedOver": 25.50, 
+              "isFixedBill": false
+            },
+            {
+              "id": "b2",
+              "name": "Personal Care / Haircuts",
+              "plannedAmount": 50.00,
+              "carriedOver": 0.00,
+              "isFixedBill": false
+            }
+          ]
+        },
+        {
+          "cycleId": 2,
+          "label": "Paycheck Set 2",
+          "budgetItems": [] 
+        }
+      ],
+
+      "ledger": [
+        {
+          "id": "t1",
+          "date": "2025-11-22",
+          "description": "ATM Withdrawal",
+          "amount": -100.00,
+          "type": "expense",
+          "cleared": true,
+          "linkedBudgetItemId": null, 
+          "splits": [
+            {
+              "linkedBudgetItemId": "b2",
+              "amount": -40.00,
+              "note": "Haircut cash"
+            },
+            {
+              "linkedBudgetItemId": "b1",
+              "amount": -60.00,
+              "note": "Cash for Farmer's Market"
+            }
+          ]
+        }
+      ],
+
+      "transfers": [
+        {
+          "id": "tr1",
+          "date": "2025-11-25",
+          "fromBudgetId": "b1",
+          "toBudgetId": "b2",
+          "amount": 20.00,
+          "note": "Needed extra for fancy haircut"
+        }
+      ],
+
+      "watchList": [] 
+    }
+  ]
+}
