@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Tracker</title>
+    <style>
+        :root {
+            --bg-color: #f4f4f9;
+            --panel-bg: #ffffff;
+            --border-color: #ddd;
+            --text-main: #333;
+            --text-muted: #888;
+            --accent-green: #2ecc71;
+            --accent-red: #e74c3c;
+            --header-bg: #2c3e50;
+            --header-text: #fff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+
+        /* Main Grid Layout */
+        .container {
+            display: grid;
+            grid-template-columns: 65% 33%; /* Left side wider for ledger details */
+            gap: 2%;
+            height: 100%;
+        }
+
+        /* Generic Panel Styles */
+        .panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        .panel-header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+            padding: 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0;
+        }
+
+        /* --- LEFT SIDE: LEDGER --- */
+        table.ledger-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .ledger-table th {
+            background: #eee;
+            text-align: left;
+            padding: 10px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .ledger-table td {
+            padding: 10px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .amount-col { text-align: right; font-family: monospace; }
+        .balance-col { text-align: right; font-weight: bold; font-family: monospace; }
+        
+        .negative { color: var(--accent-red); }
+        .positive { color: var(--accent-green); }
+
+        /* Split Transaction Styling */
+        .split-row {
+            background-color: #fafafa;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+        .split-indicator {
+            background: #eee;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            cursor: help;
+        }
+
+        /* --- RIGHT SIDE: BUDGET ENVELOPES --- */
+        .cycle-section {
+            margin-bottom: 20px;
+            border-bottom: 4px solid var(--border-color); /* The visual divider you mentioned */
+        }
+
+        .cycle-header {
+            background: #e0e0e0;
+            padding: 8px 15px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .budget-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            align-items: center;
+        }
+
+        .budget-name { font-weight: 500; }
+        .budget-math { 
+            text-align: right; 
+            font-size: 0.85rem; 
+            color: var(--text-muted);
+        }
+        .budget-remaining {
+            font-family: monospace;
+            font-weight: bold;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+        
+        .watchlist-section {
+            background-color: #fff8e1; /* Yellow tint for "Watch/ToDo" */
+            padding: 10px;
+        }
+        
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <div class="panel" id="ledger-panel">
+        <div class="panel-header">
+            <span>Transaction Ledger</span>
+            <span id="current-balance-display">Bal: $0.00</span>
+        </div>
+        <div class="scroll-area">
+            <table class="ledger-table">
+                <thead>
+                    <tr>
+                        <th width="15%">Date</th>
+                        <th width="45%">Description</th>
+                        <th width="20%" class="amount-col">Amount</th>
+                        <th width="20%" class="balance-col">Balance</th>
+                    </tr>
+                </thead>
+                <tbody id="ledger-body">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="panel" id="budget-panel">
+        <div class="panel-header">
+            <span>Budget Overview</span>
+        </div>
+        <div class="scroll-area" id="budget-container">
+            </div>
+        
+        <div class="watchlist-section" id="watchlist-container">
+            <strong>Expected Expenses (Watchlist)</strong>
+            <ul id="watchlist-items" style="padding-left: 20px; margin: 5px 0;"></ul>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- 1. THE DATA (budget.json structure) ---
+    const budgetData = {
+        "periods": [
+            {
+                "id": "2025-12",
+                "displayName": "December Budget",
+                "initialBankBalance": 3500.00,
+                "paycheckCycles": [
+                    {
+                        "cycleId": 1,
+                        "label": "Paycheck Set 1 (Nov 21)",
+                        "budgetItems": [
+                            { "id": "b1", "name": "Groceries", "plannedAmount": 400.00, "carriedOver": 25.50 },
+                            { "id": "b2", "name": "Haircuts / Personal", "plannedAmount": 50.00, "carriedOver": 0.00 },
+                            { "id": "b3", "name": "Mortgage", "plannedAmount": 2400.00, "carriedOver": 0.00 }
+                        ]
+                    },
+                    {
+                        "cycleId": 2,
+                        "label": "Paycheck Set 2 (Dec 05)",
+                        "budgetItems": [
+                            { "id": "b4", "name": "Electric Bill", "plannedAmount": 180.00, "carriedOver": 0.00 }
+                        ]
+                    }
+                ],
+                "ledger": [
+                    {
+                        "id": "t1", "date": "2025-11-21", "description": "Paycheck - Stephens", 
+                        "amount": 3500.00, "type": "income", "linkedBudgetItemId": null
+                    },
+                    {
+                        "id": "t2", "date": "2025-11-22", "description": "ATM Withdrawal (Split)", 
+                        "amount": -100.00, "type": "expense", 
+                        "splits": [
+                            { "linkedBudgetItemId": "b2", "amount": -40.00, "note": "Haircut" },
+                            { "linkedBudgetItemId": "b1", "amount": -60.00, "note": "Cash for groceries" }
+                        ]
+                    },
+                    {
+                        "id": "t3", "date": "2025-11-24", "description": "Kroger", 
+                        "amount": -120.50, "type": "expense", "linkedBudgetItemId": "b1"
+                    }
+                ],
+                "transfers": [
+                    { "fromBudgetId": "b1", "toBudgetId": "b2", "amount": 10.00 }
+                ],
+                "watchList": [
+                    { "description": "Car Insurance", "amount": 120.00, "dueDate": "2025-12-04" }
+                ]
+            }
+        ]
+    };
+
+    // --- 2. LOGIC & CALCULATIONS ---
+    
+    // Helper to format currency
+    const formatMoney = (amount) => {
+        return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
+    };
+
+    // Helper: Calculate actual spent per budget category
+    function calculateBudgetUsage(periodData) {
+        const usage = {}; // { 'b1': 180.50, 'b2': 40.00 }
+
+        // Process Ledger
+        periodData.ledger.forEach(txn => {
+            if (txn.splits) {
+                txn.splits.forEach(split => {
+                    // Note: amounts are negative in ledger, we want positive usage
+                    const val = Math.abs(split.amount);
+                    usage[split.linkedBudgetItemId] = (usage[split.linkedBudgetItemId] || 0) + val;
+                });
+            } else if (txn.linkedBudgetItemId) {
+                const val = Math.abs(txn.amount);
+                usage[txn.linkedBudgetItemId] = (usage[txn.linkedBudgetItemId] || 0) + val;
+            }
+        });
+
+        // Process Transfers (Adjust usage essentially)
+        // If I transfer FROM b1 TO b2, b1 has less available, b2 has more.
+        // We can handle this by adjusting the 'planned' or 'spent'. 
+        // Let's create a separate 'transferAdjustment' map.
+        const adjustments = {}; 
+        if (periodData.transfers) {
+            periodData.transfers.forEach(tr => {
+                adjustments[tr.fromBudgetId] = (adjustments[tr.fromBudgetId] || 0) - tr.amount;
+                adjustments[tr.toBudgetId] = (adjustments[tr.toBudgetId] || 0) + tr.amount;
+            });
+        }
+
+        return { usage, adjustments };
+    }
+
+    // --- 3. RENDERING ---
+
+    function renderApp() {
+        const currentPeriod = budgetData.periods[0]; // Just grabbing the first one for demo
+        const { usage, adjustments } = calculateBudgetUsage(currentPeriod);
+
+        // A. Render Ledger
+        const ledgerBody = document.getElementById('ledger-body');
+        let runningBalance = currentPeriod.initialBankBalance;
+        
+        // Sort ledger by date (simple string sort works for ISO dates)
+        const sortedLedger = currentPeriod.ledger.sort((a,b) => a.date.localeCompare(b.date));
+
+        sortedLedger.forEach(txn => {
+            runningBalance += txn.amount;
+            
+            const tr = document.createElement('tr');
+            
+            // Amount styling
+            const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
+            const splitBadge = txn.splits ? '<span class="split-indicator">Split</span>' : '';
+
+            tr.innerHTML = `
+                <td>${txn.date}</td>
+                <td>${txn.description} ${splitBadge}</td>
+                <td class="amount-col ${amtClass}">${formatMoney(txn.amount)}</td>
+                <td class="balance-col">${formatMoney(runningBalance)}</td>
+            `;
+            ledgerBody.appendChild(tr);
+
+            // If split, show details row (optional, simplified here)
+            if(txn.splits) {
+                const splitRow = document.createElement('tr');
+                splitRow.className = 'split-row';
+                let splitText = txn.splits.map(s => `${s.note}: ${formatMoney(s.amount)}`).join(' | ');
+                splitRow.innerHTML = `<td colspan="4" style="padding-left: 20px;">↳ ${splitText}</td>`;
+                ledgerBody.appendChild(splitRow);
+            }
+        });
+
+        // Update Header Balance
+        document.getElementById('current-balance-display').textContent = `Bal: ${formatMoney(runningBalance)}`;
+
+        // B. Render Budgets (Right Side)
+        const budgetContainer = document.getElementById('budget-container');
+        
+        currentPeriod.paycheckCycles.forEach(cycle => {
+            const section = document.createElement('div');
+            section.className = 'cycle-section';
+
+            // Cycle Header
+            section.innerHTML = `<div class="cycle-header">${cycle.label}</div>`;
+
+            // Items
+            cycle.budgetItems.forEach(item => {
+                const spent = usage[item.id] || 0;
+                const transferAdj = adjustments[item.id] || 0;
+                const totalAvailable = item.plannedAmount + item.carriedOver + transferAdj;
+                const remaining = totalAvailable - spent;
+
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'budget-item';
+                itemDiv.innerHTML = `
+                    <div class="budget-name">${item.name}</div>
+                    <div style="text-align:right;">
+                        <div class="budget-remaining ${remaining < 0 ? 'negative' : ''}">${formatMoney(remaining)}</div>
+                        <div class="budget-math">of ${formatMoney(totalAvailable)}</div>
+                    </div>
+                `;
+                section.appendChild(itemDiv);
+            });
+
+            budgetContainer.appendChild(section);
+        });
+
+        // C. Render Watchlist
+        const watchlistContainer = document.getElementById('watchlist-items');
+        currentPeriod.watchList.forEach(w => {
+            const li = document.createElement('li');
+            li.textContent = `${w.description} - ${formatMoney(w.amount)} (Due: ${w.dueDate})`;
+            watchlistContainer.appendChild(li);
+        });
+    }
+
+    // Run on load
+    renderApp();
+
+</script>
+</body>
+</html>
