@@ -478,8 +478,30 @@
       "id": "g_1764690679262",
       "name": "Stocks",
       "color": "blue",
-      "isStatic": false,
-      "links": []
+      "isStatic": true,
+      "links": [
+        {
+          "id": "l_1764690919702",
+          "groupId": "g_1764690679262",
+          "name": "TSLA",
+          "url": "https://www.google.com/finance/beta/quote/TSLA:NASDAQ",
+          "img": "https://www.logoai.com/uploads/articles/2024/03/05/tesla-logo-white-1709619543.jpg"
+        },
+        {
+          "id": "l_1764691022930",
+          "groupId": "g_1764690679262",
+          "name": "SCHG",
+          "url": "https://www.google.com/search?q=schg&rlz=1C1GCEA_enUS1182US1182&oq=schg&gs_lcrp=EgZjaHJvbWUyEwgAEEUYJxg5GEYY-gEYgAQYigUyDQgBEAAYgwEYsQMYgAQyCggCEAAYsQMYgAQyBwgDEAAYgAQyBwgEEAAYgAQyBwgFEAAYgAQyBwgGEAAYgAQyBggHEEUYPNIBCDIyODNqMGoxqAIAsAIA&sourceid=chrome&ie=UTF-8",
+          "img": "https://www.clker.com/cliparts/u/0/B/2/R/x/growth-chart-symbol-md.png"
+        },
+        {
+          "id": "l_1764691191792",
+          "groupId": "g_1764690679262",
+          "name": "SCHD",
+          "url": "https://www.google.com/search?q=schd&sca_esv=65d22011d5166a01&rlz=1C1GCEA_enUS1182US1182&sxsrf=AE3TifMDgABIFbPCcCTIPQ0jfWmzb-9Ojw%3A1764690942840&ei=_gsvaYaGM_GzmtkPxK_n4QY&ved=0ahUKEwiG_aSGop-RAxXxmSYFHcTXOWwQ4dUDCBE&uact=5&oq=schd&gs_lp=Egxnd3Mtd2l6LXNlcnAiBHNjaGQyEBAAGIAEGLEDGEMYgwEYigUyCxAAGIAEGLEDGIMBMhAQABiABBixAxhDGIMBGIoFMgoQABiABBhDGIoFMgoQABiABBhDGIoFMggQABiABBixAzIIEAAYgAQYsQMyCBAAGIAEGLEDMgsQABiABBixAxiDATIKEAAYgAQYQxiKBUj_ClCzBVifB3ABeAGQAQCYAUugAZMBqgEBMrgBA8gBAPgBAZgCA6ACoAHCAgoQABiwAxjWBBhHwgINEAAYgAQYsAMYQxiKBcICChAjGIAEGCcYigXCAgoQIxjwBRgnGMkCwgIREC4YgAQYsQMY0QMYgwEYxwGYAwCIBgGQBgqSBwEzoAe3DrIHATK4B5sBwgcFMC4xLjLIBwk&sclient=gws-wiz-serp",
+          "img": "https://smartmoneymoves.id/wp-content/uploads/2025/07/DIVIDEND.png"
+        }
+      ]
     },
     {
       "id": "g_1763789013710",
