@@ -36,15 +36,12 @@
 
         /* --- BUTTONS --- */
         .btn {
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            border: none; padding: 6px 12px; border-radius: 4px;
+            cursor: pointer; font-size: 0.85rem; transition: background 0.2s;
         }
         .btn-primary { background: var(--accent-green); color: white; }
         .btn-primary:hover { background: #27ae60; }
+        .btn-secondary { background: #95a5a6; color: white; }
         .btn-sm { padding: 2px 6px; font-size: 0.75rem; margin-left: 5px; }
         .btn-icon { background: transparent; color: #7f8c8d; }
         .btn-icon:hover { color: #2c3e50; background: #eee; }
@@ -54,50 +51,29 @@
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            display: flex; flex-direction: column;
+            overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
 
         .panel-header {
-            background-color: var(--header-bg);
-            color: var(--header-text);
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background-color: var(--header-bg); color: var(--header-text);
+            padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
         }
 
         .scroll-area { flex: 1; overflow-y: auto; }
 
         /* --- LEDGER TABLE --- */
         table.ledger-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.9rem;
-            table-layout: fixed;
+            width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed;
         }
-
         .ledger-table th {
-            background: #eee;
-            text-align: left;
-            padding: 12px 10px;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            border-bottom: 2px solid #ccc;
+            background: #eee; text-align: left; padding: 12px 10px;
+            position: sticky; top: 0; z-index: 10; border-bottom: 2px solid #ccc;
         }
-
         .ledger-table td {
-            padding: 8px 10px;
-            border-bottom: 1px solid #f0f0f0;
-            vertical-align: middle;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            padding: 8px 10px; border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        
         .ledger-row:hover { background-color: #f8f9fa; }
 
         .col-date { width: 12%; }
@@ -111,12 +87,8 @@
         .positive { color: var(--accent-green); font-weight: bold; }
         
         .ledger-icon {
-            width: 20px; height: 20px;
-            border-radius: 50%;
-            vertical-align: middle;
-            margin-right: 8px;
-            object-fit: cover;
-            border: 1px solid #ddd;
+            width: 20px; height: 20px; border-radius: 50%;
+            vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd;
         }
 
         /* --- BUDGET --- */
@@ -126,29 +98,17 @@
             font-weight: bold; font-size: 0.9rem; color: #444;
             display: flex; justify-content: space-between;
         }
-        
-        .budget-item {
-            border-bottom: 1px solid #f0f0f0;
-            cursor: pointer;
-        }
+        .budget-item { border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .budget-item:hover { background-color: var(--hover-bg); }
 
         .budget-summary {
-            padding: 10px 15px;
-            display: grid;
-            grid-template-columns: auto 1fr auto auto; /* Added generic 'auto' for edit button */
-            align-items: center;
-            gap: 10px;
+            padding: 10px 15px; display: grid;
+            grid-template-columns: auto 1fr auto auto; align-items: center; gap: 10px;
         }
-
         .budget-icon {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #eee;
-            background: #fff;
+            width: 32px; height: 32px; border-radius: 50%;
+            object-fit: cover; border: 2px solid #eee; background: #fff;
         }
-
         .budget-bar-bg {
             height: 4px; width: 100%; background: #eee;
             margin-top: 4px; border-radius: 2px; overflow: hidden;
@@ -163,37 +123,41 @@
             border-top: 1px dashed #eee;
         }
         .budget-details.active { display: block; }
-        .detail-row { display: flex; justify-content: space-between; padding: 3px 0; color: #666; }
 
-        /* --- MODAL --- */
+        /* --- MODALS --- */
         dialog {
-            border: none;
-            border-radius: 8px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-            padding: 0;
-            width: 400px;
+            border: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            padding: 0; width: 450px;
         }
         dialog::backdrop { background: rgba(0,0,0,0.5); }
         
         .modal-header {
-            background: var(--header-bg); color: #fff;
-            padding: 15px; font-weight: bold;
+            background: var(--header-bg); color: #fff; padding: 15px; font-weight: bold;
             display: flex; justify-content: space-between;
         }
-        .modal-body { padding: 20px; }
+        .modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; font-weight: 500; }
         .form-group input, .form-group select {
-            width: 100%; padding: 8px;
-            border: 1px solid #ccc; border-radius: 4px;
-            box-sizing: border-box;
+            width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;
         }
         .modal-footer {
-            padding: 15px; background: #f9f9f9; text-align: right;
-            border-top: 1px solid #eee;
+            padding: 15px; background: #f9f9f9; text-align: right; border-top: 1px solid #eee;
         }
 
+        /* Settings Specifics */
+        .income-row { display: flex; gap: 5px; margin-bottom: 5px; align-items: center; }
+        .income-row input { flex: 1; }
+        .income-preview { width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ddd; object-fit: cover; }
+
+        /* Split Specifics */
+        #split-container { background: #f8f9fa; padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        .split-line { display: flex; gap: 5px; margin-bottom: 5px; }
+        .split-line select { flex: 2; }
+        .split-line input { flex: 1; }
+        .split-totals { font-weight: bold; text-align: right; font-size: 0.9rem; margin-top: 5px; }
+        .split-err { color: red; font-size: 0.8rem; }
     </style>
 </head>
 <body>
@@ -205,6 +169,7 @@
             <div>
                 <span style="font-size:1.1rem; font-weight:bold;">Ledger</span>
                 <span id="ledger-header-info" style="font-weight:normal; font-size:0.9rem; margin-left:15px; opacity:0.9;"></span>
+                <button class="btn btn-sm btn-icon" onclick="openSettingsModal()" title="Settings">⚙️</button>
             </div>
             <button class="btn btn-primary" onclick="openTxModal()">+ Add Txn</button>
         </div>
@@ -231,11 +196,33 @@
         <div class="scroll-area" id="budget-container"></div>
         
         <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
-             <small style="color:#888; text-transform:uppercase; font-weight:bold;">Configured Income Sources</small>
+             <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
              <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
         </div>
     </div>
 </div>
+
+<dialog id="settings-modal">
+    <div class="modal-header">
+        <span>Settings</span>
+        <span style="cursor:pointer;" onclick="closeSettingsModal()">✕</span>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Starting Balance</label>
+            <input type="number" step="0.01" id="set-start-bal">
+        </div>
+        <hr>
+        <div class="form-group">
+            <label>Income Sources</label>
+            <div id="income-rows-container"></div>
+            <button class="btn btn-sm btn-secondary" style="margin-top:5px;" onclick="addIncomeRow()">+ Add Source</button>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveSettings()">Save Configuration</button>
+    </div>
+</dialog>
 
 <dialog id="tx-modal">
     <div class="modal-header">
@@ -257,7 +244,7 @@
         </div>
         <div class="form-group">
             <label>Amount</label>
-            <input type="number" step="0.01" id="tx-amount">
+            <input type="number" step="0.01" id="tx-amount" oninput="updateSplitMath()">
         </div>
         <div class="form-group">
             <label>Description</label>
@@ -265,9 +252,23 @@
         </div>
         
         <div class="form-group" id="group-category">
-            <label>Budget Category</label>
+            <label>
+                Budget Category 
+                <span style="font-size:0.8rem; color:#2980b9; cursor:pointer; float:right;" onclick="toggleSplitMode()">Need to Split?</span>
+            </label>
             <select id="tx-category">
                 </select>
+        </div>
+
+        <div class="form-group" id="group-split" style="display:none;">
+            <label>Split Details <span style="font-size:0.8rem; color:red; cursor:pointer; float:right;" onclick="toggleSplitMode()">Cancel Split</span></label>
+            <div id="split-container">
+                <div id="split-lines"></div>
+                <button class="btn btn-sm btn-secondary" onclick="addSplitLine()">+ Add Split</button>
+                <div class="split-totals">
+                    Total: <span id="split-total-disp">0.00</span> / Remaining: <span id="split-rem-disp" class="split-err">0.00</span>
+                </div>
+            </div>
         </div>
 
         <div class="form-group" id="group-income-source" style="display:none;">
@@ -354,7 +355,7 @@
 
     // --- 2. UTILS ---
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-    const getPeriod = () => appData.periods[0]; // Simplification for demo
+    const getPeriod = () => appData.periods[0]; 
 
     // --- 3. RENDERING ---
     function renderApp() {
@@ -370,7 +371,7 @@
             }
         });
 
-        // B. Image Maps for easy lookup
+        // B. Image Maps
         const imgMap = {};
         period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
@@ -380,7 +381,6 @@
         tbody.innerHTML = '';
         let balance = period.initialBankBalance;
         
-        // Sort
         const sorted = [...period.ledger].sort((a,b) => a.date.localeCompare(b.date));
 
         sorted.forEach(txn => {
@@ -388,11 +388,10 @@
             const tr = document.createElement('tr');
             tr.className = 'ledger-row';
             
-            // Icon Logic
             let iconUrl = '';
             if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
             else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
-            else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; // Generic Split
+            else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
             
             const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:28px;"></span>';
             const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
@@ -417,7 +416,6 @@
             const section = document.createElement('div');
             section.className = 'cycle-section';
             
-            // Header with Add Button
             section.innerHTML = `
                 <div class="cycle-header">
                     <span>${cycle.label}</span>
@@ -428,7 +426,7 @@
                 const spent = usage[item.id] || 0;
                 const total = item.plannedAmount + item.carriedOver;
                 const remaining = total - spent;
-                const percent = Math.min(100, (spent/total)*100);
+                const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
                 
                 let color = 'budget-bar-fill';
                 if(percent > 90) color += ' warning';
@@ -460,67 +458,170 @@
             budgetContainer.appendChild(section);
         });
 
-        // E. Render Income Sources List (Visual Reference)
+        // E. Render Income Sources List
         const incContainer = document.getElementById('income-sources-list');
         incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
     }
 
+    // --- 4. SETTINGS MODAL ---
+    function openSettingsModal() {
+        const period = getPeriod();
+        document.getElementById('set-start-bal').value = period.initialBankBalance;
+        
+        const container = document.getElementById('income-rows-container');
+        container.innerHTML = '';
+        period.incomeSources.forEach(inc => {
+            renderIncomeRow(inc.id, inc.name, inc.image);
+        });
 
-    // --- 4. MODAL LOGIC (TRANSACTIONS) ---
+        document.getElementById('settings-modal').showModal();
+    }
+    
+    function closeSettingsModal() { document.getElementById('settings-modal').close(); }
+
+    function renderIncomeRow(id, name, img) {
+        const container = document.getElementById('income-rows-container');
+        const div = document.createElement('div');
+        div.className = 'income-row';
+        div.innerHTML = `
+            <img src="${img}" class="income-preview">
+            <input type="text" placeholder="Name" value="${name}" class="inc-name" data-id="${id}">
+            <input type="text" placeholder="Image URL" value="${img}" class="inc-img">
+            <button class="btn btn-sm btn-icon" onclick="this.parentElement.remove()">✕</button>
+        `;
+        container.appendChild(div);
+    }
+
+    function addIncomeRow() { renderIncomeRow('inc'+Date.now(), 'New Source', 'https://placehold.co/40x40/gray/white?text=$'); }
+
+    function saveSettings() {
+        const period = getPeriod();
+        period.initialBankBalance = parseFloat(document.getElementById('set-start-bal').value);
+        
+        const newSources = [];
+        document.querySelectorAll('.income-row').forEach(row => {
+            newSources.push({
+                id: row.querySelector('.inc-name').dataset.id,
+                name: row.querySelector('.inc-name').value,
+                image: row.querySelector('.inc-img').value
+            });
+        });
+        period.incomeSources = newSources;
+        closeSettingsModal();
+        renderApp();
+    }
+
+
+    // --- 5. TRANSACTION MODAL (WITH SPLITS) ---
+    let isSplitMode = false;
     
     function toggleTxType() {
         const type = document.getElementById('tx-type').value;
         const catGroup = document.getElementById('group-category');
         const incGroup = document.getElementById('group-income-source');
+        const splitGroup = document.getElementById('group-split');
         
         if (type === 'expense') {
-            catGroup.style.display = 'block';
+            catGroup.style.display = isSplitMode ? 'none' : 'block';
+            splitGroup.style.display = isSplitMode ? 'block' : 'none';
             incGroup.style.display = 'none';
         } else {
             catGroup.style.display = 'none';
+            splitGroup.style.display = 'none';
             incGroup.style.display = 'block';
+            isSplitMode = false; // Cant split income in this version
         }
+    }
+
+    function toggleSplitMode() {
+        isSplitMode = !isSplitMode;
+        if(isSplitMode) {
+            // init splits if empty
+            const lines = document.getElementById('split-lines');
+            if(lines.children.length === 0) {
+                addSplitLine(); 
+                addSplitLine();
+            }
+        }
+        toggleTxType();
+        updateSplitMath();
+    }
+
+    function addSplitLine(budgetId = '', amount = '', note = '') {
+        const lines = document.getElementById('split-lines');
+        const period = getPeriod();
+        
+        // Build Select Options
+        let opts = '<option value="">-- Select --</option>';
+        period.paycheckCycles.forEach(c => {
+            c.budgetItems.forEach(b => {
+                const sel = b.id === budgetId ? 'selected' : '';
+                opts += `<option value="${b.id}" ${sel}>${b.name}</option>`;
+            });
+        });
+
+        const div = document.createElement('div');
+        div.className = 'split-line';
+        div.innerHTML = `
+            <select class="split-cat">${opts}</select>
+            <input type="number" step="0.01" class="split-amt" placeholder="0.00" value="${amount}" oninput="updateSplitMath()">
+            <input type="text" class="split-note" placeholder="Note" value="${note}">
+            <button class="btn btn-sm btn-icon" onclick="this.parentElement.remove(); updateSplitMath()">✕</button>
+        `;
+        lines.appendChild(div);
+    }
+
+    function updateSplitMath() {
+        if(!isSplitMode) return;
+        const totalTxAmt = parseFloat(document.getElementById('tx-amount').value) || 0;
+        let runningTotal = 0;
+        document.querySelectorAll('.split-amt').forEach(inp => runningTotal += parseFloat(inp.value) || 0);
+        
+        const rem = totalTxAmt - runningTotal;
+        document.getElementById('split-total-disp').innerText = runningTotal.toFixed(2);
+        const remSpan = document.getElementById('split-rem-disp');
+        remSpan.innerText = rem.toFixed(2);
+        
+        if(Math.abs(rem) < 0.01) { remSpan.style.color = 'green'; remSpan.innerText = "Balanced"; }
+        else { remSpan.style.color = 'red'; }
     }
 
     function openTxModal(txId = null) {
         const period = getPeriod();
         const modal = document.getElementById('tx-modal');
         const isEdit = !!txId;
+        isSplitMode = false;
         
         // Populate Selects
         const catSelect = document.getElementById('tx-category');
         catSelect.innerHTML = '<option value="">-- Select Budget --</option>';
-        period.paycheckCycles.forEach(c => {
-            c.budgetItems.forEach(b => {
-                const opt = document.createElement('option');
-                opt.value = b.id;
-                opt.textContent = `${b.name} (${c.label})`;
-                catSelect.appendChild(opt);
-            });
-        });
+        period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => {
+            catSelect.innerHTML += `<option value="${b.id}">${b.name} (${c.label})</option>`;
+        }));
 
         const incSelect = document.getElementById('tx-income-source');
         incSelect.innerHTML = '<option value="">-- Select Source --</option>';
-        period.incomeSources.forEach(i => {
-            const opt = document.createElement('option');
-            opt.value = i.id;
-            opt.textContent = i.name;
-            incSelect.appendChild(opt);
-        });
+        period.incomeSources.forEach(i => incSelect.innerHTML += `<option value="${i.id}">${i.name}</option>`);
 
-        // Set Values
+        // Clear Splits
+        document.getElementById('split-lines').innerHTML = '';
+
         if(isEdit) {
             const tx = period.ledger.find(t => t.id === txId);
             document.getElementById('tx-modal-title').textContent = "Edit Transaction";
             document.getElementById('tx-id').value = tx.id;
             document.getElementById('tx-date').value = tx.date;
-            document.getElementById('tx-amount').value = Math.abs(tx.amount); // Show positive in form
+            document.getElementById('tx-amount').value = Math.abs(tx.amount);
             document.getElementById('tx-desc').value = tx.description;
             document.getElementById('tx-type').value = tx.type;
             
-            // Logic for linking
-            if(tx.type === 'expense') catSelect.value = tx.linkedBudgetItemId || '';
-            if(tx.type === 'income') incSelect.value = tx.sourceId || '';
+            if(tx.splits) {
+                isSplitMode = true;
+                tx.splits.forEach(s => addSplitLine(s.linkedBudgetItemId, Math.abs(s.amount), s.note));
+            } else {
+                if(tx.type === 'expense') catSelect.value = tx.linkedBudgetItemId || '';
+                if(tx.type === 'income') incSelect.value = tx.sourceId || '';
+            }
 
         } else {
             document.getElementById('tx-modal-title').textContent = "New Transaction";
@@ -531,6 +632,7 @@
         }
         
         toggleTxType();
+        updateSplitMath();
         modal.showModal();
     }
 
@@ -552,13 +654,25 @@
         };
 
         if(type === 'expense') {
-            newTx.linkedBudgetItemId = document.getElementById('tx-category').value;
+            if(isSplitMode) {
+                newTx.splits = [];
+                document.querySelectorAll('.split-line').forEach(line => {
+                    newTx.splits.push({
+                        linkedBudgetItemId: line.querySelector('.split-cat').value,
+                        amount: -Math.abs(parseFloat(line.querySelector('.split-amt').value)),
+                        note: line.querySelector('.split-note').value
+                    });
+                });
+                newTx.linkedBudgetItemId = null;
+            } else {
+                newTx.linkedBudgetItemId = document.getElementById('tx-category').value;
+                newTx.splits = null;
+            }
         } else {
             newTx.sourceId = document.getElementById('tx-income-source').value;
         }
 
         if(id) {
-            // Update existing
             const index = period.ledger.findIndex(t => t.id === id);
             period.ledger[index] = newTx;
         } else {
@@ -569,23 +683,18 @@
         renderApp();
     }
 
-
-    // --- 5. MODAL LOGIC (BUDGETS) ---
-
+    // --- 6. BUDGET MODAL (UNCHANGED) ---
     function openBudgetModal(itemId, cycleId) {
         const modal = document.getElementById('budget-modal');
         const period = getPeriod();
-        
         document.getElementById('b-cycle-id').value = cycleId;
 
         if(itemId) {
-            // Find item
             let item;
             period.paycheckCycles.forEach(c => {
                 const found = c.budgetItems.find(b => b.id === itemId);
                 if(found) item = found;
             });
-
             document.getElementById('budget-modal-title').textContent = "Edit Item";
             document.getElementById('b-id').value = item.id;
             document.getElementById('b-name').value = item.name;
@@ -600,17 +709,13 @@
             document.getElementById('b-carried').value = 0;
             document.getElementById('b-image').value = 'https://placehold.co/40x40/gray/white?text=?';
         }
-
         modal.showModal();
     }
-
     function closeBudgetModal() { document.getElementById('budget-modal').close(); }
-
     function saveBudgetItem() {
         const period = getPeriod();
         const id = document.getElementById('b-id').value;
         const cycleId = parseInt(document.getElementById('b-cycle-id').value);
-        
         const newItem = {
             id: id || 'b' + Date.now(),
             name: document.getElementById('b-name').value,
@@ -618,21 +723,17 @@
             carriedOver: parseFloat(document.getElementById('b-carried').value),
             image: document.getElementById('b-image').value
         };
-
         const cycle = period.paycheckCycles.find(c => c.cycleId === cycleId);
-
         if(id) {
             const idx = cycle.budgetItems.findIndex(b => b.id === id);
             cycle.budgetItems[idx] = newItem;
         } else {
             cycle.budgetItems.push(newItem);
         }
-
         closeBudgetModal();
         renderApp();
     }
 
-    // Init
     renderApp();
 </script>
 </body>
