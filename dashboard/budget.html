@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Tracker Pro</title>
+    <title>Budget Tracker</title>
     <style>
         :root {
             --bg-color: #f4f4f9;
@@ -45,6 +45,13 @@
         .btn-sm { padding: 2px 6px; font-size: 0.75rem; margin-left: 5px; }
         .btn-icon { background: transparent; color: #7f8c8d; }
         .btn-icon:hover { color: #2c3e50; background: #eee; }
+        
+        /* Header Action Buttons */
+        .action-btn {
+            background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
+            padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-left: 5px;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.2); }
 
         /* --- PANELS --- */
         .panel {
@@ -166,10 +173,17 @@
     
     <div class="panel">
         <div class="panel-header">
-            <div>
+            <div style="display:flex; align-items:center;">
                 <span style="font-size:1.1rem; font-weight:bold;">Ledger</span>
                 <span id="ledger-header-info" style="font-weight:normal; font-size:0.9rem; margin-left:15px; opacity:0.9;"></span>
-                <button class="btn btn-sm btn-icon" onclick="openSettingsModal()" title="Settings">⚙️</button>
+                
+                <div style="margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.3); padding-left:10px;">
+                    <button class="action-btn" onclick="downloadData()" title="Save (Download JSON)">💾 Save</button>
+                    <button class="action-btn" onclick="document.getElementById('file-input').click()" title="Load JSON">📂 Load</button>
+                    <button class="action-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
+                    <input type="file" id="file-input" style="display:none" onchange="loadData(this)">
+                </div>
+                <span id="status-indicator" style="font-size:0.7rem; margin-left:10px; color:#aaa;"></span>
             </div>
             <button class="btn btn-primary" onclick="openTxModal()">+ Add Txn</button>
         </div>
@@ -315,51 +329,86 @@
 </dialog>
 
 <script>
-    // --- 1. DATA ---
-    const appData = {
-        "periods": [{
-            "id": "2025-12",
-            "initialBankBalance": 3500.00,
+    // --- 1. STATE ---
+    let appData = { periods: [] };
+
+    // --- 2. FILE IO & INIT ---
+    async function init() {
+        const statusEl = document.getElementById('status-indicator');
+        try {
+            // Attempt to fetch from server (Vercel)
+            const response = await fetch('./budget.json');
+            if (!response.ok) throw new Error("No budget.json found");
+            appData = await response.json();
+            statusEl.textContent = "✓ Synced with Server";
+            statusEl.style.color = "#2ecc71";
+            renderApp();
             
-            "incomeSources": [
-                { "id": "inc1", "name": "Paycheck (Stephens)", "image": "https://placehold.co/40x40/2ecc71/white?text=$" },
-                { "id": "inc2", "name": "Consulting", "image": "https://placehold.co/40x40/27ae60/white?text=C" }
-            ],
+            // Update local backup
+            localStorage.setItem('budget_backup', JSON.stringify(appData));
+        } catch (err) {
+            console.warn("Could not auto-load budget.json:", err);
+            statusEl.textContent = "⚠ Offline / Local Mode";
+            statusEl.style.color = "#f1c40f";
 
-            "paycheckCycles": [
-                {
-                    "cycleId": 1, "label": "Paycheck Set 1 (Nov 21)",
-                    "budgetItems": [
-                        { "id": "b1", "name": "Groceries", "plannedAmount": 400, "carriedOver": 25.50, "image": "https://placehold.co/40x40/orange/white?text=G" },
-                        { "id": "b2", "name": "Personal", "plannedAmount": 50, "carriedOver": 0, "image": "https://placehold.co/40x40/3498db/white?text=P" },
-                        { "id": "b3", "name": "Mortgage", "plannedAmount": 2400, "carriedOver": 0, "image": "https://placehold.co/40x40/2c3e50/white?text=M" }
-                    ]
-                },
-                {
-                    "cycleId": 2, "label": "Paycheck Set 2 (Dec 05)",
-                    "budgetItems": [
-                        { "id": "b4", "name": "Electric", "plannedAmount": 180, "carriedOver": 0, "image": "https://placehold.co/40x40/f1c40f/white?text=E" }
-                    ]
-                }
-            ],
+            // Fallback: Check LocalStorage
+            const saved = localStorage.getItem('budget_backup');
+            if(saved) {
+                appData = JSON.parse(saved);
+                renderApp();
+            } else {
+                renderEmptyState();
+            }
+        }
+    }
 
-            "ledger": [
-                { "id": "t1", "date": "2025-11-21", "description": "Paycheck", "amount": 3500.00, "type": "income", "sourceId": "inc1" },
-                { "id": "t2", "date": "2025-11-22", "description": "ATM Withdrawal", "amount": -100.00, "type": "expense", 
-                  "splits": [{ "linkedBudgetItemId": "b2", "amount": -40, "note": "Haircut" }, { "linkedBudgetItemId": "b1", "amount": -60, "note": "Cash Groceries" }] 
-                },
-                { "id": "t3", "date": "2025-11-24", "description": "Kroger", "amount": -120.50, "type": "expense", "linkedBudgetItemId": "b1" }
-            ]
-        }]
-    };
+    // Save to JSON file
+    function downloadData() {
+        localStorage.setItem('budget_backup', JSON.stringify(appData)); // Backup
 
-    // --- 2. UTILS ---
+        const dataStr = JSON.stringify(appData, null, 2);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = "budget.json";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    // Manual Upload
+    function loadData(input) {
+        const file = input.files[0];
+        if(!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                appData = JSON.parse(e.target.result);
+                renderApp();
+                localStorage.setItem('budget_backup', JSON.stringify(appData));
+                document.getElementById('status-indicator').textContent = "✓ Loaded from File";
+            } catch(err) {
+                alert("Error loading file: " + err.message);
+            }
+        };
+        reader.readAsText(file);
+        input.value = '';
+    }
+
+    // --- 3. UTILS ---
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
-    const getPeriod = () => appData.periods[0]; 
+    const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
-    // --- 3. RENDERING ---
+    // --- 4. RENDERING ---
     function renderApp() {
         const period = getPeriod();
+        if (!period) {
+            renderEmptyState();
+            return;
+        }
+
         const usage = {};
         
         // A. Calculate Usage
@@ -373,8 +422,8 @@
 
         // B. Image Maps
         const imgMap = {};
-        period.incomeSources.forEach(i => imgMap[i.id] = i.image);
-        period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
+        if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
+        if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
 
         // C. Render Ledger
         const tbody = document.getElementById('ledger-body');
@@ -412,68 +461,92 @@
         const budgetContainer = document.getElementById('budget-container');
         budgetContainer.innerHTML = '';
 
-        period.paycheckCycles.forEach(cycle => {
-            const section = document.createElement('div');
-            section.className = 'cycle-section';
-            
-            section.innerHTML = `
-                <div class="cycle-header">
-                    <span>${cycle.label}</span>
-                    <button class="btn btn-sm btn-icon" onclick="openBudgetModal(null, ${cycle.cycleId})">+ Add Item</button>
-                </div>`;
+        if(period.paycheckCycles) {
+            period.paycheckCycles.forEach(cycle => {
+                const section = document.createElement('div');
+                section.className = 'cycle-section';
+                section.innerHTML = `
+                    <div class="cycle-header">
+                        <span>${cycle.label}</span>
+                        <button class="btn btn-sm btn-icon" onclick="openBudgetModal(null, ${cycle.cycleId})">+ Add Item</button>
+                    </div>`;
 
-            cycle.budgetItems.forEach(item => {
-                const spent = usage[item.id] || 0;
-                const total = item.plannedAmount + item.carriedOver;
-                const remaining = total - spent;
-                const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
-                
-                let color = 'budget-bar-fill';
-                if(percent > 90) color += ' warning';
-                if(remaining < 0) color += ' danger';
+                cycle.budgetItems.forEach(item => {
+                    const spent = usage[item.id] || 0;
+                    const total = item.plannedAmount + item.carriedOver;
+                    const remaining = total - spent;
+                    const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
+                    
+                    let color = 'budget-bar-fill';
+                    if(percent > 90) color += ' warning';
+                    if(remaining < 0) color += ' danger';
 
-                const div = document.createElement('div');
-                div.className = 'budget-item';
-                div.innerHTML = `
-                    <div class="budget-summary" onclick="this.nextElementSibling.classList.toggle('active')">
-                        <img src="${item.image}" class="budget-icon">
-                        <div>
-                            <span style="font-weight:600">${item.name}</span>
-                            <div class="budget-bar-bg"><div class="${color}" style="width:${percent}%"></div></div>
+                    const div = document.createElement('div');
+                    div.className = 'budget-item';
+                    div.innerHTML = `
+                        <div class="budget-summary" onclick="this.nextElementSibling.classList.toggle('active')">
+                            <img src="${item.image}" class="budget-icon">
+                            <div>
+                                <span style="font-weight:600">${item.name}</span>
+                                <div class="budget-bar-bg"><div class="${color}" style="width:${percent}%"></div></div>
+                            </div>
+                            <div style="text-align:right">
+                                <div class="amount-text ${remaining<0?'negative':''}">${formatMoney(remaining)}</div>
+                                <div style="font-size:0.75rem; color:#999;">of ${formatMoney(total)}</div>
+                            </div>
+                            <button class="btn btn-icon" onclick="event.stopPropagation(); openBudgetModal('${item.id}', ${cycle.cycleId})">✎</button>
                         </div>
-                        <div style="text-align:right">
-                            <div class="amount-text ${remaining<0?'negative':''}">${formatMoney(remaining)}</div>
-                            <div style="font-size:0.75rem; color:#999;">of ${formatMoney(total)}</div>
+                        <div class="budget-details">
+                            Spent: ${formatMoney(spent)} <br>
+                            Planned: ${formatMoney(item.plannedAmount)} <br>
+                            Rollover: ${formatMoney(item.carriedOver)}
                         </div>
-                        <button class="btn btn-icon" onclick="event.stopPropagation(); openBudgetModal('${item.id}', ${cycle.cycleId})">✎</button>
-                    </div>
-                    <div class="budget-details">
-                        Spent: ${formatMoney(spent)} <br>
-                        Planned: ${formatMoney(item.plannedAmount)} <br>
-                        Rollover: ${formatMoney(item.carriedOver)}
-                    </div>
-                `;
-                section.appendChild(div);
+                    `;
+                    section.appendChild(div);
+                });
+                budgetContainer.appendChild(section);
             });
-            budgetContainer.appendChild(section);
-        });
+        }
 
-        // E. Render Income Sources List
+        // E. Render Income Sources
         const incContainer = document.getElementById('income-sources-list');
-        incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
+        if(period.incomeSources) {
+            incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
+        }
     }
 
-    // --- 4. SETTINGS MODAL ---
+    function renderEmptyState() {
+        document.getElementById('ledger-body').innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">No Budget Data Found. Please upload budget.json.</td></tr>`;
+        document.getElementById('budget-container').innerHTML = '';
+        document.getElementById('ledger-header-info').innerHTML = '';
+        
+        // Init default if completely empty
+        appData = {
+            "periods": [{
+                "id": new Date().toISOString().slice(0,7),
+                "initialBankBalance": 0,
+                "incomeSources": [],
+                "paycheckCycles": [
+                    { "cycleId": 1, "label": "Paycheck 1", "budgetItems": [] },
+                    { "cycleId": 2, "label": "Paycheck 2", "budgetItems": [] }
+                ],
+                "ledger": []
+            }]
+        };
+        // Don't render blank yet, allow user to decide
+    }
+
+
+    // --- 5. MODAL LOGIC (SETTINGS) ---
     function openSettingsModal() {
         const period = getPeriod();
+        if(!period) return;
         document.getElementById('set-start-bal').value = period.initialBankBalance;
-        
         const container = document.getElementById('income-rows-container');
         container.innerHTML = '';
-        period.incomeSources.forEach(inc => {
-            renderIncomeRow(inc.id, inc.name, inc.image);
-        });
-
+        if(period.incomeSources) {
+            period.incomeSources.forEach(inc => renderIncomeRow(inc.id, inc.name, inc.image));
+        }
         document.getElementById('settings-modal').showModal();
     }
     
@@ -497,7 +570,6 @@
     function saveSettings() {
         const period = getPeriod();
         period.initialBankBalance = parseFloat(document.getElementById('set-start-bal').value);
-        
         const newSources = [];
         document.querySelectorAll('.income-row').forEach(row => {
             newSources.push({
@@ -509,10 +581,10 @@
         period.incomeSources = newSources;
         closeSettingsModal();
         renderApp();
+        downloadData(); 
     }
 
-
-    // --- 5. TRANSACTION MODAL (WITH SPLITS) ---
+    // --- 6. MODAL LOGIC (TRANSACTION) ---
     let isSplitMode = false;
     
     function toggleTxType() {
@@ -529,18 +601,16 @@
             catGroup.style.display = 'none';
             splitGroup.style.display = 'none';
             incGroup.style.display = 'block';
-            isSplitMode = false; // Cant split income in this version
+            isSplitMode = false; 
         }
     }
 
     function toggleSplitMode() {
         isSplitMode = !isSplitMode;
         if(isSplitMode) {
-            // init splits if empty
             const lines = document.getElementById('split-lines');
             if(lines.children.length === 0) {
-                addSplitLine(); 
-                addSplitLine();
+                addSplitLine(); addSplitLine();
             }
         }
         toggleTxType();
@@ -550,8 +620,6 @@
     function addSplitLine(budgetId = '', amount = '', note = '') {
         const lines = document.getElementById('split-lines');
         const period = getPeriod();
-        
-        // Build Select Options
         let opts = '<option value="">-- Select --</option>';
         period.paycheckCycles.forEach(c => {
             c.budgetItems.forEach(b => {
@@ -588,6 +656,7 @@
 
     function openTxModal(txId = null) {
         const period = getPeriod();
+        if(!period) return;
         const modal = document.getElementById('tx-modal');
         const isEdit = !!txId;
         isSplitMode = false;
@@ -601,9 +670,10 @@
 
         const incSelect = document.getElementById('tx-income-source');
         incSelect.innerHTML = '<option value="">-- Select Source --</option>';
-        period.incomeSources.forEach(i => incSelect.innerHTML += `<option value="${i.id}">${i.name}</option>`);
+        if(period.incomeSources) {
+            period.incomeSources.forEach(i => incSelect.innerHTML += `<option value="${i.id}">${i.name}</option>`);
+        }
 
-        // Clear Splits
         document.getElementById('split-lines').innerHTML = '';
 
         if(isEdit) {
@@ -681,9 +751,10 @@
 
         closeTxModal();
         renderApp();
+        downloadData(); 
     }
 
-    // --- 6. BUDGET MODAL (UNCHANGED) ---
+    // --- 7. BUDGET MODAL ---
     function openBudgetModal(itemId, cycleId) {
         const modal = document.getElementById('budget-modal');
         const period = getPeriod();
@@ -732,9 +803,12 @@
         }
         closeBudgetModal();
         renderApp();
+        downloadData();
     }
 
-    renderApp();
+    // --- INIT ---
+    init();
+
 </script>
 </body>
 </html>
