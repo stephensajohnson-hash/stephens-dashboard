@@ -1,12 +1,14 @@
 {
-  "meta": { "appVersion": "1.1", "lastModified": "2025-12-02T14:45:00" },
+  "meta": {
+    "appVersion": "1.1",
+    "lastModified": "2025-12-02T14:45:00"
+  },
   "periods": [
     {
       "id": "2025-12",
       "displayName": "December Budget",
       "startDate": "2025-11-21",
-      "initialBankBalance": 3500.00,
-
+      "initialBankBalance": 3941.07,
       "paycheckCycles": [
         {
           "cycleId": 1,
@@ -15,62 +17,86 @@
             {
               "id": "b1",
               "name": "Groceries",
-              "plannedAmount": 400.00,
-              "carriedOver": 25.50, 
-              "isFixedBill": false
+              "plannedAmount": 5500,
+              "carriedOver": 0,
+              "image": "https://classroomclipart.com/image/static7/preview2/supermarket-cart-in-retail-store-59878.jpg"
             },
             {
               "id": "b2",
-              "name": "Personal Care / Haircuts",
-              "plannedAmount": 50.00,
-              "carriedOver": 0.00,
-              "isFixedBill": false
+              "name": "Mortgage",
+              "plannedAmount": 1088,
+              "carriedOver": 0,
+              "image": "https://www.clipartmax.com/png/middle/193-1932164_hallway-clipart-home-house-in-up-movie-clipart.png"
+            },
+            {
+              "id": "b1764711223715",
+              "name": "Student Loan",
+              "plannedAmount": 105,
+              "carriedOver": 0,
+              "image": "https://thumbs.dreamstime.com/b/graduate-student-loan-icon-student-loan-graphics-education-financial-aid-assistance-government-loans-debt-89394789.jpg?w=768"
             }
           ]
         },
         {
           "cycleId": 2,
           "label": "Paycheck Set 2",
-          "budgetItems": [] 
+          "budgetItems": [
+            {
+              "id": "b1764711319084",
+              "name": "Church",
+              "plannedAmount": 0,
+              "carriedOver": 0,
+              "image": "https://i.pinimg.com/736x/4c/38/7a/4c387ae5a8a9cc8222a652ea5edfaf96.jpg"
+            }
+          ]
         }
       ],
-
       "ledger": [
         {
           "id": "t1",
           "date": "2025-11-22",
           "description": "ATM Withdrawal",
-          "amount": -100.00,
+          "amount": -100,
           "type": "expense",
           "cleared": true,
-          "linkedBudgetItemId": null, 
+          "linkedBudgetItemId": null,
           "splits": [
             {
               "linkedBudgetItemId": "b2",
-              "amount": -40.00,
+              "amount": -40,
               "note": "Haircut cash"
             },
             {
               "linkedBudgetItemId": "b1",
-              "amount": -60.00,
+              "amount": -60,
               "note": "Cash for Farmer's Market"
             }
           ]
         }
       ],
-
       "transfers": [
         {
           "id": "tr1",
           "date": "2025-11-25",
           "fromBudgetId": "b1",
           "toBudgetId": "b2",
-          "amount": 20.00,
+          "amount": 20,
           "note": "Needed extra for fancy haircut"
         }
       ],
-
-      "watchList": [] 
+      "watchList": [],
+      "incomeSources": [
+        {
+          "id": "inc1764710864578",
+          "name": "PBFCM Paycheck",
+          "image": "https://d2q79iu7y748jz.cloudfront.net/s/_squarelogo/256x256/ff42ebe4777dfbdcada937190a508339"
+        },
+        {
+          "id": "inc1764710884570",
+          "name": "Carrie Nuckolls Paycheck",
+          "image": "https://lh3.googleusercontent.com/p/AF1QipNfjd4gLcKZF3tHMgW5kqQKUxTLV45hFa5ZlChR=s680-w680-h510-rw"
+        }
+      ]
     }
   ]
 }
