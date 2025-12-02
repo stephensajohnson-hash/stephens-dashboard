@@ -13,7 +13,6 @@
             --text-main: #333;
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
-            --accent-orange: #f39c12;
             --header-bg: #2c3e50;
             --header-text: #fff;
             --hover-bg: #f9f9f9;
@@ -38,6 +37,7 @@
         .btn-sm { padding: 2px 6px; font-size: 0.75rem; margin-left: 5px; }
         .btn-icon { background: transparent; color: #7f8c8d; }
         .btn-icon:hover { color: #2c3e50; background: #eee; }
+        
         .action-btn {
             background: rgba(255,255,255,0.1); color: #fff; border: 1px solid rgba(255,255,255,0.2);
             padding: 4px 8px; border-radius: 4px; cursor: pointer; margin-left: 5px;
@@ -87,6 +87,7 @@
         .budget-item { border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .budget-item:hover { background-color: var(--hover-bg); }
 
+        /* Updated grid to ensure buttons fit */
         .budget-summary {
             padding: 10px 15px; display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 8px;
         }
@@ -101,30 +102,13 @@
         }
         .budget-details.active { display: block; }
 
-        /* --- SUMMARY DASHBOARD (New) --- */
-        .summary-dashboard {
-            background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
-            display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;
-        }
-        .summary-card {
-            background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #eee; text-align: center;
-        }
-        .summary-label { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
-        .summary-val { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
-        .sum-in { color: var(--accent-green); }
-        .sum-out { color: var(--accent-red); }
-        .sum-plan { color: var(--accent-orange); }
-        .sum-proj { color: #333; }
-
-        /* --- WATCHLIST (Moved to Left) --- */
+        /* --- WATCHLIST --- */
         .watchlist-section {
-            background-color: #fffde7; border-top: 4px solid #ffd600; padding: 10px; 
-            max-height: 200px; overflow-y: auto; /* Scrollable area distinct from ledger */
+            background-color: #fffde7; border-top: 2px solid #ffd600; padding: 10px; max-height: 25%; overflow-y: auto;
         }
-        .watchlist-header { font-weight:bold; color:#f57f17; margin-bottom: 5px; font-size: 0.9rem;}
         .watchlist-item {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 6px 0; font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 4px 0; font-size: 0.9rem;
         }
 
         /* --- MODALS --- */
@@ -157,6 +141,7 @@
         <div class="panel-header">
             <div style="display:flex; align-items:center;">
                 <span id="period-name-display" style="font-size:1.1rem; font-weight:bold;">Ledger</span>
+                
                 <span id="ledger-header-info" style="font-weight:normal; font-size:0.9rem; margin-left:15px; opacity:0.9;"></span>
                 
                 <div style="margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.3); padding-left:10px;">
@@ -169,7 +154,6 @@
             </div>
             <button class="btn btn-primary" onclick="openTxModal()">+ Add Txn</button>
         </div>
-        
         <div class="scroll-area">
             <table class="ledger-table">
                 <thead>
@@ -184,39 +168,19 @@
                 <tbody id="ledger-body"></tbody>
             </table>
         </div>
-
-        <div class="watchlist-section" id="watchlist-container">
-            <div class="watchlist-header">Upcoming Expenses (Watchlist)</div>
-            <div id="watchlist-list"></div>
-        </div>
     </div>
 
     <div class="panel">
         <div class="panel-header">
             <span style="font-size:1.1rem; font-weight:bold;">Budgets</span>
         </div>
-
-        <div class="summary-dashboard">
-            <div class="summary-card">
-                <div class="summary-label">Income</div>
-                <div class="summary-val sum-in" id="sum-in">$0</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">Spent</div>
-                <div class="summary-val sum-out" id="sum-out">$0</div>
-            </div>
-            <div class="summary-card">
-                <div class="summary-label">Planned</div>
-                <div class="summary-val sum-plan" id="sum-plan">$0</div>
-            </div>
-            <div class="summary-card" style="background:#fff; border-color:#aaa;">
-                <div class="summary-label">Projected</div>
-                <div class="summary-val sum-proj" id="sum-proj">$0</div>
-            </div>
-        </div>
-
         <div class="scroll-area" id="budget-container"></div>
         
+        <div class="watchlist-section" id="watchlist-container">
+            <div style="font-weight:bold; margin-bottom:5px; color:#f57f17;">Upcoming Expenses (Planned)</div>
+            <div id="watchlist-list"></div>
+        </div>
+
         <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
              <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
              <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
@@ -282,7 +246,8 @@
                 Budget Category 
                 <span id="lbl-split-link" style="font-size:0.8rem; color:#2980b9; cursor:pointer; float:right;" onclick="toggleSplitMode()">Need to Split?</span>
             </label>
-            <select id="tx-category"></select>
+            <select id="tx-category">
+                </select>
         </div>
 
         <div class="form-group" id="group-split" style="display:none;">
@@ -297,8 +262,9 @@
         </div>
 
         <div class="form-group" id="group-income-source" style="display:none;">
-            <label>Income Source</label>
-            <select id="tx-income-source"></select>
+            <label>Income Source (Who paid you?)</label>
+            <select id="tx-income-source">
+                </select>
         </div>
     </div>
     <div class="modal-footer">
@@ -369,6 +335,7 @@
     async function init() {
         const statusEl = document.getElementById('status-indicator');
         try {
+            // Try fetching from server
             const response = await fetch('./budget.json');
             if (!response.ok) throw new Error("No budget.json found");
             appData = await response.json();
@@ -378,9 +345,15 @@
         } catch (err) {
             console.warn("Could not auto-load budget.json:", err);
             statusEl.textContent = "⚠ Local/Offline"; statusEl.style.color = "#f1c40f";
+            
+            // Check session
             const saved = localStorage.getItem('budget_backup');
-            if(saved) { appData = JSON.parse(saved); renderApp(); }
-            else { renderEmptyState(); }
+            if(saved) { 
+                appData = JSON.parse(saved); 
+                renderApp(); 
+            } else { 
+                renderEmptyState(); 
+            }
         }
     }
 
@@ -426,14 +399,10 @@
 
         document.getElementById('period-name-display').textContent = period.displayName || "Ledger";
 
+        // Logic: Usage & Income
         const usage = {};
         const incomeAlloc = {};
         const details = {}; 
-
-        // Dashboard Stats
-        let totalIncome = 0;
-        let totalSpent = 0;
-        let totalPlanned = 0;
 
         if(period.paycheckCycles) {
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
@@ -446,7 +415,6 @@
             };
 
             if (txn.type === 'expense') {
-                totalSpent += Math.abs(txn.amount);
                 if(txn.splits) {
                     txn.splits.forEach(s => {
                         usage[s.linkedBudgetItemId] = (usage[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
@@ -457,29 +425,12 @@
                     addDet(txn.linkedBudgetItemId, -Math.abs(txn.amount), null, 'expense');
                 }
             } else if (txn.type === 'income') {
-                totalIncome += Math.abs(txn.amount);
                 if(txn.linkedBudgetItemId) {
                     incomeAlloc[txn.linkedBudgetItemId] = (incomeAlloc[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
                     addDet(txn.linkedBudgetItemId, Math.abs(txn.amount), null, 'income');
                 }
             }
         });
-
-        // Watchlist Total
-        if(period.watchList) {
-            period.watchList.forEach(w => totalPlanned += w.amount);
-        }
-
-        // --- UPDATE DASHBOARD ---
-        const projectedBalance = (period.initialBankBalance + totalIncome) - totalSpent - totalPlanned;
-        
-        document.getElementById('sum-in').textContent = formatMoney(totalIncome);
-        document.getElementById('sum-out').textContent = formatMoney(totalSpent);
-        document.getElementById('sum-plan').textContent = formatMoney(totalPlanned);
-        document.getElementById('sum-proj').textContent = formatMoney(projectedBalance);
-        // Color code project balance
-        document.getElementById('sum-proj').style.color = projectedBalance < 0 ? '#e74c3c' : '#333';
-
 
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
@@ -489,12 +440,14 @@
         const tbody = document.getElementById('ledger-body');
         tbody.innerHTML = '';
         let balance = period.initialBankBalance;
+        
         const sorted = [...period.ledger].sort((a,b) => a.date.localeCompare(b.date));
 
         sorted.forEach(txn => {
             balance += txn.amount;
             const tr = document.createElement('tr');
             tr.className = 'ledger-row';
+            
             let iconUrl = '';
             if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
             else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
@@ -621,7 +574,7 @@
         };
     }
 
-    // --- MODALS ---
+    // --- MODAL & FORM LOGIC ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
@@ -669,7 +622,7 @@
         saveSession(); 
     }
 
-    // --- TRANSACTIONS ---
+    // --- TRANSACTION LOGIC ---
     let isSplitMode = false;
     function toggleTxType() {
         const type = document.getElementById('tx-type').value;
@@ -685,6 +638,7 @@
             lblCat.firstChild.textContent = "Budget Category";
             splitLink.style.display = "inline";
         } else {
+            // INCOME: Show category dropdown for credits
             catGroup.style.display = 'block'; 
             document.getElementById('group-split').style.display = 'none';
             incGroup.style.display = 'block';
@@ -829,7 +783,7 @@
         saveSession();
     }
 
-    // --- BUDGET & WATCHLIST ---
+    // --- BUDGET MODAL ---
     function openBudgetModal(itemId, cycleId) {
         const modal = document.getElementById('budget-modal');
         const period = getPeriod();
@@ -881,6 +835,7 @@
         saveSession();
     }
 
+    // --- WATCHLIST LOGIC ---
     function openWatchModal(defaultDesc, defaultAmt) {
         document.getElementById('w-desc').value = defaultDesc || '';
         document.getElementById('w-amount').value = defaultAmt > 0 ? defaultAmt : '';
