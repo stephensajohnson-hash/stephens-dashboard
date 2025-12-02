@@ -517,6 +517,42 @@
           "img": "https://i5.walmartimages.com/seo/Hanke-26-Inch-Checked-Luggage-PC-Hard-Shell-Suitcases-for-Travel-Front-Opening-Aluminum-Frame-Tsa-Luggage-Rolling-Suitcase-with-Wheels-Jet-Black_b564ecec-1968-44e4-bed1-816900d4e14a.80ccf9570825a5cce1757f1577b17346.jpeg?odnHeight=573&odnWidth=573&odnBg=FFFFFF"
         }
       ]
+    },
+    {
+      "id": "g_1764704352143",
+      "name": "Local",
+      "color": "blue",
+      "isStatic": false,
+      "links": [
+        {
+          "id": "l_1764704390688",
+          "groupId": "g_1764704352143",
+          "name": "Bright Star Cinemas",
+          "url": "https://www.brightstarcinemas.com/",
+          "img": "/images/bright star cinemas.png"
+        },
+        {
+          "id": "l_1764704441890",
+          "groupId": "g_1764704352143",
+          "name": "News Telegram",
+          "url": "https://www.ssnewstelegram.com",
+          "img": "https://www.ssnewstelegram.com/sites/ssnewstelegram.com/files/SSNT%20-%20Masthead.jpg"
+        },
+        {
+          "id": "l_1764704578775",
+          "groupId": "g_1764704352143",
+          "name": "City of SS",
+          "url": "http:\\\\www.sulphurspringstx.org",
+          "img": "https://www.sulphurspringstx.org/_assets_/images/logo.png"
+        },
+        {
+          "id": "l_1764704817499",
+          "groupId": "g_1764704352143",
+          "name": "Front Porch News",
+          "url": "http:\\\\www.frontporchnewstexas.com",
+          "img": "https://frontporchnewstexas.com/wp-content/uploads/2023/02/Artboard-1_4.png"
+        }
+      ]
     }
   ],
   "countdowns": [
