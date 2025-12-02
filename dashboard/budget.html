@@ -179,9 +179,7 @@
                 
                 <div style="margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.3); padding-left:10px;">
                     <button class="action-btn" onclick="downloadData()" title="Save (Download JSON)">💾 Save</button>
-                    <button class="action-btn" onclick="document.getElementById('file-input').click()" title="Load JSON">📂 Load</button>
                     <button class="action-btn" onclick="openSettingsModal()" title="Settings">⚙️</button>
-                    <input type="file" id="file-input" style="display:none" onchange="loadData(this)">
                 </div>
                 <span id="status-indicator" style="font-size:0.7rem; margin-left:10px; color:#aaa;"></span>
             </div>
@@ -332,20 +330,27 @@
     // --- 1. STATE ---
     let appData = { periods: [] };
 
-    // --- 2. FILE IO & INIT ---
+    // --- 2. INIT & IO ---
     async function init() {
         const statusEl = document.getElementById('status-indicator');
         try {
-            // Attempt to fetch from server (Vercel)
+            // 1. Try to fetch from server (Vercel)
             const response = await fetch('./budget.json');
+            
+            // 2. Check if we have unsaved work in LocalStorage that is NEWER?
+            // (For now, we simplify: Server is source of truth on load, unless server fetch fails)
+            
             if (!response.ok) throw new Error("No budget.json found");
+            
+            // Note: In a real app we might compare timestamps between LS and Server.
+            // Here, we load server data, but we immediately save it to session so we are ready to edit.
             appData = await response.json();
             statusEl.textContent = "✓ Synced with Server";
             statusEl.style.color = "#2ecc71";
+            
+            saveSession(); // Sync LS to match server start state
             renderApp();
             
-            // Update local backup
-            localStorage.setItem('budget_backup', JSON.stringify(appData));
         } catch (err) {
             console.warn("Could not auto-load budget.json:", err);
             statusEl.textContent = "⚠ Offline / Local Mode";
@@ -362,9 +367,15 @@
         }
     }
 
-    // Save to JSON file
+    // Save to LocalStorage (Session Safety)
+    function saveSession() {
+        localStorage.setItem('budget_backup', JSON.stringify(appData));
+        // Optional: Update status to show "Unsaved Changes" if we wanted to get fancy
+    }
+
+    // Save to JSON file (Explicit Export)
     function downloadData() {
-        localStorage.setItem('budget_backup', JSON.stringify(appData)); // Backup
+        saveSession(); // Ensure LS is up to date
 
         const dataStr = JSON.stringify(appData, null, 2);
         const blob = new Blob([dataStr], { type: "application/json" });
@@ -376,25 +387,6 @@
         a.click();
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
-    }
-
-    // Manual Upload
-    function loadData(input) {
-        const file = input.files[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                appData = JSON.parse(e.target.result);
-                renderApp();
-                localStorage.setItem('budget_backup', JSON.stringify(appData));
-                document.getElementById('status-indicator').textContent = "✓ Loaded from File";
-            } catch(err) {
-                alert("Error loading file: " + err.message);
-            }
-        };
-        reader.readAsText(file);
-        input.value = '';
     }
 
     // --- 3. UTILS ---
@@ -519,8 +511,6 @@
         document.getElementById('ledger-body').innerHTML = `<tr><td colspan="5" style="text-align:center; padding:20px; color:#999;">No Budget Data Found. Please upload budget.json.</td></tr>`;
         document.getElementById('budget-container').innerHTML = '';
         document.getElementById('ledger-header-info').innerHTML = '';
-        
-        // Init default if completely empty
         appData = {
             "periods": [{
                 "id": new Date().toISOString().slice(0,7),
@@ -533,7 +523,6 @@
                 "ledger": []
             }]
         };
-        // Don't render blank yet, allow user to decide
     }
 
 
@@ -581,7 +570,7 @@
         period.incomeSources = newSources;
         closeSettingsModal();
         renderApp();
-        downloadData(); 
+        saveSession(); // Only save to memory
     }
 
     // --- 6. MODAL LOGIC (TRANSACTION) ---
@@ -751,7 +740,7 @@
 
         closeTxModal();
         renderApp();
-        downloadData(); 
+        saveSession(); // Only save to memory
     }
 
     // --- 7. BUDGET MODAL ---
@@ -803,7 +792,7 @@
         }
         closeBudgetModal();
         renderApp();
-        downloadData();
+        saveSession(); // Only save to memory
     }
 
     // --- INIT ---
