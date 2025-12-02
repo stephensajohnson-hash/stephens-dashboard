@@ -18,7 +18,7 @@
               "id": "b1",
               "name": "Groceries",
               "plannedAmount": 5500,
-              "carriedOver": 0,
+              "carriedOver": 273.84,
               "image": "https://classroomclipart.com/image/static7/preview2/supermarket-cart-in-retail-store-59878.jpg"
             },
             {
@@ -34,6 +34,41 @@
               "plannedAmount": 105,
               "carriedOver": 0,
               "image": "https://thumbs.dreamstime.com/b/graduate-student-loan-icon-student-loan-graphics-education-financial-aid-assistance-government-loans-debt-89394789.jpg?w=768"
+            },
+            {
+              "id": "b1764711649373",
+              "name": "Haircuts",
+              "plannedAmount": 70,
+              "carriedOver": 120,
+              "image": "https://i.etsystatic.com/18154652/r/il/df307a/5293638365/il_794xN.5293638365_sva3.jpg"
+            },
+            {
+              "id": "b1764711739265",
+              "name": "Mowing",
+              "plannedAmount": 120,
+              "carriedOver": 0,
+              "image": "https://www.clipartmax.com/png/middle/5-57552_lawn-care-clip-art.png"
+            },
+            {
+              "id": "b1764711790564",
+              "name": "House Cleaning",
+              "plannedAmount": 160,
+              "carriedOver": 0,
+              "image": "https://www.clipartmax.com/png/middle/14-145237_cleaning-clip-art-images-free-house-cleaning-services-lady.png"
+            },
+            {
+              "id": "b1764711838253",
+              "name": "Aflac",
+              "plannedAmount": 196.69,
+              "carriedOver": 0,
+              "image": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"
+            },
+            {
+              "id": "b1764711914745",
+              "name": "Invest",
+              "plannedAmount": 0,
+              "carriedOver": 58,
+              "image": "https://images.freeimages.com/clg/images/35/356767/stock-exchange_f.jpg?fmt=webp&h=350"
             }
           ]
         },
@@ -47,6 +82,48 @@
               "plannedAmount": 0,
               "carriedOver": 0,
               "image": "https://i.pinimg.com/736x/4c/38/7a/4c387ae5a8a9cc8222a652ea5edfaf96.jpg"
+            },
+            {
+              "id": "b1764711988682",
+              "name": "Green Sky",
+              "plannedAmount": 530,
+              "carriedOver": 0,
+              "image": "https://www.paulhenryswindows.com/wp-content/uploads/2022/04/financing-greensky-300x300-min-300x300.jpg"
+            },
+            {
+              "id": "b1764712061699",
+              "name": "Water",
+              "plannedAmount": 105,
+              "carriedOver": 105,
+              "image": "https://media.istockphoto.com/id/1126448977/vector/vector-of-money-dollar-sign-flowing-from-faucet.jpg?s=612x612&w=0&k=20&c=1ixYYRUsOGyXdtetQgiaCRs9mnIb1597Z1o6bLkyBZs="
+            },
+            {
+              "id": "b1764712122166",
+              "name": "Google Finance",
+              "plannedAmount": 63.29,
+              "carriedOver": 0,
+              "image": "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-1/278877273_3162318297313306_3714083036599502140_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=1&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=3cruvh1S2XsQ7kNvwEgdExA&_nc_oc=Adlx5ueIKqjyT0lO3OrxaQzi9mYR8Ujd3_gV1xhymJ08jYE-tjuhrjk5U7b8eb88RjE&_nc_zt=24&_nc_ht=scontent-dfw5-2.xx&_nc_gid=aGczykHMAah7R3F0bZsg0A&oh=00_AfnXOSWKL97v7Qw_s3iU1CCNltoU_kOElhsVV22uItEomQ&oe=69353EF1"
+            },
+            {
+              "id": "b1764712269777",
+              "name": "Home Repair",
+              "plannedAmount": 200,
+              "carriedOver": 2380.95,
+              "image": "https://www.clipartmax.com/png/middle/394-3942002_fix-house-icon-clipart-home-repair-house-fix-house-icon-clipart-home.png"
+            },
+            {
+              "id": "b1764712324700",
+              "name": "Emergency",
+              "plannedAmount": 1919.63,
+              "carriedOver": 914.13,
+              "image": "https://media.istockphoto.com/id/1253926432/vector/flashlight-warning-alarm-light-and-siren-light-flat-design-vector-design.jpg?s=612x612&w=0&k=20&c=yOj6Jpu7XDrPJCTfUIpQm-LWI9q9RWQB91s-N7CgQDQ="
+            },
+            {
+              "id": "b1764712370143",
+              "name": "Vacation",
+              "plannedAmount": 0,
+              "carriedOver": 0,
+              "image": "https://classroomclipart.com/image/static7/preview2/tropical-beach-vacation-with-a-palm-tree-a-coconut-drink-clipart-69475.jpg"
             }
           ]
         }
@@ -54,24 +131,126 @@
       "ledger": [
         {
           "id": "t1",
-          "date": "2025-11-22",
-          "description": "ATM Withdrawal",
+          "date": "2025-11-21",
+          "description": "PBFCM Paycheck 1",
+          "amount": 4367.82,
+          "type": "income",
+          "sourceId": "inc1764710864578"
+        },
+        {
+          "id": "t1764712486395",
+          "date": "2025-11-21",
+          "description": "ATM - Cash",
           "amount": -100,
           "type": "expense",
-          "cleared": true,
-          "linkedBudgetItemId": null,
           "splits": [
             {
-              "linkedBudgetItemId": "b2",
+              "linkedBudgetItemId": "b1764711649373",
               "amount": -40,
-              "note": "Haircut cash"
+              "note": ""
             },
             {
               "linkedBudgetItemId": "b1",
               "amount": -60,
-              "note": "Cash for Farmer's Market"
+              "note": ""
             }
-          ]
+          ],
+          "linkedBudgetItemId": null
+        },
+        {
+          "id": "t1764712552973",
+          "date": "2025-11-24",
+          "description": "Carrie Nuckolls - Check 1",
+          "amount": 1021.14,
+          "type": "income",
+          "sourceId": "inc1764710884570"
+        },
+        {
+          "id": "t1764712614323",
+          "date": "2025-11-25",
+          "description": "Swim Spa",
+          "amount": -530,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764711988682",
+          "splits": null
+        },
+        {
+          "id": "t1764712666934",
+          "date": "2025-11-25",
+          "description": "Affordable Chiropractic",
+          "amount": -50,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1764712712378",
+          "date": "2025-11-26",
+          "description": "Chase Credit Card",
+          "amount": -448.9,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1764712743221",
+          "date": "2025-11-26",
+          "description": "Chase Travel - Credit Card",
+          "amount": -3090,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1764712796858",
+          "date": "2025-11-26",
+          "description": "Sharleen Allen - Organize upstairs",
+          "amount": -300,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764712269777",
+          "splits": null
+        },
+        {
+          "id": "t1764712902149",
+          "date": "2025-11-28",
+          "description": "Amazon Payments - coloring book",
+          "amount": 10.01,
+          "type": "income",
+          "sourceId": "inc1764712814632"
+        },
+        {
+          "id": "t1764712947548",
+          "date": "2025-12-01",
+          "description": "Amazon Payments - coloring book",
+          "amount": 10.12,
+          "type": "income",
+          "sourceId": "inc1764712814632"
+        },
+        {
+          "id": "t1764712984306",
+          "date": "2025-12-01",
+          "description": "Google Finance",
+          "amount": -63.29,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764712122166",
+          "splits": null
+        },
+        {
+          "id": "t1764713011184",
+          "date": "2025-12-01",
+          "description": "Alliance Bank",
+          "amount": -1088,
+          "type": "expense",
+          "linkedBudgetItemId": "b2",
+          "splits": null
+        },
+        {
+          "id": "t1764713262538",
+          "date": "2025-12-01",
+          "description": "Interest Deposit",
+          "amount": 0.42,
+          "type": "income",
+          "sourceId": "inc1764713044040"
         }
       ],
       "transfers": [
@@ -95,6 +274,16 @@
           "id": "inc1764710884570",
           "name": "Carrie Nuckolls Paycheck",
           "image": "https://lh3.googleusercontent.com/p/AF1QipNfjd4gLcKZF3tHMgW5kqQKUxTLV45hFa5ZlChR=s680-w680-h510-rw"
+        },
+        {
+          "id": "inc1764712814632",
+          "name": "Amazon Books",
+          "image": "https://m.media-amazon.com/images/I/71nhe+V5ORL.png"
+        },
+        {
+          "id": "inc1764713044040",
+          "name": "Interest",
+          "image": "https://placehold.co/40x40/gray/white?text=$"
         }
       ]
     }
