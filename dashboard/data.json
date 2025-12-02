@@ -84,7 +84,7 @@
           "groupId": "g2",
           "name": "Mega Millions",
           "url": "https://www.megamillions.com",
-          "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=WBYVKDTj94sQ7kNvwEs4nvR&_nc_oc=AdnmO7Gyl6SerauVZ5yRbG_eNyM2iBM6eKmTAgYtEw2nNpcYsGZXDZs0y18djU8jMUs&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=BgDoOuidjtlK_5YJgnN6Cg&oh=00_AfgrMHw4q6LdO16nh7RgdD67C9iqbsqdAbHVXZk76VAmlw&oe=691C4846"
+          "img": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-1/300760619_575966844316568_8359561060352066869_n.png?stp=dst-png_s200x200&_nc_cat=111&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=NloQMjkn-m4Q7kNvwHUEsZ4&_nc_oc=Adl0guXUhlaWbc84wOcYDMEgL8rnsUlt8AyBK2taECAF-l8gyRtiNsB1wc48Yo7wJj8&_nc_zt=24&_nc_ht=scontent-dfw5-1.xx&_nc_gid=T0SWPnYDaQ2MAgGDCTXtKQ&oh=00_AfipRo1pMi62wUb0WwP9zFc5CuvsXsE0kKDIdcG2W0uJeQ&oe=6933CB06"
         },
         {
           "id": "l34",
@@ -392,6 +392,20 @@
           "name": "Charles Schwab",
           "url": "https://www.schwab.com/client-home",
           "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Charles_Schwab_Corporation_logo.svg/250px-Charles_Schwab_Corporation_logo.svg.png?20210616031939"
+        },
+        {
+          "id": "l_1764690566219",
+          "groupId": "g6",
+          "name": "Mary's Fund",
+          "url": "https://docs.google.com/spreadsheets/d/1ZZuYgxh5d0lZR-FRMrypu1Tq1idB5XDXJ5FQFukeF3E",
+          "img": "https://cmsv2-assets.apptegy.net/uploads/11435/file/1077963/28e381d9-b33c-4d9c-b92e-164b4ea08c07.png"
+        },
+        {
+          "id": "l_1764690613282",
+          "groupId": "g6",
+          "name": "SSA",
+          "url": "https://secure.ssa.gov/RIL/SiView.action",
+          "img": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/Flag_of_the_United_States_Social_Security_Administration.svg/960px-Flag_of_the_United_States_Social_Security_Administration.svg.png?20241007052510"
         }
       ],
       "isStatic": true
@@ -461,6 +475,13 @@
       "isStatic": true
     },
     {
+      "id": "g_1764690679262",
+      "name": "Stocks",
+      "color": "blue",
+      "isStatic": false,
+      "links": []
+    },
+    {
       "id": "g_1763789013710",
       "name": "Gifts",
       "color": "red",
@@ -499,7 +520,7 @@
       "targetDate": "2025-12-24",
       "linkUrl": "",
       "img": "https://www.ecsd.net/images/721c8d3e-b367-4c9d-bebf-fc83cf8e80e8",
-      "isStatic": false
+      "isStatic": true
     }
   ],
   "stocks": [
