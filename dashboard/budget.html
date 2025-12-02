@@ -3,18 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Budget Tracker</title>
+    <title>Visual Budget Tracker</title>
     <style>
         :root {
             --bg-color: #f4f4f9;
             --panel-bg: #ffffff;
-            --border-color: #ddd;
+            --border-color: #e0e0e0;
             --text-main: #333;
             --text-muted: #888;
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
             --header-bg: #2c3e50;
             --header-text: #fff;
+            --hover-bg: #f9f9f9;
         }
 
         body {
@@ -27,15 +28,14 @@
             box-sizing: border-box;
         }
 
-        /* Main Grid Layout */
         .container {
             display: grid;
-            grid-template-columns: 65% 33%; /* Left side wider for ledger details */
+            grid-template-columns: 65% 33%;
             gap: 2%;
-            height: 100%;
+            height: 95%; /* Leave room for footer/padding */
         }
 
-        /* Generic Panel Styles */
+        /* --- PANELS --- */
         .panel {
             background: var(--panel-bg);
             border: 1px solid var(--border-color);
@@ -50,15 +50,17 @@
             background-color: var(--header-bg);
             color: var(--header-text);
             padding: 15px;
-            font-weight: bold;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
+
+        .header-title { font-size: 1.1rem; font-weight: bold; }
+        .header-info { font-size: 0.9rem; opacity: 0.9; }
 
         .scroll-area {
             flex: 1;
             overflow-y: auto;
-            padding: 0;
         }
 
         /* --- LEFT SIDE: LEDGER --- */
@@ -66,84 +68,158 @@
             width: 100%;
             border-collapse: collapse;
             font-size: 0.9rem;
+            table-layout: fixed; /* Fixes alignment issues */
         }
 
         .ledger-table th {
             background: #eee;
             text-align: left;
-            padding: 10px;
+            padding: 12px 10px;
             position: sticky;
             top: 0;
             z-index: 10;
+            border-bottom: 2px solid #ccc;
         }
 
         .ledger-table td {
             padding: 10px;
             border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+            overflow: hidden; 
+            text-overflow: ellipsis;
         }
 
-        .amount-col { text-align: right; font-family: monospace; }
-        .balance-col { text-align: right; font-weight: bold; font-family: monospace; }
-        
-        .negative { color: var(--accent-red); }
-        .positive { color: var(--accent-green); }
+        /* Column Specifics */
+        .col-date { width: 15%; }
+        .col-desc { width: 45%; }
+        .col-amt  { width: 20%; text-align: right; }
+        .col-bal  { width: 20%; text-align: right; }
 
-        /* Split Transaction Styling */
+        .amount-text { font-family: monospace; font-size: 1rem;}
+        .negative { color: var(--accent-red); }
+        .positive { color: var(--accent-green); font-weight: bold; }
+        .balance-text { font-weight: bold; font-family: monospace; color: #555; }
+
+        /* Ledger Icons */
+        .ledger-icon {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            vertical-align: middle;
+            margin-right: 8px;
+            object-fit: cover;
+            border: 1px solid #ddd;
+        }
+
+        .split-indicator {
+            background: #eee;
+            color: #666;
+            border-radius: 4px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
         .split-row {
             background-color: #fafafa;
             font-size: 0.85rem;
             color: var(--text-muted);
             font-style: italic;
         }
-        .split-indicator {
-            background: #eee;
-            border-radius: 4px;
-            padding: 2px 6px;
-            font-size: 0.7rem;
-            margin-left: 5px;
-            cursor: help;
-        }
 
         /* --- RIGHT SIDE: BUDGET ENVELOPES --- */
         .cycle-section {
-            margin-bottom: 20px;
-            border-bottom: 4px solid var(--border-color); /* The visual divider you mentioned */
+            margin-bottom: 0;
+            border-bottom: 4px solid var(--border-color);
         }
 
         .cycle-header {
             background: #e0e0e0;
-            padding: 8px 15px;
+            padding: 10px 15px;
             font-weight: bold;
             font-size: 0.9rem;
-            color: #555;
+            color: #444;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .budget-item {
-            padding: 10px 15px;
             border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .budget-item:hover { background-color: var(--hover-bg); }
+
+        .budget-summary {
+            padding: 10px 15px;
             display: grid;
-            grid-template-columns: 1fr auto;
+            grid-template-columns: auto 1fr auto;
             align-items: center;
+            gap: 10px;
         }
 
-        .budget-name { font-weight: 500; }
-        .budget-math { 
-            text-align: right; 
-            font-size: 0.85rem; 
-            color: var(--text-muted);
+        .budget-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #eee;
+            background: #fff;
         }
-        .budget-remaining {
-            font-family: monospace;
-            font-weight: bold;
-            font-size: 1rem;
-            color: var(--text-main);
+
+        .budget-name-area { display: flex; flex-direction: column; }
+        .budget-name { font-weight: 600; font-size: 0.95rem; }
+        .budget-bar-bg {
+            height: 4px;
+            width: 100%;
+            background: #eee;
+            margin-top: 4px;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .budget-bar-fill { height: 100%; background: var(--accent-green); }
+        .budget-bar-fill.warning { background: orange; }
+        .budget-bar-fill.danger { background: var(--accent-red); }
+
+        .budget-math { text-align: right; }
+        .remaining-amount { font-family: monospace; font-weight: bold; font-size: 1rem; }
+        .total-amount { font-size: 0.75rem; color: #999; }
+
+        /* Dropdown/Accordion Styles */
+        .budget-details {
+            display: none; /* Hidden by default */
+            background-color: #fafafa;
+            padding: 10px 15px 10px 55px; /* Indent to align with text */
+            font-size: 0.85rem;
+            border-top: 1px dashed #eee;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
         
+        .budget-details.active { display: block; }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 3px 0;
+            color: #666;
+        }
+        .detail-date { color: #999; margin-right: 10px; }
+
         .watchlist-section {
-            background-color: #fff8e1; /* Yellow tint for "Watch/ToDo" */
-            padding: 10px;
+            background-color: #fff8e1;
+            padding: 15px;
+            border-top: 2px solid #ffe082;
         }
-        
+        .watchlist-section h4 { margin: 0 0 10px 0; font-size: 0.95rem; }
+        .watchlist-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
     </style>
 </head>
 <body>
@@ -152,17 +228,18 @@
     
     <div class="panel" id="ledger-panel">
         <div class="panel-header">
-            <span>Transaction Ledger</span>
-            <span id="current-balance-display">Bal: $0.00</span>
+            <span class="header-title">Transaction Ledger</span>
+            <div class="header-info" id="ledger-header-info">
+                </div>
         </div>
         <div class="scroll-area">
             <table class="ledger-table">
                 <thead>
                     <tr>
-                        <th width="15%">Date</th>
-                        <th width="45%">Description</th>
-                        <th width="20%" class="amount-col">Amount</th>
-                        <th width="20%" class="balance-col">Balance</th>
+                        <th class="col-date">Date</th>
+                        <th class="col-desc">Description</th>
+                        <th class="col-amt">Amount</th>
+                        <th class="col-bal">Balance</th>
                     </tr>
                 </thead>
                 <tbody id="ledger-body">
@@ -173,21 +250,24 @@
 
     <div class="panel" id="budget-panel">
         <div class="panel-header">
-            <span>Budget Overview</span>
+            <span class="header-title">Budget Envelopes</span>
         </div>
         <div class="scroll-area" id="budget-container">
             </div>
         
         <div class="watchlist-section" id="watchlist-container">
-            <strong>Expected Expenses (Watchlist)</strong>
-            <ul id="watchlist-items" style="padding-left: 20px; margin: 5px 0;"></ul>
+            <h4>Expected Expenses (Watchlist)</h4>
+            <div id="watchlist-items"></div>
         </div>
     </div>
 
 </div>
 
 <script>
-    // --- 1. THE DATA (budget.json structure) ---
+    // --- 1. DATA (With Images added) ---
+    // Note: Using placeholders from Placehold.co for demo images. 
+    // You can replace these URLs with local paths (e.g., "images/groceries.png")
+    
     const budgetData = {
         "periods": [
             {
@@ -199,16 +279,28 @@
                         "cycleId": 1,
                         "label": "Paycheck Set 1 (Nov 21)",
                         "budgetItems": [
-                            { "id": "b1", "name": "Groceries", "plannedAmount": 400.00, "carriedOver": 25.50 },
-                            { "id": "b2", "name": "Haircuts / Personal", "plannedAmount": 50.00, "carriedOver": 0.00 },
-                            { "id": "b3", "name": "Mortgage", "plannedAmount": 2400.00, "carriedOver": 0.00 }
+                            { 
+                                "id": "b1", "name": "Groceries", "plannedAmount": 400.00, "carriedOver": 25.50,
+                                "image": "https://placehold.co/40x40/orange/white?text=G"
+                            },
+                            { 
+                                "id": "b2", "name": "Haircuts / Personal", "plannedAmount": 50.00, "carriedOver": 0.00,
+                                "image": "https://placehold.co/40x40/3498db/white?text=H"
+                            },
+                            { 
+                                "id": "b3", "name": "Mortgage", "plannedAmount": 2400.00, "carriedOver": 0.00,
+                                "image": "https://placehold.co/40x40/2c3e50/white?text=M"
+                            }
                         ]
                     },
                     {
                         "cycleId": 2,
                         "label": "Paycheck Set 2 (Dec 05)",
                         "budgetItems": [
-                            { "id": "b4", "name": "Electric Bill", "plannedAmount": 180.00, "carriedOver": 0.00 }
+                            { 
+                                "id": "b4", "name": "Electric Bill", "plannedAmount": 180.00, "carriedOver": 0.00,
+                                "image": "https://placehold.co/40x40/f1c40f/white?text=E"
+                            }
                         ]
                     }
                 ],
@@ -240,113 +332,180 @@
         ]
     };
 
-    // --- 2. LOGIC & CALCULATIONS ---
+    // --- 2. LOGIC ---
     
-    // Helper to format currency
     const formatMoney = (amount) => {
         return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(amount);
     };
 
-    // Helper: Calculate actual spent per budget category
-    function calculateBudgetUsage(periodData) {
-        const usage = {}; // { 'b1': 180.50, 'b2': 40.00 }
+    // Helper: Map budget IDs to their images for easy lookup
+    function getBudgetImageMap(period) {
+        const map = {};
+        period.paycheckCycles.forEach(cycle => {
+            cycle.budgetItems.forEach(item => {
+                map[item.id] = item.image;
+            });
+        });
+        return map;
+    }
+
+    // New Helper: Get detailed transaction list per budget item
+    function getBudgetDetails(periodData) {
+        // Usage totals
+        const usage = {}; 
+        // List of specific transactions for the dropdown
+        const details = {}; // { 'b1': [ {date, desc, amount} ] }
+
+        // Initialize details arrays
+        periodData.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
 
         // Process Ledger
         periodData.ledger.forEach(txn => {
-            if (txn.splits) {
-                txn.splits.forEach(split => {
-                    // Note: amounts are negative in ledger, we want positive usage
-                    const val = Math.abs(split.amount);
-                    usage[split.linkedBudgetItemId] = (usage[split.linkedBudgetItemId] || 0) + val;
+            const addDetail = (budgetId, amount, note) => {
+                if (!details[budgetId]) details[budgetId] = [];
+                details[budgetId].push({
+                    date: txn.date,
+                    desc: note || txn.description,
+                    amount: Math.abs(amount)
                 });
+                usage[budgetId] = (usage[budgetId] || 0) + Math.abs(amount);
+            };
+
+            if (txn.splits) {
+                txn.splits.forEach(split => addDetail(split.linkedBudgetItemId, split.amount, split.note));
             } else if (txn.linkedBudgetItemId) {
-                const val = Math.abs(txn.amount);
-                usage[txn.linkedBudgetItemId] = (usage[txn.linkedBudgetItemId] || 0) + val;
+                addDetail(txn.linkedBudgetItemId, txn.amount);
             }
         });
 
-        // Process Transfers (Adjust usage essentially)
-        // If I transfer FROM b1 TO b2, b1 has less available, b2 has more.
-        // We can handle this by adjusting the 'planned' or 'spent'. 
-        // Let's create a separate 'transferAdjustment' map.
+        // Process Transfers (Adjust usage only, maybe log detail if desired)
         const adjustments = {}; 
         if (periodData.transfers) {
             periodData.transfers.forEach(tr => {
                 adjustments[tr.fromBudgetId] = (adjustments[tr.fromBudgetId] || 0) - tr.amount;
                 adjustments[tr.toBudgetId] = (adjustments[tr.toBudgetId] || 0) + tr.amount;
+                
+                // Add transfer notes to details for clarity
+                if(details[tr.fromBudgetId]) details[tr.fromBudgetId].push({ date: tr.date || 'N/A', desc: `Transfer Out (to ${tr.toBudgetId})`, amount: 0 }); // Visual only
+                if(details[tr.toBudgetId]) details[tr.toBudgetId].push({ date: tr.date || 'N/A', desc: `Transfer In (from ${tr.fromBudgetId})`, amount: 0 });
             });
         }
 
-        return { usage, adjustments };
+        return { usage, adjustments, details };
     }
 
-    // --- 3. RENDERING ---
+    // --- 3. RENDER ---
 
     function renderApp() {
-        const currentPeriod = budgetData.periods[0]; // Just grabbing the first one for demo
-        const { usage, adjustments } = calculateBudgetUsage(currentPeriod);
+        const currentPeriod = budgetData.periods[0]; 
+        const { usage, adjustments, details } = getBudgetDetails(currentPeriod);
+        const imageMap = getBudgetImageMap(currentPeriod);
 
-        // A. Render Ledger
+        // --- A. LEDGER ---
         const ledgerBody = document.getElementById('ledger-body');
-        let runningBalance = currentPeriod.initialBankBalance;
+        const headerInfo = document.getElementById('ledger-header-info');
         
-        // Sort ledger by date (simple string sort works for ISO dates)
+        // Header Stats
+        let runningBalance = currentPeriod.initialBankBalance;
+        headerInfo.innerHTML = `Start: <strong>${formatMoney(runningBalance)}</strong>`;
+
         const sortedLedger = currentPeriod.ledger.sort((a,b) => a.date.localeCompare(b.date));
 
         sortedLedger.forEach(txn => {
             runningBalance += txn.amount;
             
             const tr = document.createElement('tr');
-            
-            // Amount styling
             const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
+            
+            // Determine Icon: If split, maybe a generic icon, otherwise the specific category icon
+            let iconHtml = '';
+            if (txn.linkedBudgetItemId && imageMap[txn.linkedBudgetItemId]) {
+                iconHtml = `<img src="${imageMap[txn.linkedBudgetItemId]}" class="ledger-icon">`;
+            } else if (txn.splits) {
+                iconHtml = `<span style="margin-right:8px; font-size:1.2em;">🔀</span>`; // Generic split icon
+            }
+
             const splitBadge = txn.splits ? '<span class="split-indicator">Split</span>' : '';
 
             tr.innerHTML = `
-                <td>${txn.date}</td>
-                <td>${txn.description} ${splitBadge}</td>
-                <td class="amount-col ${amtClass}">${formatMoney(txn.amount)}</td>
-                <td class="balance-col">${formatMoney(runningBalance)}</td>
+                <td class="col-date">${txn.date.substring(5)}</td>
+                <td class="col-desc">${iconHtml}${txn.description} ${splitBadge}</td>
+                <td class="col-amt"><span class="amount-text ${amtClass}">${formatMoney(txn.amount)}</span></td>
+                <td class="col-bal"><span class="balance-text">${formatMoney(runningBalance)}</span></td>
             `;
             ledgerBody.appendChild(tr);
 
-            // If split, show details row (optional, simplified here)
             if(txn.splits) {
                 const splitRow = document.createElement('tr');
                 splitRow.className = 'split-row';
-                let splitText = txn.splits.map(s => `${s.note}: ${formatMoney(s.amount)}`).join(' | ');
-                splitRow.innerHTML = `<td colspan="4" style="padding-left: 20px;">↳ ${splitText}</td>`;
+                let splitText = txn.splits.map(s => {
+                    // Try to get icon for split items too
+                    const img = imageMap[s.linkedBudgetItemId] ? `<img src="${imageMap[s.linkedBudgetItemId]}" style="width:12px; vertical-align:middle;">` : '';
+                    return `${img} ${s.note}: ${formatMoney(s.amount)}`;
+                }).join(' &nbsp;|&nbsp; ');
+                
+                splitRow.innerHTML = `<td colspan="4" style="padding-left: 50px;">↳ ${splitText}</td>`;
                 ledgerBody.appendChild(splitRow);
             }
         });
+        
+        // Append Current Balance to header
+        headerInfo.innerHTML += ` &nbsp;|&nbsp; Current: <strong style="font-size:1.1em">${formatMoney(runningBalance)}</strong>`;
 
-        // Update Header Balance
-        document.getElementById('current-balance-display').textContent = `Bal: ${formatMoney(runningBalance)}`;
 
-        // B. Render Budgets (Right Side)
+        // --- B. BUDGETS ---
         const budgetContainer = document.getElementById('budget-container');
         
         currentPeriod.paycheckCycles.forEach(cycle => {
             const section = document.createElement('div');
             section.className = 'cycle-section';
-
-            // Cycle Header
             section.innerHTML = `<div class="cycle-header">${cycle.label}</div>`;
 
-            // Items
             cycle.budgetItems.forEach(item => {
                 const spent = usage[item.id] || 0;
                 const transferAdj = adjustments[item.id] || 0;
                 const totalAvailable = item.plannedAmount + item.carriedOver + transferAdj;
                 const remaining = totalAvailable - spent;
 
+                // Progress Bar Logic
+                const percent = Math.min(100, (spent / totalAvailable) * 100);
+                let barColor = 'budget-bar-fill'; // default green
+                if(percent > 80) barColor += ' warning';
+                if(percent >= 100) barColor += ' danger';
+
+                // Item Container
                 const itemDiv = document.createElement('div');
                 itemDiv.className = 'budget-item';
+                
+                // Toggle Details on click
+                itemDiv.onclick = () => {
+                    const d = itemDiv.querySelector('.budget-details');
+                    d.classList.toggle('active');
+                };
+
+                // Specific Transactions for this budget
+                const itemTxns = details[item.id] || [];
+                const detailsHtml = itemTxns.map(t => `
+                    <div class="detail-row">
+                        <span><span class="detail-date">${t.date.substring(5)}</span> ${t.desc}</span>
+                        <span>-${formatMoney(t.amount)}</span>
+                    </div>
+                `).join('');
+
                 itemDiv.innerHTML = `
-                    <div class="budget-name">${item.name}</div>
-                    <div style="text-align:right;">
-                        <div class="budget-remaining ${remaining < 0 ? 'negative' : ''}">${formatMoney(remaining)}</div>
-                        <div class="budget-math">of ${formatMoney(totalAvailable)}</div>
+                    <div class="budget-summary">
+                        <img src="${item.image || 'https://via.placeholder.com/40'}" class="budget-icon">
+                        <div class="budget-name-area">
+                            <span class="budget-name">${item.name}</span>
+                            <div class="budget-bar-bg"><div class="${barColor}" style="width: ${percent}%"></div></div>
+                        </div>
+                        <div class="budget-math">
+                            <div class="remaining-amount ${remaining < 0 ? 'negative' : ''}">${formatMoney(remaining)}</div>
+                            <div class="total-amount">of ${formatMoney(totalAvailable)}</div>
+                        </div>
+                    </div>
+                    <div class="budget-details">
+                        ${detailsHtml.length ? detailsHtml : '<div style="color:#999; font-style:italic">No transactions yet</div>'}
                     </div>
                 `;
                 section.appendChild(itemDiv);
@@ -355,16 +514,16 @@
             budgetContainer.appendChild(section);
         });
 
-        // C. Render Watchlist
+        // --- C. WATCHLIST ---
         const watchlistContainer = document.getElementById('watchlist-items');
         currentPeriod.watchList.forEach(w => {
-            const li = document.createElement('li');
-            li.textContent = `${w.description} - ${formatMoney(w.amount)} (Due: ${w.dueDate})`;
-            watchlistContainer.appendChild(li);
+            const div = document.createElement('div');
+            div.className = 'watchlist-item';
+            div.innerHTML = `<span>${w.description}</span> <strong>${formatMoney(w.amount)}</strong>`;
+            watchlistContainer.appendChild(div);
         });
     }
 
-    // Run on load
     renderApp();
 
 </script>
