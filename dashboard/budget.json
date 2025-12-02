@@ -108,7 +108,7 @@
               "id": "b1764712269777",
               "name": "Home Repair",
               "plannedAmount": 200,
-              "carriedOver": 2380.95,
+              "carriedOver": 2680.95,
               "image": "https://www.clipartmax.com/png/middle/394-3942002_fix-house-icon-clipart-home-repair-house-fix-house-icon-clipart-home.png"
             },
             {
@@ -263,7 +263,48 @@
           "note": "Needed extra for fancy haircut"
         }
       ],
-      "watchList": [],
+      "watchList": [
+        {
+          "description": "Student Loan",
+          "amount": 105,
+          "dueDate": "2025-12-15"
+        },
+        {
+          "description": "Haircuts",
+          "amount": 55,
+          "dueDate": "2025-12-15"
+        },
+        {
+          "description": "Mowing",
+          "amount": 120,
+          "dueDate": "2025-12-10"
+        },
+        {
+          "description": "House Cleaning",
+          "amount": 160,
+          "dueDate": "2025-12-17"
+        },
+        {
+          "description": "Aflac",
+          "amount": 196.69,
+          "dueDate": "2025-12-15"
+        },
+        {
+          "description": "Church",
+          "amount": 200,
+          "dueDate": "2025-12-15"
+        },
+        {
+          "description": "Water",
+          "amount": 105,
+          "dueDate": "2025-12-15"
+        },
+        {
+          "description": "Home Repair",
+          "amount": 2580.95,
+          "dueDate": "2025-12-15"
+        }
+      ],
       "incomeSources": [
         {
           "id": "inc1764710864578",
