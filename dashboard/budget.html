@@ -405,15 +405,34 @@
             const response = await fetch('./budget.json');
             if (!response.ok) throw new Error("No budget.json found");
             appData = await response.json();
-            statusEl.textContent = "✓ Synced"; statusEl.style.color = "#2ecc71";
+            if(statusEl) {
+                statusEl.textContent = "✓ Synced"; 
+                statusEl.style.color = "#2ecc71";
+            }
+            // Add transfers array if missing (migration for older json files)
+            if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
+                appData.periods[0].transfers = [];
+            }
+            
             saveSession();
             renderApp();
         } catch (err) {
             console.warn("Could not auto-load budget.json:", err);
-            statusEl.textContent = "⚠ Local/Offline"; statusEl.style.color = "#f1c40f";
+            if(statusEl) {
+                statusEl.textContent = "⚠ Local/Offline"; 
+                statusEl.style.color = "#f1c40f";
+            }
             const saved = localStorage.getItem('budget_backup');
-            if(saved) { appData = JSON.parse(saved); renderApp(); }
-            else { renderEmptyState(); }
+            if(saved) { 
+                appData = JSON.parse(saved); 
+                // Migration check
+                if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
+                    appData.periods[0].transfers = [];
+                }
+                renderApp(); 
+            } else { 
+                renderEmptyState(); 
+            }
         }
     }
 
@@ -437,9 +456,14 @@
         reader.onload = function(e) {
             try {
                 appData = JSON.parse(e.target.result);
+                // Migration check
+                if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
+                    appData.periods[0].transfers = [];
+                }
                 renderApp();
                 saveSession();
-                document.getElementById('status-indicator').textContent = "✓ File Loaded";
+                const statusEl = document.getElementById('status-indicator');
+                if(statusEl) statusEl.textContent = "✓ File Loaded";
             } catch(err) {
                 alert("Error loading file: " + err.message);
             }
@@ -455,12 +479,14 @@
         const period = getPeriod();
         if (!period) { renderEmptyState(); return; }
 
-        document.getElementById('period-name-display').textContent = period.displayName || "Ledger";
+        // SAFETY CHECKS FOR DOM ELEMENTS
+        const periodNameEl = document.getElementById('period-name-display');
+        if(periodNameEl) periodNameEl.textContent = period.displayName || "Ledger";
 
         const usage = {};
         const incomeAlloc = {};
         const details = {}; 
-        const transferAdj = {}; // New: Track net transfers per budget
+        const transferAdj = {}; 
 
         let totalIncome = 0;
         let totalSpent = 0;
@@ -470,41 +496,41 @@
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
         }
 
-        // Process Ledger
-        period.ledger.forEach(txn => {
-            const addDet = (bid, amt, note, type) => {
-                if(!details[bid]) details[bid] = [];
-                details[bid].push({ date: txn.date, desc: note || txn.description, amount: amt, type: type });
-            };
+        // Ledger Processing
+        if(period.ledger) {
+            period.ledger.forEach(txn => {
+                const addDet = (bid, amt, note, type) => {
+                    if(!details[bid]) details[bid] = [];
+                    details[bid].push({ date: txn.date, desc: note || txn.description, amount: amt, type: type });
+                };
 
-            if (txn.type === 'expense') {
-                totalSpent += Math.abs(txn.amount);
-                if(txn.splits) {
-                    txn.splits.forEach(s => {
-                        usage[s.linkedBudgetItemId] = (usage[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
-                        addDet(s.linkedBudgetItemId, -Math.abs(s.amount), s.note || "Split", 'expense');
-                    });
-                } else if (txn.linkedBudgetItemId) {
-                    usage[txn.linkedBudgetItemId] = (usage[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
-                    addDet(txn.linkedBudgetItemId, -Math.abs(txn.amount), null, 'expense');
+                if (txn.type === 'expense') {
+                    totalSpent += Math.abs(txn.amount);
+                    if(txn.splits) {
+                        txn.splits.forEach(s => {
+                            usage[s.linkedBudgetItemId] = (usage[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
+                            addDet(s.linkedBudgetItemId, -Math.abs(s.amount), s.note || "Split", 'expense');
+                        });
+                    } else if (txn.linkedBudgetItemId) {
+                        usage[txn.linkedBudgetItemId] = (usage[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
+                        addDet(txn.linkedBudgetItemId, -Math.abs(txn.amount), null, 'expense');
+                    }
+                } else if (txn.type === 'income') {
+                    totalIncome += Math.abs(txn.amount);
+                    if(txn.linkedBudgetItemId) {
+                        incomeAlloc[txn.linkedBudgetItemId] = (incomeAlloc[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
+                        addDet(txn.linkedBudgetItemId, Math.abs(txn.amount), null, 'income');
+                    }
                 }
-            } else if (txn.type === 'income') {
-                totalIncome += Math.abs(txn.amount);
-                if(txn.linkedBudgetItemId) {
-                    incomeAlloc[txn.linkedBudgetItemId] = (incomeAlloc[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
-                    addDet(txn.linkedBudgetItemId, Math.abs(txn.amount), null, 'income');
-                }
-            }
-        });
+            });
+        }
 
-        // Process Transfers (Internal Only - Not in Ledger)
+        // Transfer Processing
         if(period.transfers) {
             period.transfers.forEach(tr => {
-                // Adjust Math
                 transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
                 transferAdj[tr.toId] = (transferAdj[tr.toId] || 0) + tr.amount;
 
-                // Add Details for audit
                 const dateStr = tr.date ? tr.date.substring(5) : '';
                 if(details[tr.fromId]) details[tr.fromId].push({ date: dateStr, desc: `Transfer to ${getBudgetName(tr.toId)}`, amount: -tr.amount, type: 'transfer-out' });
                 if(details[tr.toId]) details[tr.toId].push({ date: dateStr, desc: `Transfer from ${getBudgetName(tr.fromId)}`, amount: tr.amount, type: 'transfer-in' });
@@ -515,158 +541,177 @@
             period.watchList.forEach(w => totalPlanned += w.amount);
         }
 
-        // --- Math & Dashboard ---
-        const startBal = period.initialBankBalance;
+        // --- DASHBOARD MATH ---
+        const startBal = period.initialBankBalance || 0;
         const netCash = startBal + totalIncome - totalSpent;
         const projected = netCash - totalPlanned;
         
+        // Safety update for dashboard elements
         const mathEl = document.getElementById('watchlist-math-display');
-        const projClass = projected < 0 ? 'negative' : 'positive';
-        mathEl.innerHTML = `
-            <span title="Net Cash (Start + Inc - Exp)">${formatMoney(netCash)}</span> - 
-            <span title="Planned">${formatMoney(totalPlanned)}</span> = 
-            <span class="math-result ${projClass}">${formatMoney(projected)}</span>
-        `;
+        if(mathEl) {
+            const projClass = projected < 0 ? 'negative' : 'positive';
+            mathEl.innerHTML = `
+                <span title="Net Cash (Start + Inc - Exp)">${formatMoney(netCash)}</span> - 
+                <span title="Planned">${formatMoney(totalPlanned)}</span> = 
+                <span class="math-result ${projClass}">${formatMoney(projected)}</span>
+            `;
+        }
 
-        document.getElementById('sum-in').textContent = formatMoney(totalIncome);
-        document.getElementById('sum-out').textContent = formatMoney(totalSpent);
-        document.getElementById('sum-plan').textContent = formatMoney(totalPlanned);
-        document.getElementById('sum-proj').textContent = formatMoney(projected);
-        document.getElementById('sum-proj').style.color = projected < 0 ? '#e74c3c' : '#333';
+        // Update summary cards only if they exist
+        ['sum-in', 'sum-out', 'sum-plan', 'sum-proj'].forEach(id => {
+            const el = document.getElementById(id);
+            if(el) {
+                if(id === 'sum-in') el.textContent = formatMoney(totalIncome);
+                if(id === 'sum-out') el.textContent = formatMoney(totalSpent);
+                if(id === 'sum-plan') el.textContent = formatMoney(totalPlanned);
+                if(id === 'sum-proj') {
+                    el.textContent = formatMoney(projected);
+                    el.style.color = projected < 0 ? '#e74c3c' : '#333';
+                }
+            }
+        });
 
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
 
-        // Ledger Render
+        // LEDGER RENDER
         const tbody = document.getElementById('ledger-body');
-        tbody.innerHTML = '';
-        let balance = period.initialBankBalance;
-        const sorted = [...period.ledger].sort((a,b) => a.date.localeCompare(b.date));
+        if(tbody) {
+            tbody.innerHTML = '';
+            let balance = period.initialBankBalance || 0;
+            const sorted = period.ledger ? [...period.ledger].sort((a,b) => a.date.localeCompare(b.date)) : [];
 
-        sorted.forEach(txn => {
-            balance += txn.amount;
-            const tr = document.createElement('tr');
-            tr.className = 'ledger-row';
-            let iconUrl = '';
-            if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
-            else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
-            else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
-            
-            const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:40px;"></span>';
-            const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
+            sorted.forEach(txn => {
+                balance += txn.amount;
+                const tr = document.createElement('tr');
+                tr.className = 'ledger-row';
+                let iconUrl = '';
+                if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
+                else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
+                else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
+                
+                const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:40px;"></span>';
+                const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
-            tr.innerHTML = `
-                <td class="col-date">${txn.date.substring(5)}</td>
-                <td class="col-desc">${iconHtml}${txn.description} ${txn.splits?'<small>(Split)</small>':''}</td>
-                <td class="col-amt ${amtClass}">${formatMoney(txn.amount)}</td>
-                <td class="col-bal">${formatMoney(balance)}</td>
-                <td class="col-act"><button class="btn btn-icon" onclick="openTxModal('${txn.id}')">✎</button></td>
-            `;
-            tbody.appendChild(tr);
-        });
-        document.getElementById('ledger-header-info').innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
-
-        // Budget Render
-        const budgetContainer = document.getElementById('budget-container');
-        budgetContainer.innerHTML = '';
-
-        if(period.paycheckCycles) {
-            period.paycheckCycles.forEach(cycle => {
-                const section = document.createElement('div');
-                section.className = 'cycle-section';
-                section.innerHTML = `
-                    <div class="cycle-header">
-                        <span>${cycle.label}</span>
-                        <button class="btn btn-sm btn-icon" onclick="openBudgetModal(null, ${cycle.cycleId})">+ Add Item</button>
-                    </div>`;
-
-                cycle.budgetItems.forEach(item => {
-                    const spent = usage[item.id] || 0;
-                    const received = incomeAlloc[item.id] || 0;
-                    const transfers = transferAdj[item.id] || 0;
-                    
-                    const total = item.plannedAmount + item.carriedOver + received + transfers;
-                    const remaining = total - spent;
-                    
-                    const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
-                    let color = 'budget-bar-fill';
-                    if(percent > 90) color += ' warning';
-                    if(remaining < 0) color += ' danger';
-
-                    const myTxns = details[item.id] || [];
-                    const detailHtml = myTxns.map(t => {
-                        let colorClass = 'inherit';
-                        let prefix = '';
-                        if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
-                        if(t.type === 'transfer-out') { colorClass = 'orange'; } 
-                        
-                        return `
-                        <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
-                            <span>${t.date} ${t.desc}</span>
-                            <span style="font-family:monospace; color:${colorClass}">
-                                ${prefix}${formatMoney(t.amount)}
-                            </span>
-                        </div>
-                    `}).join('');
-
-                    const div = document.createElement('div');
-                    div.className = 'budget-item';
-                    div.innerHTML = `
-                        <div class="budget-summary" onclick="this.nextElementSibling.classList.toggle('active')">
-                            <img src="${item.image}" class="budget-icon">
-                            <div>
-                                <span style="font-weight:600">${item.name}</span>
-                                <div class="budget-bar-bg"><div class="${color}" style="width:${percent}%"></div></div>
-                            </div>
-                            <div style="text-align:right">
-                                <div class="amount-text ${remaining<0?'negative':''}">${formatMoney(remaining)}</div>
-                                <div style="font-size:0.75rem; color:#999;">of ${formatMoney(total)}</div>
-                            </div>
-                            <button class="btn btn-icon" title="Plan Expense" onclick="event.stopPropagation(); openWatchModal('${item.name}', ${remaining}, '${item.image}')">⏱</button>
-                            <button class="btn btn-icon" title="Edit Item" onclick="event.stopPropagation(); openBudgetModal('${item.id}', ${cycle.cycleId})">✎</button>
-                        </div>
-                        <div class="budget-details">
-                            <div style="margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">
-                                <strong>Plan:</strong> ${formatMoney(item.plannedAmount)} | 
-                                <strong>Carry:</strong> ${formatMoney(item.carriedOver)} | 
-                                <strong style="color:green">Credits:</strong> ${formatMoney(received)} | 
-                                <strong style="color:blue">Transfers:</strong> ${formatMoney(transfers)}
-                            </div>
-                            ${detailHtml || '<i>No transactions</i>'}
-                        </div>
-                    `;
-                    section.appendChild(div);
-                });
-                budgetContainer.appendChild(section);
-            });
-        }
-
-        const wContainer = document.getElementById('watchlist-list');
-        wContainer.innerHTML = '';
-        if(period.watchList) {
-            period.watchList.forEach((w, idx) => {
-                const div = document.createElement('div');
-                div.className = 'watchlist-item';
-                const iconHtml = w.image ? `<img src="${w.image}" class="watchlist-icon">` : '';
-                div.innerHTML = `
-                    <span style="display:flex; align-items:center;">
-                        ${iconHtml}
-                        <span>
-                            <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${w.dueDate}</span>
-                        </span>
-                    </span>
-                    <span>
-                        <b>${formatMoney(w.amount)}</b>
-                        <button class="btn btn-sm btn-icon" onclick="deleteWatchItem(${idx})">✕</button>
-                    </span>
+                tr.innerHTML = `
+                    <td class="col-date">${txn.date.substring(5)}</td>
+                    <td class="col-desc">${iconHtml}${txn.description} ${txn.splits?'<small>(Split)</small>':''}</td>
+                    <td class="col-amt ${amtClass}">${formatMoney(txn.amount)}</td>
+                    <td class="col-bal">${formatMoney(balance)}</td>
+                    <td class="col-act"><button class="btn btn-icon" onclick="openTxModal('${txn.id}')">✎</button></td>
                 `;
-                wContainer.appendChild(div);
+                tbody.appendChild(tr);
             });
+            const ledgerInfo = document.getElementById('ledger-header-info');
+            if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
         }
 
+        // BUDGET RENDER
+        const budgetContainer = document.getElementById('budget-container');
+        if(budgetContainer) {
+            budgetContainer.innerHTML = '';
+            if(period.paycheckCycles) {
+                period.paycheckCycles.forEach(cycle => {
+                    const section = document.createElement('div');
+                    section.className = 'cycle-section';
+                    section.innerHTML = `
+                        <div class="cycle-header">
+                            <span>${cycle.label}</span>
+                            <button class="btn btn-sm btn-icon" onclick="openBudgetModal(null, ${cycle.cycleId})">+ Add Item</button>
+                        </div>`;
+
+                    cycle.budgetItems.forEach(item => {
+                        const spent = usage[item.id] || 0;
+                        const received = incomeAlloc[item.id] || 0;
+                        const transfers = transferAdj[item.id] || 0;
+                        
+                        const total = item.plannedAmount + item.carriedOver + received + transfers;
+                        const remaining = total - spent;
+                        
+                        const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
+                        let color = 'budget-bar-fill';
+                        if(percent > 90) color += ' warning';
+                        if(remaining < 0) color += ' danger';
+
+                        const myTxns = details[item.id] || [];
+                        const detailHtml = myTxns.map(t => {
+                            let colorClass = 'inherit';
+                            let prefix = '';
+                            if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
+                            if(t.type === 'transfer-out') { colorClass = 'orange'; } 
+                            
+                            return `
+                            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
+                                <span>${t.date} ${t.desc}</span>
+                                <span style="font-family:monospace; color:${colorClass}">
+                                    ${prefix}${formatMoney(t.amount)}
+                                </span>
+                            </div>
+                        `}).join('');
+
+                        const div = document.createElement('div');
+                        div.className = 'budget-item';
+                        div.innerHTML = `
+                            <div class="budget-summary" onclick="this.nextElementSibling.classList.toggle('active')">
+                                <img src="${item.image}" class="budget-icon">
+                                <div>
+                                    <span style="font-weight:600">${item.name}</span>
+                                    <div class="budget-bar-bg"><div class="${color}" style="width:${percent}%"></div></div>
+                                </div>
+                                <div style="text-align:right">
+                                    <div class="amount-text ${remaining<0?'negative':''}">${formatMoney(remaining)}</div>
+                                    <div style="font-size:0.75rem; color:#999;">of ${formatMoney(total)}</div>
+                                </div>
+                                <button class="btn btn-icon" title="Plan Expense" onclick="event.stopPropagation(); openWatchModal('${item.name}', ${remaining}, '${item.image}')">⏱</button>
+                                <button class="btn btn-icon" title="Edit Item" onclick="event.stopPropagation(); openBudgetModal('${item.id}', ${cycle.cycleId})">✎</button>
+                            </div>
+                            <div class="budget-details">
+                                <div style="margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">
+                                    <strong>Plan:</strong> ${formatMoney(item.plannedAmount)} | 
+                                    <strong>Carry:</strong> ${formatMoney(item.carriedOver)} | 
+                                    <strong style="color:green">Credits:</strong> ${formatMoney(received)} | 
+                                    <strong style="color:blue">Transfers:</strong> ${formatMoney(transfers)}
+                                </div>
+                                ${detailHtml || '<i>No transactions</i>'}
+                            </div>
+                        `;
+                        section.appendChild(div);
+                    });
+                    budgetContainer.appendChild(section);
+                });
+            }
+        }
+
+        // WATCHLIST RENDER
+        const wContainer = document.getElementById('watchlist-list');
+        if(wContainer) {
+            wContainer.innerHTML = '';
+            if(period.watchList) {
+                period.watchList.forEach((w, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'watchlist-item';
+                    const iconHtml = w.image ? `<img src="${w.image}" class="watchlist-icon">` : '';
+                    div.innerHTML = `
+                        <span style="display:flex; align-items:center;">
+                            ${iconHtml}
+                            <span>
+                                <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${w.dueDate}</span>
+                            </span>
+                        </span>
+                        <span>
+                            <b>${formatMoney(w.amount)}</b>
+                            <button class="btn btn-sm btn-icon" onclick="deleteWatchItem(${idx})">✕</button>
+                        </span>
+                    `;
+                    wContainer.appendChild(div);
+                });
+            }
+        }
+
+        // INCOME SOURCES RENDER
         const incContainer = document.getElementById('income-sources-list');
-        if(period.incomeSources) {
+        if(incContainer && period.incomeSources) {
             incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
         }
     }
@@ -674,7 +719,9 @@
     function getBudgetName(id) {
         const period = getPeriod();
         let name = 'Unknown';
-        period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === id) name = b.name; }));
+        if(period && period.paycheckCycles) {
+            period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === id) name = b.name; }));
+        }
         return name;
     }
 
@@ -693,6 +740,7 @@
         };
     }
 
+    // --- MODALS & FORM LOGIC ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
