@@ -19,21 +19,21 @@
               "name": "Groceries",
               "plannedAmount": 5500,
               "carriedOver": 273.84,
-              "image": "https://classroomclipart.com/image/static7/preview2/supermarket-cart-in-retail-store-59878.jpg"
+              "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
             },
             {
               "id": "b2",
               "name": "Mortgage",
               "plannedAmount": 1088,
               "carriedOver": 0,
-              "image": "https://www.clipartmax.com/png/middle/193-1932164_hallway-clipart-home-house-in-up-movie-clipart.png"
+              "image": "https://cdn.iconscout.com/icon/free/png-512/free-house-icon-svg-download-png-460450.png?f=webp&w=256"
             },
             {
               "id": "b1764711223715",
               "name": "Student Loan",
               "plannedAmount": 105,
               "carriedOver": 0,
-              "image": "https://thumbs.dreamstime.com/b/graduate-student-loan-icon-student-loan-graphics-education-financial-aid-assistance-government-loans-debt-89394789.jpg?w=768"
+              "image": "https://cdn.iconscout.com/icon/free/png-512/free-student-icon-svg-download-png-1810201.png?f=webp&w=256"
             },
             {
               "id": "b1764711649373",
@@ -47,14 +47,14 @@
               "name": "Mowing",
               "plannedAmount": 120,
               "carriedOver": 0,
-              "image": "https://www.clipartmax.com/png/middle/5-57552_lawn-care-clip-art.png"
+              "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/lawn-mowing-icon-svg-download-png-4594800.png?f=webp&w=256"
             },
             {
               "id": "b1764711790564",
               "name": "House Cleaning",
               "plannedAmount": 160,
               "carriedOver": 0,
-              "image": "https://www.clipartmax.com/png/middle/14-145237_cleaning-clip-art-images-free-house-cleaning-services-lady.png"
+              "image": "https://cdn.iconscout.com/icon/free/png-512/free-cleaning-icon-svg-download-png-1242225.png?f=webp&w=256"
             },
             {
               "id": "b1764711838253",
@@ -68,7 +68,7 @@
               "name": "Invest",
               "plannedAmount": 0,
               "carriedOver": 58,
-              "image": "https://images.freeimages.com/clg/images/35/356767/stock-exchange_f.jpg?fmt=webp&h=350"
+              "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/investing-icon-svg-download-png-1421196.png?f=webp&w=256"
             }
           ]
         },
@@ -123,7 +123,7 @@
               "name": "Vacation",
               "plannedAmount": 0,
               "carriedOver": 0,
-              "image": "https://classroomclipart.com/image/static7/preview2/tropical-beach-vacation-with-a-palm-tree-a-coconut-drink-clipart-69475.jpg"
+              "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/vacation-icon-svg-download-png-11067623.png?f=webp&w=256"
             }
           ]
         }
