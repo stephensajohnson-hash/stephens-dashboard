@@ -603,22 +603,45 @@
         window.handleSearch = handleSearch;
         window.shareLink = shareLink;
 
-        // --- INIT ---
+// --- INIT ---
         async function initRecipeDashboard() {
             initDOM(); 
-            let data = EMBEDDED_RECIPES;
-            try { const res = await fetch('/recipes_data.json'); if(res.ok) data = await res.json(); } catch(e) {}
-            STATIC_RECIPES = data.recipes || []; STATIC_CATEGORIES = data.categories || []; STATIC_TAGS = data.availableTags || [];
-            buildIngredientDB();
-            renderRecipeGroups();
             
-            // --- CHECK URL FOR DEEP LINK ---
+            // 1. Load Data FIRST
+            let data = EMBEDDED_RECIPES;
+            try { 
+                const res = await fetch('/recipes_data.json'); 
+                if(res.ok) data = await res.json(); 
+            } catch(e) {
+                console.log("Using embedded data");
+            }
+            
+            // 2. Set Global Variables
+            STATIC_RECIPES = data.recipes || []; 
+            STATIC_CATEGORIES = data.categories || []; 
+            STATIC_TAGS = data.availableTags || [];
+            
+            // 3. Build DB
+            buildIngredientDB();
+            
+            // 4. Check URL for ID *AFTER* data is loaded
             const urlParams = new URLSearchParams(window.location.search);
             const recipeId = urlParams.get('id');
+            
             if(recipeId) {
-                // Ensure data is loaded first, then check
-                const exists = getAllRecipes().find(r => String(r.id) === String(recipeId));
-                if(exists) showDetailView(recipeId);
+                const all = getAllRecipes();
+                const targetRecipe = all.find(r => String(r.id) === String(recipeId));
+                
+                if(targetRecipe) {
+                    showDetailView(recipeId);
+                } else {
+                    // ID not found, clear URL and show list
+                    const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                    window.history.replaceState({path:newUrl},'',newUrl);
+                    renderRecipeGroups();
+                }
+            } else {
+                renderRecipeGroups();
             }
         }
         async function updateWeather() { try { const res = await fetch('https://api.openweathermap.org/data/2.5/weather?zip=75482,us&units=imperial&appid=87256fe2710631542ff491e4c5d73306'); if(res.ok) { const d = await res.json(); document.getElementById('weather-current-temp').textContent = Math.round(d.main.temp)+'°'; document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(d.main.temp)}`; document.getElementById('weather-low').textContent = Math.round(d.main.temp_min)+'°'; document.getElementById('weather-low').className = `low-temp-offset mr-1 text-xs ${getTempColor(d.main.temp_min)}`; document.getElementById('weather-high').textContent = Math.round(d.main.temp_max)+'°'; document.getElementById('weather-high').className = `high-temp-offset text-xs ${getTempColor(data.main.temp_max)}`; document.getElementById('weather-icon').innerHTML = getForecastEmoji(d.weather[0].icon); } } catch(e) {} }
