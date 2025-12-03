@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.8.2</title>
+    <title>Stephens' Recipes V0.8.3</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -37,10 +37,8 @@
 </head>
 <body class="bg-gray-900 text-white min-h-screen p-4 sm:p-8">
 
-    <!-- Datalist for Autocomplete -->
     <datalist id="ingredient-datalist"></datalist>
 
-    <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-30 p-2 flex items-center justify-between">
         <div class="flex items-center">
             <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none mr-4" onclick="toggleMenu()">
@@ -56,7 +54,6 @@
         </div>
     </nav>
 
-    <!-- Menu Dropdown -->
     <div id="menu-modal" class="fixed top-[4rem] left-4 z-40 opacity-0 pointer-events-none transform -translate-y-4 transition-all duration-300 ease-out max-w-xs z-50">
         <div class="bg-gray-800 border border-gray-700 rounded-xl p-4 shadow-2xl w-64">
             <div class="flex justify-between items-center mb-3 border-b border-gray-700 pb-2">
@@ -67,13 +64,11 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="document.getElementById('add-category-modal').classList.remove('hidden'); hideMenu();">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.2</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.3</p>
         </div>
     </div>
 
-    <!-- LIST VIEW Container -->
     <main id="recipes-content" class="px-4 sm:px-8 pt-16 pb-8">
-        <!-- Search Bar -->
         <div class="mb-8 relative max-w-xl mx-auto">
             <input type="text" id="recipe-search" placeholder="Search recipes, ingredients, sources..." class="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 px-4 pl-11 text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition duration-200 shadow-lg" oninput="handleSearch(this.value)">
             <div class="absolute left-3.5 top-3.5 text-gray-500">
@@ -83,13 +78,11 @@
 
         <div id="recipe-groups-container" class="flex flex-col space-y-8 min-h-[200px]"></div>
         
-        <!-- Tag Cloud Section -->
         <div id="tag-cloud-wrapper" class="mt-16 pt-8 border-t border-gray-700">
             <div id="tag-cloud-container" class="flex flex-wrap gap-x-4 gap-y-2 justify-center items-baseline p-4"></div>
         </div>
     </main>
 
-    <!-- DETAIL VIEW Container -->
     <main id="recipe-detail-view" class="px-4 sm:px-8 pt-16 pb-8 hidden">
         <div class="flex justify-between items-start mb-4 z-40 relative">
             <button id="back-to-list" class="flex items-center text-gray-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-gray-800 bg-gray-800 border border-gray-700" onclick="renderRecipeGroups()">
@@ -107,7 +100,6 @@
         <div id="detail-content" class="bg-gray-800 rounded-2xl p-6 border border-gray-700 shadow-2xl max-w-5xl mx-auto"></div>
     </main>
     
-    <!-- RECIPE MODAL -->
     <div id="recipe-form-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-900 border border-gray-700 rounded-2xl w-full max-w-4xl h-[90vh] flex flex-col shadow-2xl overflow-hidden m-4 bg-gray-900">
             <div class="p-4 border-b border-gray-700 flex justify-between items-center bg-gray-800">
@@ -157,7 +149,6 @@
         </div>
     </div>
 
-    <!-- Simple Modals -->
     <div id="add-category-modal" class="fixed inset-0 modal-backdrop z-50 flex items-center justify-center hidden">
         <div class="bg-gray-800 border border-gray-700 rounded-2xl p-6 w-full max-w-sm">
             <h2 class="text-xl font-bold mb-4">Add Category</h2>
@@ -165,7 +156,6 @@
         </div>
     </div>
 
-    <!-- JS Logic -->
     <script>
         // --- VARIABLES ---
         const state = { localStorageKeys: { recipes: 'sd_custom_recipes', categories: 'sd_custom_categories', tags: 'sd_custom_tags' } };
@@ -486,12 +476,23 @@
             const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
             containers.groups.innerHTML = '';
 
+            // Calculate Counts FIRST
+            const counts = {}; 
+            allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
+
             const allTagsSet = new Set([...STATIC_TAGS, ...customTags]); allRecipes.forEach(r => (r.tags||[]).forEach(t => allTagsSet.add(t)));
             const sortedTags = Array.from(allTagsSet).sort();
-            const getSize = c => c>3?"text-4xl font-black":c>2?"text-2xl font-bold":c>1?"text-lg font-semibold":"text-xs font-normal text-gray-400";
+            
             const colors = ["text-blue-400","text-green-400","text-yellow-400","text-red-400","text-purple-400","text-pink-400"];
-            const counts = {}; allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
-            containers.tags.innerHTML = sortedTags.map(tag => `<button onclick="filterByTag('${tag}')" class="tag-cloud-item ${getSize(counts[tag])} ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`).join('');
+            
+            // --- UPDATED LOGIC HERE ---
+            containers.tags.innerHTML = sortedTags.map(tag => {
+                const count = counts[tag] || 0;
+                // Formula: Start with 9, add count * 2
+                const fontSize = 9 + (count * 2); 
+                return `<button onclick="filterByTag('${tag}')" style="font-size: ${fontSize}pt;" class="tag-cloud-item font-bold ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`;
+            }).join('');
+            // --------------------------
 
             let displayRecipes = allRecipes;
 
