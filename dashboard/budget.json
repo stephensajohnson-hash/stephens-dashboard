@@ -270,6 +270,22 @@
           "toBudgetId": "b2",
           "amount": 20,
           "note": "Needed extra for fancy haircut"
+        },
+        {
+          "id": "tr1764800996288",
+          "fromId": "b1764712061699",
+          "toId": "b1",
+          "amount": 25.71,
+          "note": "",
+          "date": "2025-12-03"
+        },
+        {
+          "id": "tr1764801081506",
+          "fromId": "b1764712324700",
+          "toId": "b1",
+          "amount": 2833.76,
+          "note": "",
+          "date": "2025-12-03"
         }
       ],
       "watchList": [
