@@ -5,9 +5,9 @@
     "owner": "Stephens"
   },
   "leagues": [
-    "NFL",
+    "EFL Championship",
     "MLB",
-    "EFL Championship"
+    "NFL"
   ],
   "teams": [
     {
@@ -711,6 +711,18 @@
       "rating": 7,
       "id": "media_1764178647221",
       "date": "2025-01-01"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Pay Day",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764707144174",
+      "date": "2025-01-03"
     },
     {
       "type": "media",
@@ -3155,7 +3167,7 @@
       "ticketNumber": "",
       "status": "pending",
       "id": "task_1764023034485",
-      "date": "2025-12-02"
+      "date": "2025-12-04"
     },
     {
       "type": "habit",
@@ -3201,6 +3213,15 @@
           "carbs": 76,
           "fat": 41,
           "fiber": 21
+        },
+        {
+          "mealType": "dinner",
+          "name": "Turkey Lentil Curry",
+          "calories": 786,
+          "protein": 75,
+          "carbs": 40,
+          "fat": 40,
+          "fiber": 14
         }
       ],
       "workouts": []
@@ -3215,7 +3236,8 @@
       "description": "",
       "id": "habit_1764741600000_klq8v",
       "date": "2025-12-03",
-      "streakCount": 1506
+      "streakCount": 1506,
+      "status": "completed"
     },
     {
       "type": "habit",
@@ -6900,6 +6922,86 @@
       "description": "",
       "id": "birthday_1764112468882_19",
       "date": "2026-12-28"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Deal with Harry's Razor Order",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764772644117",
+      "date": "2025-12-03"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Deal with Harry's Razor Order",
+      "linkUrl": "https://www.harrys.com/en/profile/next-box",
+      "imgUrl": "https://cdn.shopify.com/s/files/1/0883/9528/4786/files/US_website_harrys_plus_carts_04_01_69f9a095-d19b-4066-be8f-d44cec3c7ac5.jpg?v=1752154428&width=600&height=600&crop=center",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764772793646",
+      "date": "2026-11-20"
+    },
+    {
+      "id": "health_1764773583920",
+      "date": "2025-12-03",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "Protein Shake",
+          "calories": 225,
+          "protein": 27,
+          "carbs": 23,
+          "fat": 5,
+          "fiber": 5
+        },
+        {
+          "mealType": "lunch",
+          "name": "Unstuffed Bell Peppers",
+          "calories": 226,
+          "protein": 22,
+          "carbs": 12,
+          "fat": 10,
+          "fiber": 4
+        },
+        {
+          "mealType": "lunch",
+          "name": "Keto Lasagna",
+          "calories": 552,
+          "protein": 53,
+          "carbs": 13,
+          "fat": 37,
+          "fiber": 2
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Reserve boarding at La Pooch for Avi",
+      "linkUrl": "https://www.lapoochpetresorts.com/pricing/",
+      "imgUrl": "https://www.myperfectpetfood.com/cdn/shop/files/Logo_146d598c-5bbb-48d8-87eb-ba24071d0c3a.png?v=1721283233",
+      "description": "Drop Off - Wed. Dec. 24 \nPick Up - Mon. Dec. 29",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764784616169",
+      "date": "2025-12-03"
     }
   ]
 }
