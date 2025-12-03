@@ -13,6 +13,7 @@
             --text-main: #333;
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
+            --accent-orange: #f39c12;
             --header-bg: #2c3e50;
             --header-text: #fff;
             --hover-bg: #f9f9f9;
@@ -22,20 +23,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
-            margin: 0; 
-            padding: 20px; 
-            /* CHANGE: Allow body to grow, use min-height instead of fixed height */
-            min-height: 100vh; 
-            box-sizing: border-box;
+            margin: 0; padding: 20px; 
+            min-height: 100vh; box-sizing: border-box;
         }
 
         .container {
-            display: grid; 
-            grid-template-columns: 65% 33%; 
-            gap: 2%; 
-            /* CHANGE: Removed fixed height, added alignment so cols don't stretch */
-            height: auto; 
-            align-items: start;
+            display: grid; grid-template-columns: 65% 33%; gap: 2%; 
+            height: auto; align-items: start;
         }
 
         /* --- BUTTONS --- */
@@ -55,40 +49,25 @@
 
         /* --- PANELS --- */
         .panel {
-            background: var(--panel-bg); 
-            border: 1px solid var(--border-color); 
-            border-radius: 8px;
-            display: flex; 
-            flex-direction: column; 
-            /* CHANGE: Removed overflow:hidden so sticky headers work and content grows */
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
+            display: flex; flex-direction: column; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;
         }
 
         .panel-header {
             background-color: var(--header-bg); color: var(--header-text);
             padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
-            border-radius: 8px 8px 0 0; /* rounded top corners only */
+            border-radius: 8px 8px 0 0;
         }
 
-        /* CHANGE: Removed scrolling constraints */
-        .scroll-area { 
-            flex: 1; 
-            overflow: visible; 
-        }
+        .scroll-area { flex: 1; overflow: visible; }
 
         /* --- LEDGER TABLE --- */
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
         .ledger-table th {
-            background: #eee; 
-            text-align: left; 
-            padding: 12px 10px; 
-            /* CHANGE: Sticky Header relative to Window */
-            position: sticky; 
-            top: 0; 
-            z-index: 100; 
-            border-bottom: 2px solid #ccc;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Subtle shadow for depth */
+            background: #eee; text-align: left; padding: 12px 10px; 
+            position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .ledger-table td {
             padding: 8px 10px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
@@ -104,7 +83,7 @@
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
         .positive { color: var(--accent-green); font-weight: bold; }
-        .ledger-icon { width: 20px; height: 20px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
+        .ledger-icon { width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- BUDGET --- */
         .cycle-section { border-bottom: 4px solid var(--border-color); }
@@ -115,7 +94,6 @@
         .budget-item { border-bottom: 1px solid #f0f0f0; cursor: pointer; }
         .budget-item:hover { background-color: var(--hover-bg); }
 
-        /* Updated grid to ensure buttons fit */
         .budget-summary {
             padding: 10px 15px; display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 8px;
         }
@@ -130,17 +108,43 @@
         }
         .budget-details.active { display: block; }
 
+        /* --- SUMMARY DASHBOARD --- */
+        .summary-dashboard {
+            background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
+            display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;
+            position: sticky; top: 0; z-index: 90;
+        }
+        .summary-card {
+            background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #eee; text-align: center;
+        }
+        .summary-label { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
+        .summary-val { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
+        .sum-in { color: var(--accent-green); }
+        .sum-out { color: var(--accent-red); }
+        .sum-plan { color: var(--accent-orange); }
+        .sum-proj { color: #333; }
+
         /* --- WATCHLIST --- */
         .watchlist-section {
-            background-color: #fffde7; 
-            border-top: 2px solid #ffd600; 
-            padding: 10px; 
-            /* CHANGE: Removed fixed max-height/overflow so it grows */
+            background-color: #fffde7; border-top: 2px solid #ffd600; padding: 15px; 
         }
+        .watchlist-header { 
+            font-weight:bold; color:#f57f17; margin-bottom: 10px; font-size: 1rem; 
+            border-bottom: 1px solid #e0e0e0; padding-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        /* New Watchlist Math Header Styles */
+        .watchlist-math { font-size: 0.85rem; color: #555; background: rgba(255,255,255,0.6); padding: 4px 8px; border-radius: 4px; }
+        .math-result { font-weight: bold; margin-left: 5px; }
+        .math-result.positive { color: var(--accent-green); }
+        .math-result.negative { color: var(--accent-red); }
+
         .watchlist-item {
             display: flex; justify-content: space-between; align-items: center;
-            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 4px 0; font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; font-size: 0.9rem;
         }
+        .watchlist-icon { width: 24px; height: 24px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- MODALS --- */
         dialog { border: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 0; width: 450px; }
@@ -208,7 +212,11 @@
         <div class="scroll-area" id="budget-container"></div>
         
         <div class="watchlist-section" id="watchlist-container">
-            <div style="font-weight:bold; margin-bottom:5px; color:#f57f17;">Upcoming Expenses (Planned)</div>
+            <div class="watchlist-header">
+                <span>Upcoming Expenses</span>
+                <div class="watchlist-math" id="watchlist-math-display">
+                    </div>
+            </div>
             <div id="watchlist-list"></div>
         </div>
 
@@ -341,6 +349,7 @@
         <span style="cursor:pointer;" onclick="document.getElementById('watch-modal').close()">✕</span>
     </div>
     <div class="modal-body">
+        <input type="hidden" id="w-image">
         <div class="form-group">
             <label>Description</label>
             <input type="text" id="w-desc">
@@ -366,7 +375,6 @@
     async function init() {
         const statusEl = document.getElementById('status-indicator');
         try {
-            // Try fetching from server
             const response = await fetch('./budget.json');
             if (!response.ok) throw new Error("No budget.json found");
             appData = await response.json();
@@ -376,8 +384,6 @@
         } catch (err) {
             console.warn("Could not auto-load budget.json:", err);
             statusEl.textContent = "⚠ Local/Offline"; statusEl.style.color = "#f1c40f";
-            
-            // Check session
             const saved = localStorage.getItem('budget_backup');
             if(saved) { 
                 appData = JSON.parse(saved); 
@@ -419,21 +425,21 @@
         input.value = '';
     }
 
-    // --- UTILS ---
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
     const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
-    // --- RENDERING ---
     function renderApp() {
         const period = getPeriod();
         if (!period) { renderEmptyState(); return; }
 
         document.getElementById('period-name-display').textContent = period.displayName || "Ledger";
 
-        // Logic: Usage & Income
         const usage = {};
         const incomeAlloc = {};
         const details = {}; 
+        let totalIncome = 0;
+        let totalSpent = 0;
+        let totalPlanned = 0;
 
         if(period.paycheckCycles) {
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
@@ -446,6 +452,7 @@
             };
 
             if (txn.type === 'expense') {
+                totalSpent += Math.abs(txn.amount);
                 if(txn.splits) {
                     txn.splits.forEach(s => {
                         usage[s.linkedBudgetItemId] = (usage[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
@@ -456,6 +463,7 @@
                     addDet(txn.linkedBudgetItemId, -Math.abs(txn.amount), null, 'expense');
                 }
             } else if (txn.type === 'income') {
+                totalIncome += Math.abs(txn.amount);
                 if(txn.linkedBudgetItemId) {
                     incomeAlloc[txn.linkedBudgetItemId] = (incomeAlloc[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
                     addDet(txn.linkedBudgetItemId, Math.abs(txn.amount), null, 'income');
@@ -463,28 +471,42 @@
             }
         });
 
+        if(period.watchList) {
+            period.watchList.forEach(w => totalPlanned += w.amount);
+        }
+
+        // --- NEW: Watchlist Zero-Based Math ---
+        const startBal = period.initialBankBalance;
+        const netCash = startBal + totalIncome - totalSpent;
+        const projected = netCash - totalPlanned;
+        
+        const mathEl = document.getElementById('watchlist-math-display');
+        const projClass = projected < 0 ? 'negative' : 'positive';
+        mathEl.innerHTML = `
+            <span title="Net Cash (Start + Inc - Exp)">${formatMoney(netCash)}</span> - 
+            <span title="Planned">${formatMoney(totalPlanned)}</span> = 
+            <span class="math-result ${projClass}">${formatMoney(projected)}</span>
+        `;
+
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
 
-        // Ledger Render
         const tbody = document.getElementById('ledger-body');
         tbody.innerHTML = '';
         let balance = period.initialBankBalance;
-        
         const sorted = [...period.ledger].sort((a,b) => a.date.localeCompare(b.date));
 
         sorted.forEach(txn => {
             balance += txn.amount;
             const tr = document.createElement('tr');
             tr.className = 'ledger-row';
-            
             let iconUrl = '';
             if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
             else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
             else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
             
-            const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:28px;"></span>';
+            const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:40px;"></span>';
             const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
             tr.innerHTML = `
@@ -498,7 +520,6 @@
         });
         document.getElementById('ledger-header-info').innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
 
-        // Budget Render
         const budgetContainer = document.getElementById('budget-container');
         budgetContainer.innerHTML = '';
 
@@ -518,7 +539,6 @@
                     const total = item.plannedAmount + item.carriedOver + received;
                     const remaining = total - spent;
                     const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
-                    
                     let color = 'budget-bar-fill';
                     if(percent > 90) color += ' warning';
                     if(remaining < 0) color += ' danger';
@@ -546,7 +566,7 @@
                                 <div class="amount-text ${remaining<0?'negative':''}">${formatMoney(remaining)}</div>
                                 <div style="font-size:0.75rem; color:#999;">of ${formatMoney(total)}</div>
                             </div>
-                            <button class="btn btn-icon" title="Plan Expense" onclick="event.stopPropagation(); openWatchModal('${item.name}', ${remaining})">⏱</button>
+                            <button class="btn btn-icon" title="Plan Expense" onclick="event.stopPropagation(); openWatchModal('${item.name}', ${remaining}, '${item.image}')">⏱</button>
                             <button class="btn btn-icon" title="Edit Item" onclick="event.stopPropagation(); openBudgetModal('${item.id}', ${cycle.cycleId})">✎</button>
                         </div>
                         <div class="budget-details">
@@ -564,16 +584,19 @@
             });
         }
 
-        // Watchlist Render
         const wContainer = document.getElementById('watchlist-list');
         wContainer.innerHTML = '';
         if(period.watchList) {
             period.watchList.forEach((w, idx) => {
                 const div = document.createElement('div');
                 div.className = 'watchlist-item';
+                const iconHtml = w.image ? `<img src="${w.image}" class="watchlist-icon">` : '';
                 div.innerHTML = `
-                    <span>
-                        <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${w.dueDate}</span>
+                    <span style="display:flex; align-items:center;">
+                        ${iconHtml}
+                        <span>
+                            <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${w.dueDate}</span>
+                        </span>
                     </span>
                     <span>
                         <b>${formatMoney(w.amount)}</b>
@@ -584,7 +607,6 @@
             });
         }
 
-        // Income Sources Render
         const incContainer = document.getElementById('income-sources-list');
         if(period.incomeSources) {
             incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
@@ -605,13 +627,11 @@
         };
     }
 
-    // --- MODAL & FORM LOGIC ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
         document.getElementById('set-period-name').value = period.displayName || '';
         document.getElementById('set-start-bal').value = period.initialBankBalance;
-        
         const container = document.getElementById('income-rows-container');
         container.innerHTML = '';
         if(period.incomeSources) {
@@ -653,7 +673,6 @@
         saveSession(); 
     }
 
-    // --- TRANSACTION LOGIC ---
     let isSplitMode = false;
     function toggleTxType() {
         const type = document.getElementById('tx-type').value;
@@ -669,7 +688,6 @@
             lblCat.firstChild.textContent = "Budget Category";
             splitLink.style.display = "inline";
         } else {
-            // INCOME: Show category dropdown for credits
             catGroup.style.display = 'block'; 
             document.getElementById('group-split').style.display = 'none';
             incGroup.style.display = 'block';
@@ -814,7 +832,6 @@
         saveSession();
     }
 
-    // --- BUDGET MODAL ---
     function openBudgetModal(itemId, cycleId) {
         const modal = document.getElementById('budget-modal');
         const period = getPeriod();
@@ -866,11 +883,11 @@
         saveSession();
     }
 
-    // --- WATCHLIST LOGIC ---
-    function openWatchModal(defaultDesc, defaultAmt) {
+    function openWatchModal(defaultDesc, defaultAmt, image) {
         document.getElementById('w-desc').value = defaultDesc || '';
         document.getElementById('w-amount').value = defaultAmt > 0 ? defaultAmt : '';
         document.getElementById('w-date').value = '';
+        document.getElementById('w-image').value = image || '';
         document.getElementById('watch-modal').showModal();
     }
     function saveWatchItem() {
@@ -879,7 +896,8 @@
         period.watchList.push({
             description: document.getElementById('w-desc').value,
             amount: parseFloat(document.getElementById('w-amount').value) || 0,
-            dueDate: document.getElementById('w-date').value || 'TBD'
+            dueDate: document.getElementById('w-date').value || 'TBD',
+            image: document.getElementById('w-image').value
         });
         document.getElementById('watch-modal').close();
         renderApp();
