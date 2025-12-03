@@ -18,7 +18,7 @@
             --header-text: #fff;
             --hover-bg: #f9f9f9;
             --watchlist-bg: #fffde7;
-            --watchlist-header-bg: #f57f17; /* Burnt Orange */
+            --watchlist-header-bg: #f57f17; 
         }
 
         body {
@@ -66,6 +66,50 @@
 
         .scroll-area { flex: 1; overflow: visible; }
 
+        /* --- HOVER ZOOM EFFECT (NEW) --- */
+        .icon-wrapper {
+            position: relative;
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        
+        /* The small image */
+        .icon-thumb {
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid #ddd;
+            cursor: zoom-in;
+        }
+        
+        /* Specific sizes for different contexts */
+        .ledger-size { width: 32px; height: 32px; }
+        .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
+        .watchlist-size { width: 24px; height: 24px; }
+        .income-size { width: 30px; height: 30px; }
+
+        /* The Large "Popup" Image */
+        .icon-large {
+            display: none; /* Hidden by default */
+            position: absolute;
+            bottom: 100%; /* Float above */
+            left: 50%;
+            transform: translateX(-50%);
+            height: 100px; /* Fixed height requested */
+            width: auto;   /* Maintain aspect ratio */
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 2px solid #fff;
+            z-index: 1000;
+            background-color: #fff;
+            margin-bottom: 8px; /* Spacing from cursor */
+        }
+
+        /* Show large image on hover */
+        .icon-wrapper:hover .icon-large {
+            display: block;
+        }
+
         /* --- LEDGER TABLE --- */
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
         .ledger-table th {
@@ -87,7 +131,6 @@
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
         .positive { color: var(--accent-green); font-weight: bold; }
-        .ledger-icon { width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- BUDGET --- */
         .cycle-section { border-bottom: 4px solid var(--border-color); }
@@ -101,7 +144,6 @@
         .budget-summary {
             padding: 10px 15px; display: grid; grid-template-columns: auto 1fr auto auto auto; align-items: center; gap: 8px;
         }
-        .budget-icon { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 2px solid #eee; background: #fff; }
         .budget-bar-bg { height: 4px; width: 100%; background: #eee; margin-top: 4px; border-radius: 2px; overflow: hidden; }
         .budget-bar-fill { height: 100%; background: var(--accent-green); }
         .budget-bar-fill.warning { background: orange; }
@@ -134,12 +176,11 @@
             border-top: 2px solid var(--watchlist-header-bg); 
             padding: 15px; 
         }
-        /* UPDATED HEADER STYLING */
         .watchlist-header { 
             background-color: var(--watchlist-header-bg);
             color: #fff;
             padding: 10px 15px;
-            margin: -15px -15px 10px -15px; /* Full bleed */
+            margin: -15px -15px 10px -15px;
             font-weight: bold; 
             font-size: 1rem; 
             display: flex; justify-content: space-between; align-items: center;
@@ -148,12 +189,11 @@
         .watchlist-math { 
             font-size: 0.85rem; 
             color: #fff; 
-            background: rgba(0,0,0,0.15); /* Slightly darker for contrast */
+            background: rgba(0,0,0,0.15); 
             padding: 4px 8px; 
             border-radius: 4px; 
         }
         .math-result { font-weight: bold; margin-left: 5px; }
-        /* Since bg is orange, ensure text pops */
         .math-result.positive { color: #ccff90; } 
         .math-result.negative { color: #ff8a80; } 
 
@@ -161,7 +201,6 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; font-size: 0.9rem;
         }
-        .watchlist-icon { width: 24px; height: 24px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- MODALS --- */
         dialog { border: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 0; width: 450px; }
@@ -486,6 +525,17 @@
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
     const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
+    // Helper to generate image HTML with hover zoom
+    function getZoomableImage(url, className) {
+        if(!url) return '<span style="display:inline-block;width:30px;"></span>';
+        return `
+            <div class="icon-wrapper">
+                <img src="${url}" class="icon-thumb ${className}">
+                <img src="${url}" class="icon-large">
+            </div>
+        `;
+    }
+
     function renderApp() {
         const period = getPeriod();
         if (!period) { renderEmptyState(); return; }
@@ -502,7 +552,6 @@
         let totalSpent = 0;
         let totalPlanned = 0;
 
-        // Build Name -> Image Map for Smart Lookup
         const nameToImage = {};
         if(period.paycheckCycles) {
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => {
@@ -511,7 +560,6 @@
             }));
         }
 
-        // Ledger Processing
         if(period.ledger) {
             period.ledger.forEach(txn => {
                 const addDet = (bid, amt, note, type) => {
@@ -540,7 +588,6 @@
             });
         }
 
-        // Transfer Processing
         if(period.transfers) {
             period.transfers.forEach(tr => {
                 transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
@@ -556,7 +603,6 @@
             period.watchList.forEach(w => totalPlanned += w.amount);
         }
 
-        // --- DASHBOARD MATH ---
         const startBal = period.initialBankBalance || 0;
         const netCash = startBal + totalIncome - totalSpent;
         const projected = netCash - totalPlanned;
@@ -604,7 +650,8 @@
                 else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
                 else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
                 
-                const iconHtml = iconUrl ? `<img src="${iconUrl}" class="ledger-icon">` : '<span style="display:inline-block;width:40px;"></span>';
+                // Using the helper
+                const iconHtml = getZoomableImage(iconUrl, 'ledger-size');
                 const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
                 tr.innerHTML = `
@@ -638,10 +685,8 @@
                         const spent = usage[item.id] || 0;
                         const received = incomeAlloc[item.id] || 0;
                         const transfers = transferAdj[item.id] || 0;
-                        
                         const total = item.plannedAmount + item.carriedOver + received + transfers;
                         const remaining = total - spent;
-                        
                         const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
                         let color = 'budget-bar-fill';
                         if(percent > 90) color += ' warning';
@@ -653,21 +698,20 @@
                             let prefix = '';
                             if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
                             if(t.type === 'transfer-out') { colorClass = 'orange'; } 
-                            
                             return `
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
                                 <span>${t.date} ${t.desc}</span>
-                                <span style="font-family:monospace; color:${colorClass}">
-                                    ${prefix}${formatMoney(t.amount)}
-                                </span>
+                                <span style="font-family:monospace; color:${colorClass}">${prefix}${formatMoney(t.amount)}</span>
                             </div>
                         `}).join('');
+
+                        const iconHtml = getZoomableImage(item.image, 'budget-size');
 
                         const div = document.createElement('div');
                         div.className = 'budget-item';
                         div.innerHTML = `
                             <div class="budget-summary" onclick="this.nextElementSibling.classList.toggle('active')">
-                                <img src="${item.image}" class="budget-icon">
+                                ${iconHtml}
                                 <div>
                                     <span style="font-weight:600">${item.name}</span>
                                     <div class="budget-bar-bg"><div class="${color}" style="width:${percent}%"></div></div>
@@ -696,7 +740,7 @@
             }
         }
 
-        // WATCHLIST RENDER (With Smart Image Lookup)
+        // WATCHLIST RENDER
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -705,13 +749,13 @@
                     const div = document.createElement('div');
                     div.className = 'watchlist-item';
                     
-                    // SMART IMAGE LOOKUP
+                    // Fallback to budget image if available
                     let displayImage = w.image;
                     if (!displayImage && nameToImage[w.description]) {
                         displayImage = nameToImage[w.description];
                     }
+                    const iconHtml = getZoomableImage(displayImage, 'watchlist-size');
 
-                    const iconHtml = displayImage ? `<img src="${displayImage}" class="watchlist-icon">` : '';
                     div.innerHTML = `
                         <span style="display:flex; align-items:center;">
                             ${iconHtml}
@@ -732,7 +776,7 @@
         // INCOME SOURCES RENDER
         const incContainer = document.getElementById('income-sources-list');
         if(incContainer && period.incomeSources) {
-            incContainer.innerHTML = period.incomeSources.map(i => `<img src="${i.image}" title="${i.name}" style="width:30px;height:30px;border-radius:50%;border:1px solid #ccc;">`).join('');
+            incContainer.innerHTML = period.incomeSources.map(i => getZoomableImage(i.image, 'income-size')).join('');
         }
     }
 
