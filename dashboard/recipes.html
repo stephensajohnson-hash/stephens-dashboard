@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.8.3</title>
+    <title>Stephens' Recipes V0.8.4</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -30,6 +30,9 @@
             animation: float 2s ease-in-out infinite;
             text-shadow: 0 4px 8px rgba(0,0,0,0.5);
         }
+        /* Dropdown Animation */
+        .dropdown-fade { animation: fadeIn 0.2s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
     <script>
         tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter', 'sans-serif'], }, } } }
@@ -64,7 +67,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="document.getElementById('add-category-modal').classList.remove('hidden'); hideMenu();">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.3</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.4</p>
         </div>
     </div>
 
@@ -88,7 +91,20 @@
             <button id="back-to-list" class="flex items-center text-gray-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-gray-800 bg-gray-800 border border-gray-700" onclick="renderRecipeGroups()">
                 <span class="mr-1">←</span> Back
             </button>
-            <div class="flex space-x-2">
+            
+            <div class="flex space-x-2 relative">
+                <div class="relative">
+                    <button id="share-recipe-btn" onclick="document.getElementById('share-dropdown').classList.toggle('hidden')" class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg> Share
+                    </button>
+                    <div id="share-dropdown" class="hidden absolute right-0 mt-2 w-48 bg-gray-800 rounded-lg shadow-2xl border border-gray-700 z-50 dropdown-fade overflow-hidden">
+                        <button onclick="shareLink('copy')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-sm flex items-center"><span class="mr-2">📋</span> Copy Link</button>
+                        <button onclick="shareLink('sms')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-sm flex items-center"><span class="mr-2">💬</span> Send Text</button>
+                        <button onclick="shareLink('messenger')" class="w-full text-left px-4 py-3 hover:bg-gray-700 text-sm flex items-center"><span class="mr-2">⚡</span> Messenger</button>
+                        <button id="native-share-btn" onclick="shareLink('native')" class="hidden w-full text-left px-4 py-3 hover:bg-gray-700 text-sm border-t border-gray-700"><span class="mr-2">📱</span> System Share</button>
+                    </div>
+                </div>
+
                 <button id="edit-recipe-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg> Edit
                 </button>
@@ -452,12 +468,38 @@
             currentEditingId = String(recipeId);
             const recipe = getAllRecipes().find(r => String(r.id) === String(recipeId));
             if (!recipe) return;
+            
+            // --- URL UPDATE LOGIC ---
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?id=' + recipeId;
+            window.history.replaceState({path:newUrl},'',newUrl);
+            
             currentRecipeBase = recipe;
             views.list.classList.add('hidden'); views.detail.classList.remove('hidden'); window.scrollTo(0,0);
+            
+            // Hide share dropdown initially
+            document.getElementById('share-dropdown').classList.add('hidden');
+            // Show native share button only if navigator.share exists
+            if (navigator.share) { document.getElementById('native-share-btn').classList.remove('hidden'); }
+            
             const ps = calculateRecipeMacros(recipe);
             containers.detail.innerHTML = `<div class="flex flex-col md:flex-row gap-6 mb-8"><img src="${recipe.image}" class="w-full md:w-1/2 rounded-xl object-cover h-96 shadow-lg border border-gray-700" onerror="this.src='https://placehold.co/400x250?text=No+Image'"><div class="flex-1 flex flex-col justify-center"><h1 class="text-4xl font-extrabold text-white mb-2">${recipe.title.replace(' (test)', '')}</h1>${recipe.source ? `<div class="text-sm text-blue-300 mb-4 font-medium">Source: ${recipe.source.url ? `<a href="${recipe.source.url}" target="_blank" class="underline hover:text-white transition">${recipe.source.description}</a>` : recipe.source.description}</div>` : ''}<p class="text-gray-400 italic mb-6 text-lg">${recipe.description || ''}</p><div class="flex gap-4 mb-6 text-sm"><span class="bg-gray-700 px-3 py-1 rounded">Prep: <strong>${recipe.prepTime}</strong></span><span class="bg-gray-700 px-3 py-1 rounded">Cook: <strong>${recipe.cookTime}</strong></span><div class="bg-gray-700 px-3 py-1 rounded flex items-center space-x-2 select-none"><span>Serves:</span><button onclick="window.updateServings(-1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">−</button><strong id="current-servings">${recipe.servings}</strong><button onclick="window.updateServings(1)" class="text-blue-400 hover:text-white font-bold text-lg px-1">+</button></div></div><div class="bg-gray-900/80 p-4 rounded-xl border border-gray-700"><h3 class="text-xs font-bold text-gray-500 uppercase mb-2 text-center">Per Serving</h3><div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center"><div><div class="text-xl font-black text-white">${ps.calories}</div><div class="text-[10px] text-gray-500 uppercase">Calories</div></div><div><div class="text-lg font-bold text-blue-400">${ps.protein}g</div><div class="text-[10px] text-gray-500 uppercase">Protein</div></div><div><div class="text-lg font-bold text-green-400">${ps.carbs}g</div><div class="text-[10px] text-gray-500 uppercase">Carbs</div></div><div><div class="text-lg font-bold text-emerald-400">${ps.netCarbs}g</div><div class="text-[10px] text-gray-500 uppercase">Net Carb</div></div><div><div class="text-lg font-bold text-yellow-400">${ps.fat}g</div><div class="text-[10px] text-gray-500 uppercase">Fat</div></div><div><div class="text-lg font-bold text-gray-300">${ps.fiber}g</div><div class="text-[10px] text-gray-500 uppercase">Fiber</div></div></div></div></div></div><div class="grid md:grid-cols-2 gap-8"><div><h2 class="text-2xl font-bold border-b border-blue-900/50 pb-2 mb-4 text-blue-300">Ingredients</h2>${(recipe.ingredients || []).map(section => `<div class="mb-6"><h3 class="text-lg font-semibold text-white mb-2 pl-2 border-l-2 border-blue-500">${section.sectionTitle}</h3><ul class="space-y-2">${section.list.map(ing => { const baseQty = parseQuantity(ing.quantity); const displayQty = (ing.unit==='g'||ing.unit==='ml'||ing.unit==='oz'||ing.unit==='lb'||ing.unit==='pounds') ? formatQuantity(baseQty) : formatQuantity(baseQty); return `<li class="flex justify-between border-b border-gray-700/50 pb-1 ingredient-line" data-base-qty="${baseQty}" data-unit="${ing.unit}"><span class="text-gray-200"><span class="font-bold text-white qty-display">${displayQty}</span> <span class="font-bold text-white unit-display">${ing.unit}</span> ${ing.name}</span><span class="text-xs text-gray-500 italic ml-2">${prettifyFractions(ing.notes||'')}</span></li>` }).join('')}</ul></div>`).join('')}</div><div><h2 class="text-2xl font-bold border-b border-green-900/50 pb-2 mb-4 text-green-300">Instructions</h2>${(recipe.instructions || []).map(section => `<div class="mb-8"><h3 class="text-lg font-semibold text-white mb-3 pl-2 border-l-2 border-green-500">${section.sectionTitle}</h3><ol class="list-decimal list-outside space-y-4 text-gray-300 pl-5">${section.steps.map(step => `<li class="pl-2 instruction-step" data-original-text="${step.replace(/"/g, '&quot;')}">${prettifyFractions(step)}</li>`).join('')}</ol></div>`).join('')}</div></div>`;
             const tagsContainer = document.createElement('div'); tagsContainer.className = 'flex flex-wrap gap-1 mb-4'; if(recipe.tags) { recipe.tags.forEach(tag => { const btn = document.createElement('button'); btn.className = 'px-2 py-1 text-xs rounded-full bg-blue-900/50 text-blue-300 hover:bg-blue-600 hover:text-white transition'; btn.textContent = tag; btn.onclick = (e) => { e.stopPropagation(); filterByTag(tag); }; tagsContainer.appendChild(btn); }); } containers.detail.querySelector('h1').after(tagsContainer);
             document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe); document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
+        }
+        
+        async function shareLink(type) {
+             const url = window.location.href;
+             document.getElementById('share-dropdown').classList.add('hidden');
+             if (type === 'copy') {
+                 try { await navigator.clipboard.writeText(url); alert('Link copied to clipboard!'); } catch(err) { prompt("Copy this link:", url); }
+             } else if (type === 'sms') {
+                 window.location.href = `sms:?body=Check out this recipe: ${encodeURIComponent(url)}`;
+             } else if (type === 'messenger') {
+                 // Try to open messenger app protocol, fallback to standard share if needed (hard to target messenger web specifically without app ID)
+                 window.location.href = `fb-messenger://share/?link=${encodeURIComponent(url)}`;
+             } else if (type === 'native' && navigator.share) {
+                 navigator.share({ title: currentRecipeBase.title, text: 'Check out this recipe!', url: url });
+             }
         }
 
         function createRecipeCard(r) {
@@ -470,13 +512,17 @@
         function renderRecipeGroups() {
             views.detail.classList.add('hidden');
             views.list.classList.remove('hidden');
+            
+            // --- URL CLEANUP ---
+            const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+            window.history.replaceState({path:newUrl},'',newUrl);
+            
             const allRecipes = getAllRecipes();
             const customCats = getCustomData(state.localStorageKeys.categories);
             const customTags = getCustomData(state.localStorageKeys.tags);
             const allCategories = [...STATIC_CATEGORIES, ...customCats].filter((v, i, a) => a.indexOf(v) === i);
             containers.groups.innerHTML = '';
 
-            // Calculate Counts FIRST
             const counts = {}; 
             allRecipes.forEach(r => (r.tags||[]).forEach(t => counts[t]=(counts[t]||0)+1));
 
@@ -485,10 +531,9 @@
             
             const colors = ["text-blue-400","text-green-400","text-yellow-400","text-red-400","text-purple-400","text-pink-400"];
             
-            // --- UPDATED LOGIC HERE ---
+            // --- UPDATED LOGIC (5 + count*3) ---
             containers.tags.innerHTML = sortedTags.map(tag => {
                 const count = counts[tag] || 0;
-                // Formula: Start with 9, add count * 3
                 const fontSize = 5 + (count * 3); 
                 return `<button onclick="filterByTag('${tag}')" style="font-size: ${fontSize}pt;" class="tag-cloud-item font-bold ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`;
             }).join('');
@@ -496,7 +541,6 @@
 
             let displayRecipes = allRecipes;
 
-            // Apply Search Filter
             if (currentSearchTerm) {
                 const term = currentSearchTerm.toLowerCase();
                 displayRecipes = displayRecipes.filter(r => {
@@ -557,6 +601,7 @@
         window.renderRecipeGroups = renderRecipeGroups;
         window.autoFillMacros = autoFillMacros;
         window.handleSearch = handleSearch;
+        window.shareLink = shareLink;
 
         // --- INIT ---
         async function initRecipeDashboard() {
@@ -566,6 +611,15 @@
             STATIC_RECIPES = data.recipes || []; STATIC_CATEGORIES = data.categories || []; STATIC_TAGS = data.availableTags || [];
             buildIngredientDB();
             renderRecipeGroups();
+            
+            // --- CHECK URL FOR DEEP LINK ---
+            const urlParams = new URLSearchParams(window.location.search);
+            const recipeId = urlParams.get('id');
+            if(recipeId) {
+                // Ensure data is loaded first, then check
+                const exists = getAllRecipes().find(r => String(r.id) === String(recipeId));
+                if(exists) showDetailView(recipeId);
+            }
         }
         async function updateWeather() { try { const res = await fetch('https://api.openweathermap.org/data/2.5/weather?zip=75482,us&units=imperial&appid=87256fe2710631542ff491e4c5d73306'); if(res.ok) { const d = await res.json(); document.getElementById('weather-current-temp').textContent = Math.round(d.main.temp)+'°'; document.getElementById('weather-current-temp').className = `text-lg font-bold mr-3 ${getTempColor(d.main.temp)}`; document.getElementById('weather-low').textContent = Math.round(d.main.temp_min)+'°'; document.getElementById('weather-low').className = `low-temp-offset mr-1 text-xs ${getTempColor(d.main.temp_min)}`; document.getElementById('weather-high').textContent = Math.round(d.main.temp_max)+'°'; document.getElementById('weather-high').className = `high-temp-offset text-xs ${getTempColor(data.main.temp_max)}`; document.getElementById('weather-icon').innerHTML = getForecastEmoji(d.weather[0].icon); } } catch(e) {} }
         function updateClock() { const now = new Date(); document.getElementById('datetime').innerHTML = `<span class="text-gray-400">${now.toLocaleDateString()}</span> <span class="text-blue-300 ml-1">${now.toLocaleTimeString([], {hour:'numeric', minute:'2-digit'}).toLowerCase()}</span>`; }
