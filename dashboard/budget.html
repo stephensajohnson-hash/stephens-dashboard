@@ -14,10 +14,11 @@
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
             --accent-orange: #f39c12;
-            --accent-blue: #3498db;
             --header-bg: #2c3e50;
             --header-text: #fff;
             --hover-bg: #f9f9f9;
+            --watchlist-bg: #fffde7;
+            --watchlist-header-bg: #f57f17; /* Burnt Orange */
         }
 
         body {
@@ -38,7 +39,7 @@
         .btn-primary { background: var(--accent-green); color: white; }
         .btn-primary:hover { background: #27ae60; }
         .btn-secondary { background: #95a5a6; color: white; }
-        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-blue { background: #3498db; color: white; }
         .btn-blue:hover { background: #2980b9; }
         .btn-sm { padding: 2px 6px; font-size: 0.75rem; margin-left: 5px; }
         .btn-icon { background: transparent; color: #7f8c8d; }
@@ -86,7 +87,6 @@
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
         .positive { color: var(--accent-green); font-weight: bold; }
-        .neutral { color: var(--accent-blue); }
         .ledger-icon { width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- BUDGET --- */
@@ -130,17 +130,32 @@
 
         /* --- WATCHLIST --- */
         .watchlist-section {
-            background-color: #fffde7; border-top: 2px solid #ffd600; padding: 15px; 
+            background-color: var(--watchlist-bg); 
+            border-top: 2px solid var(--watchlist-header-bg); 
+            padding: 15px; 
         }
+        /* UPDATED HEADER STYLING */
         .watchlist-header { 
-            font-weight:bold; color:#f57f17; margin-bottom: 10px; font-size: 1rem; 
-            border-bottom: 1px solid #e0e0e0; padding-bottom: 8px;
+            background-color: var(--watchlist-header-bg);
+            color: #fff;
+            padding: 10px 15px;
+            margin: -15px -15px 10px -15px; /* Full bleed */
+            font-weight: bold; 
+            font-size: 1rem; 
             display: flex; justify-content: space-between; align-items: center;
         }
-        .watchlist-math { font-size: 0.85rem; color: #555; background: rgba(255,255,255,0.6); padding: 4px 8px; border-radius: 4px; }
+        
+        .watchlist-math { 
+            font-size: 0.85rem; 
+            color: #fff; 
+            background: rgba(0,0,0,0.15); /* Slightly darker for contrast */
+            padding: 4px 8px; 
+            border-radius: 4px; 
+        }
         .math-result { font-weight: bold; margin-left: 5px; }
-        .math-result.positive { color: var(--accent-green); }
-        .math-result.negative { color: var(--accent-red); }
+        /* Since bg is orange, ensure text pops */
+        .math-result.positive { color: #ccff90; } 
+        .math-result.negative { color: #ff8a80; } 
 
         .watchlist-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -409,11 +424,9 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
-            // Add transfers array if missing (migration for older json files)
             if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
                 appData.periods[0].transfers = [];
             }
-            
             saveSession();
             renderApp();
         } catch (err) {
@@ -425,7 +438,6 @@
             const saved = localStorage.getItem('budget_backup');
             if(saved) { 
                 appData = JSON.parse(saved); 
-                // Migration check
                 if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
                     appData.periods[0].transfers = [];
                 }
@@ -456,7 +468,6 @@
         reader.onload = function(e) {
             try {
                 appData = JSON.parse(e.target.result);
-                // Migration check
                 if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
                     appData.periods[0].transfers = [];
                 }
@@ -479,7 +490,6 @@
         const period = getPeriod();
         if (!period) { renderEmptyState(); return; }
 
-        // SAFETY CHECKS FOR DOM ELEMENTS
         const periodNameEl = document.getElementById('period-name-display');
         if(periodNameEl) periodNameEl.textContent = period.displayName || "Ledger";
 
@@ -492,8 +502,13 @@
         let totalSpent = 0;
         let totalPlanned = 0;
 
+        // Build Name -> Image Map for Smart Lookup
+        const nameToImage = {};
         if(period.paycheckCycles) {
-            period.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
+            period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => {
+                details[b.id] = [];
+                nameToImage[b.name] = b.image;
+            }));
         }
 
         // Ledger Processing
@@ -546,7 +561,6 @@
         const netCash = startBal + totalIncome - totalSpent;
         const projected = netCash - totalPlanned;
         
-        // Safety update for dashboard elements
         const mathEl = document.getElementById('watchlist-math-display');
         if(mathEl) {
             const projClass = projected < 0 ? 'negative' : 'positive';
@@ -557,7 +571,6 @@
             `;
         }
 
-        // Update summary cards only if they exist
         ['sum-in', 'sum-out', 'sum-plan', 'sum-proj'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
@@ -683,7 +696,7 @@
             }
         }
 
-        // WATCHLIST RENDER
+        // WATCHLIST RENDER (With Smart Image Lookup)
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -691,7 +704,14 @@
                 period.watchList.forEach((w, idx) => {
                     const div = document.createElement('div');
                     div.className = 'watchlist-item';
-                    const iconHtml = w.image ? `<img src="${w.image}" class="watchlist-icon">` : '';
+                    
+                    // SMART IMAGE LOOKUP
+                    let displayImage = w.image;
+                    if (!displayImage && nameToImage[w.description]) {
+                        displayImage = nameToImage[w.description];
+                    }
+
+                    const iconHtml = displayImage ? `<img src="${displayImage}" class="watchlist-icon">` : '';
                     div.innerHTML = `
                         <span style="display:flex; align-items:center;">
                             ${iconHtml}
