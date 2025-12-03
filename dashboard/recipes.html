@@ -489,7 +489,7 @@
             containers.tags.innerHTML = sortedTags.map(tag => {
                 const count = counts[tag] || 0;
                 // Formula: Start with 9, add count * 3
-                const fontSize = 9 + (count * 3); 
+                const fontSize = 5 + (count * 3); 
                 return `<button onclick="filterByTag('${tag}')" style="font-size: ${fontSize}pt;" class="tag-cloud-item font-bold ${colors[Math.floor(Math.random()*colors.length)]} hover:scale-110 transition duration-200 cursor-pointer px-2">${tag}</button>`;
             }).join('');
             // --------------------------
