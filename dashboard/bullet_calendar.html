@@ -403,6 +403,39 @@
             // Tooltip logic stub
         }
 
+        function getTeamRecord(teamId, season) {
+            // Combine current items and archive items to get full history
+            const allItems = getAllItems();
+            let wins = 0;
+            let losses = 0;
+            let ties = 0;
+
+            allItems.forEach(item => {
+                // strict filters: must be sports, completed, matching season, and involve our team
+                if (item.type !== 'sports' || item.status !== 'completed') return;
+                if (item.season !== season) return;
+                if (item.homeTeamId !== teamId && item.awayTeamId !== teamId) return;
+
+                let myScore = 0;
+                let oppScore = 0;
+
+                if (item.homeTeamId === teamId) {
+                    myScore = parseInt(item.homeScore) || 0;
+                    oppScore = parseInt(item.awayScore) || 0;
+                } else {
+                    myScore = parseInt(item.awayScore) || 0;
+                    oppScore = parseInt(item.homeScore) || 0;
+                }
+
+                if (myScore > oppScore) wins++;
+                else if (myScore < oppScore) losses++;
+                else ties++;
+            });
+
+            if (ties > 0) return `${wins}-${losses}-${ties}`;
+            return `${wins}-${losses}`;
+        }
+
         // --- 2. RENDERERS (Used by UI) ---
         function renderItemChip(item) {
              let icon = '';
