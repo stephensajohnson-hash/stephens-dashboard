@@ -66,49 +66,35 @@
 
         .scroll-area { flex: 1; overflow: visible; }
 
-        /* --- HOVER ZOOM EFFECT (NEW) --- */
-        .icon-wrapper {
-            position: relative;
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
+        /* --- GLOBAL HOVER PREVIEW --- */
+        #hover-preview {
+            position: fixed;
+            display: none;
+            z-index: 10000; /* Above everything */
+            height: 120px;  /* Larger size as requested */
+            width: auto;
+            border: 3px solid #fff;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+            pointer-events: none; /* Let mouse pass through */
+            background: #fff;
         }
-        
-        /* The small image */
+
+        /* --- ICONS --- */
         .icon-thumb {
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid #ddd;
             cursor: zoom-in;
+            vertical-align: middle;
+            margin-right: 8px;
         }
         
-        /* Specific sizes for different contexts */
+        /* Context sizes */
         .ledger-size { width: 32px; height: 32px; }
         .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
         .watchlist-size { width: 24px; height: 24px; }
         .income-size { width: 30px; height: 30px; }
-
-        /* The Large "Popup" Image */
-        .icon-large {
-            display: none; /* Hidden by default */
-            position: absolute;
-            bottom: 100%; /* Float above */
-            left: 50%;
-            transform: translateX(-50%);
-            height: 100px; /* Fixed height requested */
-            width: auto;   /* Maintain aspect ratio */
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border: 2px solid #fff;
-            z-index: 1000;
-            background-color: #fff;
-            margin-bottom: 8px; /* Spacing from cursor */
-        }
-
-        /* Show large image on hover */
-        .icon-wrapper:hover .icon-large {
-            display: block;
-        }
 
         /* --- LEDGER TABLE --- */
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
@@ -225,6 +211,8 @@
     </style>
 </head>
 <body>
+
+<img id="hover-preview" src="">
 
 <div class="container">
     
@@ -525,15 +513,28 @@
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
     const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
-    // Helper to generate image HTML with hover zoom
+    // --- HOVER PREVIEW LOGIC ---
+    function showPreview(e, url) {
+        if(!url) return;
+        const preview = document.getElementById('hover-preview');
+        preview.src = url;
+        preview.style.display = 'block';
+        
+        // Position slightly above and to right of cursor
+        const offset = 15;
+        preview.style.left = (e.clientX + offset) + 'px';
+        preview.style.top = (e.clientY - 130) + 'px'; // 130 to account for height + padding
+    }
+
+    function hidePreview() {
+        document.getElementById('hover-preview').style.display = 'none';
+    }
+
+    // Helper to generate image HTML
     function getZoomableImage(url, className) {
         if(!url) return '<span style="display:inline-block;width:30px;"></span>';
-        return `
-            <div class="icon-wrapper">
-                <img src="${url}" class="icon-thumb ${className}">
-                <img src="${url}" class="icon-large">
-            </div>
-        `;
+        // Add event listeners to the IMG
+        return `<img src="${url}" class="icon-thumb ${className}" onmouseenter="showPreview(event, '${url}')" onmouseleave="hidePreview()" onmousemove="showPreview(event, '${url}')">`;
     }
 
     function renderApp() {
@@ -634,7 +635,6 @@
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
 
-        // LEDGER RENDER
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
@@ -650,7 +650,6 @@
                 else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
                 else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
                 
-                // Using the helper
                 const iconHtml = getZoomableImage(iconUrl, 'ledger-size');
                 const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
@@ -667,7 +666,6 @@
             if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
         }
 
-        // BUDGET RENDER
         const budgetContainer = document.getElementById('budget-container');
         if(budgetContainer) {
             budgetContainer.innerHTML = '';
@@ -685,8 +683,10 @@
                         const spent = usage[item.id] || 0;
                         const received = incomeAlloc[item.id] || 0;
                         const transfers = transferAdj[item.id] || 0;
+                        
                         const total = item.plannedAmount + item.carriedOver + received + transfers;
                         const remaining = total - spent;
+                        
                         const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
                         let color = 'budget-bar-fill';
                         if(percent > 90) color += ' warning';
@@ -698,10 +698,13 @@
                             let prefix = '';
                             if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
                             if(t.type === 'transfer-out') { colorClass = 'orange'; } 
+                            
                             return `
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
                                 <span>${t.date} ${t.desc}</span>
-                                <span style="font-family:monospace; color:${colorClass}">${prefix}${formatMoney(t.amount)}</span>
+                                <span style="font-family:monospace; color:${colorClass}">
+                                    ${prefix}${formatMoney(t.amount)}
+                                </span>
                             </div>
                         `}).join('');
 
@@ -740,7 +743,6 @@
             }
         }
 
-        // WATCHLIST RENDER
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -749,7 +751,6 @@
                     const div = document.createElement('div');
                     div.className = 'watchlist-item';
                     
-                    // Fallback to budget image if available
                     let displayImage = w.image;
                     if (!displayImage && nameToImage[w.description]) {
                         displayImage = nameToImage[w.description];
@@ -773,7 +774,6 @@
             }
         }
 
-        // INCOME SOURCES RENDER
         const incContainer = document.getElementById('income-sources-list');
         if(incContainer && period.incomeSources) {
             incContainer.innerHTML = period.incomeSources.map(i => getZoomableImage(i.image, 'income-size')).join('');
@@ -804,7 +804,6 @@
         };
     }
 
-    // --- MODALS & FORM LOGIC ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
