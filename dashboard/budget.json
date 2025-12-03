@@ -251,6 +251,15 @@
           "amount": 0.42,
           "type": "income",
           "sourceId": "inc1764713044040"
+        },
+        {
+          "id": "t1764800501603",
+          "date": "2025-12-03",
+          "description": "City of Sulphur Springs - Water",
+          "amount": -79.29,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764712061699",
+          "splits": null
         }
       ],
       "transfers": [
@@ -292,11 +301,6 @@
         {
           "description": "Church",
           "amount": 200,
-          "dueDate": "2025-12-15"
-        },
-        {
-          "description": "Water",
-          "amount": 105,
           "dueDate": "2025-12-15"
         },
         {
