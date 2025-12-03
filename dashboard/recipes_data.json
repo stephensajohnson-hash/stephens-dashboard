@@ -4661,6 +4661,277 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1764775463990",
+      "title": "Lentil Curry",
+      "description": "This authentic flavor combination of fresh\ntomatoes, mustard seeds and curry leaves takes me back to my travels to Kerala and Goa. The addition of lentils and green beans to the tomatoes really packs in the protein and vegetables per portion, making this beautifully balanced and light. Because of the lentils, I don’t think this curry needs to be served with rice, but you can if you wish.\n\n",
+      "category": "Indian",
+      "servings": 4,
+      "prepTime": "20 minutes",
+      "cookTime": "35 minutes",
+      "image": "https://ik.thedoctorskitchen.com/tr:n-medium/south-indian-style-monkfish-and-lentil-curry_wILNYZ-mX",
+      "source": {
+        "description": "The Doctor's Kitchen",
+        "url": "https://www.thedoctorskitchen.com/recipes/south-indian-style-monkfish-and-lentil-curry?utm_medium=referral&utm_campaign=one-pan-protein-dinner-youtube-oct25&utm_source=youtube"
+      },
+      "tags": [
+        "Poultry",
+        "Fish",
+        "Keto",
+        "Cayce Diet"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Curry Paste",
+          "list": [
+            {
+              "name": "Red Pepper Flakes",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 29,
+                "protein": 1,
+                "carbs": 6,
+                "fat": 1,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Desiccated Coconut",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 100,
+                "protein": 1,
+                "carbs": 4,
+                "fat": 9,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Red Onion",
+              "quantity": "100",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 40,
+                "protein": 1,
+                "carbs": 10,
+                "fat": 0,
+                "fiber": 2
+              }
+            },
+            {
+              "name": "Tomatoes",
+              "quantity": "300",
+              "unit": "g",
+              "notes": "chopped",
+              "macros": {
+                "calories": 54,
+                "protein": 0.9,
+                "carbs": 13.2,
+                "fat": 1,
+                "fiber": 3.6
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic",
+              "quantity": "6",
+              "unit": "cloves",
+              "notes": "peeled",
+              "macros": {
+                "calories": 8,
+                "protein": 1,
+                "carbs": 6,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Curry",
+          "list": [
+            {
+              "name": "Coconut Oil",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 234,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 27,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cumin Seeds",
+              "quantity": "2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 16,
+                "protein": 1,
+                "carbs": 2,
+                "fat": 1,
+                "fiber": 0.4
+              }
+            },
+            {
+              "name": "Turmeric Powder",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 8,
+                "protein": 0.2,
+                "carbs": 1.4,
+                "fat": 0.2,
+                "fiber": 0.5
+              }
+            },
+            {
+              "name": "Red Lintels",
+              "quantity": "150",
+              "unit": "g",
+              "notes": "dried",
+              "macros": {
+                "calories": 174,
+                "protein": 15,
+                "carbs": 40,
+                "fat": 0.5,
+                "fiber": 15
+              }
+            },
+            {
+              "name": "Chicken Broth",
+              "quantity": "300",
+              "unit": "ml",
+              "notes": "",
+              "macros": {
+                "calories": 10,
+                "protein": 1,
+                "carbs": 1,
+                "fat": 1,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chicken",
+              "quantity": "600",
+              "unit": "g",
+              "notes": "or any protein - fish",
+              "macros": {
+                "calories": 720,
+                "protein": 150,
+                "carbs": 0,
+                "fat": 12,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Baby Spinach",
+              "quantity": "150",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 35,
+                "protein": 1,
+                "carbs": 4,
+                "fat": 0,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Coconut Milk",
+              "quantity": "400",
+              "unit": "g",
+              "notes": "",
+              "macros": {
+                "calories": 768,
+                "protein": 10.76,
+                "carbs": 33.4,
+                "fat": 70.88,
+                "fiber": 8.8
+              }
+            },
+            {
+              "name": "Star Anise",
+              "quantity": "1",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 23,
+                "protein": 0.4,
+                "carbs": 5.4,
+                "fat": 0.4,
+                "fiber": 1.3
+              }
+            },
+            {
+              "name": "",
+              "quantity": "",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Serve With",
+          "list": [
+            {
+              "name": "Limes",
+              "quantity": "2",
+              "unit": "",
+              "notes": "cut in to wedges",
+              "macros": {
+                "calories": 40,
+                "protein": 1,
+                "carbs": 14,
+                "fat": 0,
+                "fiber": 4
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Gather and prepare your ingredients.",
+            "For the curry paste, soak the dried chillies and coconut in the boiling water for 10 minutes. Tip the soaked chillies and coconut, along with the water, into a food processor or blender with the remaining ingredients and blend until smooth.",
+            "Heat the coconut oil in a heavy-based saucepan over a medium-low heat. Add the star anise, cumin, and turmeric with seasoning, and fry for 1 to 2 minutes. Add the curry paste and fry for 5 minutes, stirring continuously, until it thickens and intensifies in flavor.",
+            "Add the lentils, coconut milk and stock. Bring to a simmer and cook gently for 20 minutes until the lentils are soft.",
+            "Add the chicken and spinach and cook for a further 8 minutes or until the chicken is just cooked through.",
+            "To serve, spoon the curry into bowls and garnish with lime wedges for squeezing."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
@@ -4672,7 +4943,8 @@
     "Italian",
     "Salad",
     "Sweets",
-    "Dips"
+    "Dips",
+    "Indian"
   ],
   "availableTags": []
 }
