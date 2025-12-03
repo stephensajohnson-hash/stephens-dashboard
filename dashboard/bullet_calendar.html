@@ -67,10 +67,8 @@
 </head>
 <body class="bg-gray-900 text-white h-screen flex flex-col overflow-hidden">
 
-    <!-- Tooltip Container -->
     <div id="hover-card-container" class="fixed z-50 hidden pointer-events-none drop-shadow-2xl max-w-sm w-full transition-opacity duration-200 opacity-0"></div>
 
-    <!-- Navbar -->
     <nav class="fixed top-0 left-0 right-0 bg-gray-800 border-b border-gray-700 shadow-xl z-40 p-2 flex items-center justify-between h-16">
         <div class="flex items-center gap-3">
             <button id="menu-button" class="p-2 rounded-full bg-gray-700 hover:bg-gray-600 focus:outline-none" onclick="toggleSidebar()">
@@ -101,7 +99,6 @@
         </div>
     </nav>
 
-    <!-- Layout -->
     <div class="flex flex-1 pt-16 relative overflow-hidden">
         <div id="sidebar-overlay" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 hidden lg:hidden backdrop-blur-sm"></div>
         <aside id="bullet-sidebar" class="absolute lg:relative z-50 w-64 h-full bg-gray-800 border-r border-gray-700 flex flex-col sidebar-closed lg:sidebar-open shadow-2xl">
@@ -136,7 +133,6 @@
         </main>
     </div>
 
-    <!-- Sports Manager Modal -->
     <div id="sports-manager-modal" class="fixed inset-0 bg-black/80 z-[70] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-gray-800 rounded-2xl w-full max-w-3xl h-[80vh] flex flex-col shadow-2xl border border-gray-700">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
@@ -179,7 +175,6 @@
         </div>
     </div>
 
-    <!-- Nutrition Editor Modal -->
     <div id="nutrition-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-gray-800 rounded-2xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl border border-gray-700">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center">
@@ -205,7 +200,6 @@
         </div>
     </div>
 
-    <!-- General Item Editor Modal -->
     <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700 max-h-[85vh]">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center shrink-0">
@@ -215,7 +209,6 @@
             <div class="p-6 space-y-4 overflow-y-auto flex-1 min-h-0">
                 <input type="hidden" id="item-category"><input type="hidden" id="item-id">
                 
-                <!-- DATE MOVER -->
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Date</label>
                     <div class="flex gap-2">
@@ -224,14 +217,12 @@
                     </div>
                 </div>
 
-                <!-- TYPE SELECTOR REPLACED WITH BUTTONS -->
                 <div>
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Type</label>
                     <input type="hidden" id="item-type">
                     <div id="type-buttons-container" class="grid grid-cols-5 gap-2 mb-2"></div>
                 </div>
                 
-                <!-- TASK CATEGORY SELECTOR -->
                 <div id="field-task-category" class="hidden">
                     <label class="block text-xs font-bold text-gray-500 uppercase mb-1">Task Category</label>
                     <div class="flex gap-2">
@@ -246,10 +237,8 @@
                     </div>
                 </div>
                 
-                <!-- Title Row -->
                 <div id="field-title"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Title</label><input type="text" id="item-title" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Item title..."></div>
 
-                <!-- SPORTS Specific Fields -->
                 <div id="field-sports" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                          <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">League</label><select id="sports-league" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs" onchange="populateTeamSelects()"></select></div>
@@ -269,7 +258,6 @@
                     </div>
                 </div>
                 
-                <!-- VACATION Specific Fields -->
                 <div id="field-vacation" class="hidden space-y-4">
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Date</label><input type="date" id="vacation-start" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" onchange="generateVacationDailyInputs()"></div>
@@ -278,7 +266,6 @@
                     <div id="vacation-daily-notes" class="space-y-2 max-h-40 overflow-y-auto border-t border-gray-700 pt-2"></div>
                 </div>
 
-                <!-- Holiday Specific Fields -->
                 <div id="field-holiday" class="hidden">
                     <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-2">
                         <input type="checkbox" id="item-is-work-holiday" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-blue-600 focus:ring-blue-500">
@@ -286,7 +273,6 @@
                     </label>
                 </div>
                 
-                <!-- Annual Recurrence -->
                 <div id="field-annual" class="hidden">
                     <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-2">
                         <input type="checkbox" id="item-add-next-year" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-pink-500 focus:ring-pink-500">
@@ -296,7 +282,6 @@
 
                 <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
                 
-                <!-- Meeting Fields -->
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
@@ -304,13 +289,10 @@
                     <div class="col-span-2 flex items-center gap-2 mt-2"><input type="checkbox" id="item-recur-weekly" class="rounded bg-gray-700 border-gray-600"><label for="item-recur-weekly" class="text-xs text-gray-300">Repeat Weekly (Add next 4 occurrences)</label></div>
                 </div>
                 
-                <!-- Task Fields -->
                 <div id="field-task" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Ticket Number (Optional)</label><input type="text" id="item-ticket" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. JIRA-123"></div>
                 
-                <!-- Media Fields -->
                 <div id="field-media" class="hidden"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Rating (1-10 Stars)</label><input type="hidden" id="item-rating" value="5"><div id="star-rating-container" class="flex gap-1 text-2xl cursor-pointer"></div></div>
 
-                <!-- Habit Fields -->
                 <div id="field-habit" class="hidden">
                     <div class="grid grid-cols-2 gap-4">
                         <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Current Streak</label><input type="number" id="item-streak" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" value="0"></div>
@@ -318,7 +300,6 @@
                     </div>
                 </div>
 
-                <!-- URL/Image -->
                 <div class="grid grid-cols-2 gap-4" id="field-url">
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Link URL</label><input type="url" id="item-link" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Image URL</label><input type="text" id="item-img" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white text-xs"></div>
@@ -1242,25 +1223,31 @@
                 const grid = document.createElement('div');
                 grid.className = "grid grid-cols-4 gap-2";
                 
-                for(let m=0; m<12; m++) {
-                     const btn = document.createElement('button');
-                     const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
-                     const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
-                     
-                     let baseClass = "text-[10px] py-2 rounded text-center transition border ";
-                     if (isViewedMonth) {
+                let startM = 0;
+                let endM = 11;
+                
+                if (year === journalYear - 1) startM = 8; // September
+                if (year === journalYear + 1) endM = 3;   // April
+
+                for(let m=startM; m<=endM; m++) {
+                      const btn = document.createElement('button');
+                      const isViewedMonth = (year === appState.currentDate.getFullYear() && m === appState.currentDate.getMonth());
+                      const isActualToday = (year === new Date().getFullYear() && m === new Date().getMonth());
+                      
+                      let baseClass = "text-[10px] py-2 rounded text-center transition border ";
+                      if (isViewedMonth) {
                         baseClass += "bg-blue-600 text-white border-blue-500 font-bold shadow-lg transform scale-105";
-                     } else if (isActualToday) {
+                      } else if (isActualToday) {
                         baseClass += "bg-gray-700 text-blue-300 border-blue-900/50 font-bold"; 
-                     } else {
+                      } else {
                         baseClass += "bg-gray-800 text-gray-400 border-gray-700 hover:bg-gray-700 hover:text-white hover:border-gray-600";
-                     }
-                     
-                     btn.className = baseClass;
-                     const d = new Date(year, m, 1);
-                     btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
-                     btn.onclick = () => jumpToMonth(year, m);
-                     grid.appendChild(btn);
+                      }
+                      
+                      btn.className = baseClass;
+                      const d = new Date(year, m, 1);
+                      btn.innerText = d.toLocaleDateString('en-US', { month: 'short' });
+                      btn.onclick = () => jumpToMonth(year, m);
+                      grid.appendChild(btn);
                 }
                 yearWrapper.appendChild(grid);
                 list.appendChild(yearWrapper);
