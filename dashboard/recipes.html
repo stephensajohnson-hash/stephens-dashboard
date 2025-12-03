@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stephens' Recipes V0.8.4</title>
+    <title>Stephens' Recipes V0.8.5</title>
     <link rel="icon" href="/images/favicon.png">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -67,7 +67,7 @@
             <button id="add-category-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="document.getElementById('add-category-modal').classList.remove('hidden'); hideMenu();">Add New Category</button>
             <button id="download-data-button" class="w-full text-left py-2 px-3 rounded-lg text-gray-200 hover:bg-gray-700 mb-4 transition duration-150" onclick="downloadDataFile()">Download Data File</button>
             <button id="clear-draft-button" class="w-full text-left py-2 px-3 rounded-lg text-red-400 hover:bg-red-900/20 mb-4 transition duration-150 border border-red-700/50" onclick="clearDraftData()">Clear Local Data</button>
-            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.4</p>
+            <p id="version-display" class="text-sm font-mono text-gray-300">Recipe Dashboard V0.8.5</p>
         </div>
     </div>
 
@@ -487,11 +487,33 @@
             document.getElementById('edit-recipe-btn').onclick = () => openRecipeModal(recipe); document.getElementById('delete-recipe-btn').onclick = () => deleteRecipe(recipe.id);
         }
         
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-6 py-3 rounded-full shadow-2xl z-50 transition-opacity duration-300 opacity-0 border border-gray-600";
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            // Trigger reflow to enable transition
+            void toast.offsetWidth; 
+            
+            toast.classList.remove('opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('opacity-0');
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+        
         async function shareLink(type) {
              const url = window.location.href;
              document.getElementById('share-dropdown').classList.add('hidden');
              if (type === 'copy') {
-                 try { await navigator.clipboard.writeText(url); alert('Link copied to clipboard!'); } catch(err) { prompt("Copy this link:", url); }
+                 try { 
+                     await navigator.clipboard.writeText(url); 
+                     showToast('Link copied to clipboard!'); 
+                 } catch(err) { 
+                     prompt("Copy this link:", url); 
+                 }
              } else if (type === 'sms') {
                  window.location.href = `sms:?body=Check out this recipe: ${encodeURIComponent(url)}`;
              } else if (type === 'messenger') {
@@ -602,8 +624,9 @@
         window.autoFillMacros = autoFillMacros;
         window.handleSearch = handleSearch;
         window.shareLink = shareLink;
+        window.showToast = showToast;
 
-// --- INIT ---
+        // --- INIT ---
         async function initRecipeDashboard() {
             initDOM(); 
             
@@ -635,7 +658,6 @@
                 if(targetRecipe) {
                     showDetailView(recipeId);
                 } else {
-                    // ID not found, clear URL and show list
                     const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                     window.history.replaceState({path:newUrl},'',newUrl);
                     renderRecipeGroups();
