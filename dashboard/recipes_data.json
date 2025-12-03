@@ -4932,6 +4932,132 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1764785525097",
+      "title": "Cinnamon Roll Dip",
+      "description": "Serving size - 1 Tbsp",
+      "category": "Sweets",
+      "servings": 32,
+      "prepTime": "5 minutes",
+      "cookTime": "10 minutes",
+      "image": "https://hips.hearstapps.com/del.h-cdn.co/assets/15/46/1280x853/gallery-1447257375-delish-dessert-dip-cinnamon-roll-cheesecake-recipe.jpg",
+      "source": {
+        "description": "Geenien Sheikah",
+        "url": "https://www.facebook.com/reel/1388516412800775"
+      },
+      "tags": [
+        "Party",
+        "Christmas",
+        "Dip"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Cream Cheese",
+              "quantity": "8",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 700,
+                "protein": 16,
+                "carbs": 16,
+                "fat": 70,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Heavy Cream",
+              "quantity": "4",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 400,
+                "protein": 3,
+                "carbs": 3,
+                "fat": 40,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Powdered Sugar",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 351,
+                "protein": 0,
+                "carbs": 91,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Vanilla Extract",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 12,
+                "protein": 0,
+                "carbs": 0.53,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cinnamon",
+              "quantity": "1 1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 18,
+                "protein": 0,
+                "carbs": 6,
+                "fat": 0,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Sugar",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 8,
+                "protein": 0,
+                "carbs": 2,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Powdered Sugar",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 44,
+                "protein": 0,
+                "carbs": 11,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Whip heavy cream for about 2 minutes until it becomes whipping cream.  Add 2 tbsp powdered sugar and mix until incorporated.",
+            "In a bowl combine cream cheese, powdered sugar, vanilla, and cinnamon, then fold in whipping cream until fully combined. Top with cinnamon sugar, and serve with graham crackers for dipping."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
