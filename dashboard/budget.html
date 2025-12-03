@@ -14,6 +14,7 @@
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
             --accent-orange: #f39c12;
+            --accent-blue: #3498db;
             --header-bg: #2c3e50;
             --header-text: #fff;
             --hover-bg: #f9f9f9;
@@ -37,6 +38,8 @@
         .btn-primary { background: var(--accent-green); color: white; }
         .btn-primary:hover { background: #27ae60; }
         .btn-secondary { background: #95a5a6; color: white; }
+        .btn-blue { background: var(--accent-blue); color: white; }
+        .btn-blue:hover { background: #2980b9; }
         .btn-sm { padding: 2px 6px; font-size: 0.75rem; margin-left: 5px; }
         .btn-icon { background: transparent; color: #7f8c8d; }
         .btn-icon:hover { color: #2c3e50; background: #eee; }
@@ -83,6 +86,7 @@
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
         .positive { color: var(--accent-green); font-weight: bold; }
+        .neutral { color: var(--accent-blue); }
         .ledger-icon { width: 32px; height: 32px; border-radius: 50%; vertical-align: middle; margin-right: 8px; object-fit: cover; border: 1px solid #ddd; }
 
         /* --- BUDGET --- */
@@ -133,8 +137,6 @@
             border-bottom: 1px solid #e0e0e0; padding-bottom: 8px;
             display: flex; justify-content: space-between; align-items: center;
         }
-        
-        /* New Watchlist Math Header Styles */
         .watchlist-math { font-size: 0.85rem; color: #555; background: rgba(255,255,255,0.6); padding: 4px 8px; border-radius: 4px; }
         .math-result { font-weight: bold; margin-left: 5px; }
         .math-result.positive { color: var(--accent-green); }
@@ -176,7 +178,6 @@
         <div class="panel-header">
             <div style="display:flex; align-items:center;">
                 <span id="period-name-display" style="font-size:1.1rem; font-weight:bold;">Ledger</span>
-                
                 <span id="ledger-header-info" style="font-weight:normal; font-size:0.9rem; margin-left:15px; opacity:0.9;"></span>
                 
                 <div style="margin-left: 20px; border-left: 1px solid rgba(255,255,255,0.3); padding-left:10px;">
@@ -208,14 +209,14 @@
     <div class="panel">
         <div class="panel-header">
             <span style="font-size:1.1rem; font-weight:bold;">Budgets</span>
+            <button class="btn btn-blue btn-sm" onclick="openTransferModal()">⇄ Transfer</button>
         </div>
         <div class="scroll-area" id="budget-container"></div>
         
         <div class="watchlist-section" id="watchlist-container">
             <div class="watchlist-header">
                 <span>Upcoming Expenses</span>
-                <div class="watchlist-math" id="watchlist-math-display">
-                    </div>
+                <div class="watchlist-math" id="watchlist-math-display"></div>
             </div>
             <div id="watchlist-list"></div>
         </div>
@@ -285,8 +286,7 @@
                 Budget Category 
                 <span id="lbl-split-link" style="font-size:0.8rem; color:#2980b9; cursor:pointer; float:right;" onclick="toggleSplitMode()">Need to Split?</span>
             </label>
-            <select id="tx-category">
-                </select>
+            <select id="tx-category"></select>
         </div>
 
         <div class="form-group" id="group-split" style="display:none;">
@@ -301,9 +301,8 @@
         </div>
 
         <div class="form-group" id="group-income-source" style="display:none;">
-            <label>Income Source (Who paid you?)</label>
-            <select id="tx-income-source">
-                </select>
+            <label>Income Source</label>
+            <select id="tx-income-source"></select>
         </div>
     </div>
     <div class="modal-footer">
@@ -368,6 +367,34 @@
     </div>
 </dialog>
 
+<dialog id="transfer-modal">
+    <div class="modal-header">
+        <span>Transfer Funds</span>
+        <span style="cursor:pointer;" onclick="document.getElementById('transfer-modal').close()">✕</span>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>From Budget</label>
+            <select id="tr-from"></select>
+        </div>
+        <div class="form-group">
+            <label>To Budget</label>
+            <select id="tr-to"></select>
+        </div>
+        <div class="form-group">
+            <label>Amount</label>
+            <input type="number" step="0.01" id="tr-amount">
+        </div>
+        <div class="form-group">
+            <label>Note (Optional)</label>
+            <input type="text" id="tr-note" placeholder="e.g. Needed more for gas">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-blue" onclick="saveTransfer()">Transfer</button>
+    </div>
+</dialog>
+
 <script>
     let appData = { periods: [] };
 
@@ -385,12 +412,8 @@
             console.warn("Could not auto-load budget.json:", err);
             statusEl.textContent = "⚠ Local/Offline"; statusEl.style.color = "#f1c40f";
             const saved = localStorage.getItem('budget_backup');
-            if(saved) { 
-                appData = JSON.parse(saved); 
-                renderApp(); 
-            } else { 
-                renderEmptyState(); 
-            }
+            if(saved) { appData = JSON.parse(saved); renderApp(); }
+            else { renderEmptyState(); }
         }
     }
 
@@ -437,6 +460,8 @@
         const usage = {};
         const incomeAlloc = {};
         const details = {}; 
+        const transferAdj = {}; // New: Track net transfers per budget
+
         let totalIncome = 0;
         let totalSpent = 0;
         let totalPlanned = 0;
@@ -445,6 +470,7 @@
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(i => details[i.id] = []));
         }
 
+        // Process Ledger
         period.ledger.forEach(txn => {
             const addDet = (bid, amt, note, type) => {
                 if(!details[bid]) details[bid] = [];
@@ -471,11 +497,25 @@
             }
         });
 
+        // Process Transfers (Internal Only - Not in Ledger)
+        if(period.transfers) {
+            period.transfers.forEach(tr => {
+                // Adjust Math
+                transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
+                transferAdj[tr.toId] = (transferAdj[tr.toId] || 0) + tr.amount;
+
+                // Add Details for audit
+                const dateStr = tr.date ? tr.date.substring(5) : '';
+                if(details[tr.fromId]) details[tr.fromId].push({ date: dateStr, desc: `Transfer to ${getBudgetName(tr.toId)}`, amount: -tr.amount, type: 'transfer-out' });
+                if(details[tr.toId]) details[tr.toId].push({ date: dateStr, desc: `Transfer from ${getBudgetName(tr.fromId)}`, amount: tr.amount, type: 'transfer-in' });
+            });
+        }
+
         if(period.watchList) {
             period.watchList.forEach(w => totalPlanned += w.amount);
         }
 
-        // --- NEW: Watchlist Zero-Based Math ---
+        // --- Math & Dashboard ---
         const startBal = period.initialBankBalance;
         const netCash = startBal + totalIncome - totalSpent;
         const projected = netCash - totalPlanned;
@@ -488,10 +528,17 @@
             <span class="math-result ${projClass}">${formatMoney(projected)}</span>
         `;
 
+        document.getElementById('sum-in').textContent = formatMoney(totalIncome);
+        document.getElementById('sum-out').textContent = formatMoney(totalSpent);
+        document.getElementById('sum-plan').textContent = formatMoney(totalPlanned);
+        document.getElementById('sum-proj').textContent = formatMoney(projected);
+        document.getElementById('sum-proj').style.color = projected < 0 ? '#e74c3c' : '#333';
+
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
 
+        // Ledger Render
         const tbody = document.getElementById('ledger-body');
         tbody.innerHTML = '';
         let balance = period.initialBankBalance;
@@ -520,6 +567,7 @@
         });
         document.getElementById('ledger-header-info').innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
 
+        // Budget Render
         const budgetContainer = document.getElementById('budget-container');
         budgetContainer.innerHTML = '';
 
@@ -536,22 +584,31 @@
                 cycle.budgetItems.forEach(item => {
                     const spent = usage[item.id] || 0;
                     const received = incomeAlloc[item.id] || 0;
-                    const total = item.plannedAmount + item.carriedOver + received;
+                    const transfers = transferAdj[item.id] || 0;
+                    
+                    const total = item.plannedAmount + item.carriedOver + received + transfers;
                     const remaining = total - spent;
+                    
                     const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
                     let color = 'budget-bar-fill';
                     if(percent > 90) color += ' warning';
                     if(remaining < 0) color += ' danger';
 
                     const myTxns = details[item.id] || [];
-                    const detailHtml = myTxns.map(t => `
+                    const detailHtml = myTxns.map(t => {
+                        let colorClass = 'inherit';
+                        let prefix = '';
+                        if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
+                        if(t.type === 'transfer-out') { colorClass = 'orange'; } 
+                        
+                        return `
                         <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
-                            <span>${t.date.substring(5)} ${t.desc}</span>
-                            <span style="font-family:monospace; color:${t.type==='income'?'green':'inherit'}">
-                                ${t.type==='income'?'+':''}${formatMoney(t.amount)}
+                            <span>${t.date} ${t.desc}</span>
+                            <span style="font-family:monospace; color:${colorClass}">
+                                ${prefix}${formatMoney(t.amount)}
                             </span>
                         </div>
-                    `).join('');
+                    `}).join('');
 
                     const div = document.createElement('div');
                     div.className = 'budget-item';
@@ -573,7 +630,8 @@
                             <div style="margin-bottom:5px; border-bottom:1px solid #eee; padding-bottom:5px;">
                                 <strong>Plan:</strong> ${formatMoney(item.plannedAmount)} | 
                                 <strong>Carry:</strong> ${formatMoney(item.carriedOver)} | 
-                                <strong style="color:green">Credits:</strong> ${formatMoney(received)}
+                                <strong style="color:green">Credits:</strong> ${formatMoney(received)} | 
+                                <strong style="color:blue">Transfers:</strong> ${formatMoney(transfers)}
                             </div>
                             ${detailHtml || '<i>No transactions</i>'}
                         </div>
@@ -613,6 +671,13 @@
         }
     }
 
+    function getBudgetName(id) {
+        const period = getPeriod();
+        let name = 'Unknown';
+        period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === id) name = b.name; }));
+        return name;
+    }
+
     function renderEmptyState() {
         appData = {
             "periods": [{
@@ -622,7 +687,8 @@
                 "incomeSources": [],
                 "paycheckCycles": [{ "cycleId": 1, "label": "Paycheck 1", "budgetItems": [] }],
                 "ledger": [],
-                "watchList": []
+                "watchList": [],
+                "transfers": []
             }]
         };
     }
@@ -906,6 +972,52 @@
     function deleteWatchItem(idx) {
         const period = getPeriod();
         period.watchList.splice(idx, 1);
+        renderApp();
+        saveSession();
+    }
+
+    // --- TRANSFER LOGIC ---
+    function openTransferModal() {
+        const period = getPeriod();
+        const fromSel = document.getElementById('tr-from');
+        const toSel = document.getElementById('tr-to');
+        fromSel.innerHTML = '<option value="">-- Select Source --</option>';
+        toSel.innerHTML = '<option value="">-- Select Target --</option>';
+        
+        period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => {
+            const opt = `<option value="${b.id}">${b.name}</option>`;
+            fromSel.innerHTML += opt;
+            toSel.innerHTML += opt;
+        }));
+        
+        document.getElementById('tr-amount').value = '';
+        document.getElementById('tr-note').value = '';
+        document.getElementById('transfer-modal').showModal();
+    }
+
+    function saveTransfer() {
+        const period = getPeriod();
+        const fromId = document.getElementById('tr-from').value;
+        const toId = document.getElementById('tr-to').value;
+        const amount = parseFloat(document.getElementById('tr-amount').value);
+        const note = document.getElementById('tr-note').value;
+
+        if(!fromId || !toId || !amount || fromId === toId) {
+            alert("Please select valid budgets and amount");
+            return;
+        }
+
+        if(!period.transfers) period.transfers = [];
+        period.transfers.push({
+            id: 'tr'+Date.now(),
+            fromId: fromId,
+            toId: toId,
+            amount: amount,
+            note: note,
+            date: new Date().toISOString().split('T')[0]
+        });
+
+        document.getElementById('transfer-modal').close();
         renderApp();
         saveSession();
     }
