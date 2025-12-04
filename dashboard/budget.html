@@ -168,7 +168,7 @@
             border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; font-size: 0.9rem;
         }
 
-        /* --- EXPECTED INCOME SECTION (NEW) --- */
+        /* --- EXPECTED INCOME SECTION --- */
         .income-section {
             background-color: var(--income-bg); border-top: 2px solid var(--income-header-bg); padding: 15px;
         }
@@ -317,7 +317,7 @@
 
 <dialog id="tx-modal">
     <div class="modal-header">
-        <span>Transaction</span>
+        <span id="tx-modal-title">Transaction</span>
         <span style="cursor:pointer;" onclick="closeTxModal()">✕</span>
     </div>
     <div class="modal-body">
@@ -699,6 +699,10 @@
         }
 
         // Ledger Render
+        const imgMap = {};
+        if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
+        if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
+
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
@@ -711,10 +715,9 @@
                 tr.className = 'ledger-row';
                 let iconUrl = '';
                 if(txn.type === 'income' && txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
-                else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; // messy, optimize later
+                else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
                 else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
                 
-                // Fix for ledger icon lookup
                 if(!iconUrl && txn.linkedBudgetItemId) {
                      period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === txn.linkedBudgetItemId) iconUrl = b.image; }));
                 }
@@ -840,7 +843,7 @@
             }
         }
 
-        // Expected Income Render (NEW)
+        // Expected Income Render
         const expContainer = document.getElementById('exp-income-list');
         if(expContainer) {
             expContainer.innerHTML = '';
@@ -849,17 +852,14 @@
                     const div = document.createElement('div');
                     div.className = 'watchlist-item';
                     
-                    // Lookup icon from sourceId
+                    // Lookup icon
                     let imgUrl = sourceToImage[inc.sourceId];
-                    // Fallback to name match for sources (configured list)
                     if(!imgUrl) {
                         const found = period.incomeSources.find(s => s.id === inc.sourceId);
                         if(found) imgUrl = found.image;
                     }
-
                     const iconHtml = getZoomableImage(imgUrl, 'income-size');
                     
-                    // Find name
                     const sourceName = period.incomeSources.find(s => s.id === inc.sourceId)?.name || 'Unknown Source';
 
                     div.innerHTML = `
@@ -905,7 +905,7 @@
         };
     }
 
-    // --- MODALS & FORM LOGIC ---
+    // --- MODALS ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
@@ -952,6 +952,7 @@
         saveSession(); 
     }
 
+    // --- TRANSACTION LOGIC ---
     let isSplitMode = false;
     function toggleTxType() {
         const type = document.getElementById('tx-type').value;
@@ -1017,6 +1018,7 @@
         if(Math.abs(rem) < 0.01) { remSpan.style.color = 'green'; remSpan.innerText = "Balanced"; } else { remSpan.style.color = 'red'; }
     }
 
+    // UPDATED: Added safety check for title element
     function openTxModal(txId = null) {
         const period = getPeriod();
         if(!period) return;
@@ -1035,9 +1037,12 @@
 
         document.getElementById('split-lines').innerHTML = '';
 
+        const titleEl = document.getElementById('tx-modal-title');
+
         if(isEdit) {
             const tx = period.ledger.find(t => t.id === txId);
-            document.getElementById('tx-modal-title').textContent = "Edit Transaction";
+            if(titleEl) titleEl.textContent = "Edit Transaction";
+            
             document.getElementById('tx-id').value = tx.id;
             document.getElementById('tx-date').value = tx.date;
             document.getElementById('tx-amount').value = Math.abs(tx.amount);
@@ -1052,7 +1057,7 @@
                 if(tx.type === 'income') incSelect.value = tx.sourceId || '';
             }
         } else {
-            document.getElementById('tx-modal-title').textContent = "New Transaction";
+            if(titleEl) titleEl.textContent = "New Transaction";
             document.getElementById('tx-id').value = '';
             document.getElementById('tx-date').value = new Date().toISOString().split('T')[0];
             document.getElementById('tx-amount').value = '';
