@@ -927,21 +927,6 @@ function openItemModal(category, itemId = null, allowedTypes = '') {
                 document.getElementById('field-recurrence').classList.remove('hidden');
             }
         }
-        function updateModalFields() {
-            const type = document.getElementById('item-type').value;
-            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
-            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation','task-category'];
-            allFields.forEach(f => { const el = document.getElementById(`field-${f}`); if(el) el.classList.add('hidden'); });
-            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
-            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
-            if(type === 'task') { document.getElementById('field-task').classList.remove('hidden'); document.getElementById('field-task-category').classList.remove('hidden'); }
-            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
-            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
-            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
-            if(type === 'birthday' || type === 'anniversary') { const isEdit = document.getElementById('item-id').value !== ''; if(!isEdit) document.getElementById('field-annual').classList.remove('hidden'); }
-            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
-            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
-        }
         function populateTeamSelects() {
             const league = document.getElementById('sports-league').value;
             const teams = (appState.data.teams || []).filter(t => t.league === league);
