@@ -22,7 +22,7 @@
             --watchlist-header-bg: #f57f17; 
             --income-bg: #e8f5e9;
             --income-header-bg: #2ecc71;
-            --header-height: 58px; /* Variable for sticky calculations */
+            --header-height: 58px;
         }
 
         body {
@@ -60,19 +60,14 @@
             background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
             display: flex; flex-direction: column; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;
-            /* overflow: hidden removed to allow sticky children */
         }
 
         .panel-header {
             background-color: var(--header-bg); color: var(--header-text);
             padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
             border-radius: 8px 8px 0 0;
-            height: 38px; /* Total height approx 58px with padding */
-            
-            /* STICKY CONFIG */
-            position: sticky;
-            top: 0;
-            z-index: 110; /* Highest priority */
+            height: 38px;
+            position: sticky; top: 0; z-index: 110;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
@@ -100,11 +95,7 @@
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
         .ledger-table th {
             background: #eee; text-align: left; padding: 12px 10px; 
-            /* STICKY UNDER PANEL HEADER */
-            position: sticky; 
-            top: var(--header-height); 
-            z-index: 100; 
-            border-bottom: 2px solid #ccc;
+            position: sticky; top: 58px; z-index: 100; border-bottom: 2px solid #ccc;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .ledger-table td {
@@ -148,10 +139,7 @@
         .summary-dashboard {
             background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
-            /* STICKY UNDER PANEL HEADER */
-            position: sticky; 
-            top: var(--header-height); 
-            z-index: 100;
+            position: sticky; top: 58px; z-index: 100;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .summary-card {
@@ -361,7 +349,7 @@
         
         <div class="form-group" id="group-category">
             <label id="lbl-category">
-                Budget Category 
+                <span id="lbl-text-span">Budget Category</span>
                 <span id="lbl-split-link" style="font-size:0.8rem; color:#2980b9; cursor:pointer; float:right;" onclick="toggleSplitMode()">Need to Split?</span>
             </label>
             <select id="tx-category"></select>
@@ -511,6 +499,7 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
+            // Data Migrations
             if(appData.periods && appData.periods[0]) {
                 if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
                 if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
@@ -969,21 +958,29 @@
         const catGroup = document.getElementById('group-category');
         const incGroup = document.getElementById('group-income-source');
         const splitLink = document.getElementById('lbl-split-link');
-        const lblCat = document.getElementById('lbl-category');
+        const lblText = document.getElementById('lbl-text-span');
         
+        // Always show split link now!
+        splitLink.style.display = 'inline';
+
         if (type === 'expense') {
             catGroup.style.display = isSplitMode ? 'none' : 'block';
             document.getElementById('group-split').style.display = isSplitMode ? 'block' : 'none';
             incGroup.style.display = 'none';
-            lblCat.firstChild.textContent = "Budget Category";
-            splitLink.style.display = "inline";
+            lblText.textContent = "Budget Category";
         } else {
-            catGroup.style.display = 'block'; 
-            document.getElementById('group-split').style.display = 'none';
-            incGroup.style.display = 'block';
-            lblCat.firstChild.textContent = "Credit to Budget (Optional)";
-            splitLink.style.display = "none";
-            isSplitMode = false;
+            // INCOME
+            // If splitting income, show split group, hide source/cat group
+            if(isSplitMode) {
+                document.getElementById('group-split').style.display = 'block';
+                catGroup.style.display = 'none';
+                incGroup.style.display = 'none';
+            } else {
+                document.getElementById('group-split').style.display = 'none';
+                catGroup.style.display = 'block'; 
+                incGroup.style.display = 'block';
+            }
+            lblText.textContent = "Credit to Budget (Optional)";
         }
     }
 
@@ -1110,18 +1107,19 @@
                 newTx.splits = null;
             }
         } else {
-            // Updated Logic for Income Split support
+            // INCOME SPLIT LOGIC
             if(isSplitMode) {
                 newTx.splits = [];
                 document.querySelectorAll('.split-line').forEach(line => {
                     newTx.splits.push({
                         linkedBudgetItemId: line.querySelector('.split-cat').value,
-                        amount: Math.abs(parseFloat(line.querySelector('.split-amt').value)), // Positive for income
+                        // Income splits are POSITIVE
+                        amount: Math.abs(parseFloat(line.querySelector('.split-amt').value)), 
                         note: line.querySelector('.split-note').value
                     });
                 });
                 newTx.linkedBudgetItemId = null;
-                newTx.sourceId = null; // source is abstract in split
+                newTx.sourceId = null; 
             } else {
                 newTx.sourceId = document.getElementById('tx-income-source').value;
                 newTx.linkedBudgetItemId = document.getElementById('tx-category').value || null; 
