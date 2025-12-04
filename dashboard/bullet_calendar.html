@@ -203,7 +203,7 @@
         </div>
     </div>
 
-    <div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
+<div id="item-modal" class="fixed inset-0 bg-black/80 z-[60] hidden flex items-center justify-center p-4 backdrop-blur-sm">
         <div class="bg-gray-800 rounded-2xl w-full max-w-md flex flex-col shadow-2xl border border-gray-700 max-h-[85vh]">
             <div class="p-6 border-b border-gray-700 flex justify-between items-center shrink-0">
                 <h3 class="text-xl font-bold text-white" id="item-modal-title">Add Item</h3>
@@ -285,6 +285,16 @@
 
                 <div id="common-fields"><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Description / Notes</label><textarea id="item-desc" rows="2" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white focus:border-blue-500 outline-none" placeholder="Details..."></textarea></div>
                 
+                <div id="field-recurrence" class="hidden">
+                    <label class="flex items-center gap-2 text-sm text-gray-300 cursor-pointer mt-2 bg-gray-700/50 p-2 rounded border border-gray-600 hover:bg-gray-700 transition">
+                        <input type="checkbox" id="item-recur-biweekly" class="w-4 h-4 rounded border-gray-600 bg-gray-700 text-purple-500 focus:ring-purple-500">
+                        <div class="flex flex-col">
+                            <span class="font-bold text-white">Repeat Bi-Weekly</span>
+                            <span class="text-[10px] text-gray-400">Every 14 days until end of year</span>
+                        </div>
+                    </label>
+                </div>
+
                 <div id="field-meeting" class="hidden grid grid-cols-2 gap-4">
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Start Time</label><input type="time" id="item-startTime" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white"></div>
                     <div><label class="block text-xs font-bold text-gray-500 uppercase mb-1">Planned Duration</label><input type="text" id="item-duration" class="w-full bg-gray-700 border border-gray-600 rounded p-2 text-white" placeholder="e.g. 1h 30m or 90"></div>
@@ -741,7 +751,7 @@
             saveData(); closeNutritionModal(); updateUI();
         }
 
-        function openItemModal(category, itemId = null, allowedTypes = '') {
+function openItemModal(category, itemId = null, allowedTypes = '') {
             const ymd = toLocalYMD(appState.currentDate);
             
             if(document.getElementById('type-buttons-container').children.length === 0) {
@@ -763,6 +773,7 @@
             document.getElementById('item-fill-month').checked = false;
             document.getElementById('item-is-work-holiday').checked = true;
             document.getElementById('item-recur-weekly').checked = false;
+            document.getElementById('item-recur-biweekly').checked = false; // Reset new checkbox
             document.getElementById('item-add-next-year').checked = false;
             document.getElementById('vacation-start').value = ymd; 
             document.getElementById('vacation-end').value = '';
@@ -818,6 +829,7 @@
         }
 
         function closeItemModal() { document.getElementById('item-modal').classList.add('hidden'); }
+        
         function saveItem() {
             const type = document.getElementById('item-type').value; 
             let category = 'personal'; 
@@ -859,6 +871,8 @@
                 }
                 saveData(); closeItemModal(); updateUI(); return; 
             }
+            
+            // Weekly Recurrence (Next 4 weeks)
             if (type === 'meeting' && document.getElementById('item-recur-weekly').checked && !editId) {
                 const baseDate = new Date(dateYMD + "T12:00:00");
                 for(let w=1; w<=4; w++) {
@@ -866,6 +880,25 @@
                     const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_${w}`, date: nextYMD }; appState.data.items.push(finalClone);
                 }
             }
+            
+            // Bi-Weekly Recurrence (Rest of Year) - NEW
+            if ((type === 'task' || type === 'meeting') && document.getElementById('item-recur-biweekly').checked && !editId) {
+                const baseDate = new Date(dateYMD + "T12:00:00");
+                const currentYear = baseDate.getFullYear();
+                let nextDate = new Date(baseDate);
+                nextDate.setDate(nextDate.getDate() + 14); // Start 2 weeks out
+
+                while(nextDate.getFullYear() === currentYear) {
+                    const nextYMD = toLocalYMD(nextDate);
+                    // Generate unique ID
+                    const cloneId = `${type}_${Date.now()}_${Math.floor(Math.random()*1000)}`;
+                    const clonedItem = { ...newItemBase, id: cloneId, date: nextYMD };
+                    appState.data.items.push(clonedItem);
+                    
+                    nextDate.setDate(nextDate.getDate() + 14);
+                }
+            }
+
             if ((type === 'birthday' || type === 'anniversary') && document.getElementById('item-add-next-year').checked && !editId) {
                 const [y, m, d] = dateYMD.split('-'); const nextYearYMD = `${parseInt(y)+1}-${m}-${d}`;
                 const finalClone = { ...newItemBase, id: `${type}_${new Date().getTime()}_next`, date: nextYearYMD }; appState.data.items.push(finalClone);
@@ -873,6 +906,26 @@
             const finalItem = { ...newItemBase, id: editId || `${type}_${new Date().getTime()}`, date: dateYMD };
             if (editId) { const idx = appState.data.items.findIndex(i => i.id === editId); if (idx >= 0) appState.data.items[idx] = finalItem; } else { appState.data.items.push(finalItem); }
             saveData(); closeItemModal(); updateUI();
+        }
+
+        function updateModalFields() {
+            const type = document.getElementById('item-type').value;
+            if (type === 'health') { closeItemModal(); openNutritionModal(); return; }
+            const allFields = ['meeting','task','media','habit','sports','holiday','annual','vacation','task-category','recurrence'];
+            allFields.forEach(f => { const el = document.getElementById(`field-${f}`); if(el) el.classList.add('hidden'); });
+            document.getElementById('field-title').style.display = type === 'sports' ? 'none' : 'block';
+            if(type === 'meeting') document.getElementById('field-meeting').classList.remove('hidden');
+            if(type === 'task') { document.getElementById('field-task').classList.remove('hidden'); document.getElementById('field-task-category').classList.remove('hidden'); }
+            if(type === 'media') { document.getElementById('field-media').classList.remove('hidden'); renderStarInput(parseInt(document.getElementById('item-rating').value) || 5); }
+            if(type === 'habit') document.getElementById('field-habit').classList.remove('hidden');
+            if(type === 'holiday') document.getElementById('field-holiday').classList.remove('hidden');
+            if(type === 'birthday' || type === 'anniversary') { const isEdit = document.getElementById('item-id').value !== ''; if(!isEdit) document.getElementById('field-annual').classList.remove('hidden'); }
+            if(type === 'sports') { document.getElementById('field-sports').classList.remove('hidden'); if(document.getElementById('sports-league').options.length === 0) { (appState.data.leagues || []).forEach(l => { const opt = document.createElement('option'); opt.value = l; opt.innerText = l; document.getElementById('sports-league').appendChild(opt); }); populateTeamSelects(); } }
+            if(type === 'vacation') document.getElementById('field-vacation').classList.remove('hidden');
+            // Show recurrence for Task or Meeting
+            if(type === 'task' || type === 'meeting') {
+                document.getElementById('field-recurrence').classList.remove('hidden');
+            }
         }
         function updateModalFields() {
             const type = document.getElementById('item-type').value;
