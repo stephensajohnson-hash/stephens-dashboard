@@ -103,19 +103,24 @@
         }
         .ledger-row:hover { background-color: #f8f9fa; }
 
-        /* UPDATED COLUMN WIDTHS & ALIGNMENT */
         .col-date { width: 18%; }
-        .col-desc { width: 44%; } /* Maximize description space */
+        .col-desc { width: 44%; } 
         .col-amt  { width: 17%; text-align: right; }
         .col-bal  { width: 17%; text-align: right; }
         .col-act  { width: 4%; text-align: center; }
         
-        /* Align Headers to match Data */
         .ledger-table th.col-amt, .ledger-table th.col-bal { text-align: right; }
 
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
         .positive { color: var(--accent-green); font-weight: bold; }
+
+        /* SPLIT TAG */
+        .split-tag {
+            font-size: 0.75rem; background-color: #e0e0e0; color: #555;
+            padding: 1px 5px; border-radius: 4px; margin-left: 6px;
+            vertical-align: middle; cursor: help; border: 1px solid #ccc;
+        }
 
         /* --- BUDGET --- */
         .cycle-section { border-bottom: 4px solid var(--border-color); }
@@ -157,7 +162,7 @@
         .sum-proj { color: #333; }
         .sum-var { color: #555; } 
 
-        /* --- WATCHLIST (EXPECTED EXPENSES) --- */
+        /* --- WATCHLIST --- */
         .watchlist-section {
             background-color: var(--watchlist-bg); border-top: 2px solid var(--watchlist-header-bg); padding: 15px; 
         }
@@ -294,11 +299,6 @@
                 <div class="watchlist-math" id="watchlist-math-display"></div>
             </div>
             <div id="watchlist-list"></div>
-        </div>
-
-        <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
-             <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
-             <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
         </div>
     </div>
 </div>
@@ -508,6 +508,7 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
+            // Data Migrations
             if(appData.periods && appData.periods[0]) {
                 if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
                 if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
@@ -742,20 +743,29 @@
                 const tr = document.createElement('tr');
                 tr.className = 'ledger-row';
                 let iconUrl = '';
+                
+                // --- FIXED ICON LOGIC ---
                 if(txn.type === 'income' && txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
                 else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
-                else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
                 
+                // Fallback for splits: use first split item's category image
+                if(!iconUrl && txn.splits && txn.splits.length > 0) {
+                    const firstId = txn.splits[0].linkedBudgetItemId;
+                    if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
+                }
+                
+                // Fallback for direct linked (if not found in name map)
                 if(!iconUrl && txn.linkedBudgetItemId) {
                      period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === txn.linkedBudgetItemId) iconUrl = b.image; }));
                 }
 
                 const iconHtml = getZoomableImage(iconUrl, 'ledger-size');
                 const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
+                const splitBadge = txn.splits ? '<span class="split-tag" title="Split Transaction">🔀</span>' : '';
 
                 tr.innerHTML = `
                     <td class="col-date">${formatDate(txn.date)}</td>
-                    <td class="col-desc">${iconHtml}${txn.description} ${txn.splits?'<small>(Split)</small>':''}</td>
+                    <td class="col-desc">${iconHtml}${txn.description} ${splitBadge}</td>
                     <td class="col-amt ${amtClass}">${formatMoney(txn.amount)}</td>
                     <td class="col-bal">${formatMoney(balance)}</td>
                     <td class="col-act"><button class="btn btn-icon" onclick="openTxModal('${txn.id}')">✎</button></td>
