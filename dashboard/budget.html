@@ -20,6 +20,8 @@
             --hover-bg: #f9f9f9;
             --watchlist-bg: #fffde7;
             --watchlist-header-bg: #f57f17; 
+            --income-bg: #e8f5e9;
+            --income-header-bg: #2ecc71;
         }
 
         body {
@@ -83,7 +85,7 @@
         .ledger-size { width: 32px; height: 32px; }
         .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
         .watchlist-size { width: 24px; height: 24px; }
-        .income-size { width: 30px; height: 30px; }
+        .income-size { width: 24px; height: 24px; }
 
         /* --- LEDGER TABLE --- */
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
@@ -132,10 +134,7 @@
         /* --- SUMMARY DASHBOARD --- */
         .summary-dashboard {
             background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
-            display: grid; 
-            /* FORCE 5 COLUMNS */
-            grid-template-columns: repeat(5, 1fr); 
-            gap: 5px;
+            display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
             position: sticky; top: 0; z-index: 90;
         }
         .summary-card {
@@ -147,22 +146,16 @@
         .sum-out { color: var(--accent-red); }
         .sum-plan { color: var(--accent-orange); }
         .sum-proj { color: #333; }
-        /* VARIANCE CARD STYLING */
         .sum-var { color: #555; } 
 
         /* --- WATCHLIST --- */
         .watchlist-section {
-            background-color: var(--watchlist-bg); 
-            border-top: 2px solid var(--watchlist-header-bg); 
-            padding: 15px; 
+            background-color: var(--watchlist-bg); border-top: 2px solid var(--watchlist-header-bg); padding: 15px; 
         }
         .watchlist-header { 
-            background-color: var(--watchlist-header-bg);
-            color: #fff;
-            padding: 10px 15px;
-            margin: -15px -15px 10px -15px;
-            font-weight: bold; 
-            font-size: 1rem; 
+            background-color: var(--watchlist-header-bg); color: #fff;
+            padding: 10px 15px; margin: -15px -15px 10px -15px;
+            font-weight: bold; font-size: 1rem; 
             display: flex; justify-content: space-between; align-items: center;
         }
         .watchlist-math { font-size: 0.85rem; color: #fff; background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 4px; }
@@ -174,6 +167,18 @@
             display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid rgba(0,0,0,0.05); padding: 8px 0; font-size: 0.9rem;
         }
+
+        /* --- EXPECTED INCOME SECTION (NEW) --- */
+        .income-section {
+            background-color: var(--income-bg); border-top: 2px solid var(--income-header-bg); padding: 15px;
+        }
+        .income-header {
+            background-color: var(--income-header-bg); color: #fff;
+            padding: 10px 15px; margin: -15px -15px 10px -15px;
+            font-weight: bold; font-size: 1rem; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .add-link { cursor: pointer; color: #fff; font-size: 0.8rem; text-decoration: underline; }
 
         /* --- MODALS --- */
         dialog { border: none; border-radius: 8px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); padding: 0; width: 450px; }
@@ -258,7 +263,7 @@
                 <div class="summary-label">Projected</div>
                 <div class="summary-val sum-proj" id="sum-proj">$0</div>
             </div>
-            <div class="summary-card" title="Bank Balance - Sum of Envelope Balances">
+            <div class="summary-card" title="Net Cash + Expected Income - Total Budgeted">
                 <div class="summary-label">Unallocated</div>
                 <div class="summary-val sum-var" id="sum-var">$0</div>
             </div>
@@ -274,9 +279,12 @@
             <div id="watchlist-list"></div>
         </div>
 
-        <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
-             <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
-             <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
+        <div class="income-section" id="income-container">
+            <div class="income-header">
+                <span>Expected Income</span>
+                <span class="add-link" onclick="openExpIncomeModal()">+ Add</span>
+            </div>
+            <div id="exp-income-list"></div>
         </div>
     </div>
 </div>
@@ -297,7 +305,7 @@
         </div>
         <hr>
         <div class="form-group">
-            <label>Income Sources</label>
+            <label>Configured Income Sources</label>
             <div id="income-rows-container"></div>
             <button class="btn btn-sm btn-secondary" style="margin-top:5px;" onclick="addIncomeRow()">+ Add Source</button>
         </div>
@@ -420,6 +428,30 @@
     </div>
 </dialog>
 
+<dialog id="exp-income-modal">
+    <div class="modal-header">
+        <span>Plan Income</span>
+        <span style="cursor:pointer;" onclick="document.getElementById('exp-income-modal').close()">✕</span>
+    </div>
+    <div class="modal-body">
+        <div class="form-group">
+            <label>Source</label>
+            <select id="exp-source"></select>
+        </div>
+        <div class="form-group">
+            <label>Expected Amount</label>
+            <input type="number" step="0.01" id="exp-amount">
+        </div>
+        <div class="form-group">
+            <label>Expected Date</label>
+            <input type="date" id="exp-date">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" onclick="saveExpIncome()">Save</button>
+    </div>
+</dialog>
+
 <dialog id="transfer-modal">
     <div class="modal-header">
         <span>Transfer Funds</span>
@@ -462,8 +494,10 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
-            if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
-                appData.periods[0].transfers = [];
+            // Data Migrations
+            if(appData.periods && appData.periods[0]) {
+                if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
+                if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
             }
             saveSession();
             renderApp();
@@ -476,8 +510,9 @@
             const saved = localStorage.getItem('budget_backup');
             if(saved) { 
                 appData = JSON.parse(saved); 
-                if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
-                    appData.periods[0].transfers = [];
+                if(appData.periods && appData.periods[0]) {
+                    if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
+                    if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
                 }
                 renderApp(); 
             } else { 
@@ -506,8 +541,9 @@
         reader.onload = function(e) {
             try {
                 appData = JSON.parse(e.target.result);
-                if(appData.periods && appData.periods[0] && !appData.periods[0].transfers) {
-                    appData.periods[0].transfers = [];
+                if(appData.periods && appData.periods[0]) {
+                    if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
+                    if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
                 }
                 renderApp();
                 saveSession();
@@ -555,8 +591,15 @@
         let totalSpent = 0;
         let totalPlanned = 0;
         let totalEnvelopeRemaining = 0;
+        let totalExpectedIncome = 0;
 
         const nameToImage = {};
+        const sourceToImage = {}; // map income source ID to image
+
+        if(period.incomeSources) {
+            period.incomeSources.forEach(s => sourceToImage[s.id] = s.image);
+        }
+
         if(period.paycheckCycles) {
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => {
                 details[b.id] = [];
@@ -603,6 +646,7 @@
         }
 
         if(period.watchList) period.watchList.forEach(w => totalPlanned += w.amount);
+        if(period.expectedIncome) period.expectedIncome.forEach(i => totalExpectedIncome += i.amount);
 
         // Pre-calculate Budget Totals for Variance
         if(period.paycheckCycles) {
@@ -618,9 +662,11 @@
 
         const startBal = period.initialBankBalance || 0;
         const currentBalance = startBal + totalIncome - totalSpent;
-        const unallocated = currentBalance - totalEnvelopeRemaining;
+        
+        // VARIANCE LOGIC: Current Cash + Expected Income - Total Envelopes
+        const unallocated = (currentBalance + totalExpectedIncome) - totalEnvelopeRemaining;
 
-        // Update Dashboard Values
+        // Update Dashboard
         ['sum-in', 'sum-out', 'sum-plan', 'sum-proj', 'sum-var'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
@@ -640,7 +686,6 @@
             }
         });
 
-        // Update Watchlist Math Header
         const mathEl = document.getElementById('watchlist-math-display');
         if(mathEl) {
             const netCash = startBal + totalIncome - totalSpent; 
@@ -654,10 +699,6 @@
         }
 
         // Ledger Render
-        const imgMap = {};
-        if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
-        if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
-
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
@@ -669,10 +710,15 @@
                 const tr = document.createElement('tr');
                 tr.className = 'ledger-row';
                 let iconUrl = '';
-                if(txn.type === 'income' && txn.sourceId) iconUrl = imgMap[txn.sourceId];
-                else if(txn.linkedBudgetItemId) iconUrl = imgMap[txn.linkedBudgetItemId];
+                if(txn.type === 'income' && txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
+                else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; // messy, optimize later
                 else if(txn.splits) iconUrl = 'https://placehold.co/40x40/999/white?text=S'; 
                 
+                // Fix for ledger icon lookup
+                if(!iconUrl && txn.linkedBudgetItemId) {
+                     period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === txn.linkedBudgetItemId) iconUrl = b.image; }));
+                }
+
                 const iconHtml = getZoomableImage(iconUrl, 'ledger-size');
                 const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
@@ -794,9 +840,43 @@
             }
         }
 
-        const incContainer = document.getElementById('income-sources-list');
-        if(incContainer && period.incomeSources) {
-            incContainer.innerHTML = period.incomeSources.map(i => getZoomableImage(i.image, 'income-size')).join('');
+        // Expected Income Render (NEW)
+        const expContainer = document.getElementById('exp-income-list');
+        if(expContainer) {
+            expContainer.innerHTML = '';
+            if(period.expectedIncome) {
+                period.expectedIncome.forEach((inc, idx) => {
+                    const div = document.createElement('div');
+                    div.className = 'watchlist-item';
+                    
+                    // Lookup icon from sourceId
+                    let imgUrl = sourceToImage[inc.sourceId];
+                    // Fallback to name match for sources (configured list)
+                    if(!imgUrl) {
+                        const found = period.incomeSources.find(s => s.id === inc.sourceId);
+                        if(found) imgUrl = found.image;
+                    }
+
+                    const iconHtml = getZoomableImage(imgUrl, 'income-size');
+                    
+                    // Find name
+                    const sourceName = period.incomeSources.find(s => s.id === inc.sourceId)?.name || 'Unknown Source';
+
+                    div.innerHTML = `
+                        <span style="display:flex; align-items:center;">
+                            ${iconHtml}
+                            <span>
+                                <strong>${sourceName}</strong> <span style="font-size:0.8rem; color:#888;">Expected ${inc.date}</span>
+                            </span>
+                        </span>
+                        <span>
+                            <b style="color:green;">+${formatMoney(inc.amount)}</b>
+                            <button class="btn btn-sm btn-icon" onclick="deleteExpIncome(${idx})">✕</button>
+                        </span>
+                    `;
+                    expContainer.appendChild(div);
+                });
+            }
         }
     }
 
@@ -819,7 +899,8 @@
                 "paycheckCycles": [{ "cycleId": 1, "label": "Paycheck 1", "budgetItems": [] }],
                 "ledger": [],
                 "watchList": [],
-                "transfers": []
+                "transfers": [],
+                "expectedIncome": []
             }]
         };
     }
@@ -1104,6 +1185,41 @@
     function deleteWatchItem(idx) {
         const period = getPeriod();
         period.watchList.splice(idx, 1);
+        renderApp();
+        saveSession();
+    }
+
+    // --- EXPECTED INCOME LOGIC ---
+    function openExpIncomeModal() {
+        const period = getPeriod();
+        const sel = document.getElementById('exp-source');
+        sel.innerHTML = '<option value="">-- Select Source --</option>';
+        if(period.incomeSources) {
+            period.incomeSources.forEach(s => {
+                sel.innerHTML += `<option value="${s.id}">${s.name}</option>`;
+            });
+        }
+        document.getElementById('exp-amount').value = '';
+        document.getElementById('exp-date').value = '';
+        document.getElementById('exp-income-modal').showModal();
+    }
+
+    function saveExpIncome() {
+        const period = getPeriod();
+        if(!period.expectedIncome) period.expectedIncome = [];
+        period.expectedIncome.push({
+            sourceId: document.getElementById('exp-source').value,
+            amount: parseFloat(document.getElementById('exp-amount').value) || 0,
+            date: document.getElementById('exp-date').value || 'TBD'
+        });
+        document.getElementById('exp-income-modal').close();
+        renderApp();
+        saveSession();
+    }
+
+    function deleteExpIncome(idx) {
+        const period = getPeriod();
+        period.expectedIncome.splice(idx, 1);
         renderApp();
         saveSession();
     }
