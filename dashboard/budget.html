@@ -22,6 +22,7 @@
             --watchlist-header-bg: #f57f17; 
             --income-bg: #e8f5e9;
             --income-header-bg: #2ecc71;
+            --header-height: 58px; /* Variable for sticky calculations */
         }
 
         body {
@@ -59,12 +60,20 @@
             background: var(--panel-bg); border: 1px solid var(--border-color); border-radius: 8px;
             display: flex; flex-direction: column; 
             box-shadow: 0 4px 6px rgba(0,0,0,0.05); margin-bottom: 20px;
+            /* overflow: hidden removed to allow sticky children */
         }
 
         .panel-header {
             background-color: var(--header-bg); color: var(--header-text);
             padding: 10px 15px; display: flex; justify-content: space-between; align-items: center;
             border-radius: 8px 8px 0 0;
+            height: 38px; /* Total height approx 58px with padding */
+            
+            /* STICKY CONFIG */
+            position: sticky;
+            top: 0;
+            z-index: 110; /* Highest priority */
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .scroll-area { flex: 1; overflow: visible; }
@@ -85,13 +94,17 @@
         .ledger-size { width: 32px; height: 32px; }
         .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
         .watchlist-size { width: 24px; height: 24px; }
-        .income-size { width: 24px; height: 24px; }
+        .income-size { width: 30px; height: 30px; }
 
         /* --- LEDGER TABLE --- */
         table.ledger-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; table-layout: fixed; }
         .ledger-table th {
             background: #eee; text-align: left; padding: 12px 10px; 
-            position: sticky; top: 0; z-index: 100; border-bottom: 2px solid #ccc;
+            /* STICKY UNDER PANEL HEADER */
+            position: sticky; 
+            top: var(--header-height); 
+            z-index: 100; 
+            border-bottom: 2px solid #ccc;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .ledger-table td {
@@ -135,7 +148,11 @@
         .summary-dashboard {
             background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
             display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px;
-            position: sticky; top: 0; z-index: 90;
+            /* STICKY UNDER PANEL HEADER */
+            position: sticky; 
+            top: var(--header-height); 
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
         }
         .summary-card {
             background: #f8f9fa; padding: 8px 4px; border-radius: 6px; border: 1px solid #eee; text-align: center;
@@ -222,7 +239,7 @@
                 </div>
                 <span id="status-indicator" style="font-size:0.7rem; margin-left:10px; color:#aaa;"></span>
             </div>
-            <button class="btn btn-primary" onclick="openTxModal()">+ Add Txn</button>
+            <button class="btn btn-primary" onclick="openTxModal()">+ Add Transaction</button>
         </div>
         <div class="scroll-area">
             <table class="ledger-table">
@@ -494,7 +511,6 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
-            // Data Migrations
             if(appData.periods && appData.periods[0]) {
                 if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
                 if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
@@ -594,7 +610,7 @@
         let totalExpectedIncome = 0;
 
         const nameToImage = {};
-        const sourceToImage = {}; // map income source ID to image
+        const sourceToImage = {}; 
 
         if(period.incomeSources) {
             period.incomeSources.forEach(s => sourceToImage[s.id] = s.image);
@@ -648,7 +664,6 @@
         if(period.watchList) period.watchList.forEach(w => totalPlanned += w.amount);
         if(period.expectedIncome) period.expectedIncome.forEach(i => totalExpectedIncome += i.amount);
 
-        // Pre-calculate Budget Totals for Variance
         if(period.paycheckCycles) {
             period.paycheckCycles.forEach(c => c.budgetItems.forEach(item => {
                 const spent = usage[item.id] || 0;
@@ -662,11 +677,9 @@
 
         const startBal = period.initialBankBalance || 0;
         const currentBalance = startBal + totalIncome - totalSpent;
-        
-        // VARIANCE LOGIC: Current Cash + Expected Income - Total Envelopes
         const unallocated = (currentBalance + totalExpectedIncome) - totalEnvelopeRemaining;
 
-        // Update Dashboard
+        // Dashboard
         ['sum-in', 'sum-out', 'sum-plan', 'sum-proj', 'sum-var'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
@@ -698,7 +711,7 @@
             `;
         }
 
-        // Ledger Render
+        // Ledger
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
@@ -738,7 +751,7 @@
             if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(startBal)}</b> | Current: <b>${formatMoney(balance)}</b>`;
         }
 
-        // Budget Render
+        // Budget
         const budgetContainer = document.getElementById('budget-container');
         if(budgetContainer) {
             budgetContainer.innerHTML = '';
@@ -811,7 +824,7 @@
             }
         }
 
-        // Watchlist Render
+        // Watchlist
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -843,7 +856,7 @@
             }
         }
 
-        // Expected Income Render
+        // Expected Income
         const expContainer = document.getElementById('exp-income-list');
         if(expContainer) {
             expContainer.innerHTML = '';
@@ -852,14 +865,12 @@
                     const div = document.createElement('div');
                     div.className = 'watchlist-item';
                     
-                    // Lookup icon
                     let imgUrl = sourceToImage[inc.sourceId];
                     if(!imgUrl) {
                         const found = period.incomeSources.find(s => s.id === inc.sourceId);
                         if(found) imgUrl = found.image;
                     }
                     const iconHtml = getZoomableImage(imgUrl, 'income-size');
-                    
                     const sourceName = period.incomeSources.find(s => s.id === inc.sourceId)?.name || 'Unknown Source';
 
                     div.innerHTML = `
@@ -952,7 +963,6 @@
         saveSession(); 
     }
 
-    // --- TRANSACTION LOGIC ---
     let isSplitMode = false;
     function toggleTxType() {
         const type = document.getElementById('tx-type').value;
@@ -1018,7 +1028,6 @@
         if(Math.abs(rem) < 0.01) { remSpan.style.color = 'green'; remSpan.innerText = "Balanced"; } else { remSpan.style.color = 'red'; }
     }
 
-    // UPDATED: Added safety check for title element
     function openTxModal(txId = null) {
         const period = getPeriod();
         if(!period) return;
@@ -1101,8 +1110,22 @@
                 newTx.splits = null;
             }
         } else {
-            newTx.sourceId = document.getElementById('tx-income-source').value;
-            newTx.linkedBudgetItemId = document.getElementById('tx-category').value || null; 
+            // Updated Logic for Income Split support
+            if(isSplitMode) {
+                newTx.splits = [];
+                document.querySelectorAll('.split-line').forEach(line => {
+                    newTx.splits.push({
+                        linkedBudgetItemId: line.querySelector('.split-cat').value,
+                        amount: Math.abs(parseFloat(line.querySelector('.split-amt').value)), // Positive for income
+                        note: line.querySelector('.split-note').value
+                    });
+                });
+                newTx.linkedBudgetItemId = null;
+                newTx.sourceId = null; // source is abstract in split
+            } else {
+                newTx.sourceId = document.getElementById('tx-income-source').value;
+                newTx.linkedBudgetItemId = document.getElementById('tx-category').value || null; 
+            }
         }
 
         if(id) {
