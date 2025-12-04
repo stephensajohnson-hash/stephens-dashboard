@@ -270,7 +270,28 @@
           "type": "expense",
           "linkedBudgetItemId": "b1764711223715",
           "splits": null
-        }    
+        },
+        {
+          "id": "t1764870895968",
+          "date": "2025-12-04",
+          "description": "Perdue Brandon - Paycheck 2",
+          "amount": 4367.84,
+          "type": "income",
+          "splits": [
+            {
+              "linkedBudgetItemId": "b1764711914745",
+              "amount": 0.02,
+              "note": "Extra"
+            },
+            {
+              "linkedBudgetItemId": "",
+              "amount": null,
+              "note": ""
+            }
+          ],
+          "linkedBudgetItemId": null,
+          "sourceId": "inc1764710864578"
+        }
       ],
       "transfers": [
         {
