@@ -7,9 +7,10 @@
       "links": [
         {
           "id": "l1",
+          "groupId": "g1",
           "name": "Halo",
           "url": "https://pbfcm.haloitsm.com",
-          "img": "https://media.licdn.com/dms/image/v2/D4D0BAQHua1QvehlNJg/company-logo_200_200/company-logo_200_200/0/1719256595420/haloitsm_logo?e=1764806400&v=beta&t=Et1KWvi52D9xGj68eE4JmapbZ0fg84N4t9c-aheyINs"
+          "img": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSn29rE-grR6Y5pqJZpQALap3RimVH01im88y9xTirBTsggX2E24wexB8s&s"
         },
         {
           "id": "l2",
@@ -611,6 +612,63 @@
       "color": "green",
       "isStatic": false,
       "links": []
+    },
+    {
+      "id": "g_1764888480039",
+      "name": "Repeat Buys",
+      "color": "gray",
+      "isStatic": false,
+      "links": [
+        {
+          "id": "l_1764888542722",
+          "groupId": "g_1764888480039",
+          "name": "Hardness Plus",
+          "url": "https://www.amazon.com/dp/B0DB759K6X?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1",
+          "img": "https://m.media-amazon.com/images/I/61-WUShGoPL._AC_SL1500_.jpg"
+        },
+        {
+          "id": "l_1764888624891",
+          "groupId": "g_1764888480039",
+          "name": "365 Marinara",
+          "url": "https://www.amazon.com/dp/B074H5Z5T4?ref=ppx_yo2ov_dt_b_fed_asin_title",
+          "img": "https://m.media-amazon.com/images/I/51QK1+a8XdL._SL1000_.jpg"
+        },
+        {
+          "id": "l_1764888802851",
+          "groupId": "g_1764888480039",
+          "name": "Men's Jeans - Lee",
+          "url": "https://www.amazon.com/dp/B07T6PJYPG?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1&psc=1",
+          "img": "https://m.media-amazon.com/images/I/71WzLRfuZQL._AC_SY741_.jpg"
+        },
+        {
+          "id": "l_1764888904268",
+          "groupId": "g_1764888480039",
+          "name": "Spa Purge",
+          "url": "https://www.amazon.com/dp/B002WKJAAM?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1",
+          "img": "https://m.media-amazon.com/images/I/51162pF6-0L._AC_SL1300_.jpg"
+        },
+        {
+          "id": "l_1764888987830",
+          "groupId": "g_1764888480039",
+          "name": "Heater Element",
+          "url": "https://www.amazon.com/dp/B07BL27PG9?ref=ppx_yo2ov_dt_b_fed_asin_title",
+          "img": "https://m.media-amazon.com/images/I/91mUeAMq-YL._AC_SL1500_.jpg"
+        },
+        {
+          "id": "l_1764889130062",
+          "groupId": "g_1764888480039",
+          "name": "Oral-B Heads",
+          "url": "https://www.amazon.com/Oral-B-FlossAction-Toothbrush-Replacement-Sensitive/dp/B07Y8YPMCV?pd_rd_w=X9sEZ&content-id=amzn1.sym.55c0153f-1fb7-42ff-8241-d1c0f3732289&pf_rd_p=55c0153f-1fb7-42ff-8241-d1c0f3732289&pf_rd_r=QBEBC4805BKRXA1CT88C&pd_rd_wg=tF9nG&pd_rd_r=52a767d2-3d5f-497c-9b7a-ed7f3ee2f6f6&ref_=sspa_dk_detail_sbb_0&sp_csd=d2lkZ2V0TmFtZT1zcF9kZXRhaWxfdGhlbWF0aWM&th=1",
+          "img": "https://m.media-amazon.com/images/I/51POfBpMBpL._SL1000_.jpg"
+        },
+        {
+          "id": "l_1764889171203",
+          "groupId": "g_1764888480039",
+          "name": "Creatine",
+          "url": "https://www.amazon.com/dp/B0CCCNKD73?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1",
+          "img": "https://m.media-amazon.com/images/I/71pwRVWO3mL._AC_SL1500_.jpg"
+        }
+      ]
     }
   ],
   "countdowns": [
