@@ -508,7 +508,6 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
-            // Data Migrations
             if(appData.periods && appData.periods[0]) {
                 if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
                 if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
@@ -744,17 +743,26 @@
                 tr.className = 'ledger-row';
                 let iconUrl = '';
                 
-                // --- FIXED ICON LOGIC ---
-                if(txn.type === 'income' && txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
-                else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
-                
-                // Fallback for splits: use first split item's category image
-                if(!iconUrl && txn.splits && txn.splits.length > 0) {
-                    const firstId = txn.splits[0].linkedBudgetItemId;
-                    if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
+                // Logic: Income priority = source, then first split budget. Expense priority = budget, then first split budget.
+                if(txn.type === 'income') {
+                    if(txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
+                    if(!iconUrl && txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)];
+                    if(!iconUrl && txn.splits && txn.splits.length > 0) {
+                        // Fallback to first budget item icon if no source
+                        const firstId = txn.splits[0].linkedBudgetItemId;
+                        if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
+                    }
+                } else {
+                    // Expense
+                    if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
+                    // Fallback for splits
+                    if(!iconUrl && txn.splits && txn.splits.length > 0) {
+                        const firstId = txn.splits[0].linkedBudgetItemId;
+                        if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
+                    }
                 }
                 
-                // Fallback for direct linked (if not found in name map)
+                // Final safety fallback
                 if(!iconUrl && txn.linkedBudgetItemId) {
                      period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === txn.linkedBudgetItemId) iconUrl = b.image; }));
                 }
