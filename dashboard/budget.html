@@ -103,11 +103,15 @@
         }
         .ledger-row:hover { background-color: #f8f9fa; }
 
-        .col-date { width: 12%; }
-        .col-desc { width: 43%; }
-        .col-amt  { width: 20%; text-align: right; }
-        .col-bal  { width: 20%; text-align: right; }
-        .col-act  { width: 5%; text-align: center; }
+        /* UPDATED COLUMN WIDTHS & ALIGNMENT */
+        .col-date { width: 18%; }
+        .col-desc { width: 44%; } /* Maximize description space */
+        .col-amt  { width: 17%; text-align: right; }
+        .col-bal  { width: 17%; text-align: right; }
+        .col-act  { width: 4%; text-align: center; }
+        
+        /* Align Headers to match Data */
+        .ledger-table th.col-amt, .ledger-table th.col-bal { text-align: right; }
 
         .amount-text { font-family: monospace; font-size: 1rem;}
         .negative { color: var(--accent-red); }
@@ -153,7 +157,7 @@
         .sum-proj { color: #333; }
         .sum-var { color: #555; } 
 
-        /* --- WATCHLIST --- */
+        /* --- WATCHLIST (EXPECTED EXPENSES) --- */
         .watchlist-section {
             background-color: var(--watchlist-bg); border-top: 2px solid var(--watchlist-header-bg); padding: 15px; 
         }
@@ -276,20 +280,25 @@
 
         <div class="scroll-area" id="budget-container"></div>
         
-        <div class="watchlist-section" id="watchlist-container">
-            <div class="watchlist-header">
-                <span>Upcoming Expenses</span>
-                <div class="watchlist-math" id="watchlist-math-display"></div>
-            </div>
-            <div id="watchlist-list"></div>
-        </div>
-
         <div class="income-section" id="income-container">
             <div class="income-header">
                 <span>Expected Income</span>
                 <span class="add-link" onclick="openExpIncomeModal()">+ Add</span>
             </div>
             <div id="exp-income-list"></div>
+        </div>
+
+        <div class="watchlist-section" id="watchlist-container">
+            <div class="watchlist-header">
+                <span>Expected Expenses</span>
+                <div class="watchlist-math" id="watchlist-math-display"></div>
+            </div>
+            <div id="watchlist-list"></div>
+        </div>
+
+        <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
+             <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
+             <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
         </div>
     </div>
 </div>
@@ -561,6 +570,14 @@
         input.value = '';
     }
 
+    // UPDATED: Date Formatter
+    function formatDate(isoStr) {
+        if(!isoStr) return '';
+        const [y, m, d] = isoStr.split('-');
+        const date = new Date(y, m - 1, d);
+        return date.toLocaleDateString('en-US', { weekday: 'short', month: '2-digit', day: '2-digit', year: 'numeric' });
+    }
+
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
     const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
@@ -615,7 +632,7 @@
             period.ledger.forEach(txn => {
                 const addDet = (bid, amt, note, type) => {
                     if(!details[bid]) details[bid] = [];
-                    details[bid].push({ date: txn.date, desc: note || txn.description, amount: amt, type: type });
+                    details[bid].push({ date: formatDate(txn.date), desc: note || txn.description, amount: amt, type: type });
                 };
 
                 if (txn.type === 'expense') {
@@ -631,7 +648,6 @@
                     }
                 } else if (txn.type === 'income') {
                     totalIncome += Math.abs(txn.amount);
-                    // Updated Income Processing for Splits
                     if(txn.splits) {
                         txn.splits.forEach(s => {
                             incomeAlloc[s.linkedBudgetItemId] = (incomeAlloc[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
@@ -649,9 +665,9 @@
             period.transfers.forEach(tr => {
                 transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
                 transferAdj[tr.toId] = (transferAdj[tr.toId] || 0) + tr.amount;
-                const dateStr = tr.date ? tr.date.substring(5) : '';
-                if(details[tr.fromId]) details[tr.fromId].push({ date: dateStr, desc: `Transfer to ${getBudgetName(tr.toId)}`, amount: -tr.amount, type: 'transfer-out' });
-                if(details[tr.toId]) details[tr.toId].push({ date: dateStr, desc: `Transfer from ${getBudgetName(tr.fromId)}`, amount: tr.amount, type: 'transfer-in' });
+                
+                if(details[tr.fromId]) details[tr.fromId].push({ date: formatDate(tr.date), desc: `Transfer to ${getBudgetName(tr.toId)}`, amount: -tr.amount, type: 'transfer-out' });
+                if(details[tr.toId]) details[tr.toId].push({ date: formatDate(tr.date), desc: `Transfer from ${getBudgetName(tr.fromId)}`, amount: tr.amount, type: 'transfer-in' });
             });
         }
 
@@ -687,10 +703,9 @@
                     el.style.color = proj < 0 ? '#e74c3c' : '#333';
                 }
                 if(id === 'sum-var') {
-                    // "Balanced" Text Logic
                     if(Math.abs(unallocated) < 0.01) {
                         el.textContent = "Balanced";
-                        el.style.color = "#2ecc71"; // Green
+                        el.style.color = "#2ecc71"; 
                     } else {
                         el.textContent = formatMoney(unallocated);
                         el.style.color = unallocated < -0.01 ? '#e74c3c' : '#aaa';
@@ -712,6 +727,10 @@
         }
 
         // Ledger Render
+        const imgMap = {};
+        if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
+        if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
+
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
@@ -735,7 +754,7 @@
                 const amtClass = txn.amount >= 0 ? 'positive' : 'negative';
 
                 tr.innerHTML = `
-                    <td class="col-date">${txn.date.substring(5)}</td>
+                    <td class="col-date">${formatDate(txn.date)}</td>
                     <td class="col-desc">${iconHtml}${txn.description} ${txn.splits?'<small>(Split)</small>':''}</td>
                     <td class="col-amt ${amtClass}">${formatMoney(txn.amount)}</td>
                     <td class="col-bal">${formatMoney(balance)}</td>
@@ -839,7 +858,7 @@
                         <span style="display:flex; align-items:center;">
                             ${iconHtml}
                             <span>
-                                <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${w.dueDate}</span>
+                                <strong>${w.description}</strong> <span style="font-size:0.8rem; color:#888;">Due ${formatDate(w.dueDate) || 'TBD'}</span>
                             </span>
                         </span>
                         <span>
@@ -873,7 +892,7 @@
                         <span style="display:flex; align-items:center;">
                             ${iconHtml}
                             <span>
-                                <strong>${sourceName}</strong> <span style="font-size:0.8rem; color:#888;">Expected ${inc.date}</span>
+                                <strong>${sourceName}</strong> <span style="font-size:0.8rem; color:#888;">Expected ${formatDate(inc.date) || 'TBD'}</span>
                             </span>
                         </span>
                         <span>
