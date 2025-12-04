@@ -3163,9 +3163,9 @@
       "title": "FTP Download",
       "linkUrl": "",
       "imgUrl": "",
-      "description": "Attempt to copy files with sftp using fields in the records",
+      "description": "Attempt to copy files with sftp using fields in the records.  Sftp failed (using my credentials) with error that indicated it was listening for Ftp.  Tried FTP with port 21 and it doesn't connect either.",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764023034485",
       "date": "2025-12-04"
     },
@@ -3249,7 +3249,8 @@
       "description": "",
       "id": "habit_1764828000000_x7j0o",
       "date": "2025-12-04",
-      "streakCount": 1507
+      "streakCount": 1507,
+      "status": "completed"
     },
     {
       "type": "sports",
@@ -6987,6 +6988,24 @@
           "carbs": 13,
           "fat": 37,
           "fiber": 2
+        },
+        {
+          "mealType": "dinner",
+          "name": "Juan Pablos Nachos",
+          "calories": 760,
+          "protein": 46,
+          "carbs": 45,
+          "fat": 44,
+          "fiber": 5
+        },
+        {
+          "mealType": "dinner",
+          "name": "Cheesy Bread - Nanos & Little Debbie Christmas Tree",
+          "calories": 440,
+          "protein": 13,
+          "carbs": 54,
+          "fat": 18,
+          "fiber": 1
         }
       ],
       "workouts": []
@@ -7074,6 +7093,80 @@
       "status": "pending",
       "id": "task_1764864353900",
       "date": "2025-12-28"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "5:30pm Super Bowl",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764867885569",
+      "date": "2026-02-08"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Order Calcium Hardness Plus",
+      "linkUrl": "https://www.amazon.com/dp/B0DB759K6X?smid=A2LLS7SYKCBWI8&ref_=chk_typ_imgToDp&th=1",
+      "imgUrl": "https://m.media-amazon.com/images/I/61-WUShGoPL._AC_SL1500_.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764869331075",
+      "date": "2025-12-04"
+    },
+    {
+      "id": "health_1764876634747",
+      "date": "2025-12-04",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "2 Chicken Thighs, 2 Oat Wraps with mayo/salsa dip",
+          "calories": 923,
+          "protein": 78,
+          "carbs": 23,
+          "fat": 54,
+          "fiber": 2
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Get Connection Help",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Need help connecting to finesscratch for SFTP/FTP or need to test on another server that support SFTP with folders outside normal working areas.",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764884679832",
+      "date": "2025-12-05"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "Watch Texas Comptroller Training Video",
+      "linkUrl": "https://dir.texas.gov/information-security/statewide-cybersecurity-awareness-training?id=154#requirements",
+      "imgUrl": "https://i.ytimg.com/an_webp/zKoLaN2pmWE/mqdefault_6s.webp?du=3000&sqp=CKvfx8kG&rs=AOn4CLCnK_cqD6egw-LPIevamzwEMPR6uA",
+      "description": "Length 33:34 - Sign and return document to W. Ross Lowthorp",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764885488736",
+      "date": "2025-12-05"
     }
   ]
 }
