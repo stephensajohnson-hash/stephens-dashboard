@@ -69,25 +69,16 @@
 
         /* --- GLOBAL HOVER PREVIEW --- */
         #hover-preview {
-            position: fixed;
-            display: none;
-            z-index: 10000;
-            height: 120px;
-            width: auto;
-            border: 3px solid #fff;
-            border-radius: 8px;
+            position: fixed; display: none; z-index: 10000;
+            height: 120px; width: auto;
+            border: 3px solid #fff; border-radius: 8px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            pointer-events: none;
-            background: #fff;
+            pointer-events: none; background: #fff;
         }
 
         .icon-thumb {
-            border-radius: 50%;
-            object-fit: cover;
-            border: 1px solid #ddd;
-            cursor: zoom-in;
-            vertical-align: middle;
-            margin-right: 8px;
+            border-radius: 50%; object-fit: cover; border: 1px solid #ddd;
+            cursor: zoom-in; vertical-align: middle; margin-right: 8px;
         }
         .ledger-size { width: 32px; height: 32px; }
         .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
@@ -142,7 +133,7 @@
         .summary-dashboard {
             background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
             display: grid; 
-            /* UPDATED: 5 Columns to fit Unallocated */
+            /* FORCE 5 COLUMNS */
             grid-template-columns: repeat(5, 1fr); 
             gap: 5px;
             position: sticky; top: 0; z-index: 90;
@@ -156,7 +147,7 @@
         .sum-out { color: var(--accent-red); }
         .sum-plan { color: var(--accent-orange); }
         .sum-proj { color: #333; }
-        /* New Unallocated Style */
+        /* VARIANCE CARD STYLING */
         .sum-var { color: #555; } 
 
         /* --- WATCHLIST --- */
@@ -174,13 +165,7 @@
             font-size: 1rem; 
             display: flex; justify-content: space-between; align-items: center;
         }
-        .watchlist-math { 
-            font-size: 0.85rem; 
-            color: #fff; 
-            background: rgba(0,0,0,0.15); 
-            padding: 4px 8px; 
-            border-radius: 4px; 
-        }
+        .watchlist-math { font-size: 0.85rem; color: #fff; background: rgba(0,0,0,0.15); padding: 4px 8px; border-radius: 4px; }
         .math-result { font-weight: bold; margin-left: 5px; }
         .math-result.positive { color: #ccff90; } 
         .math-result.negative { color: #ff8a80; } 
@@ -255,6 +240,30 @@
             <span style="font-size:1.1rem; font-weight:bold;">Budgets</span>
             <button class="btn btn-blue btn-sm" onclick="openTransferModal()">⇄ Transfer</button>
         </div>
+
+        <div class="summary-dashboard" id="main-dashboard">
+            <div class="summary-card">
+                <div class="summary-label">Income</div>
+                <div class="summary-val sum-in" id="sum-in">$0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Spent</div>
+                <div class="summary-val sum-out" id="sum-out">$0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Planned</div>
+                <div class="summary-val sum-plan" id="sum-plan">$0</div>
+            </div>
+            <div class="summary-card">
+                <div class="summary-label">Projected</div>
+                <div class="summary-val sum-proj" id="sum-proj">$0</div>
+            </div>
+            <div class="summary-card" title="Bank Balance - Sum of Envelope Balances">
+                <div class="summary-label">Unallocated</div>
+                <div class="summary-val sum-var" id="sum-var">$0</div>
+            </div>
+        </div>
+
         <div class="scroll-area" id="budget-container"></div>
         
         <div class="watchlist-section" id="watchlist-container">
@@ -268,31 +277,6 @@
         <div style="padding:10px; border-top:1px solid #ddd; background:#fdfdfd;">
              <small style="color:#888; text-transform:uppercase; font-weight:bold;">Income Sources</small>
              <div id="income-sources-list" style="display:flex; gap:10px; margin-top:5px;"></div>
-        </div>
-    </div>
-</div>
-
-<div id="dashboard-template" style="display:none;">
-    <div class="summary-dashboard" id="main-dashboard">
-        <div class="summary-card">
-            <div class="summary-label">Income</div>
-            <div class="summary-val sum-in" id="sum-in">$0</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-label">Spent</div>
-            <div class="summary-val sum-out" id="sum-out">$0</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-label">Planned</div>
-            <div class="summary-val sum-plan" id="sum-plan">$0</div>
-        </div>
-        <div class="summary-card">
-            <div class="summary-label">Projected</div>
-            <div class="summary-val sum-proj" id="sum-proj">$0</div>
-        </div>
-        <div class="summary-card" title="Bank Balance - Sum of Envelope Balances">
-            <div class="summary-label">Unallocated</div>
-            <div class="summary-val sum-var" id="sum-var">$0</div>
         </div>
     </div>
 </div>
@@ -570,7 +554,7 @@
         let totalIncome = 0;
         let totalSpent = 0;
         let totalPlanned = 0;
-        let totalEnvelopeRemaining = 0; // Sum of all envelope balances
+        let totalEnvelopeRemaining = 0;
 
         const nameToImage = {};
         if(period.paycheckCycles) {
@@ -580,7 +564,6 @@
             }));
         }
 
-        // Ledger
         if(period.ledger) {
             period.ledger.forEach(txn => {
                 const addDet = (bid, amt, note, type) => {
@@ -609,7 +592,6 @@
             });
         }
 
-        // Transfers
         if(period.transfers) {
             period.transfers.forEach(tr => {
                 transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
@@ -635,21 +617,8 @@
         }
 
         const startBal = period.initialBankBalance || 0;
-        // Current Bank Balance
         const currentBalance = startBal + totalIncome - totalSpent;
-        
-        // Variance Logic: Current Bank - Total Remaining Envelopes
         const unallocated = currentBalance - totalEnvelopeRemaining;
-
-        // --- DASHBOARD INJECTION ---
-        // We inject the 5-card dashboard HTML if it's missing (robustness)
-        const budgetHeader = document.querySelector('.panel .panel-header:has(button.btn-blue)'); // Right panel header
-        let dashboardEl = document.querySelector('.summary-dashboard');
-        
-        if(!dashboardEl && budgetHeader) {
-            const template = document.getElementById('dashboard-template').innerHTML;
-            budgetHeader.insertAdjacentHTML('afterend', template);
-        }
 
         // Update Dashboard Values
         ['sum-in', 'sum-out', 'sum-plan', 'sum-proj', 'sum-var'].forEach(id => {
@@ -659,7 +628,6 @@
                 if(id === 'sum-out') el.textContent = formatMoney(totalSpent);
                 if(id === 'sum-plan') el.textContent = formatMoney(totalPlanned);
                 if(id === 'sum-proj') {
-                    // Projected = Current Cash (Net Cash) - Watchlist
                     const netCash = startBal + totalIncome - totalSpent; 
                     const proj = netCash - totalPlanned;
                     el.textContent = formatMoney(proj);
@@ -856,7 +824,7 @@
         };
     }
 
-    // --- MODALS (No Changes needed here) ---
+    // --- MODALS & FORM LOGIC ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
