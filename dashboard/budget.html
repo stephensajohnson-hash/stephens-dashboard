@@ -743,26 +743,17 @@
                 tr.className = 'ledger-row';
                 let iconUrl = '';
                 
-                // Logic: Income priority = source, then first split budget. Expense priority = budget, then first split budget.
-                if(txn.type === 'income') {
-                    if(txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
-                    if(!iconUrl && txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)];
-                    if(!iconUrl && txn.splits && txn.splits.length > 0) {
-                        // Fallback to first budget item icon if no source
-                        const firstId = txn.splits[0].linkedBudgetItemId;
-                        if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
-                    }
-                } else {
-                    // Expense
-                    if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
-                    // Fallback for splits
-                    if(!iconUrl && txn.splits && txn.splits.length > 0) {
-                        const firstId = txn.splits[0].linkedBudgetItemId;
-                        if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
-                    }
+                // --- FIXED ICON LOGIC ---
+                if(txn.type === 'income' && txn.sourceId) iconUrl = sourceToImage[txn.sourceId];
+                else if(txn.linkedBudgetItemId) iconUrl = nameToImage[getBudgetName(txn.linkedBudgetItemId)]; 
+                
+                // Fallback for splits: use first split item's category image
+                if(!iconUrl && txn.splits && txn.splits.length > 0) {
+                    const firstId = txn.splits[0].linkedBudgetItemId;
+                    if(firstId) iconUrl = nameToImage[getBudgetName(firstId)];
                 }
                 
-                // Final safety fallback
+                // Fallback for direct linked (if not found in name map)
                 if(!iconUrl && txn.linkedBudgetItemId) {
                      period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => { if(b.id === txn.linkedBudgetItemId) iconUrl = b.image; }));
                 }
@@ -1016,7 +1007,8 @@
             if(isSplitMode) {
                 document.getElementById('group-split').style.display = 'block';
                 catGroup.style.display = 'none';
-                incGroup.style.display = 'none';
+                // BUG FIX: Keep incGroup (Source) visible for splits too!
+                incGroup.style.display = 'block'; 
             } else {
                 document.getElementById('group-split').style.display = 'none';
                 catGroup.style.display = 'block'; 
@@ -1100,6 +1092,11 @@
             if(tx.splits) {
                 isSplitMode = true;
                 tx.splits.forEach(s => addSplitLine(s.linkedBudgetItemId, Math.abs(s.amount), s.note));
+                
+                // If it was income, set source too
+                if(tx.type === 'income' && tx.sourceId) {
+                    incSelect.value = tx.sourceId;
+                }
             } else {
                 if(tx.linkedBudgetItemId) catSelect.value = tx.linkedBudgetItemId;
                 if(tx.type === 'income') incSelect.value = tx.sourceId || '';
@@ -1161,7 +1158,8 @@
                     });
                 });
                 newTx.linkedBudgetItemId = null;
-                newTx.sourceId = null; 
+                // FIX: Grab source even in split mode
+                newTx.sourceId = document.getElementById('tx-income-source').value; 
             } else {
                 newTx.sourceId = document.getElementById('tx-income-source').value;
                 newTx.linkedBudgetItemId = document.getElementById('tx-category').value || null; 
