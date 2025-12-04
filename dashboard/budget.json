@@ -277,8 +277,20 @@
           "description": "Perdue Brandon - Check 2",
           "amount": 4367.83,
           "type": "income",
-          "sourceId": "inc1764710864578",
-          "linkedBudgetItemId": null
+          "splits": [
+            {
+              "linkedBudgetItemId": "b1764711914745",
+              "amount": 0.02,
+              "note": "Extra"
+            },
+            {
+              "linkedBudgetItemId": "",
+              "amount": 4367.81,
+              "note": "Already Allocated"
+            }
+          ],
+          "linkedBudgetItemId": null,
+          "sourceId": null
         }
       ],
       "transfers": [
