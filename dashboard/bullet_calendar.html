@@ -1120,7 +1120,8 @@
             
             if (bgClass) {
                  const bgDiv = document.createElement('div');
-                 bgDiv.className = `absolute inset-0 ${bgClass} z-0 pointer-events-none dynamic-bg-layer transition-colors duration-300`;
+                 // UPDATED: Changed 'absolute' to 'fixed' to ensure background covers full scroll height
+                 bgDiv.className = `fixed inset-0 ${bgClass} z-0 pointer-events-none dynamic-bg-layer transition-colors duration-300`;
                  document.querySelector('main').insertBefore(bgDiv, document.querySelector('main').firstChild);
             }
 
