@@ -7002,6 +7002,78 @@
       "status": "completed",
       "id": "task_1764784616169",
       "date": "2025-12-03"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Reserve Hotel for Austin Trip",
+      "linkUrl": "https://maps.app.goo.gl/JcjCqsVqPp8nvvsj8",
+      "imgUrl": "https://ci3.googleusercontent.com/meips/ADKq_NbhE99nJpIwYIvEi3T11erPjkbpsC4DP7n320d-wOqNKptER-Srx4ZeuNCCVxhXVifUlCKnKuGET3MSkNlSRH48UTOiHJEhXe7NqfmVDIimoWMWjFOU0XXJiaxqTgBALz137i9-IHeGTu2JmrvHdVqeHZ2xVA=s0-d-e1-ft#https://hotel-content-graphics.cnxloyalty.com/fi/EPS/23847/3f2d10e25cebc4482aff116d6b59adbd.jpg",
+      "description": "Embassy Suites by Hilton Austin Arboretum for night of Saturday, Dec. 27th - Check in 3pm",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1764863756720",
+      "date": "2025-12-04"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Drop Avi off at La Pooch",
+      "linkUrl": "https://www.lapoochpetresorts.com/pricing/",
+      "imgUrl": "https://www.lapoochpetresorts.com/wp-content/uploads/2021/09/banner2021d.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764864117819",
+      "date": "2025-12-24"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Stay at Sumner Airbnb",
+      "linkUrl": "https://www.airbnb.com/rooms/1115316717096712576?source_impression_id=p3_1764779350_P3Zk5d9jIvT-cVCx",
+      "imgUrl": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTExNTMxNjcxNzA5NjcxMjU3Ng%3D%3D/original/bb729427-fb24-4788-a7b6-469177a5a3ee.jpeg?im_w=720",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764864210756",
+      "date": "2025-12-24"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Stay at Sumner Airbnb",
+      "linkUrl": "https://www.airbnb.com/rooms/1115316717096712576?source_impression_id=p3_1764779350_P3Zk5d9jIvT-cVCx",
+      "imgUrl": "https://a0.muscache.com/im/pictures/hosting/Hosting-U3RheVN1cHBseUxpc3Rpbmc6MTExNTMxNjcxNzA5NjcxMjU3Ng%3D%3D/original/bb729427-fb24-4788-a7b6-469177a5a3ee.jpeg?im_w=720",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764864258459",
+      "date": "2025-12-25"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Stay at Embassy Suites - Austin",
+      "linkUrl": "https://maps.app.goo.gl/JcjCqsVqPp8nvvsj8",
+      "imgUrl": "https://ci3.googleusercontent.com/meips/ADKq_NbhE99nJpIwYIvEi3T11erPjkbpsC4DP7n320d-wOqNKptER-Srx4ZeuNCCVxhXVifUlCKnKuGET3MSkNlSRH48UTOiHJEhXe7NqfmVDIimoWMWjFOU0XXJiaxqTgBALz137i9-IHeGTu2JmrvHdVqeHZ2xVA=s0-d-e1-ft#https://hotel-content-graphics.cnxloyalty.com/fi/EPS/23847/3f2d10e25cebc4482aff116d6b59adbd.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764864307354",
+      "date": "2025-12-27"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "12:00 Surprise BD Lunch for Chris",
+      "linkUrl": "https://share.google/8i8FCYEZQdkIgyLZ7",
+      "imgUrl": "https://lh3.googleusercontent.com/gps-cs-s/AG0ilSxryUt4IEY_HaR8m661PHRMb634nHotEmBltjHeImY90kdZuvW0umvVbuP31M6D0_xTuSRW7YYUpo4AQxEoGa5p8TzWUonIkSpfrGyFYXB4mUXTtKdxM5QcGQNl76OogmwTt95r4cm5DEZP=w243-h174-n-k-no-nu",
+      "description": "Maudie’s Hill Country",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764864353900",
+      "date": "2025-12-28"
     }
   ]
 }
