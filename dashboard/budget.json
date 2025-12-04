@@ -87,7 +87,7 @@
               "id": "b1764711988682",
               "name": "Green Sky",
               "plannedAmount": 530,
-              "carriedOver": 0,
+              "carriedOver": 530,
               "image": "https://www.paulhenryswindows.com/wp-content/uploads/2022/04/financing-greensky-300x300-min-300x300.jpg"
             },
             {
@@ -132,10 +132,11 @@
         {
           "id": "t1",
           "date": "2025-11-21",
-          "description": "PBFCM Paycheck 1",
+          "description": "Perdue Brandon - Check 1",
           "amount": 4367.82,
           "type": "income",
-          "sourceId": "inc1764710864578"
+          "sourceId": "inc1764710864578",
+          "linkedBudgetItemId": null
         },
         {
           "id": "t1764712486395",
@@ -260,6 +261,24 @@
           "type": "expense",
           "linkedBudgetItemId": "b1764712061699",
           "splits": null
+        },
+        {
+          "id": "t1764858979911",
+          "date": "2025-12-04",
+          "description": "Department of Education",
+          "amount": -105,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764711223715",
+          "splits": null
+        },
+        {
+          "id": "t1764859039589",
+          "date": "2025-12-04",
+          "description": "Perdue Brandon - Check 2",
+          "amount": 4367.83,
+          "type": "income",
+          "sourceId": "inc1764710864578",
+          "linkedBudgetItemId": null
         }
       ],
       "transfers": [
@@ -290,11 +309,6 @@
       ],
       "watchList": [
         {
-          "description": "Student Loan",
-          "amount": 105,
-          "dueDate": "2025-12-15"
-        },
-        {
           "description": "Haircuts",
           "amount": 55,
           "dueDate": "2025-12-15"
@@ -323,6 +337,30 @@
           "description": "Home Repair",
           "amount": 2380.95,
           "dueDate": "TBD"
+        },
+        {
+          "description": "Green Sky",
+          "amount": 530,
+          "dueDate": "2025-12-25",
+          "image": "https://www.paulhenryswindows.com/wp-content/uploads/2022/04/financing-greensky-300x300-min-300x300.jpg"
+        },
+        {
+          "description": "Water",
+          "amount": 105,
+          "dueDate": "TBD",
+          "image": "https://media.istockphoto.com/id/1126448977/vector/vector-of-money-dollar-sign-flowing-from-faucet.jpg?s=612x612&w=0&k=20&c=1ixYYRUsOGyXdtetQgiaCRs9mnIb1597Z1o6bLkyBZs="
+        },
+        {
+          "description": "Groceries",
+          "amount": 360.91,
+          "dueDate": "2025-12-05",
+          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
+        },
+        {
+          "description": "Groceries",
+          "amount": 3255,
+          "dueDate": "2025-12-05",
+          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
         }
       ],
       "incomeSources": [
