@@ -477,15 +477,32 @@
             </div>`;
         }
 
-        function renderCard(item) {
-             let titleHtml = `<h4 class="font-bold text-lg">${item.title}</h4>`;
-             let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
-             let resultHtml = '';
+      function renderCard(item) {
+            // --- Link & Image Logic ---
+            // 1. Prepare Title Link Wrappers
+            const linkStart = item.linkUrl ? `<a href="${item.linkUrl}" target="_blank" class="hover:text-blue-400 hover:underline transition-colors" onclick="event.stopPropagation();">` : '';
+            const linkEnd = item.linkUrl ? `</a>` : '';
 
-             if (item.type === 'vacation') {
-                titleHtml = `<h4 class="font-bold text-lg text-green-400 flex items-center gap-2">✈️ ${item.title}</h4>`;
-                if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
-             } else if(item.type === 'sports') {
+            // 2. Prepare Image HTML (Full width, ratio kept, linked if url exists)
+            let sharedImageHtml = '';
+            if (item.imgUrl) {
+                const imgTag = `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-3 mb-1 shadow-lg object-contain bg-black/20" loading="lazy">`;
+                if (item.linkUrl) {
+                    sharedImageHtml = `<a href="${item.linkUrl}" target="_blank" class="block cursor-pointer hover:opacity-90 transition-opacity" onclick="event.stopPropagation();">${imgTag}</a>`;
+                } else {
+                    sharedImageHtml = imgTag;
+                }
+            }
+
+            let titleHtml = `<h4 class="font-bold text-lg">${linkStart}${item.title}${linkEnd}</h4>`;
+            let meta = '', descriptionHtml = item.description ? `<p class="text-sm text-gray-300 mt-2">${item.description}</p>` : '', content = '';
+            let resultHtml = '';
+
+            if (item.type === 'vacation') {
+                titleHtml = `<h4 class="font-bold text-lg text-green-400 flex items-center gap-2">✈️ ${linkStart}${item.title}${linkEnd}</h4>`;
+                content += sharedImageHtml; // Add image
+            } 
+            else if(item.type === 'sports') {
                 const home = appState.data.teams.find(t => t.id === item.homeTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
                 const away = appState.data.teams.find(t => t.id === item.awayTeamId) || { name: 'Unknown', logo: '', abbrev: 'UNK' };
                 const myTeam = home.isFavorite ? home : (away.isFavorite ? away : null);
@@ -502,23 +519,35 @@
                 content += `<div class="flex justify-between items-center mt-3 mb-2 relative"><div class="flex flex-col items-center w-1/3"><img src="${away.logo}" class="${away.isFavorite ? 'w-12 h-12' : 'w-8 h-8'} object-contain mb-1"><span class="text-[10px] uppercase font-bold text-gray-400 text-center leading-tight">${away.abbrev || away.name}</span></div><div class="text-center w-1/3 flex flex-col items-center"><span class="text-xs text-gray-500 mb-1">AT</span>${scoreDisplay}</div><div class="flex flex-col items-center w-1/3"><img src="${home.logo}" class="${home.isFavorite ? 'w-12 h-12' : 'w-8 h-8'} object-contain mb-1"><span class="text-[10px] uppercase font-bold text-gray-400 text-center leading-tight">${home.abbrev || home.name}</span></div></div>`;
                 if(myTeam) {
                     const seasonLabel = item.season || "2025/2026";
-                    content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record (${seasonLabel}): <span class="text-white font-bold">${getTeamRecord(myTeam.id, seasonLabel)}</span></div>`;
+                    // Note: Ensure getTeamRecord function exists in your code as discussed in previous turn
+                    if (typeof getTeamRecord === "function") {
+                        content += `<div class="text-center text-[10px] text-gray-500 border-t border-gray-700 pt-1 mt-1">${myTeam.abbrev} Season Record (${seasonLabel}): <span class="text-white font-bold">${getTeamRecord(myTeam.id, seasonLabel)}</span></div>`;
+                    }
                 }
-             } else if(item.type === 'media') {
+            } 
+            else if(item.type === 'media') {
                 meta = `<div class="flex text-yellow-400 text-xs">${'★'.repeat(item.rating)}${'☆'.repeat(10-item.rating)}</div>`;
-                if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto rounded-lg mt-2 mb-2 shadow-lg">`;
-             } else if(item.type === 'habit') {
-                 content += `<div class="mt-2 flex items-center justify-between gap-2"><div class="flex items-center gap-2"><div class="text-2xl">🔥</div><div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div></div><input type="checkbox" class="w-6 h-6 rounded border-green-600 text-green-600 bg-gray-700 focus:ring-green-500" ${item.status === 'completed' ? 'checked' : ''} onchange="toggleHabitStatus('${item.id}', event)"></div>`;
-             } else if(item.type === 'task') {
+                content += sharedImageHtml; // Add image
+            } 
+            else if(item.type === 'habit') {
+                content += `<div class="mt-2 flex items-center justify-between gap-2"><div class="flex items-center gap-2"><div class="text-2xl">🔥</div><div><div class="text-xl font-bold">${item.streakCount}</div><div class="text-[10px] uppercase text-gray-500">Day Streak</div></div></div><input type="checkbox" class="w-6 h-6 rounded border-green-600 text-green-600 bg-gray-700 focus:ring-green-500" ${item.status === 'completed' ? 'checked' : ''} onchange="toggleHabitStatus('${item.id}', event)"></div>`;
+                content += sharedImageHtml; // Add image
+            } 
+            else if(item.type === 'task') {
                 const isChecked = item.status === 'completed'; 
-                titleHtml = `<div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-blue-600 bg-gray-700" ${isChecked ? 'checked' : ''} onchange="toggleTaskStatus('${item.id}')"><h4 class="font-bold text-lg ${isChecked ? 'line-through text-gray-500' : ''}">${item.title}</h4></div>`;
-             } else if(item.type === 'meeting') {
-                 meta = `<div class="text-xs text-gray-400 flex flex-col gap-1 mt-1"><span><i class="mr-1">⏰</i> ${formatTime(item.startTime)}</span></div>`;
-             } else if(item.type === 'holiday' || item.type === 'birthday' || item.type === 'anniversary') {
-                 if(item.imgUrl) content += `<img src="${item.imgUrl}" class="w-full h-auto object-contain rounded-lg mt-2 mb-2 shadow-md">`;
-             }
+                // Apply link logic to task title specifically
+                titleHtml = `<div class="flex items-center gap-3"><input type="checkbox" class="w-5 h-5 rounded border-gray-600 text-blue-600 bg-gray-700" ${isChecked ? 'checked' : ''} onchange="toggleTaskStatus('${item.id}')"><h4 class="font-bold text-lg ${isChecked ? 'line-through text-gray-500' : ''}">${linkStart}${item.title}${linkEnd}</h4></div>`;
+                content += sharedImageHtml; // Add image
+            } 
+            else if(item.type === 'meeting') {
+                meta = `<div class="text-xs text-gray-400 flex flex-col gap-1 mt-1"><span><i class="mr-1">⏰</i> ${formatTime(item.startTime)}</span></div>`;
+                content += sharedImageHtml; // Add image
+            } 
+            else if(item.type === 'holiday' || item.type === 'birthday' || item.type === 'anniversary') {
+                content += sharedImageHtml; // Add image
+            }
 
-             return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group">${resultHtml}<div class="flex justify-between items-start relative z-10"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : (item.type === 'vacation' ? 'vacation' : '')}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
+            return `<div class="glass-panel p-4 rounded-xl border-l-4 ${getTypeColor(item.type)} hover:translate-x-1 transition-transform relative group">${resultHtml}<div class="flex justify-between items-start relative z-10"><div>${titleHtml}${meta}</div><div class="opacity-0 group-hover:opacity-100 transition-opacity flex gap-2"><button class="text-gray-400 hover:text-white" onclick="openItemModal('${item.category}', '${item.id}', '${item.type === 'sports' ? 'sports' : (item.type === 'vacation' ? 'vacation' : '')}')">✎</button><button class="text-red-400 hover:text-red-300" onclick="deleteItem('${item.id}', '${item.type}')">🗑️</button></div></div>${descriptionHtml}${content}</div>`;
         }
 
         function renderHealthCard(item) {
