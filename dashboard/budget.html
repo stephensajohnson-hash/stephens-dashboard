@@ -349,7 +349,7 @@
         
         <div class="form-group" id="group-category">
             <label id="lbl-category">
-                <span id="lbl-text-span">Budget Category</span>
+                <span id="lbl-text-span">Budget Category</span> 
                 <span id="lbl-split-link" style="font-size:0.8rem; color:#2980b9; cursor:pointer; float:right;" onclick="toggleSplitMode()">Need to Split?</span>
             </label>
             <select id="tx-category"></select>
@@ -499,7 +499,6 @@
                 statusEl.textContent = "✓ Synced"; 
                 statusEl.style.color = "#2ecc71";
             }
-            // Data Migrations
             if(appData.periods && appData.periods[0]) {
                 if(!appData.periods[0].transfers) appData.periods[0].transfers = [];
                 if(!appData.periods[0].expectedIncome) appData.periods[0].expectedIncome = [];
@@ -632,7 +631,13 @@
                     }
                 } else if (txn.type === 'income') {
                     totalIncome += Math.abs(txn.amount);
-                    if(txn.linkedBudgetItemId) {
+                    // Updated Income Processing for Splits
+                    if(txn.splits) {
+                        txn.splits.forEach(s => {
+                            incomeAlloc[s.linkedBudgetItemId] = (incomeAlloc[s.linkedBudgetItemId] || 0) + Math.abs(s.amount);
+                            addDet(s.linkedBudgetItemId, Math.abs(s.amount), s.note || "Split", 'income');
+                        });
+                    } else if(txn.linkedBudgetItemId) {
                         incomeAlloc[txn.linkedBudgetItemId] = (incomeAlloc[txn.linkedBudgetItemId] || 0) + Math.abs(txn.amount);
                         addDet(txn.linkedBudgetItemId, Math.abs(txn.amount), null, 'income');
                     }
@@ -682,8 +687,14 @@
                     el.style.color = proj < 0 ? '#e74c3c' : '#333';
                 }
                 if(id === 'sum-var') {
-                    el.textContent = formatMoney(unallocated);
-                    el.style.color = unallocated < -0.01 ? '#e74c3c' : (unallocated > 0.01 ? '#2ecc71' : '#aaa');
+                    // "Balanced" Text Logic
+                    if(Math.abs(unallocated) < 0.01) {
+                        el.textContent = "Balanced";
+                        el.style.color = "#2ecc71"; // Green
+                    } else {
+                        el.textContent = formatMoney(unallocated);
+                        el.style.color = unallocated < -0.01 ? '#e74c3c' : '#aaa';
+                    }
                 }
             }
         });
@@ -700,11 +711,7 @@
             `;
         }
 
-        // Ledger
-        const imgMap = {};
-        if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
-        if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
-
+        // Ledger Render
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
@@ -740,7 +747,7 @@
             if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(startBal)}</b> | Current: <b>${formatMoney(balance)}</b>`;
         }
 
-        // Budget
+        // Budget Render
         const budgetContainer = document.getElementById('budget-container');
         if(budgetContainer) {
             budgetContainer.innerHTML = '';
@@ -813,7 +820,7 @@
             }
         }
 
-        // Watchlist
+        // Watchlist Render
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -845,7 +852,7 @@
             }
         }
 
-        // Expected Income
+        // Expected Income Render
         const expContainer = document.getElementById('exp-income-list');
         if(expContainer) {
             expContainer.innerHTML = '';
@@ -960,7 +967,6 @@
         const splitLink = document.getElementById('lbl-split-link');
         const lblText = document.getElementById('lbl-text-span');
         
-        // Always show split link now!
         splitLink.style.display = 'inline';
 
         if (type === 'expense') {
@@ -970,7 +976,6 @@
             lblText.textContent = "Budget Category";
         } else {
             // INCOME
-            // If splitting income, show split group, hide source/cat group
             if(isSplitMode) {
                 document.getElementById('group-split').style.display = 'block';
                 catGroup.style.display = 'none';
@@ -1190,7 +1195,11 @@
 
     function openWatchModal(defaultDesc, defaultAmt, image) {
         document.getElementById('w-desc').value = defaultDesc || '';
-        document.getElementById('w-amount').value = defaultAmt > 0 ? defaultAmt : '';
+        if(defaultAmt) {
+            document.getElementById('w-amount').value = parseFloat(defaultAmt).toFixed(2);
+        } else {
+            document.getElementById('w-amount').value = '';
+        }
         document.getElementById('w-date').value = '';
         document.getElementById('w-image').value = image || '';
         document.getElementById('watch-modal').showModal();
