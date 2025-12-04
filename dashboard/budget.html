@@ -14,6 +14,7 @@
             --accent-green: #2ecc71;
             --accent-red: #e74c3c;
             --accent-orange: #f39c12;
+            --accent-blue: #3498db;
             --header-bg: #2c3e50;
             --header-text: #fff;
             --hover-bg: #f9f9f9;
@@ -70,17 +71,16 @@
         #hover-preview {
             position: fixed;
             display: none;
-            z-index: 10000; /* Above everything */
-            height: 120px;  /* Larger size as requested */
+            z-index: 10000;
+            height: 120px;
             width: auto;
             border: 3px solid #fff;
             border-radius: 8px;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            pointer-events: none; /* Let mouse pass through */
+            pointer-events: none;
             background: #fff;
         }
 
-        /* --- ICONS --- */
         .icon-thumb {
             border-radius: 50%;
             object-fit: cover;
@@ -89,8 +89,6 @@
             vertical-align: middle;
             margin-right: 8px;
         }
-        
-        /* Context sizes */
         .ledger-size { width: 32px; height: 32px; }
         .budget-size { width: 32px; height: 32px; border: 2px solid #eee; background: #fff;}
         .watchlist-size { width: 24px; height: 24px; }
@@ -143,18 +141,23 @@
         /* --- SUMMARY DASHBOARD --- */
         .summary-dashboard {
             background: #fff; border-bottom: 1px solid #ddd; padding: 15px;
-            display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px;
+            display: grid; 
+            /* UPDATED: 5 Columns to fit Unallocated */
+            grid-template-columns: repeat(5, 1fr); 
+            gap: 5px;
             position: sticky; top: 0; z-index: 90;
         }
         .summary-card {
-            background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #eee; text-align: center;
+            background: #f8f9fa; padding: 8px 4px; border-radius: 6px; border: 1px solid #eee; text-align: center;
         }
-        .summary-label { font-size: 0.75rem; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
-        .summary-val { font-size: 1.1rem; font-weight: bold; font-family: monospace; }
+        .summary-label { font-size: 0.7rem; text-transform: uppercase; color: #888; letter-spacing: 0.5px; }
+        .summary-val { font-size: 1.0rem; font-weight: bold; font-family: monospace; }
         .sum-in { color: var(--accent-green); }
         .sum-out { color: var(--accent-red); }
         .sum-plan { color: var(--accent-orange); }
         .sum-proj { color: #333; }
+        /* New Unallocated Style */
+        .sum-var { color: #555; } 
 
         /* --- WATCHLIST --- */
         .watchlist-section {
@@ -171,7 +174,6 @@
             font-size: 1rem; 
             display: flex; justify-content: space-between; align-items: center;
         }
-        
         .watchlist-math { 
             font-size: 0.85rem; 
             color: #fff; 
@@ -270,6 +272,31 @@
     </div>
 </div>
 
+<div id="dashboard-template" style="display:none;">
+    <div class="summary-dashboard" id="main-dashboard">
+        <div class="summary-card">
+            <div class="summary-label">Income</div>
+            <div class="summary-val sum-in" id="sum-in">$0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Spent</div>
+            <div class="summary-val sum-out" id="sum-out">$0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Planned</div>
+            <div class="summary-val sum-plan" id="sum-plan">$0</div>
+        </div>
+        <div class="summary-card">
+            <div class="summary-label">Projected</div>
+            <div class="summary-val sum-proj" id="sum-proj">$0</div>
+        </div>
+        <div class="summary-card" title="Bank Balance - Sum of Envelope Balances">
+            <div class="summary-label">Unallocated</div>
+            <div class="summary-val sum-var" id="sum-var">$0</div>
+        </div>
+    </div>
+</div>
+
 <dialog id="settings-modal">
     <div class="modal-header">
         <span>Settings</span>
@@ -298,7 +325,7 @@
 
 <dialog id="tx-modal">
     <div class="modal-header">
-        <span id="tx-modal-title">Add Transaction</span>
+        <span>Transaction</span>
         <span style="cursor:pointer;" onclick="closeTxModal()">✕</span>
     </div>
     <div class="modal-body">
@@ -513,27 +540,18 @@
     const formatMoney = (n) => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(n);
     const getPeriod = () => appData.periods && appData.periods.length > 0 ? appData.periods[0] : null; 
 
-    // --- HOVER PREVIEW LOGIC ---
+    // --- HOVER PREVIEW ---
     function showPreview(e, url) {
         if(!url) return;
         const preview = document.getElementById('hover-preview');
         preview.src = url;
         preview.style.display = 'block';
-        
-        // Position slightly above and to right of cursor
-        const offset = 15;
-        preview.style.left = (e.clientX + offset) + 'px';
-        preview.style.top = (e.clientY - 130) + 'px'; // 130 to account for height + padding
+        preview.style.left = (e.clientX + 15) + 'px';
+        preview.style.top = (e.clientY - 130) + 'px'; 
     }
-
-    function hidePreview() {
-        document.getElementById('hover-preview').style.display = 'none';
-    }
-
-    // Helper to generate image HTML
+    function hidePreview() { document.getElementById('hover-preview').style.display = 'none'; }
     function getZoomableImage(url, className) {
         if(!url) return '<span style="display:inline-block;width:30px;"></span>';
-        // Add event listeners to the IMG
         return `<img src="${url}" class="icon-thumb ${className}" onmouseenter="showPreview(event, '${url}')" onmouseleave="hidePreview()" onmousemove="showPreview(event, '${url}')">`;
     }
 
@@ -552,6 +570,7 @@
         let totalIncome = 0;
         let totalSpent = 0;
         let totalPlanned = 0;
+        let totalEnvelopeRemaining = 0; // Sum of all envelope balances
 
         const nameToImage = {};
         if(period.paycheckCycles) {
@@ -561,6 +580,7 @@
             }));
         }
 
+        // Ledger
         if(period.ledger) {
             period.ledger.forEach(txn => {
                 const addDet = (bid, amt, note, type) => {
@@ -589,48 +609,83 @@
             });
         }
 
+        // Transfers
         if(period.transfers) {
             period.transfers.forEach(tr => {
                 transferAdj[tr.fromId] = (transferAdj[tr.fromId] || 0) - tr.amount;
                 transferAdj[tr.toId] = (transferAdj[tr.toId] || 0) + tr.amount;
-
                 const dateStr = tr.date ? tr.date.substring(5) : '';
                 if(details[tr.fromId]) details[tr.fromId].push({ date: dateStr, desc: `Transfer to ${getBudgetName(tr.toId)}`, amount: -tr.amount, type: 'transfer-out' });
                 if(details[tr.toId]) details[tr.toId].push({ date: dateStr, desc: `Transfer from ${getBudgetName(tr.fromId)}`, amount: tr.amount, type: 'transfer-in' });
             });
         }
 
-        if(period.watchList) {
-            period.watchList.forEach(w => totalPlanned += w.amount);
+        if(period.watchList) period.watchList.forEach(w => totalPlanned += w.amount);
+
+        // Pre-calculate Budget Totals for Variance
+        if(period.paycheckCycles) {
+            period.paycheckCycles.forEach(c => c.budgetItems.forEach(item => {
+                const spent = usage[item.id] || 0;
+                const received = incomeAlloc[item.id] || 0;
+                const transfers = transferAdj[item.id] || 0;
+                const total = item.plannedAmount + item.carriedOver + received + transfers;
+                const remaining = total - spent;
+                totalEnvelopeRemaining += remaining;
+            }));
         }
 
         const startBal = period.initialBankBalance || 0;
-        const netCash = startBal + totalIncome - totalSpent;
-        const projected = netCash - totalPlanned;
+        // Current Bank Balance
+        const currentBalance = startBal + totalIncome - totalSpent;
         
-        const mathEl = document.getElementById('watchlist-math-display');
-        if(mathEl) {
-            const projClass = projected < 0 ? 'negative' : 'positive';
-            mathEl.innerHTML = `
-                <span title="Net Cash (Start + Inc - Exp)">${formatMoney(netCash)}</span> - 
-                <span title="Planned">${formatMoney(totalPlanned)}</span> = 
-                <span class="math-result ${projClass}">${formatMoney(projected)}</span>
-            `;
+        // Variance Logic: Current Bank - Total Remaining Envelopes
+        const unallocated = currentBalance - totalEnvelopeRemaining;
+
+        // --- DASHBOARD INJECTION ---
+        // We inject the 5-card dashboard HTML if it's missing (robustness)
+        const budgetHeader = document.querySelector('.panel .panel-header:has(button.btn-blue)'); // Right panel header
+        let dashboardEl = document.querySelector('.summary-dashboard');
+        
+        if(!dashboardEl && budgetHeader) {
+            const template = document.getElementById('dashboard-template').innerHTML;
+            budgetHeader.insertAdjacentHTML('afterend', template);
         }
 
-        ['sum-in', 'sum-out', 'sum-plan', 'sum-proj'].forEach(id => {
+        // Update Dashboard Values
+        ['sum-in', 'sum-out', 'sum-plan', 'sum-proj', 'sum-var'].forEach(id => {
             const el = document.getElementById(id);
             if(el) {
                 if(id === 'sum-in') el.textContent = formatMoney(totalIncome);
                 if(id === 'sum-out') el.textContent = formatMoney(totalSpent);
                 if(id === 'sum-plan') el.textContent = formatMoney(totalPlanned);
                 if(id === 'sum-proj') {
-                    el.textContent = formatMoney(projected);
-                    el.style.color = projected < 0 ? '#e74c3c' : '#333';
+                    // Projected = Current Cash (Net Cash) - Watchlist
+                    const netCash = startBal + totalIncome - totalSpent; 
+                    const proj = netCash - totalPlanned;
+                    el.textContent = formatMoney(proj);
+                    el.style.color = proj < 0 ? '#e74c3c' : '#333';
+                }
+                if(id === 'sum-var') {
+                    el.textContent = formatMoney(unallocated);
+                    el.style.color = unallocated < -0.01 ? '#e74c3c' : (unallocated > 0.01 ? '#2ecc71' : '#aaa');
                 }
             }
         });
 
+        // Update Watchlist Math Header
+        const mathEl = document.getElementById('watchlist-math-display');
+        if(mathEl) {
+            const netCash = startBal + totalIncome - totalSpent; 
+            const proj = netCash - totalPlanned;
+            const projClass = proj < 0 ? 'negative' : 'positive';
+            mathEl.innerHTML = `
+                <span title="Net Cash">${formatMoney(netCash)}</span> - 
+                <span title="Planned">${formatMoney(totalPlanned)}</span> = 
+                <span class="math-result ${projClass}">${formatMoney(proj)}</span>
+            `;
+        }
+
+        // Ledger Render
         const imgMap = {};
         if(period.incomeSources) period.incomeSources.forEach(i => imgMap[i.id] = i.image);
         if(period.paycheckCycles) period.paycheckCycles.forEach(c => c.budgetItems.forEach(b => imgMap[b.id] = b.image));
@@ -638,7 +693,7 @@
         const tbody = document.getElementById('ledger-body');
         if(tbody) {
             tbody.innerHTML = '';
-            let balance = period.initialBankBalance || 0;
+            let balance = startBal;
             const sorted = period.ledger ? [...period.ledger].sort((a,b) => a.date.localeCompare(b.date)) : [];
 
             sorted.forEach(txn => {
@@ -663,9 +718,10 @@
                 tbody.appendChild(tr);
             });
             const ledgerInfo = document.getElementById('ledger-header-info');
-            if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(period.initialBankBalance)}</b> | Current: <b>${formatMoney(balance)}</b>`;
+            if(ledgerInfo) ledgerInfo.innerHTML = `Start: <b>${formatMoney(startBal)}</b> | Current: <b>${formatMoney(balance)}</b>`;
         }
 
+        // Budget Render
         const budgetContainer = document.getElementById('budget-container');
         if(budgetContainer) {
             budgetContainer.innerHTML = '';
@@ -683,10 +739,8 @@
                         const spent = usage[item.id] || 0;
                         const received = incomeAlloc[item.id] || 0;
                         const transfers = transferAdj[item.id] || 0;
-                        
                         const total = item.plannedAmount + item.carriedOver + received + transfers;
                         const remaining = total - spent;
-                        
                         const percent = total > 0 ? Math.min(100, (spent/total)*100) : 0;
                         let color = 'budget-bar-fill';
                         if(percent > 90) color += ' warning';
@@ -698,13 +752,10 @@
                             let prefix = '';
                             if(t.type === 'income' || t.type === 'transfer-in') { colorClass = 'green'; prefix = '+'; }
                             if(t.type === 'transfer-out') { colorClass = 'orange'; } 
-                            
                             return `
                             <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#555; margin-bottom:2px;">
                                 <span>${t.date} ${t.desc}</span>
-                                <span style="font-family:monospace; color:${colorClass}">
-                                    ${prefix}${formatMoney(t.amount)}
-                                </span>
+                                <span style="font-family:monospace; color:${colorClass}">${prefix}${formatMoney(t.amount)}</span>
                             </div>
                         `}).join('');
 
@@ -743,6 +794,7 @@
             }
         }
 
+        // Watchlist Render
         const wContainer = document.getElementById('watchlist-list');
         if(wContainer) {
             wContainer.innerHTML = '';
@@ -804,6 +856,7 @@
         };
     }
 
+    // --- MODALS (No Changes needed here) ---
     function openSettingsModal() {
         const period = getPeriod();
         if(!period) return;
