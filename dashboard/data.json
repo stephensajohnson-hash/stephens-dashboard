@@ -332,9 +332,10 @@
       "links": [
         {
           "id": "l27",
+          "groupId": "g5",
           "name": "Amazon",
           "url": "https://amazon.com",
-          "img": "https://images.seeklogo.com/logo-png/40/2/amazon-icon-logo-png_seeklogo-405254.png"
+          "img": "https://wallpapers.com/images/high/amazon-app-icon-0vxsqxaqsv2hidrm.png"
         },
         {
           "id": "l28",
@@ -436,9 +437,10 @@
         },
         {
           "id": "l40",
+          "groupId": "g7",
           "name": "HSA Bank",
           "url": "https://account.hsabank.com/#/",
-          "img": "https://media.licdn.com/dms/image/v2/D4E22AQG0tY8-IPbPAQ/feedshare-shrink_800/B4EZTXDi.1GYAg-/0/1738774819262?e=1764806400&v=beta&t=S0Rvm5Ve8gQ7zjOjiLHHnd9zMVS3YSbmC4qeWM6zJfg"
+          "img": "https://hsabank.bynder.com/m/59f7ea016400165f/original/HSA-Bank-Logo-full-color-positive.png"
         },
         {
           "id": "l41",
