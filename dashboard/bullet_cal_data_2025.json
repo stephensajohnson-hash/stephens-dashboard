@@ -3280,7 +3280,8 @@
       "description": "",
       "id": "habit_1764914400000_z9y0t",
       "date": "2025-12-05",
-      "streakCount": 1508
+      "streakCount": 1508,
+      "status": "completed"
     },
     {
       "type": "birthday",
@@ -7168,9 +7169,9 @@
       "title": "Get Connection Help",
       "linkUrl": "",
       "imgUrl": "",
-      "description": "Need help connecting to finesscratch for SFTP/FTP or need to test on another server that support SFTP with folders outside normal working areas.",
+      "description": "Need help connecting to finesscratch for SFTP/FTP or need to test on another server that support SFTP with folders outside normal working areas.  \n\nTry this on Alpha ",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764884679832",
       "date": "2025-12-05"
     },
@@ -7178,11 +7179,11 @@
       "type": "task",
       "category": "work",
       "title": "Watch Texas Comptroller Training Video",
-      "linkUrl": "https://dir.texas.gov/information-security/statewide-cybersecurity-awareness-training?id=154#requirements",
-      "imgUrl": "https://i.ytimg.com/an_webp/zKoLaN2pmWE/mqdefault_6s.webp?du=3000&sqp=CKvfx8kG&rs=AOn4CLCnK_cqD6egw-LPIevamzwEMPR6uA",
+      "linkUrl": "https://www.youtube.com/watch?v=XtdQd5nN1d0",
+      "imgUrl": "https://www.itsecurityguru.org/wp-content/uploads/2016/07/cyber-security-training.jpg",
       "description": "Length 33:34 - Sign and return document to W. Ross Lowthorp",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764885488736",
       "date": "2025-12-05"
     },
@@ -7279,7 +7280,7 @@
       "description": "",
       "startTime": "10:00",
       "durationMinutes": 15,
-      "timeSpentMinutes": 0,
+      "timeSpentMinutes": 30,
       "id": "meeting_1764949571173",
       "date": "2025-12-05"
     }
