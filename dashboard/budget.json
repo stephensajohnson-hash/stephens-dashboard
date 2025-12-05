@@ -291,6 +291,24 @@
           ],
           "linkedBudgetItemId": null,
           "sourceId": "inc1764710864578"
+        },
+        {
+          "id": "t1764946009832",
+          "date": "2025-12-05",
+          "description": "Chase Credit Card",
+          "amount": -360.91,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1764946033767",
+          "date": "2025-12-05",
+          "description": "Chase Travel Credit Card",
+          "amount": -3255,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
         }
       ],
       "transfers": [
@@ -361,18 +379,6 @@
           "amount": 105,
           "dueDate": "TBD",
           "image": "https://media.istockphoto.com/id/1126448977/vector/vector-of-money-dollar-sign-flowing-from-faucet.jpg?s=612x612&w=0&k=20&c=1ixYYRUsOGyXdtetQgiaCRs9mnIb1597Z1o6bLkyBZs="
-        },
-        {
-          "description": "Groceries",
-          "amount": 360.91,
-          "dueDate": "2025-12-05",
-          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
-        },
-        {
-          "description": "Groceries",
-          "amount": 3255,
-          "dueDate": "2025-12-05",
-          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
         }
       ],
       "incomeSources": [
