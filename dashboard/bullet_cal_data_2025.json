@@ -3296,12 +3296,12 @@
       "type": "meeting",
       "category": "work",
       "title": "Development Update",
-      "linkUrl": "",
+      "linkUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
       "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
-      "description": "",
+      "description": "Halo - devops - incidents come from our internal users - create ticket and link incidents to it.  Major incident - server down.  We're going to have an approval process for user requests.\n\nApplication Test - end user and manager credentials.\n\nTolls Reporting -\nPermission Removal -\nLetter Template Discovery - \nEmails - 750k/month - really high - SE Market\nLT Update from Russell Smith\n\n",
       "startTime": "09:00",
       "durationMinutes": 60,
-      "timeSpentMinutes": 0,
+      "timeSpentMinutes": 60,
       "id": "meeting_1764106791559",
       "date": "2025-12-05"
     },
@@ -7242,7 +7242,7 @@
       "imgUrl": "https://thumbs.dreamstime.com/b/pay-day-25841431.jpg?w=768",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764888198263_814",
       "date": "2025-12-05"
     },
@@ -7269,6 +7269,19 @@
       "status": "pending",
       "id": "task_1764888198263",
       "date": "2025-10-10"
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "Meet with Gary Cheatwood",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "startTime": "10:00",
+      "durationMinutes": 15,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1764949571173",
+      "date": "2025-12-05"
     }
   ]
 }
