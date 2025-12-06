@@ -3316,7 +3316,8 @@
       "description": "",
       "id": "habit_1765000800000_o5jd6",
       "date": "2025-12-06",
-      "streakCount": 1509
+      "streakCount": 1509,
+      "status": "completed"
     },
     {
       "id": "gm_19",
@@ -7283,6 +7284,53 @@
       "timeSpentMinutes": 30,
       "id": "meeting_1764949571173",
       "date": "2025-12-05"
+    },
+    {
+      "type": "task",
+      "category": "work",
+      "title": "FTP Download",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "Try using fines - username password from vb code - or switch to Alpha server for testing.",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1764974538961",
+      "date": "2025-12-08"
+    },
+    {
+      "id": "health_1765029644639",
+      "date": "2025-12-05",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "dinner",
+          "name": "Ribs, brisket, fried okra, and pinto beans",
+          "calories": 1310,
+          "protein": 84,
+          "carbs": 94,
+          "fat": 71,
+          "fiber": 14
+        },
+        {
+          "mealType": "snack",
+          "name": "Onion slices with parmesan cheese, mayo & ketchup",
+          "calories": 465,
+          "protein": 30,
+          "carbs": 9,
+          "fat": 34,
+          "fiber": 1
+        }
+      ],
+      "workouts": []
     }
   ]
 }
