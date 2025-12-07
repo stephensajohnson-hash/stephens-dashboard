@@ -5063,6 +5063,189 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1765129235983",
+      "title": "Crack Chicken Dip",
+      "description": "A holiday favorite!",
+      "category": "Dips",
+      "servings": 8,
+      "prepTime": "15 minutes",
+      "cookTime": "15 minutes",
+      "image": "https://www.thecountrycook.net/wp-content/uploads/2020/10/Crack-Chicken-Dip-with-a-celery-stick-2048x1366.jpg",
+      "source": {
+        "description": "Cooking With Dave",
+        "url": "https://www.youtube.com/watch?v=Tb1e605mj1Q"
+      },
+      "tags": [
+        "Dip",
+        "Keto"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Bacon",
+              "quantity": "5",
+              "unit": "slices",
+              "notes": "",
+              "macros": {
+                "calories": 250,
+                "protein": 15,
+                "carbs": 0,
+                "fat": 20,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cream Cheese",
+              "quantity": "8",
+              "unit": "oz",
+              "notes": "softened",
+              "macros": {
+                "calories": 700,
+                "protein": 16,
+                "carbs": 16,
+                "fat": 70,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cottage Cheese",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 163,
+                "protein": 28,
+                "carbs": 7,
+                "fat": 3,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ranch Seasoning Mix",
+              "quantity": ".4",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Cheddar Cheese",
+              "quantity": "1 1/2",
+              "unit": "cup",
+              "notes": "shredded",
+              "macros": {
+                "calories": 354,
+                "protein": 21,
+                "carbs": 5,
+                "fat": 28,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Mozzarella Cheese",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "shredded",
+              "macros": {
+                "calories": 160,
+                "protein": 8,
+                "carbs": 2,
+                "fat": 9,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Jalapeno",
+              "quantity": "1",
+              "unit": "",
+              "notes": "chopped",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chicken",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 231,
+                "protein": 43,
+                "carbs": 0,
+                "fat": 5,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Green Onions",
+              "quantity": "2",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 10,
+                "protein": 0.3,
+                "carbs": 2,
+                "fat": 0.17,
+                "fiber": 0.4
+              }
+            },
+            {
+              "name": "Bell Peppers",
+              "quantity": "2",
+              "unit": "",
+              "notes": "Sliced",
+              "macros": {
+                "calories": 60,
+                "protein": 2,
+                "carbs": 14,
+                "fat": 0,
+                "fiber": 6
+              }
+            },
+            {
+              "name": "Celery",
+              "quantity": "4",
+              "unit": "stalks",
+              "notes": "cut into 3 inch bars",
+              "macros": {
+                "calories": 25,
+                "protein": 1,
+                "carbs": 5,
+                "fat": 0,
+                "fiber": 3
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Cook bacon until crispy.  400 degrees in oven for 15 - 20 minutes.",
+            "In medium bowl, add cottage cheese, cream cheese, cheddar cheese (save off 1/2 cup for garnish on top), mozzarella cheese, ranch seasoning mix, and chopped jalapeño pepper.  Mix well.",
+            "Add chicken and mix gently.",
+            "Chop bacon and add to cheese mixture (save some bacon for garnish on top) - mix gently.  ",
+            "Lower oven temperature to 350 degrees.",
+            "Transfer mixture to an 8x8 casserole dish.  Sprinkle reserved cheddar cheese and bacon on top as a garnish.",
+            "Bake at 350 degrees for 25 minutes.",
+            "Chop green onions for top garnish.  Slice bell peppers and celery to use as chips."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
@@ -5072,9 +5255,9 @@
     "Dips",
     "Indian",
     "Italian",
-    "Salad",    
-    "Soup",    
-    "Southern Food", 
+    "Salad",
+    "Soup",
+    "Southern Food",
     "Sweets"
   ],
   "availableTags": []
