@@ -7196,7 +7196,7 @@
       "imgUrl": "https://www.kindermusikwithfriends.com/wp-content/uploads/2018/02/moving-truck-clipart-image-colorful-cartoon-moving-van-or-truck-moving-truck-cartoon-300x207.jpg",
       "description": "Watch Avery and Help Pack",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764885838169",
       "date": "2025-12-06"
     },
@@ -7328,6 +7328,32 @@
           "carbs": 9,
           "fat": 34,
           "fiber": 1
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "id": "health_1765080391865",
+      "date": "2025-12-06",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "Vanesias - Sausage Brandy, Meatballs, Cheese Sticks, Salad",
+          "calories": 2000,
+          "protein": 95,
+          "carbs": 88,
+          "fat": 148,
+          "fiber": 8
         }
       ],
       "workouts": []
