@@ -3368,10 +3368,10 @@
       "title": "Conversion Review",
       "linkUrl": "",
       "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
-      "description": "",
+      "description": "Halo - automate ticket creation and notification\nHalo has an API we could use to create tickets and pass data with json",
       "startTime": "09:00",
       "durationMinutes": 60,
-      "timeSpentMinutes": 0,
+      "timeSpentMinutes": 60,
       "id": "meeting_1764106697022_1",
       "date": "2025-12-08"
     },
@@ -3459,19 +3459,6 @@
       "ticketNumber": "",
       "status": "pending",
       "id": "meeting_1764622580245",
-      "date": "2025-12-12"
-    },
-    {
-      "type": "meeting",
-      "category": "work",
-      "title": "Development Update",
-      "linkUrl": "",
-      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
-      "description": "",
-      "startTime": "09:00",
-      "durationMinutes": 60,
-      "timeSpentMinutes": 0,
-      "id": "meeting_1764106791559_1",
       "date": "2025-12-12"
     },
     {
@@ -7440,6 +7427,30 @@
         }
       ],
       "workouts": []
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "A Boy Named Christmas",
+      "linkUrl": "https://www.imdb.com/title/tt10187208/reference/",
+      "imgUrl": "https://resizing.flixster.com/9--NS2g6vkW8Wqlm6QtkitYJ_mA=/206x305/v2/https://resizing.flixster.com/blJxy6UYJ9MF-6-qMCK-Pdjc0yY=/ems.cHJkLWVtcy1hc3NldHMvbW92aWVzLzJlYzMwZDMwLTY2ODEtNDcxOS1iNDQ1LTQwOWQ2MDE2N2Q5Yy5qcGc=",
+      "notes": "In this origin story of Father Christmas, an ordinary boy--with a loyal pet mouse and a reindeer at his side--sets out on an extraordinary adventure to find his father, who is on a quest to discover the fabled village of Elfhelm.",
+      "description": "In this origin story of Father Christmas, an ordinary boy--with a loyal pet mouse and a reindeer at his side--sets out on an extraordinary adventure to find his father, who is on a quest to discover the fabled village of Elfhelm.",
+      "rating": 8,
+      "id": "media_1765210752280",
+      "date": "2025-12-07"
+    },
+    {
+      "type": "media",
+      "category": "personal",
+      "title": "Christmas with the Kranks",
+      "linkUrl": "https://www.imdb.com/title/tt0388419/reference/?ref_=fn_t_2",
+      "imgUrl": "https://cdn11.bigcommerce.com/s-yzgoj/images/stencil/1280x1280/products/264785/4922622/MOV221926__48937.1542196224.jpg?c=2",
+      "notes": "With their daughter Blair away in Peru, Luther and Nora Krank decide to skip Christmas altogether until she decides to come home, causing an uproar when they must celebrate it at the last minute.",
+      "description": "With their daughter Blair away in Peru, Luther and Nora Krank decide to skip Christmas altogether until she decides to come home, causing an uproar when they must celebrate it at the last minute.",
+      "rating": 7,
+      "id": "media_1765210973791",
+      "date": "2025-12-07"
     }
   ]
 }
