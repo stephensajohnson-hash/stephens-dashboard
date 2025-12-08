@@ -3320,19 +3320,22 @@
       "status": "completed"
     },
     {
-      "id": "gm_19",
-      "date": "2025-12-06",
       "type": "sports",
       "category": "personal",
       "title": "WRE @ PNE",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_preston",
       "awayTeamId": "t_wrexham",
-      "homeScore": 0,
-      "awayScore": 0,
-      "status": "scheduled",
+      "homeScore": 1,
+      "awayScore": 1,
       "startTime": "15:00",
-      "season": "2025/2026"
+      "status": "completed",
+      "season": "2025/2026",
+      "id": "gm_19",
+      "date": "2025-12-06"
     },
     {
       "type": "habit",
@@ -3344,7 +3347,8 @@
       "description": "",
       "id": "habit_1765087200000_58pd4",
       "date": "2025-12-07",
-      "streakCount": 1510
+      "streakCount": 1510,
+      "status": "completed"
     },
     {
       "type": "habit",
@@ -7354,6 +7358,85 @@
           "carbs": 88,
           "fat": 148,
           "fiber": 8
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "id": "health_1765129768115",
+      "date": "2025-12-07",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "3 slices of bacon",
+          "calories": 120,
+          "protein": 9,
+          "carbs": 0,
+          "fat": 9,
+          "fiber": 0
+        },
+        {
+          "mealType": "lunch",
+          "name": "Brisket",
+          "calories": 870,
+          "protein": 65,
+          "carbs": 23,
+          "fat": 55,
+          "fiber": 0
+        },
+        {
+          "mealType": "lunch",
+          "name": "3/4 Ham Sandwich - a bit of mac & cheese",
+          "calories": 590,
+          "protein": 34,
+          "carbs": 54,
+          "fat": 30,
+          "fiber": 4
+        },
+        {
+          "mealType": "dinner",
+          "name": "Crack Chicken Dip",
+          "calories": 306,
+          "protein": 21,
+          "carbs": 9,
+          "fat": 21,
+          "fiber": 1
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "id": "health_1765204886519",
+      "date": "2025-12-08",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 270,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "breakfast",
+          "name": "Sausage, 4 eggs, 1/2 cup salsa",
+          "calories": 583,
+          "protein": 36,
+          "carbs": 11.5,
+          "fat": 42.5,
+          "fiber": 4
         }
       ],
       "workouts": []
