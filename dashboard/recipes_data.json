@@ -5083,18 +5083,18 @@
       ],
       "ingredients": [
         {
-          "sectionTitle": "",
+          "sectionTitle": "Main DIp",
           "list": [
             {
               "name": "Bacon",
-              "quantity": "5",
+              "quantity": "4 1/2",
               "unit": "slices",
-              "notes": "",
+              "notes": "chopped",
               "macros": {
-                "calories": 250,
-                "protein": 15,
+                "calories": 225,
+                "protein": 14,
                 "carbs": 0,
-                "fat": 20,
+                "fat": 18,
                 "fiber": 0
               }
             },
@@ -5139,14 +5139,14 @@
             },
             {
               "name": "Cheddar Cheese",
-              "quantity": "1 1/2",
+              "quantity": "1",
               "unit": "cup",
               "notes": "shredded",
               "macros": {
-                "calories": 354,
-                "protein": 21,
-                "carbs": 5,
-                "fat": 28,
+                "calories": 236,
+                "protein": 14,
+                "carbs": 3,
+                "fat": 19,
                 "fiber": 0
               }
             },
@@ -5180,7 +5180,7 @@
               "name": "Chicken",
               "quantity": "1",
               "unit": "cup",
-              "notes": "",
+              "notes": "chopped",
               "macros": {
                 "calories": 231,
                 "protein": 43,
@@ -5188,25 +5188,61 @@
                 "fat": 5,
                 "fiber": 0
               }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Toppings",
+          "list": [
+            {
+              "name": "Cheddar Cheese",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "shredded",
+              "macros": {
+                "calories": 118,
+                "protein": 7,
+                "carbs": 2,
+                "fat": 9,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Bacon",
+              "quantity": "1/2",
+              "unit": "strip",
+              "notes": "chopped",
+              "macros": {
+                "calories": 25,
+                "protein": 2,
+                "carbs": 0,
+                "fat": 2,
+                "fiber": 0
+              }
             },
             {
               "name": "Green Onions",
               "quantity": "2",
               "unit": "",
-              "notes": "",
+              "notes": "chopped",
               "macros": {
                 "calories": 10,
                 "protein": 0.3,
                 "carbs": 2,
-                "fat": 0.17,
+                "fat": 0,
                 "fiber": 0.4
               }
-            },
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Dippers",
+          "list": [
             {
               "name": "Bell Peppers",
               "quantity": "2",
               "unit": "",
-              "notes": "Sliced",
+              "notes": "cut into slices",
               "macros": {
                 "calories": 60,
                 "protein": 2,
@@ -5219,7 +5255,7 @@
               "name": "Celery",
               "quantity": "4",
               "unit": "stalks",
-              "notes": "cut into 3 inch bars",
+              "notes": "sectioned",
               "macros": {
                 "calories": 25,
                 "protein": 1,
