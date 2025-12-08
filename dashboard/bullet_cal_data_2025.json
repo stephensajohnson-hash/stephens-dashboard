@@ -3360,7 +3360,8 @@
       "description": "",
       "id": "habit_1765173600000_nxkzf",
       "date": "2025-12-08",
-      "streakCount": 1511
+      "streakCount": 1511,
+      "status": "completed"
     },
     {
       "type": "meeting",
@@ -7282,9 +7283,9 @@
       "title": "FTP Download",
       "linkUrl": "",
       "imgUrl": "",
-      "description": "Try using fines - username password from vb code - or switch to Alpha server for testing.",
+      "description": "Try using fines - username password from vb code - or switch to Alpha server for testing.  Discussed with Daniel and he's going to have something set up on some server for me to test with.",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1764974538961",
       "date": "2025-12-08"
     },
@@ -7424,6 +7425,24 @@
           "carbs": 11.5,
           "fat": 42.5,
           "fiber": 4
+        },
+        {
+          "mealType": "lunch",
+          "name": "Keto Unstuffed Bell Peppers",
+          "calories": 226,
+          "protein": 22,
+          "carbs": 12,
+          "fat": 10,
+          "fiber": 4
+        },
+        {
+          "mealType": "lunch",
+          "name": "Keto Parmesan Chicken",
+          "calories": 489,
+          "protein": 68,
+          "carbs": 14,
+          "fat": 15,
+          "fiber": 3
         }
       ],
       "workouts": []
@@ -7451,6 +7470,18 @@
       "rating": 7,
       "id": "media_1765210973791",
       "date": "2025-12-07"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Contact Doug Snyder",
+      "linkUrl": "",
+      "imgUrl": "https://scontent-dfw5-1.xx.fbcdn.net/v/t39.30808-6/467683491_10232306443714028_5819698167903682868_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=833d8c&_nc_ohc=-FloQHlrXqYQ7kNvwFDLtaB&_nc_oc=AdmCsL1G4_DsyU_r-5XWDSh4LHphFhWOiPNeTxb-4VgONWPXlYrDohEia1KS2bRQOTo&_nc_zt=23&_nc_ht=scontent-dfw5-1.xx&_nc_gid=qpFSysd2ieBWRb0JeXe2Jg&oh=00_Afko2m9TMtIqCTjORp5mWp6HHwNf_kUDOevKDY46_ZBj5A&oe=693D3270",
+      "description": "Bathroom Heating Element, Kitchen drawers, floors",
+      "ticketNumber": "",
+      "status": "completed",
+      "id": "task_1765231444375",
+      "date": "2025-12-08"
     }
   ]
 }
