@@ -7443,6 +7443,33 @@
           "carbs": 14,
           "fat": 15,
           "fiber": 3
+        },
+        {
+          "mealType": "dinner",
+          "name": "Crack Chicken Dip w/ Bell Peppers",
+          "calories": 306,
+          "protein": 21.25,
+          "carbs": 8.75,
+          "fat": 21.25,
+          "fiber": 1.25
+        },
+        {
+          "mealType": "dinner",
+          "name": "Keto Turkey & Dressing Muffins",
+          "calories": 249,
+          "protein": 18,
+          "carbs": 9,
+          "fat": 15,
+          "fiber": 3
+        },
+        {
+          "mealType": "snack",
+          "name": "1/4 cup roasted pistachios",
+          "calories": 160,
+          "protein": 6,
+          "carbs": 8,
+          "fat": 13,
+          "fiber": 3
         }
       ],
       "workouts": []
