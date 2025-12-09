@@ -5531,6 +5531,185 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1765302720446",
+      "title": "TikTok Onion Rings",
+      "description": "",
+      "category": "American",
+      "servings": 6,
+      "prepTime": "5 minutes",
+      "cookTime": "30 minutes",
+      "image": "https://hungryhappens.net/wp-content/uploads/2025/02/IMG_9990-scaled.jpg",
+      "source": {
+        "description": "Low Carb Love",
+        "url": "https://www.lowcarblove.com/blog/2-ingredient-onion-rings"
+      },
+      "tags": [
+        "Keto"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Chips",
+          "list": [
+            {
+              "name": "Onion",
+              "quantity": "1",
+              "unit": "",
+              "notes": "slice thin",
+              "macros": {
+                "calories": 60,
+                "protein": 2,
+                "carbs": 14,
+                "fat": 0,
+                "fiber": 3
+              }
+            },
+            {
+              "name": "Parmesan Cheese",
+              "quantity": "1",
+              "unit": "cup",
+              "notes": "grated",
+              "macros": {
+                "calories": 431,
+                "protein": 39,
+                "carbs": 4,
+                "fat": 29,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic Powder",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Smoked Paprika",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Sauce",
+          "list": [
+            {
+              "name": "Mayonnaise",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 187,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 21,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ketchup",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "",
+              "macros": {
+                "calories": 20,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Horse Radish",
+              "quantity": "1/8",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Dijon Mustard",
+              "quantity": "1/8",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 1,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "Chips",
+          "steps": [
+            "Preheat oven to 400F",
+            "Slice your onion with a mandoline. You want this crispy, so about ¼ inch thick is what you’re aiming for. ",
+            "Line your baking tray with parchment paper and make onion sized circles of parmesan cheese.  Save some cheese for a topper.",
+            "Next, lay your onions onto the baking sheet on top of each parmesan cheese circle.",
+            "Add seasonings: salt, garlic powder, onion powder, smoked paprika",
+            "Add rest of parmesan cheese on top of onions.",
+            "Bake for 20 minutes until golden brown and allow to cool for an additional 10 mins. "
+          ]
+        },
+        {
+          "sectionTitle": "Sauce",
+          "steps": [
+            "Mix mayo, ketchup, mustard, and horse radish."
+          ]
+        }
+      ]
     }
   ],
   "categories": [
