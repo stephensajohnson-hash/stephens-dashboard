@@ -5282,6 +5282,255 @@
           ]
         }
       ]
+    },
+    {
+      "id": "user_rec_1765297922714",
+      "title": "*NEW* Chicken Parmesan",
+      "description": "",
+      "category": "Italian",
+      "servings": 6,
+      "prepTime": "15 minutes",
+      "cookTime": "45 minutes",
+      "image": "https://images.squarespace-cdn.com/content/v1/5f9b6df57e950808cac2a3eb/1630219020947-R8QZI7ZCCIEHRZYSEP5N/C0183.00_08_54_12.Still002.jpeg?format=1500w",
+      "source": {
+        "description": "Low Carb Love",
+        "url": "https://www.lowcarblove.com/blog/chicken-parmesan"
+      },
+      "tags": [
+        "Keto",
+        "Poultry"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "Chicken",
+          "list": [
+            {
+              "name": "Large Egg",
+              "quantity": "2",
+              "unit": "",
+              "notes": "",
+              "macros": {
+                "calories": 144,
+                "protein": 12,
+                "carbs": 1,
+                "fat": 10,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic Powder",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Fresh Parsley",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "chopped",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Black Pepper",
+              "quantity": "1",
+              "unit": "Pinch",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Chicken Breast",
+              "quantity": "2",
+              "unit": "lbs",
+              "notes": "each cut in thin halves",
+              "macros": {
+                "calories": 1089,
+                "protein": 204,
+                "carbs": 0,
+                "fat": 24,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Breading",
+          "list": [
+            {
+              "name": "Lupin Flour",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "",
+              "macros": {
+                "calories": 148,
+                "protein": 21,
+                "carbs": 24,
+                "fat": 4,
+                "fiber": 21
+              }
+            },
+            {
+              "name": "Whey Protein Powder",
+              "quantity": "1/2",
+              "unit": "cup",
+              "notes": "optional, unflavored",
+              "macros": {
+                "calories": 120,
+                "protein": 20,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Parmesan Cheese",
+              "quantity": "1/3",
+              "unit": "cup",
+              "notes": "grated",
+              "macros": {
+                "calories": 144,
+                "protein": 13,
+                "carbs": 1,
+                "fat": 10,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 8,
+                "protein": 0,
+                "carbs": 2,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Sauce",
+          "list": [
+            {
+              "name": "Organic Tomato Sauce",
+              "quantity": "15",
+              "unit": "oz",
+              "notes": "",
+              "macros": {
+                "calories": 140,
+                "protein": 7,
+                "carbs": 28,
+                "fat": 0,
+                "fiber": 7
+              }
+            }
+          ]
+        },
+        {
+          "sectionTitle": "Toppings",
+          "list": [
+            {
+              "name": "Mozzarella Cheese",
+              "quantity": "6",
+              "unit": "slices",
+              "notes": "",
+              "macros": {
+                "calories": 500,
+                "protein": 37,
+                "carbs": 3,
+                "fat": 38,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Parmesan Cheese",
+              "quantity": "1/3",
+              "unit": "cup",
+              "notes": "grated",
+              "macros": {
+                "calories": 144,
+                "protein": 13,
+                "carbs": 1,
+                "fat": 10,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Fresh Parsley",
+              "quantity": "2",
+              "unit": "tbsp",
+              "notes": "chopped",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Preheat oven 430. ",
+            "Lightly grease a baking dish.",
+            "Whisk together eggs, garlic, parsley, salt and pepper in a shallow dish. Add chicken into the egg, rotating to evenly coat each fillet in the mixture. Cover with plastic wrap and allow to marinate for at least 15 to 30 minutes.",
+            "Heat your frying oil so it’s ready. ",
+            "Dip egg chicken into bread ingredients mixture and fry until golden on each side.",
+            "In a prepared cookie sheet, add the fried chicken in a baking dish topped with sauce, cheeses, and herbs. ",
+            "Bake for 10 to 15 minutes until chick is fully cooked and cheese is melted. Convention 8-10"
+          ]
+        }
+      ]
     }
   ],
   "categories": [
