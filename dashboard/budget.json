@@ -318,6 +318,15 @@
           "type": "expense",
           "linkedBudgetItemId": "b1764711739265",
           "splits": null
+        },
+        {
+          "id": "t1765292032099",
+          "date": "2025-12-09",
+          "description": "Perdue Brandon - Bonus",
+          "amount": 1733.75,
+          "type": "income",
+          "sourceId": "inc1764710864578",
+          "linkedBudgetItemId": "b1764712324700"
         }
       ],
       "transfers": [
