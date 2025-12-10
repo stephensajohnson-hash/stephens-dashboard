@@ -5535,9 +5535,9 @@
     {
       "id": "user_rec_1765302720446",
       "title": "TikTok Onion Rings",
-      "description": "",
+      "description": "Serving size - 3 onion slices",
       "category": "American",
-      "servings": 6,
+      "servings": 2,
       "prepTime": "5 minutes",
       "cookTime": "30 minutes",
       "image": "https://hungryhappens.net/wp-content/uploads/2025/02/IMG_9990-scaled.jpg",
@@ -5554,15 +5554,15 @@
           "list": [
             {
               "name": "Onion",
-              "quantity": "1",
+              "quantity": "1/2",
               "unit": "",
-              "notes": "slice thin",
+              "notes": "6 thin slices",
               "macros": {
-                "calories": 60,
-                "protein": 2,
-                "carbs": 14,
+                "calories": 30,
+                "protein": 1,
+                "carbs": 7,
                 "fat": 0,
-                "fiber": 3
+                "fiber": 2
               }
             },
             {
@@ -5707,6 +5707,157 @@
           "sectionTitle": "Sauce",
           "steps": [
             "Mix mayo, ketchup, mustard, and horse radish."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "user_rec_1765388691970",
+      "title": "Never Fail Sausage",
+      "description": "This may be Cayce's favorite recipe because it is extremely yummy and so versatile, and costs less than premixed sausage and it's clean! ",
+      "category": "American",
+      "servings": 4,
+      "prepTime": "5 minutes",
+      "cookTime": "10 minutes",
+      "image": "https://imagesvc.meredithcorp.io/v3/mm/image?url=https%3A%2F%2Fpublic-assets.meredithcorp.io%2F9eb10bae0ffac8d202b6f3548182112e%2F17363455615651000010782.jpg&q=60&c=sc&poi=auto&orient=true&h=512",
+      "source": {
+        "description": "AllRecipes.com",
+        "url": "https://www.allrecipes.com/recipe/16359/breakfast-sausage/"
+      },
+      "tags": [
+        "Keto",
+        "Cayce Diet",
+        "Beef"
+      ],
+      "ingredients": [
+        {
+          "sectionTitle": "",
+          "list": [
+            {
+              "name": "Ground Beef",
+              "quantity": "1",
+              "unit": "lb",
+              "notes": "or pork or turkey",
+              "macros": {
+                "calories": 680,
+                "protein": 92,
+                "carbs": 0,
+                "fat": 32,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Salt",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ground Sage",
+              "quantity": "1",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 0,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Onion Powder",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 1,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Rosemary",
+              "quantity": "1/4",
+              "unit": "tsp",
+              "notes": "optional",
+              "macros": {
+                "calories": 1,
+                "protein": 0.01,
+                "carbs": 0.2,
+                "fat": 0.03,
+                "fiber": 0.2
+              }
+            },
+            {
+              "name": "Crushed Red Pepper",
+              "quantity": "1/2",
+              "unit": "tsp",
+              "notes": "",
+              "macros": {
+                "calories": 4,
+                "protein": 0,
+                "carbs": 0,
+                "fat": 0,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Ground Cloves",
+              "quantity": "1",
+              "unit": "pinch",
+              "notes": "",
+              "macros": {
+                "calories": 3,
+                "protein": 0.1,
+                "carbs": 1,
+                "fat": 0.1,
+                "fiber": 0
+              }
+            },
+            {
+              "name": "Garlic",
+              "quantity": "2",
+              "unit": "cloves",
+              "notes": "minced",
+              "macros": {
+                "calories": 3,
+                "protein": 0,
+                "carbs": 2,
+                "fat": 0,
+                "fiber": 0
+              }
+            }
+          ]
+        }
+      ],
+      "instructions": [
+        {
+          "sectionTitle": "",
+          "steps": [
+            "Combine all ingredients in a skillet and brown on medium-high heat.",
+            "Drain if necessary."
+          ]
+        },
+        {
+          "sectionTitle": "Notes",
+          "steps": [
+            "This recipe can be customized to fit any dish.",
+            "For Italian Sausage, add 1 tsp Italian Seasoning and an extra clove of garlic",
+            "For Breakfast Sausage, add 2 tsp brown sugar or 1 tbsp maple syrup - leave out garlic",
+            "For Hot Sausage, add more crushed red pepper and paprika or hot sauce",
+            "For Cajun Sausage, reduce salt to 1/2 tsp and add 1 tsp Cajun Seasoning and another clove of garlic",
+            "For Nachos, if using extra sharp cheddar cheese - reduce salt to 1/2 tsp (because the cheese and chips are salty).  Add 1 tsp cumin and 1 tsp chili powder.  Increase crushed red pepper to taste or use pepper jack cheese.",
+            "For Tacos, add 1 tsp cumin and 1 tsp chili powder."
           ]
         }
       ]
