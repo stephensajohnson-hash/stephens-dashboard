@@ -3386,7 +3386,8 @@
       "description": "",
       "id": "habit_1765260000000_aokra",
       "date": "2025-12-09",
-      "streakCount": 1512
+      "streakCount": 1512,
+      "status": "completed"
     },
     {
       "type": "habit",
@@ -3453,9 +3454,9 @@
     {
       "type": "task",
       "category": "personal",
-      "title": "6:30 Cayce's Christmas Party",
+      "title": "6:30 C21 Christmas Party",
       "linkUrl": "",
-      "imgUrl": "",
+      "imgUrl": "https://www.21online.com/etc.clientlibs/realogy-c21/clientlibs/clientlib-base/resources/21Online_YardSign.png",
       "description": "",
       "ticketNumber": "",
       "status": "pending",
@@ -7509,6 +7510,62 @@
       "status": "completed",
       "id": "task_1765231444375",
       "date": "2025-12-08"
+    },
+    {
+      "id": "health_1765308819265",
+      "date": "2025-12-09",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 269,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "Salad with Chicken Breast & Avocado Toast",
+          "calories": 820,
+          "protein": 51,
+          "carbs": 35,
+          "fat": 53,
+          "fiber": 9
+        },
+        {
+          "mealType": "dinner",
+          "name": "Homemade wagyu burger and corn cob with butter",
+          "calories": 845,
+          "protein": 42,
+          "carbs": 51,
+          "fat": 51,
+          "fiber": 7
+        },
+        {
+          "mealType": "snack",
+          "name": "1 cup pistachios in shell",
+          "calories": 640,
+          "protein": 24,
+          "carbs": 32,
+          "fat": 52,
+          "fiber": 12
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "4:30 Dr. Cardile",
+      "linkUrl": "https://www.affordablechiropracticss.com/",
+      "imgUrl": "https://static.wixstatic.com/media/e65748_227ca188680a42999a8657b930f73ffe~mv2.jpg/v1/fill/w_583,h_701,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/e65748_227ca188680a42999a8657b930f73ffe~mv2.jpg",
+      "description": "Chiropractor",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "meeting_1765311058553",
+      "date": "2025-12-10"
     }
   ]
 }
