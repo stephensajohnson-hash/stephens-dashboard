@@ -3399,22 +3399,26 @@
       "description": "",
       "id": "habit_1765346400000_yd1if",
       "date": "2025-12-10",
-      "streakCount": 1513
+      "streakCount": 1513,
+      "status": "completed"
     },
     {
-      "id": "gm_20",
-      "date": "2025-12-10",
       "type": "sports",
       "category": "personal",
       "title": "WRE @ HUL",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
       "league": "EFL Championship",
       "homeTeamId": "t_hull",
       "awayTeamId": "t_wrexham",
-      "homeScore": 0,
+      "homeScore": 2,
       "awayScore": 0,
-      "status": "scheduled",
       "startTime": "20:00",
-      "season": "2025/2026"
+      "status": "completed",
+      "season": "2025/2026",
+      "id": "gm_20",
+      "date": "2025-12-10"
     },
     {
       "type": "habit",
@@ -7558,14 +7562,73 @@
     {
       "type": "task",
       "category": "personal",
-      "title": "4:30 Dr. Cardile",
+      "title": "4:45 Dr. Cardile",
       "linkUrl": "https://www.affordablechiropracticss.com/",
       "imgUrl": "https://static.wixstatic.com/media/e65748_227ca188680a42999a8657b930f73ffe~mv2.jpg/v1/fill/w_583,h_701,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/e65748_227ca188680a42999a8657b930f73ffe~mv2.jpg",
       "description": "Chiropractor",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "meeting_1765311058553",
       "date": "2025-12-10"
+    },
+    {
+      "id": "health_1765398250247",
+      "date": "2025-12-10",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 268,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "Keto Cloud Pizza - 2 servings",
+          "calories": 728,
+          "protein": 60,
+          "carbs": 16,
+          "fat": 40,
+          "fiber": 4
+        },
+        {
+          "mealType": "dinner",
+          "name": "Keto Cloud Pizza - 2 servings",
+          "calories": 728,
+          "protein": 60,
+          "carbs": 16,
+          "fat": 40,
+          "fiber": 4
+        }
+      ],
+      "workouts": []
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Sharleen - House Cleaning",
+      "linkUrl": "",
+      "imgUrl": "https://cdn.iconscout.com/icon/free/png-512/free-cleaning-icon-svg-download-png-1242225.png?f=webp&w=256",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1765464318119",
+      "date": "2025-12-11"
+    },
+    {
+      "type": "task",
+      "category": "personal",
+      "title": "Order NFM Gift Card for Jayce & Shelby",
+      "linkUrl": "",
+      "imgUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Nebraska_Furniture_Mart_logo.jpg/250px-Nebraska_Furniture_Mart_logo.jpg",
+      "description": "",
+      "ticketNumber": "",
+      "status": "pending",
+      "id": "task_1765470410400",
+      "date": "2025-12-11"
     }
   ]
 }
