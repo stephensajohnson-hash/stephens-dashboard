@@ -3633,19 +3633,6 @@
       "streakCount": 1522
     },
     {
-      "type": "meeting",
-      "category": "work",
-      "title": "Development Update",
-      "linkUrl": "",
-      "imgUrl": "https://media.istockphoto.com/id/1470351499/vector/software-developer-working-with-computers.jpg?s=612x612&w=0&k=20&c=N5R182foFpVQ-U6QP8RiSYDsWXOy7Lz6d5VT8aJKkj0=",
-      "description": "",
-      "startTime": "09:00",
-      "durationMinutes": 60,
-      "timeSpentMinutes": 0,
-      "id": "meeting_1764106791559_2",
-      "date": "2025-12-19"
-    },
-    {
       "id": "gm_22",
       "date": "2025-12-19",
       "type": "sports",
@@ -3951,19 +3938,6 @@
       "id": "habit_1766988000000_47cli",
       "date": "2025-12-29",
       "streakCount": 1532
-    },
-    {
-      "type": "meeting",
-      "category": "work",
-      "title": "Conversion Review",
-      "linkUrl": "",
-      "imgUrl": "https://thumbs.dreamstime.com/b/conversions-word-team-pulling-together-increasing-sales-profits-pulled-workers-combining-strengths-to-increase-improve-39952329.jpg",
-      "description": "",
-      "startTime": "09:00",
-      "durationMinutes": 60,
-      "timeSpentMinutes": 0,
-      "id": "meeting_1764106697022_4",
-      "date": "2025-12-29"
     },
     {
       "id": "gm_24",
@@ -7614,7 +7588,7 @@
       "imgUrl": "https://cdn.iconscout.com/icon/free/png-512/free-cleaning-icon-svg-download-png-1242225.png?f=webp&w=256",
       "description": "",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1765464318119",
       "date": "2025-12-11"
     },
@@ -7624,11 +7598,55 @@
       "title": "Order NFM Gift Card for Jayce & Shelby",
       "linkUrl": "",
       "imgUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Nebraska_Furniture_Mart_logo.jpg/250px-Nebraska_Furniture_Mart_logo.jpg",
-      "description": "",
+      "description": "2 x $200 - sent to JayceJohnson95@gmail.com",
       "ticketNumber": "",
-      "status": "pending",
+      "status": "completed",
       "id": "task_1765470410400",
       "date": "2025-12-11"
+    },
+    {
+      "id": "health_1765475499743",
+      "date": "2025-12-11",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 268,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "dinner",
+          "name": "Pork Rhinds, Garlic Parm wings, Chicken Club Flatbread",
+          "calories": 1200,
+          "protein": 90,
+          "carbs": 45,
+          "fat": 78,
+          "fiber": 3
+        },
+        {
+          "mealType": "snack",
+          "name": "Pepperoni & Cheese",
+          "calories": 250,
+          "protein": 16,
+          "carbs": 1,
+          "fat": 21,
+          "fiber": 0
+        },
+        {
+          "mealType": "snack",
+          "name": "Pistachios & Chocolate Chips",
+          "calories": 470,
+          "protein": 14,
+          "carbs": 39,
+          "fat": 34,
+          "fiber": 8
+        }
+      ],
+      "workouts": []
     }
   ]
 }
