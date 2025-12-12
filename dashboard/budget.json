@@ -327,6 +327,42 @@
           "type": "income",
           "sourceId": "inc1764710864578",
           "linkedBudgetItemId": "b1764712324700"
+        },
+        {
+          "id": "t1765512566486",
+          "date": "2025-12-09",
+          "description": "Carrie Nuckolls - Check 2",
+          "amount": 1021.14,
+          "type": "income",
+          "sourceId": "inc1764710884570",
+          "linkedBudgetItemId": null
+        },
+        {
+          "id": "t1765512668268",
+          "date": "2025-12-10",
+          "description": "Chase Credit Card",
+          "amount": -226.57,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1765512730631",
+          "date": "2025-12-10",
+          "description": "Chase Travel Credit Card",
+          "amount": -2528,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1765513054896",
+          "date": "2025-12-10",
+          "description": "Wendell Hutchins - Christmas Gift",
+          "amount": -100,
+          "type": "expense",
+          "linkedBudgetItemId": "b1764711319084",
+          "splits": null
         }
       ],
       "transfers": [
@@ -353,6 +389,22 @@
           "amount": 2833.76,
           "note": "",
           "date": "2025-12-03"
+        },
+        {
+          "id": "tr1765512637837",
+          "fromId": "b1764712324700",
+          "toId": "b1",
+          "amount": 1733.75,
+          "note": "",
+          "date": "2025-12-12"
+        },
+        {
+          "id": "tr1765513026793",
+          "fromId": "b1764712269777",
+          "toId": "b1764711319084",
+          "amount": 200,
+          "note": "",
+          "date": "2025-12-12"
         }
       ],
       "watchList": [
@@ -372,11 +424,6 @@
           "dueDate": "2025-12-15"
         },
         {
-          "description": "Church",
-          "amount": 200,
-          "dueDate": "2025-12-15"
-        },
-        {
           "description": "Home Repair",
           "amount": 2380.95,
           "dueDate": "TBD"
@@ -392,6 +439,12 @@
           "amount": 105,
           "dueDate": "TBD",
           "image": "https://media.istockphoto.com/id/1126448977/vector/vector-of-money-dollar-sign-flowing-from-faucet.jpg?s=612x612&w=0&k=20&c=1ixYYRUsOGyXdtetQgiaCRs9mnIb1597Z1o6bLkyBZs="
+        },
+        {
+          "description": "Church",
+          "amount": 100,
+          "dueDate": "2025-12-19",
+          "image": "https://i.pinimg.com/736x/4c/38/7a/4c387ae5a8a9cc8222a652ea5edfaf96.jpg"
         }
       ],
       "incomeSources": [
@@ -416,13 +469,7 @@
           "image": "https://placehold.co/40x40/gray/white?text=$"
         }
       ],
-      "expectedIncome": [
-        {
-          "sourceId": "inc1764710884570",
-          "amount": 1021.14,
-          "date": "2025-12-08"
-        }
-      ]
+      "expectedIncome": []
     }
   ]
 }
