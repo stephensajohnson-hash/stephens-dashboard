@@ -363,6 +363,26 @@
           "type": "expense",
           "linkedBudgetItemId": "b1764711319084",
           "splits": null
+        },
+        {
+          "id": "t1765897324814",
+          "date": "2025-12-16",
+          "description": "Sharleen Allen",
+          "amount": -317,
+          "type": "expense",
+          "splits": [
+            {
+              "linkedBudgetItemId": "b1764711790564",
+              "amount": -160,
+              "note": ""
+            },
+            {
+              "linkedBudgetItemId": "b1764712269777",
+              "amount": -157,
+              "note": ""
+            }
+          ],
+          "linkedBudgetItemId": null
         }
       ],
       "transfers": [
@@ -414,19 +434,9 @@
           "dueDate": "2025-12-15"
         },
         {
-          "description": "House Cleaning",
-          "amount": 160,
-          "dueDate": "2025-12-17"
-        },
-        {
           "description": "Aflac",
           "amount": 196.69,
           "dueDate": "2025-12-15"
-        },
-        {
-          "description": "Home Repair",
-          "amount": 2380.95,
-          "dueDate": "TBD"
         },
         {
           "description": "Green Sky",
@@ -445,6 +455,12 @@
           "amount": 100,
           "dueDate": "2025-12-19",
           "image": "https://i.pinimg.com/736x/4c/38/7a/4c387ae5a8a9cc8222a652ea5edfaf96.jpg"
+        },
+        {
+          "description": "Home Repair",
+          "amount": 2223.95,
+          "dueDate": "2026-01-10",
+          "image": "https://www.clipartmax.com/png/middle/394-3942002_fix-house-icon-clipart-home-repair-house-fix-house-icon-clipart-home.png"
         }
       ],
       "incomeSources": [
