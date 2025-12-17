@@ -818,10 +818,10 @@
     },
     {
       "type": "birthday",
-      "category": "work",
+      "category": "personal",
       "title": "Calli Willard",
       "linkUrl": "",
-      "imgUrl": "https://scontent-dfw5-3.xx.fbcdn.net/v/t39.30808-6/550089738_1165997708915845_8095481745998762853_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=wiOGMfCscuoQ7kNvwGNUmyi&_nc_oc=AdmKIYsxE5EGYTXwxO_DZxAqzRHrIk8gI4mgUeIS3pbg8KHLjtDhWZTl5izcSzMT3KE&_nc_zt=23&_nc_ht=scontent-dfw5-3.xx&_nc_gid=nVhgo6G4NBGo_tQML1z1uw&oh=00_AfjdIudSLCerhnkPTP_RWYIvKLtR5MH8q8NJihyxADBGOw&oe=692D0837",
+      "imgUrl": "https://scontent-dfw5-3.xx.fbcdn.net/v/t39.30808-6/550089738_1165997708915845_8095481745998762853_n.jpg?_nc_cat=109&ccb=1-7&_nc_sid=127cfc&_nc_ohc=0rnVFHcJfkIQ7kNvwHGTtE-&_nc_oc=AdlLgR3QroTuf5L7P803q1CDSgP03KnAWdP1iVuyPWoYSpt7k_OoLN55lfQqaLYMvBE&_nc_zt=23&_nc_ht=scontent-dfw5-3.xx&_nc_gid=DXsn15epe6IRxw-407Fhkw&oh=00_AfnfctRH9NwJMWnqr8trvbOpQWygI2Z4i28JTgZQMgzZrA&oe=6948EFF7",
       "description": "",
       "id": "birthday_1764110777619",
       "date": "2025-01-23"
@@ -7942,6 +7942,45 @@
       "status": "completed",
       "id": "task_1765916672184",
       "date": "2025-12-16"
+    },
+    {
+      "type": "meeting",
+      "category": "work",
+      "title": "PBFCM Official Kick Off Call",
+      "linkUrl": "",
+      "imgUrl": "",
+      "description": "",
+      "startTime": "15:00",
+      "durationMinutes": 60,
+      "timeSpentMinutes": 0,
+      "id": "meeting_1765999993358",
+      "date": "2025-12-18"
+    },
+    {
+      "id": "health_1766000078309",
+      "date": "2025-12-17",
+      "type": "health",
+      "category": "personal",
+      "weightLbs": 268,
+      "goals": {
+        "tdee": 2816,
+        "calorieGoal": 2220,
+        "protein": 167,
+        "fat": 150,
+        "netCarbs": 100
+      },
+      "meals": [
+        {
+          "mealType": "lunch",
+          "name": "Tomato, Beef Pasta with Butter Parmesan Sourdough Toast",
+          "calories": 927,
+          "protein": 62,
+          "carbs": 84,
+          "fat": 38.5,
+          "fiber": 6
+        }
+      ],
+      "workouts": []
     }
   ]
 }
