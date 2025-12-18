@@ -18,7 +18,7 @@
               "id": "b1",
               "name": "Groceries",
               "plannedAmount": 5500,
-              "carriedOver": 273.84,
+              "carriedOver": 247.68,
               "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
             },
             {
@@ -39,7 +39,7 @@
               "id": "b1764711649373",
               "name": "Haircuts",
               "plannedAmount": 70,
-              "carriedOver": 120,
+              "carriedOver": 150,
               "image": "https://i.etsystatic.com/18154652/r/il/df307a/5293638365/il_794xN.5293638365_sva3.jpg"
             },
             {
@@ -67,7 +67,7 @@
               "id": "b1764711914745",
               "name": "Invest",
               "plannedAmount": 0,
-              "carriedOver": 58,
+              "carriedOver": 58.02,
               "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/investing-icon-svg-download-png-1421196.png?f=webp&w=256"
             }
           ]
@@ -80,7 +80,7 @@
               "id": "b1764711319084",
               "name": "Church",
               "plannedAmount": 0,
-              "carriedOver": 0,
+              "carriedOver": 100,
               "image": "https://i.pinimg.com/736x/4c/38/7a/4c387ae5a8a9cc8222a652ea5edfaf96.jpg"
             },
             {
@@ -100,35 +100,44 @@
             {
               "id": "b1764712122166",
               "name": "Google Finance",
-              "plannedAmount": 63.29,
+              "plannedAmount": 57.38,
               "carriedOver": 0,
               "image": "https://scontent-dfw5-2.xx.fbcdn.net/v/t39.30808-1/278877273_3162318297313306_3714083036599502140_n.jpg?stp=dst-jpg_s200x200_tt6&_nc_cat=1&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=3cruvh1S2XsQ7kNvwEgdExA&_nc_oc=Adlx5ueIKqjyT0lO3OrxaQzi9mYR8Ujd3_gV1xhymJ08jYE-tjuhrjk5U7b8eb88RjE&_nc_zt=24&_nc_ht=scontent-dfw5-2.xx&_nc_gid=aGczykHMAah7R3F0bZsg0A&oh=00_AfnXOSWKL97v7Qw_s3iU1CCNltoU_kOElhsVV22uItEomQ&oe=69353EF1"
             },
             {
               "id": "b1764712269777",
               "name": "Home Repair",
-              "plannedAmount": 200,
-              "carriedOver": 2680.95,
+              "plannedAmount": 2114.95,
+              "carriedOver": 0,
               "image": "https://www.clipartmax.com/png/middle/394-3942002_fix-house-icon-clipart-home-repair-house-fix-house-icon-clipart-home.png"
             },
             {
               "id": "b1764712324700",
               "name": "Emergency",
-              "plannedAmount": 1919.63,
-              "carriedOver": 914.13,
+              "plannedAmount": 2095.83,
+              "carriedOver": 0,
               "image": "https://media.istockphoto.com/id/1253926432/vector/flashlight-warning-alarm-light-and-siren-light-flat-design-vector-design.jpg?s=612x612&w=0&k=20&c=yOj6Jpu7XDrPJCTfUIpQm-LWI9q9RWQB91s-N7CgQDQ="
             },
             {
               "id": "b1764712370143",
               "name": "Vacation",
-              "plannedAmount": 0,
+              "plannedAmount": 750,
               "carriedOver": 0,
               "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/vacation-icon-svg-download-png-11067623.png?f=webp&w=256"
             }
           ]
         }
       ],
-      "ledger": [       
+      "ledger": [
+        {
+          "id": "t1766073847074",
+          "date": "2025-12-18",
+          "description": "PBFCM Paycheck 1",
+          "amount": 4367.81,
+          "type": "income",
+          "sourceId": "inc1764710864578",
+          "linkedBudgetItemId": null
+        }
       ],
       "watchList": [
         {
@@ -156,9 +165,51 @@
         },
         {
           "description": "Home Repair",
-          "amount": 2189.95,
+          "amount": 2114.95,
           "dueDate": "TBD",
           "image": "https://www.clipartmax.com/png/middle/394-3942002_fix-house-icon-clipart-home-repair-house-fix-house-icon-clipart-home.png"
+        },
+        {
+          "description": "Mortgage",
+          "amount": 1088,
+          "dueDate": "2026-01-01",
+          "image": "https://cdn.iconscout.com/icon/free/png-512/free-house-icon-svg-download-png-460450.png?f=webp&w=256"
+        },
+        {
+          "description": "Student Loan",
+          "amount": 105,
+          "dueDate": "2026-01-01",
+          "image": "https://cdn.iconscout.com/icon/free/png-512/free-student-icon-svg-download-png-1810201.png?f=webp&w=256"
+        },
+        {
+          "description": "Mowing",
+          "amount": 120,
+          "dueDate": "2026-01-08",
+          "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/lawn-mowing-icon-svg-download-png-4594800.png?f=webp&w=256"
+        },
+        {
+          "description": "House Cleaning",
+          "amount": 160,
+          "dueDate": "2025-12-24",
+          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cleaning-icon-svg-download-png-1242225.png?f=webp&w=256"
+        },
+        {
+          "description": "Vacation",
+          "amount": 750,
+          "dueDate": "2026-01-31",
+          "image": "https://cdn.iconscout.com/icon/premium/png-512-thumb/vacation-icon-svg-download-png-11067623.png?f=webp&w=256"
+        },
+        {
+          "description": "Haircuts",
+          "amount": 40,
+          "dueDate": "2025-12-30",
+          "image": "https://i.etsystatic.com/18154652/r/il/df307a/5293638365/il_794xN.5293638365_sva3.jpg"
+        },
+        {
+          "description": "Aflac",
+          "amount": 196.69,
+          "dueDate": "2026-01-15",
+          "image": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"
         }
       ],
       "incomeSources": [
@@ -183,7 +234,8 @@
           "image": "https://placehold.co/40x40/gray/white?text=$"
         }
       ],
-      "expectedIncome": []
+      "expectedIncome": [],
+      "transfers": []
     }
   ]
 }
