@@ -133,10 +133,40 @@
           "id": "t1766073847074",
           "date": "2025-12-18",
           "description": "PBFCM Paycheck 1",
-          "amount": 4367.81,
+          "amount": 4367.82,
           "type": "income",
-          "sourceId": "inc1764710864578",
-          "linkedBudgetItemId": null
+          "splits": [
+            {
+              "linkedBudgetItemId": "b1764711914745",
+              "amount": 0.01,
+              "note": "Extra"
+            },
+            {
+              "linkedBudgetItemId": "",
+              "amount": null,
+              "note": ""
+            }
+          ],
+          "linkedBudgetItemId": null,
+          "sourceId": "inc1764710864578"
+        },
+        {
+          "id": "t1766210915368",
+          "date": "2025-12-19",
+          "description": "Chase Credit Card",
+          "amount": -506.81,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
+        },
+        {
+          "id": "t1766210956608",
+          "date": "2025-12-19",
+          "description": "Chase Travel Credit Card",
+          "amount": -1302,
+          "type": "expense",
+          "linkedBudgetItemId": "b1",
+          "splits": null
         }
       ],
       "watchList": [
@@ -210,18 +240,6 @@
           "amount": 196.69,
           "dueDate": "2026-01-15",
           "image": "https://cdn.brandfetch.io/idfLaxzY-K/w/400/h/400/theme/dark/icon.png?c=1bxid64Mup7aczewSAYMX&t=1667924267088"
-        },
-        {
-          "description": "Groceries",
-          "amount": 506.81,
-          "dueDate": "2025-12-19",
-          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
-        },
-        {
-          "description": "Groceries",
-          "amount": 1302,
-          "dueDate": "2025-12-19",
-          "image": "https://cdn.iconscout.com/icon/free/png-512/free-cart-icon-svg-download-png-458456.png?f=webp&w=256"
         }
       ],
       "incomeSources": [
