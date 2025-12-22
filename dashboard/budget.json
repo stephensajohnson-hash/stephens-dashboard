@@ -167,6 +167,15 @@
           "type": "expense",
           "linkedBudgetItemId": "b1",
           "splits": null
+        },
+        {
+          "id": "t1766422073441",
+          "date": "2025-12-22",
+          "description": "Carrie Nuckolls - Paycheck 1",
+          "amount": 1021.14,
+          "type": "income",
+          "sourceId": "inc1764710884570",
+          "linkedBudgetItemId": null
         }
       ],
       "watchList": [
@@ -269,11 +278,6 @@
           "sourceId": "inc1764710864578",
           "amount": 4367.81,
           "date": "2026-01-01"
-        },
-        {
-          "sourceId": "inc1764710884570",
-          "amount": 1021.14,
-          "date": "2025-12-22"
         },
         {
           "sourceId": "inc1764710884570",
